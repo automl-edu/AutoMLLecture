@@ -1,3 +1,11 @@
 # Add any directories, files, or patterns you don't want to be tracked by version control
 
 *.pdf
+/macros.log
+/main.log
+/main.aux
+/main.nav
+/main.out
+/main.snm
+/main.synctex.gz
+/main.toc

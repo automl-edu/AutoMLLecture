@@ -9,7 +9,7 @@
 
 \huge
 \centering
-What are your expectations for the course?
+Why are you sitting here?
 
 \bigskip
 
@@ -31,10 +31,285 @@ Overview and Motivation
 What do we learn today?
 
 \begin{itemize}
-  \item What is AutoML?
-  \item \ldots
+  \item Why ML does not scale up
+  \item Design decisions in ML 
+  \item What is AutoML? 
+  \item Challenges in AutoML
+  \item Risks of AutoML
+  \item Meta-algorithmic hierarchy 
   \item Organization of the course
 \end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Machine Learning}
+
+\centering
+\textit{``Machine learning is the science of getting computers to act\\
+ without being explicitly programmed.''}
+
+\hfill by Andrew Ng
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Machine Learning}
+
+\includegraphics[width=1.0\textwidth]{images/sklearn-cheat}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Machine Learning Workflow}
+
+\centering
+\input{tikz/ml-workflow}
+
+\pause
+ 
+\bigskip
+\bigskip
+$\leadsto$ Users indirectly teach machines how to learn.
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Machine Learning does not scale up}
+
+\begin{itemize}
+  \item Basics in machine learning are not hard to grasp
+  \smallskip
+  \item Achieving state-of-the-art performance is quite hard
+  \smallskip
+  \item Design decisions are (sometimes) unintuitive and\\ require a lot of expertise
+  \begin{itemize}
+    \item making these design decisions is a tedious and error-prone task
+  \end{itemize}
+  \smallskip
+  \item Many experts are employed in ML these days
+  \smallskip
+  \item Nevertheless, developing a new ML-applications takes time
+  \smallskip
+  \item The job market for ML experts is nearly empty
+\end{itemize}
+
+\bigskip
+
+\textit{``I'd like to use machine learning, but I can't invest much time''}
+
+\hfill Zoubin Gharamani
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Design Decisions in Machine Learning}
+
+What could be design decisions for applying ML to a new dataset?
+\hands
+
+\pause
+
+\begin{itemize}
+  \item Choice of machine learning algorithm
+  \begin{itemize}
+    \item SVM, random forest, deep neural network?
+  \end{itemize}
+  \pause
+  \item Hyperparameters of machine learning algorithms
+  \begin{itemize}
+    \item SVM: C, gamma, kernel, \ldots?
+  \end{itemize}
+  \pause
+  \item Architecture of a neural network
+  \begin{itemize}
+    \item $\#$layers, $\#$neurons, activation function, \ldots 
+  \end{itemize}
+  \pause
+  \item Data preprocessing
+  \begin{itemize}
+  	\item data cleanup, missing data imputation, feature selection, \ldots  
+  \end{itemize}
+  \pause
+  \item anomaly detection
+  \item allocation of computational resources
+  \item \ldots
+\end{itemize}
+
+\medskip
+$\leadsto$ All these design decisions have to be made for each new dataset.
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{A simple Example with $k$-NN}
+
+\centering
+\includegraphics[width=0.6\textwidth]{images/kNN-jasmine}
+
+\begin{itemize}
+  \item $k$-nearest neighbors is one of the most trivial ML algorithms
+  \item Size of neighbourhood ($k$) is very important for its performance
+  \item The performance function depending on $k$ is quite complex\\ (not at all convex)
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Goal of AutoML}
+
+\begin{block}{AutoML}
+The goal of AutoML is to automate all parts of machine learning (as needed)
+to \emph{support} users efficiently building their machine learning applications.
+\end{block}
+
+\bigskip
+
+\begin{block}{AutoML System}
+Given
+\begin{itemize}
+  \item a dataset
+  \item a task (e.g., regression or classification)
+  \item a performance metric (e.g., accuracy or RMSE)
+\end{itemize}
+an AutoML system automatically determines the approach 
+that performs best for this particular application.
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{AutoML in Research}
+
+AutoML enables:
+
+\begin{enumerate}
+  \item more efficient research
+  \begin{itemize}
+    \item AutoML has shown on subproblems to outperform human experts
+  \end{itemize}
+  \pause
+  \smallskip
+  \item more systematic research
+  \begin{itemize}
+    \item humans tend to be unsystematic which leads to errors
+  \end{itemize}
+  \smallskip
+  \pause
+  \item more reproducible research
+  \begin{itemize}
+    \item since AutoML is systematic and human's unsystematic approaches cannot be reproduced 
+  \end{itemize}
+  \item broader use of ML also in other disciplines
+  \begin{itemize}
+    \item ML should not be limited to computer scientists;
+    \item the most amazing applications of ML is often done\\ by either interdisciplinary teams or even non-computer scientists
+  \end{itemize}
+\end{enumerate}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Challenges in AutoML}
+
+\begin{enumerate}
+  \item Design decisions have to be made for each dataset again
+  \item Training of a single ML model can be quite expensive\\
+  		(e.g., hours, days or weeks)
+  \begin{itemize}
+    \item[$\leadsto$] often, we cannot try a many design decisions
+  \end{itemize}
+  \item the mathmatical relation between design decisions\\ and performance is (often) unknown
+  \begin{itemize}
+    \item[$\leadsto$] gradient-based optimization is not directly possible
+  \end{itemize}
+  \item optimization in highly complex spaces
+  \begin{itemize}
+    \item incl. categorical choices, continuous parameters,\\ conditional dependencies
+  \end{itemize}
+  
+\end{enumerate}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Risks of AutoML}
+
+What could be risks of AutoML?
+\hands
+\pause
+
+\begin{enumerate}
+  \item Users apply AutoML without understanding anything.
+  \begin{itemize}
+    \item Users might wonder why (Auto-)ML does not perform well\\ after they passed poor data. 
+  \end{itemize}
+  \pause
+  \item The users over-trust the AutoML too much.
+  \begin{itemize}
+    \item humans might not use human reasoning skills and do not second guess machine decisions
+  \end{itemize}
+  \pause
+  \item We enable non-ML experts to use ML\\ without knowing the risks and consequences of ML.
+  \pause
+  \item Could result in deployment of \ldots
+  \begin{itemize}
+    \item inaccurate ML models due to lack of understanding of statistical concepts, e.g., sampling bias, overfitting, concept drift, \ldots
+    \item biased and unfair models due to lack of understanding ethical practices and use of features such as gender and race for predicting outcomes
+  \end{itemize}
+\end{enumerate}
+
+See \textit{\href{https://arxiv.org/abs/1902.06804}{Democratisation of Usable Machine Learning in Computer Vision}}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Snipped of Meta-Algorithmic Hierarchy}
+
+
+Meta-algorithmic approaches
+
+\begin{itemize}
+  \item[$\subset$] AutoAI
+  \pause
+  \begin{itemize}
+		\item[$\subset$] AutoML
+		\pause
+		\begin{itemize}
+		 	\item[$\subset$] Hyperparameter optimization (HPO)
+		 	\pause
+		 	\item[$\subset$] Neural architecture search (NAS)\\
+		 	   \hspace{1em} Google sometimes claims: AutoML $==$ NAS\\
+		 	   \hspace{1em} but that's wrong!
+		 	\pause
+		 	\item[$\subset$] Meta-learning\\
+		\end{itemize}
+		\pause
+		\item[$\subset$] Algorithm configuration
+	\end{itemize}
+	\pause
+	\item[$\subset$] Search-based software engineering
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Goals of the Lecture}
+
+You will be able to \ldots
+\begin{enumerate}
+  \item use AutoML tools
+  \smallskip
+  \item develop AutoML tools
+  \smallskip
+  \item have a good overview over the state-of-the-art in AutoML
+  \smallskip
+  \item do research on AutoML yourself
+  \begin{itemize}
+    \item perfect opportunity to do a master project or thesis with us afterwards
+  \end{itemize}
+\end{enumerate}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -42,48 +317,46 @@ What do we learn today?
 \begin{frame}[c]{Course Overview}
 
 \begin{itemize}
-	\item TODO
+	\item Introduction
+	\item Background
+	\begin{itemize}
+		\item Design spaces in ML
+		\item Experimentation and visualization
+	\end{itemize}
+	\item Hyperparameter optimization (HPO)
+	\begin{itemize}
+	  \item Bayesian optimization
+	  \item Other black-box techniques
+	\end{itemize}
+	\item Speeding up HPO with multi-fidelity optimization
+	\item Pentecost (Holiday) -- no lecture
+	\item Architecture search I + II
+	\item Meta-Learning
+	\item Learning to learn $\&$ optimize
+	\item Beyond AutoML: algorithm configuration and control
+	\item Project announcement and closing
 \end{itemize}
 
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Team (1)}
+\begin{frame}[c]{Team - Lectures}
 
 \begin{columns}[T]
-\column{0.7\textwidth}
-\begin{itemize}
-  \item Frank Hutter
-  \item Head of machine learning lab
-  \item PhD at the University of British Columbia (Canada)
-  \item Background: Machine learning and combinatorial optimization
-  \item Expertise in algorithm configuration, algorithm selection, automated machine learning,\ldots
-\end{itemize}
-\column{0.3\textwidth}
-\vspace*{0.7cm}
-\includegraphics[width=6.7em]{images/team/frank_small}
+\column{0.5\textwidth}
 
-\end{columns}
+\centering
+\includegraphics[width=9em]{images/team/frank_small}
 
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Team (2)}
+Prof. Dr. Frank Hutter
 
-\begin{columns}[T]
-\column{0.7\textwidth}
-\begin{itemize}
-  \item Marius Lindauer
-  \item Junior research group lead of automatic algorithm design
-  \item PhD at University of Potsdam
-  \item Expertise in algorithm configuration, algorithm selection and AutoML
-  \item Maintainer of ASlib and AClib
- % \item Background: Hard combinatorial problems (e.g., SAT and ASP)
-\end{itemize}
-\column{0.3\textwidth}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=9em]{images/team/marius}
 
-\includegraphics[width=6.7em]{images/team/marius}
+Dr. Marius Lindauer
+
 \end{columns}
 
 \end{frame}
@@ -92,16 +365,20 @@ What do we learn today?
 \begin{frame}[c]{Team -- Exercise}
 
 \begin{columns}[T]
-\column{0.7\textwidth}
-\begin{itemize}
-  \item Andr\'e Biedenkapp
-  \item PhD student
-  \item Focus on algorithm control
-  \item Responsible for exercises
-\end{itemize}
-\column{0.3\textwidth}
 
-\includegraphics[width=6.7em]{images/team/biedenkapp}
+\column{0.3\textwidth}
+\centering
+\includegraphics[height=9em]{images/team/biedenkapp}
+André Biedenkapp
+\column{0.3\textwidth}
+\centering
+\includegraphics[height=9em]{images/team/eggensperger_small}
+Katharina Eggensperger
+\column{0.3\textwidth}
+\centering
+\includegraphics[height=9em]{images/team/arber_small}
+Arber Zela
+
 \end{columns}
 
 \end{frame}
@@ -113,12 +390,15 @@ What do we learn today?
   \item $6$ ECTS
   \item Every week at Monday: 14:15 (s.t) - 15:45\\ (Building: 106 Room: SR 00 007)
   \item \emph{Interactive} Lecture 
+  \begin{itemize}
+    \item We will ask you questions in the lectures
+    \item Kahoot quiz at the end of each lecture
+  \end{itemize}
   \item Course material on our homepage\\
-  		{\small \url{ml.informatik.uni-freiburg.de/teaching/ws2018/ml4aad/}}
+  		{\small \url{ml.informatik.uni-freiburg.de/teaching/ss2019/automl/}}
   \item Slides will be online before the lectures
   \item No video recording!
 \end{itemize}
-
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -126,21 +406,20 @@ What do we learn today?
 \begin{frame}[c]{Organization (Exercises)}
 
 \begin{itemize}
-  \item Every Tuesday at: 12:30 - 14:00\\ (Building: 051 Room: SR 00 006)
+  \item Every Friday at: 14:15 - 15:45\\ (Building: 106 Room: SR 00 007)
   \begin{itemize}
     \item No meeting this week, but first exercise sheet!
   \end{itemize}
-  \item Roughly every week new exercise sheet and discussion of last exercise
+  \item Every week new exercise sheet and discussion of last exercise
   \item Most exercises will be practical, i.e., you have to implement something
   \item Team work allowed, max team size: 2! 
-  %\item Each exercise will be worth at most $50$ points
   \item Cheating:
   \begin{itemize}
     \item First time cheating: $0$ points for exercise
     \item Second time cheating: failing the course
   \end{itemize}
   \item You have to obtain at least $50\%$ points in the exercises  
-  \item Not all assignments will provide the same amount of points
+  \item The number of points per sheet will slightly increase over time
   \item Submit via bitbucket (git)
 \end{itemize}
 
@@ -161,19 +440,20 @@ What do we learn today?
 \begin{frame}[c]{Requirements}
 
 \begin{itemize}
-  \item Knowledge in Machine Learning (strongly recommended)
+  \item Knowledge in \alert{Machine Learning} (strongly recommended)
   \begin{itemize}
-    \item Classification, regression, clustering, decision tree, training-test split, cross validation, deep learning \ldots
+    \item Classification, regression, clustering, decision tree, training-test split, cross validation, pre-processing \ldots
   \end{itemize}
   \pause
-  \item Basic knowledge in AI 
+  \item Knowledge in \alert{Deep Learning} (strongly recommended)
   \begin{itemize}
-    \item decision problems, optimization problems, NP-hard, \ldots 
+    \item feed-forward network, recurrent network, convolutions, learning rates, regularization, \ldots 
   \end{itemize}
   \pause
-  \item Experience in Python and git 
+  \item Experience in \alert{Python and git} (recommended)
   \begin{itemize}
-    \item nearly all exercises will require that you implement something in~Python and submit the solution to a git repo
+    \item nearly all exercises will require 
+    that you implement something in~Python and submit the solution to a git repo
   \end{itemize}
 \end{itemize}
 
@@ -192,14 +472,29 @@ What do we learn today?
 		\item Present the project in the first $15$ minutes\\ (including some questions from us)
 		\item Answer questions about further course material in the second $15$ minutes
 	\end{itemize}	
+  \item tentative date: end of September
 \end{itemize}
 
 \end{frame}
-%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Resources}
+
+\begin{itemize}
+  \item To get a deep understanding of AutoML, you should also read some literature 
+  \item We will provide links to papers at the end of each lecture
+  \item New AutoML book: \url{https://www.automl.org/book/}
+  \begin{itemize}
+    \item Draft online available
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Chances and Risks}
 
-ML4AAD is an advanced lecture and we modify it each time.
+AutoML is an advanced lecture and we modify it each time.
 
 \bigskip
 \pause
@@ -222,6 +517,11 @@ Risks:
 \pause
 $\to$ Give us some feedback and we will improve the course!
 
+\medskip
+\pause
+Note: AutoML was already partially covered in our old lecture ML4AAD. 
+If you successfully attended ML4AAD, please don't attend AutoML.
+
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
@@ -230,7 +530,7 @@ $\to$ Give us some feedback and we will improve the course!
 \begin{itemize}
   \item Why have you chosen this course?
   \medskip
-  \item Background knowledge? (AI, ML, \ldots)
+  \item Background knowledge? (ML, DL, \ldots)
   \medskip 
   \item Experience with such problems?
 \end{itemize}
