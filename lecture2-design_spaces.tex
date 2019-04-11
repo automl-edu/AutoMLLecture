@@ -80,6 +80,7 @@ After this lecture, you will be able to \ldots
 
 \end{frame}
 %----------------------------------------------------------------------
+\section{Design Space from Documentation}
 %----------------------------------------------------------------------
 \begin{frame}[c]{Design Space of Support Vector Machines}
 
@@ -98,7 +99,7 @@ Given
   \item a set of hyperparameters of a machine learning algorithms
   \item a cost metric (e.g., predictive error)
 \end{itemize}
-we want to find the hyperparameter settings minimizing the cost metric wrt the dataset. 
+we want to find the hyperparameter configurations minimizing the cost metric wrt the dataset. 
 \end{block}
 
 \begin{block}{Hyperparameter Types of SVM}
@@ -166,60 +167,170 @@ gamma_value float [0.0001, 8.0]
 \begin{itemize}
   \item We assume that each algorithm has a default
   \begin{itemize}
-    \item often a robust setting of the algorithm if you don't want to change it
+    \item often a robust configuration if you don't want to change it
     \item default often provided by developer, e.g.,\\
    		  in its documentation or the paper
   \end{itemize}
+  \pause
   \item We use the default to start our search for hyperparameter optimization
   \begin{itemize}
     \item if we know a reasonable configuration,\\ we should start with a random configuration?
     \item Goal: find something which is better than the default
+    \pause
+    \smallskip
     \item Pro: Can help us to start in good region of the design space
     \item Contra: We might start being trapped in local optimum.
   \end{itemize}
 \end{itemize}
 
+\pause
 Example: the default \texttt{kernel} is the RBF-kernel\\
 \texttt{kernel categorical \{linear, rbf, poly, sigmoid\}[rbf]}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
+\begin{frame}[c, fragile]{Conditional Dependencies}
+
+\begin{block}{SVM Example}
+\begin{verbatim}
+kernel categorical {linear, rbf, poly, sigmoid}[rbf]
+degree integer [1, 5][3]
+gamma_value float [0.0001, 8.0][2.0]
+\end{verbatim}
+\end{block}
+
+\pause
+
+\begin{itemize}
+  \item Some parameter depend on each other
+  \begin{itemize}
+    \item \texttt{degree} is only active if \texttt{kernel} is set to \texttt{poly}
+    \item \texttt{gamma\_value} is only active if \texttt{kernel} is set to \texttt{rbf}  
+  \end{itemize}
+  \bigskip
+  \pause
+  \item[$\leadsto$] model such conditional dependencies in configuration space:
+\end{itemize}
+
+\begin{verbatim}
+degree | kernel in {poly}
+gamma_value | kernel in {rbf}
+\end{verbatim}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c, fragile]{Forbidden Constraints}
+
+\begin{itemize}
+  \item sometimes, combinations of settings are forbidden
+  \item For example: $a \leq b$
+  \smallskip
+  \pause
+  \item[$\leadsto$] Try to avoid such constraints\\ because sampling in constraint spaces get much harder
+  \smallskip
+  \item Sometimes constraints can be rewritten:
+\end{itemize}
+
+\begin{verbatim}
+a float [0,1][0]
+b float [0,1][0]
+a < b
+\end{verbatim}
+
+Rewrite:
+\begin{verbatim}
+a float [0,1][0]
+c float [0,1][0]
+\end{verbatim}
+
+with $b = a + c$ $\leadsto$ \texttt{b} might be larger than 1! 
 
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
+\begin{frame}[c]{Design Space of Support Vector Machines}
 
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
-
+\centering
+\includegraphics[width=0.7\textwidth]{images/sklearn_svm_doc.png}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
+\begin{frame}[c, fragile]{Configuration Space of SVM}
 
+\begin{verbatim}
+  Hyperparameters:
+    C float [0.001, 1000.0][1.0]
+    coef0 float [0.0, 10.0][0.0]
+    degree integer [1, 5][3]
+    gamma categorical {auto, value}[auto]
+    gamma_value float [0.0001, 8.0][1.0]
+    kernel categorical {linear, rbf, poly, sigmoid}[poly]
+    shrinking categorical {true, false}[true]
+  Conditions:
+    coef0 | kernel in {poly, sigmoid}
+    degree | kernel in {poly}
+    gamma | kernel in {rbf, poly, sigmoid}
+    gamma_value | gamma in {value}
+\end{verbatim}
+
+\end{frame}
+%----------------------------------------------------------------------
+\section{Design Space from Algorithm}
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm: Randomized Regression Tree}
+
+\begin{algorithm}[H]
+\Input{$D = \{(\vec{x}^{(i)}, y^{(i)})\}_{i\in \{1\ldots|D|\}}$, attributes A}
+\BlankLine
+\If{current tree depth larger than threshold $t_d$} {
+	  \Return{Leaf with average label $y$}
+}
+\If{samples size $|D|$ is smaller than threshold $t_n$} {
+	  \Return{Leaf with average label $y$}
+}
+\pause
+$A'$ $\leftarrow$ subsample $k$ attributes from $A$;\\
+let $s$ be the \emph{best split value} of attribute $a \in A'$ according to criterion $c$;\\ 
+Create edges with constraint $s \leq x.a$ and $s > x.a$;\\
+BuildTree($\{ (\vec{x}^{(i)}, y^{(i)}) \in D | \vec{x}^{(i)}.a \leq v\}$, $A$);\\
+BuildTree($\{ (\vec{x}^{(i)}, y^{(i)}) \in D | \vec{x}^{(i)}.a > v\}$, $A$);
+	
+\Return{current node}
+\caption{\texttt{BuildTree()}}
+\end{algorithm}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
+\begin{frame}[c]{Algorithm: Regression Random Forest}
 
+\begin{algorithm}[H]
+\Input{$D = \{(\vec{x}^{(i)}, y^{(i)})\}_{i\in \{1\ldots|D|\}}$, attributes A}
+\BlankLine
+
+\For{$i \in \{1 \ldots n\}$}{
+	$D'$ $\leftarrow$ bootstrap $D$ with $d$ points;\\
+	BuildTree($D'$, $A$);\\
+}
+	
+\Return{current node}
+\caption{\texttt{BuildForest()}}
+\end{algorithm}
+
+\pause
+\bigskip
+
+Task: \hands
+\begin{itemize}
+  \item What are design decisions of a regression random forest?
+  \item What could be a reasonable configuration space?  
+\end{itemize}
 
 \end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
-
-
-\end{frame}
-%----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Slide}
 
