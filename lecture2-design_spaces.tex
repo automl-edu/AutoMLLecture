@@ -99,7 +99,7 @@ Given
   \item a set of hyperparameters of a machine learning algorithms
   \item a cost metric (e.g., predictive error)
 \end{itemize}
-we want to find the hyperparameter configurations minimizing the cost metric wrt the dataset. 
+we want to find the hyperparameter configuration minimizing the cost metric wrt the dataset. 
 \end{block}
 
 \begin{block}{Hyperparameter Types of SVM}
@@ -143,10 +143,11 @@ we want to find the hyperparameter configurations minimizing the cost metric wrt
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Design Space}
+\begin{frame}[c,fragile]{Design Space and Configuration}
 
-The combination of several hyperparameter ranges $\pcs_i$ creates a design space:
-$\pcs = \theta_1 \times \theta_2 \times \theta_3 \ldots \times \theta_n$ 
+\begin{block}{Design/Configuration Space}
+The combination of several hyperparameter ranges $\pcs_i$ for the $it$-th hyperparameter creates a design space:
+$\pcs = \pcs_1 \times \pcs_2 \times \pcs_3 \ldots \times \pcs_n$ 
 
 \pause
 \bigskip
@@ -158,6 +159,18 @@ kernel categorical {linear, rbf, poly, sigmoid}
 degree integer [1, 5]
 gamma_value float [0.0001, 8.0]
 \end{verbatim}
+\end{block}
+
+\pause
+
+\begin{block}{Configuration}
+An element of the configuration space $\conf \in \pcs$ instantiates each hyperparameter $\conf_i$ with a value.
+For example:
+\begin{verbatim}
+{kernel: rbf, gamma_value: 1, degree: 2}
+\end{verbatim}
+
+\end{block}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -203,7 +216,7 @@ gamma_value float [0.0001, 8.0][2.0]
 \pause
 
 \begin{itemize}
-  \item Some parameter depend on each other
+  \item Some parameters depend on each other
   \begin{itemize}
     \item \texttt{degree} is only active if \texttt{kernel} is set to \texttt{poly}
     \item \texttt{gamma\_value} is only active if \texttt{kernel} is set to \texttt{rbf}  
@@ -228,7 +241,7 @@ gamma_value | kernel in {rbf}
   \item For example: $a \leq b$
   \smallskip
   \pause
-  \item[$\leadsto$] Try to avoid such constraints\\ because sampling in constraint spaces get much harder
+  \item[$\leadsto$] Try to avoid such constraints\\ because sampling in constrainted spaces gets much harder
   \smallskip
   \item Sometimes constraints can be rewritten:
 \end{itemize}
@@ -295,6 +308,7 @@ with $b = a + c$ $\leadsto$ \texttt{b} might be larger than 1!
 \pause
 $A'$ $\leftarrow$ subsample $k$ attributes from $A$;\\
 let $s$ be the \emph{best split value} of attribute $a \in A'$ according to criterion $c$;\\ 
+\pause
 Create edges with constraint $s \leq x.a$ and $s > x.a$;\\
 BuildTree($\{ (\vec{x}^{(i)}, y^{(i)}) \in D | \vec{x}^{(i)}.a \leq v\}$, $A$);\\
 BuildTree($\{ (\vec{x}^{(i)}, y^{(i)}) \in D | \vec{x}^{(i)}.a > v\}$, $A$);
@@ -314,15 +328,32 @@ BuildTree($\{ (\vec{x}^{(i)}, y^{(i)}) \in D | \vec{x}^{(i)}.a > v\}$, $A$);
 
 \For{$i \in \{1 \ldots n\}$}{
 	$D'$ $\leftarrow$ bootstrap $D$ with $d$ points;\\
-	BuildTree($D'$, $A$);\\
+	$T_i$ $\leftarrow$ BuildTree($D'$, $A$);\\
 }
 	
-\Return{current node}
 \caption{\texttt{BuildForest()}}
 \end{algorithm}
 
 \pause
 \bigskip
+
+\begin{algorithm}[H]
+\Input{Data point $x$}
+\BlankLine
+
+\For{$i \in \{1 \ldots n\}$}{
+        $y_i$ $\leftarrow$ $T_i$.predict($x$); \\
+}
+
+$y$ $\leftarrow$ $\frac{1}{n}\sum_{i}^n y_i$;\\
+	
+\caption{\texttt{Predict()}}
+\end{algorithm}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+\begin{frame}{Configuration Space of Regression Random Forest}
 
 Task: \hands
 \begin{itemize}
@@ -330,7 +361,209 @@ Task: \hands
   \item What could be a reasonable configuration space?  
 \end{itemize}
 
+
+
 \end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Levels of Programming by Optimization \refw{Hoos 2012}}
+
+\begin{description}
+\item[Level 0] Already exposed hyperparameters
+\pause
+\item[Level 1] Make hardwired design choices accessible
+\pause
+\item[Level 2] Design choices are already considered during software development
+\pause 
+\item[Level 3] Seek design choices in software development
+\end{description}
+
+\pause
+
+$\leadsto$ The field of search-based software engineering is closely related to AutoML.
+
+\end{frame}
+%----------------------------------------------------------------------
+\section{Hyperparameter Optimization and CASH}
+%----------------------------------------------------------------------
+\begin{frame}[c]{Hyperparameter Optimization}
+
+\begin{block}{Hyperparameter Optimization (HPO)}
+Given
+\begin{itemize}
+  \item a dataset $\dataset$
+  \item a set of hyperparameters $\pcs$ of a machine learning algorithms $\algo$
+  \item a cost metric or loss function $\loss$ (e.g., predictive error)
+\end{itemize}
+we want to find the hyperparameter configuration minimizing the cost metric wrt the dataset:
+
+\begin{equation}
+\conf^* \in \argmin_{\conf \in \pcs} \loss(\algo(\conf), \dataset) \nonumber
+\end{equation}
+
+\end{block}
+
+\pause
+Remarks: 
+
+\begin{itemize}
+  \item We use an simplified notation of the loss function $\loss$ to focus on the main point here;
+  \pause
+  \item $\argmin$ returns a set of optimal points of a given function. We are happy to find one element of this set and thus use $\in$ instead of $=$.
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Extend HPO}
+
+AutoML includes
+
+\begin{itemize}
+  \item Hyperparameter Optimization (HPO)
+  \item Algorithm selection 
+  \item \ldots (and more)
+\end{itemize}
+
+\pause
+$\leadsto$ How to select an algorithm?
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{CASH: Combined Algorithm Selection and Hyperparameter Optimization}
+
+\begin{block}{Hyperparameter Optimization (HPO)}
+Given
+\begin{itemize}
+  \item a dataset $\dataset$
+  \item a set of algorithms $A = \{\algo_1, \algo_2, \ldots, \algo_k\}$
+  \item a set of hyperparameters $\pcs$ of each machine learning algorithms $\algo_i$
+  \item a cost metric or loss function $\loss$ (e.g., predictive error)
+\end{itemize}
+we want to find the best combination of algorithm and its hyperparameter configuration minimizing the cost metric wrt the dataset:
+
+\begin{equation}
+(\algo^*, \conf^*) \in \argmin_{\algo \in A, \conf \in \pcs} \loss(\algo(\conf), \dataset) \nonumber
+\end{equation}
+
+\end{block}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c, fragile]{Representation of CASH}
+
+\begin{itemize}
+  \item top-level hyperparameter to select algorithm
+  \item conditional constraints for all algorihm-specific hyperparameters
+\end{itemize}
+
+\pause
+
+\begin{verbatim}
+algo categorical {SVM, RF, DNN}[RF]
+
+n_tree integer [10,100][10]
+n_tree | algo in {RF}
+
+gamma float {0.0001,8}[1]
+gamma | algo in {SVM]
+
+...
+\end{verbatim}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c, fragile]{Representation of CASH}
+
+\centering
+\includegraphics[width=1.0\textwidth]{images/cash}
+
+\hfill Source: Komer et al. 2019
+
+\end{frame}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c, fragile]{Select several Algorithms}
+
+We can use set of algorithms:
+\begin{itemize}
+  \item for example, we want to apply a set of preprocessors
+  \item Each algorithm gets a binary hyperparameter
+\end{itemize}
+
+\begin{verbatim}
+normalize categorical {True, False}[False]
+pca categorical {True, False}[False]
+pca_dim integer [1,100][10]
+pca_dim | pca in {True}
+\end{verbatim}
+
+\end{frame}
+%----------------------------------------------------------------------
+\section{Unbounded Configuration Spaces}
+%----------------------------------------------------------------------
+\begin{frame}[c]{Bounded Configuration Spaces}
+
+So far, we assumed that each hyperparameter has a pre-defined domain.
+
+Problems:
+\begin{itemize}
+  \item sometime we don't know a good range
+  \begin{itemize}
+     \item too large range $\leadsto$ very hard optimization problem
+     \item too small range $\leadsto$ we might miss the true optimum
+  \end{itemize}
+  \pause
+  \medskip
+  \item for pipelines, we might don't know the size of the pipeline
+  \begin{itemize}
+    \item some compoenents could be part of the pipeline multiple times
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{TPOT {Olson et al. 2016}}
+
+\centering
+\includegraphics[width=0.8\textwidth]{images/tpot_tree}
+
+\begin{itemize}
+  \item TPOP searches in a space of tree-based pipelines
+  \item pipeline can potentially grow in size
+  \item challenge: avoid illegal pipelines
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{HyperOpt}
+
+\begin{itemize}
+  \item instead of a bound range, HyperOpt also allows for (unbounded) distributions
+  \begin{itemize}
+    \item sampling of gamma (of SVM) could be done according to log-normal distribution (with given statistics) 
+  \end{itemize}
+  \item Advantage: allows for flexible definition of expert knowledge
+  \item Disadvantage: hard to find a good distribution if expert knowledge is limited
+\end{itemize}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Increasing Bounds {???}}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+\section{Design Spaces for Neural Networks}
 %----------------------------------------------------------------------
 \begin{frame}[c]{Slide}
 
@@ -391,8 +624,6 @@ Task: \hands
 
 \end{frame}
 %----------------------------------------------------------------------
-
-
 
 %----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals}
