@@ -74,7 +74,7 @@ After this lecture, you will be able to \ldots
   \begin{itemize}
     \item PCA, feature selection, random kitchen sinks, \ldots
   \end{itemize}
-  \item if we only use one preprocessor and one ML algorithm, brute force would need:\\
+  \item if we only use one preprocessor and one ML algorithm, brute force would need:
   $t \cdot n \cdot l$
 \end{itemize}
 
@@ -366,7 +366,7 @@ Task: \hands
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Levels of Programming by Optimization \refw{Hoos 2012}}
+\begin{frame}[c]{Levels of Programming by Optimization {Hoos 2012}}
 
 \begin{description}
 \item[Level 0] Already exposed hyperparameters
@@ -560,13 +560,147 @@ Problems:
 %----------------------------------------------------------------------
 \begin{frame}[c]{Increasing Bounds {???}}
 
+\begin{enumerate}
+  \item start with distributions making it very unlikely\\ to sample outside of fairly narrow bounds
+  \item increase width of distribution over time\\ to search in larger areas over time
+\end{enumerate}
+
+\bigskip
+\pause
+
+Remark:
+\begin{itemize}
+  \item similar ideas can be used for save optimization
+  \begin{itemize}
+    \item quite important if a failed configuration incurs great (monetary) costs, \\
+          a robot is destroyed because of its configuration
+  \end{itemize}
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 \section{Design Spaces for Neural Networks}
 %----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
+\begin{frame}[c]{Design of Neural Networks}
 
+To train a deep neural network, we have many crucial design decisions \hands
+\pause
+
+Examples:
+\begin{itemize}
+  \item number of layers
+  \item number of neurons in each layer
+  \item activation functions
+  \item skip connections
+  \item global architecture (MLP, ResNet, DenseNet, \ldots)
+  \item regularization
+  \begin{itemize}
+    \item batch norm, weight decay, dropout, mixup, cut-out, \ldots 
+  \end{itemize}
+  \item optimizer hyperparameters
+  \begin{itemize}
+    \item type of optimizer (SGD, Adam, \ldots)
+    \item learning rate
+    \item momentum
+    \item learning rate schedule
+  \end{itemize}
+  \item \ldots
+\end{itemize}
+
+$\leadsto$ global optimization!
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Neural Architecture Search (NAS)}
+
+\begin{block}{Neural Architecture Search (NAS)}
+Given
+\begin{itemize}
+  \item a dataset $\dataset$
+  \item a set of hyperparameters $\pcs$\\ \textbf{defining the architecture of a deep neural network}
+  \item a cost metric or loss function $\loss$ (e.g., predictive error)
+\end{itemize}
+we want to find the hyperparameter configuration minimizing the cost metric wrt the dataset:
+
+\begin{equation}
+\conf^* \in \argmin_{\conf \in \pcs} \loss(\algo(\conf), \dataset) \nonumber
+\end{equation}
+\end{block}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Neural Architecture Search (NAS) -- Remarks}
+
+\begin{itemize}
+  \item yet another hyperparameter problem?
+  \begin{itemize}
+    \item[$\to$] we will see in later sessions how we exploit expert knowledge about neural networks to go beyond black-box HPO
+  \end{itemize}
+  \pause
+  \bigskip
+  \item Current pratice: 
+  \begin{itemize}
+    \item hyperparameters (e.g., of the optimizer) are tuned manual or independently from the architecture
+  \end{itemize}
+  \pause
+  \item Better practice:
+  \begin{itemize}
+    \item jointly optimize hyperparameters and architecture design {Zela et al. 2018}
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Shapes of Deep Neural Networks {???}}
+
+\begin{itemize}
+  \item Many human-designed networks follow a pattern
+  \item whether this is a good idea is not studied well
+  \item Advantage: The number of hyperparameters gets smaller
+  \begin{itemize}
+    \item E.g., instead of tuning the number of neurons in each layer\\ ($\leadsto$ one hyperparameter per layer),\\
+          a few parameters to define shape
+  \end{itemize} 
+\end{itemize}
+
+\textbf{ADD Picture!}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Global NAS vs. Cell NAS}
+
+\textbf{ADD Slide from last year}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Flow of Tensors through Operators}
+
+\textbf{ADD pic from DARTS}
+
+\begin{itemize}
+  \item each node is a tensor (i.e., a latent representation of the input data)
+  \item between nodes operators change the data\\ (e.g., cnn layer or batch norm)
+  \begin{itemize}  
+     \item includes no-op operators to deactivate edges
+  \end{itemize}
+\end{itemize}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{One-Shot Architecture}
+
+\begin{itemize}
+  \item Parent architecture: Between nodes, we have several operators 
+  \item Child architecture: find subset of operators
+  \item[$\leadsto$] We will see in a later session how to do it
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -576,55 +710,6 @@ Problems:
 
 \end{frame}
 %----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
-
-
-\end{frame}
-%----------------------------------------------------------------------
-
 %----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals}
 
