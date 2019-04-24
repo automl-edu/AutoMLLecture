@@ -54,7 +54,7 @@ What do we learn today?
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Machine Learning}
+\begin{frame}[c]{Machine Learning requires many design decisions}
 
 \includegraphics[width=1.0\textwidth]{images/sklearn-cheat}
 
@@ -80,15 +80,19 @@ $\leadsto$ Users indirectly teach machines how to learn.
 \begin{itemize}
   \item Basics in machine learning are not hard to grasp
   \smallskip
+  \pause
   \item Achieving state-of-the-art performance is quite hard
   \smallskip
-  \item Design decisions are (sometimes) unintuitive and\\ require a lot of expertise
+  \pause
+  \item Design decisions are (sometimes) not intuitive and\\ require a lot of expertise
   \begin{itemize}
     \item making these design decisions is a tedious and error-prone task
   \end{itemize}
+  \pause
   \smallskip
   \item Many experts are employed in ML these days
   \smallskip
+  \pause
   \item Nevertheless, developing a new ML-applications takes time
   \smallskip
   \item The job market for ML experts is nearly empty
@@ -99,6 +103,21 @@ $\leadsto$ Users indirectly teach machines how to learn.
 \textit{``I'd like to use machine learning, but I can't invest much time''}
 
 \hfill Zoubin Gharamani
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{AutoML Tools Demo}
+
+Auto-Sklearn:
+
+\url{https://colab.research.google.com/drive/11UcQQ_dymL5spF8o56qgSRZpMC1GKag9}
+
+\bigskip
+Auto-PyTorch:
+
+\url{https://colab.research.google.com/drive/14G5wvbqBkJ-SQJOdJsE_G8swq0JaFk6_}
 
 
 \end{frame}
@@ -138,7 +157,7 @@ What could be design decisions for applying ML to a new dataset?
 \end{itemize}
 
 \medskip
-$\leadsto$ All these design decisions have to be made for each new dataset.
+$\leadsto$ To achieve state-of-the-art performance,\\ all these design decisions have to be made for each new dataset.
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -149,7 +168,7 @@ $\leadsto$ All these design decisions have to be made for each new dataset.
 \includegraphics[width=0.6\textwidth]{images/kNN-jasmine}
 
 \begin{itemize}
-  \item $k$-nearest neighbors is one of the most trivial ML algorithms
+  \item $k$-nearest neighbors is one of the simplest ML algorithms
   \item Size of neighbourhood ($k$) is very important for its performance
   \item The performance function depending on $k$ is quite complex\\ (not at all convex)
 \end{itemize}
@@ -165,6 +184,7 @@ to \emph{support} users efficiently building their machine learning applications
 \end{block}
 
 \bigskip
+\pause
 
 \begin{block}{AutoML System}
 Given
@@ -201,10 +221,11 @@ AutoML enables:
   \begin{itemize}
     \item since AutoML is systematic and human's unsystematic approaches cannot be reproduced 
   \end{itemize}
+  \pause
   \item broader use of ML also in other disciplines
   \begin{itemize}
     \item ML should not be limited to computer scientists;
-    \item the most amazing applications of ML is often done\\ by either interdisciplinary teams or even non-computer scientists
+    \item the most amazing applications of ML are often done\\ by either interdisciplinary teams or even non-computer scientists
   \end{itemize}
 \end{enumerate}
 
@@ -215,15 +236,21 @@ AutoML enables:
 
 \begin{enumerate}
   \item Design decisions have to be made for each dataset again
+  \smallskip
+  \pause
   \item Training of a single ML model can be quite expensive\\
   		(e.g., hours, days or weeks)
   \begin{itemize}
     \item[$\leadsto$] often, we cannot try a many design decisions
   \end{itemize}
-  \item the mathmatical relation between design decisions\\ and performance is (often) unknown
+  \smallskip
+  \pause
+  \item the mathematical relation between design decisions\\ and performance is (often) unknown
   \begin{itemize}
     \item[$\leadsto$] gradient-based optimization is not directly possible
   \end{itemize}
+  \smallskip
+  \pause
   \item optimization in highly complex spaces
   \begin{itemize}
     \item incl. categorical choices, continuous parameters,\\ conditional dependencies
@@ -243,12 +270,12 @@ What could be risks of AutoML?
 \begin{enumerate}
   \item Users apply AutoML without understanding anything.
   \begin{itemize}
-    \item Users might wonder why (Auto-)ML does not perform well\\ after they passed poor data. 
+    \item Users might wonder why (Auto-)ML does not perform well\\ after they passed in poor data. 
   \end{itemize}
   \pause
-  \item The users over-trust the AutoML too much.
+  \item Users over-trust AutoML too much.
   \begin{itemize}
-    \item humans might not use human reasoning skills and do not second guess machine decisions
+    \item humans might not use human reasoning skills and\\ do not second guess machine decisions
   \end{itemize}
   \pause
   \item We enable non-ML experts to use ML\\ without knowing the risks and consequences of ML.
@@ -351,7 +378,7 @@ You will be able to \ldots
 	\smallskip
 	\item Interactive lecture
 	\begin{itemize}
-	  \item more efficient learning through self-reflection on challenges!
+	  \item more efficient learning through self-reflection
 	\end{itemize}
 	\smallskip
 	\item Practical exercises
@@ -470,19 +497,19 @@ Arber Zela
 \begin{frame}[c]{Requirements}
 
 \begin{itemize}
-  \item Knowledge and hands-on exp. in \alert{Machine Learning}\\ (strongly recommended)
+  \item Knowledge and hands-on exp. in \alert{Machine Learning}\\ (mandatory)
   \begin{itemize}
     \item Classification, regression, clustering, decision tree, training-test split, cross validation, pre-processing \ldots
     \item to catch up (if nec.): \url{https://www.coursera.org/learn/machine-learning} 
   \end{itemize}
   \pause
-  \item Knowledge and hands-on exp. in \alert{Deep Learning}\\ (strongly recommended)
+  \item Knowledge and hands-on exp. in \alert{Deep Learning}\\ (mandatory)
   \begin{itemize}
     \item feed-forward network, recurrent network, convolutions, learning rates, regularization, \ldots 
     \item to catch up (if nec.): \url{https://course.fast.ai/}
   \end{itemize}
   \pause
-  \item Experience in \alert{Python and git}\\ (recommended)
+  \item Experience in \alert{Python and git}\\ (strongly recommended)
   \begin{itemize}
     \item nearly all exercises will require 
     that you implement something in~Python and submit the solution to a git repo
@@ -502,7 +529,7 @@ Arber Zela
   \item Exam
 	\begin{itemize}
 		\item Present the project in the first $15$ minutes\\ (including some questions from us)
-		\item Answer questions about further course material in the second $15$ minutes
+		\item Answer questions about further course material\\ in the second $15$ minutes
 	\end{itemize}	
   \item tentative date: end of September
 \end{itemize}
@@ -527,7 +554,7 @@ Arber Zela
 %----------------------------------------------------------------------
 \begin{frame}[c]{Chances and Risks}
 
-AutoML is an advanced lecture and we modify it each time.
+AutoML is an advanced lecture and we update it each time.
 
 \bigskip
 \pause
