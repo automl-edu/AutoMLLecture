@@ -99,7 +99,7 @@ Given
   \item a set of hyperparameters of a machine learning algorithms
   \item a cost metric (e.g., predictive error)
 \end{itemize}
-we want to find the hyperparameter configuration minimizing the cost metric wrt the dataset. 
+we want to find the hyperparameter configuration\\ that minimizes the cost metric wrt the dataset. 
 \end{block}
 
 \begin{block}{Hyperparameter Types of SVM}
@@ -123,7 +123,7 @@ we want to find the hyperparameter configuration minimizing the cost metric wrt 
 	  \item \texttt{kernel \{linear, rbf, poly, sigmoid\}}
 	\end{itemize}
 	\pause
-	\item[ordinal] list of values with uniform distance
+	\item[ordinal] list of ordered values with uniform distance
 	\begin{itemize}
 	  \item no example in SVM design space
 	  \item \texttt{size [small, medium, large]}
@@ -181,11 +181,11 @@ For example:
   \item We assume that each algorithm has a default
   \begin{itemize}
     \item often a robust configuration if you don't want to change it
-    \item default often provided by developer, e.g.,\\
-   		  in its documentation or the paper
+    \item defaults often provided by developer, e.g.,\\
+   		  in its documentation or the corresponding paper
   \end{itemize}
   \pause
-  \item We use the default to start our search for hyperparameter optimization
+  \item We use the default to start our search for HPO
   \begin{itemize}
     \item if we know a reasonable configuration,\\ we should start with a random configuration?
     \item Goal: find something which is better than the default
@@ -307,9 +307,9 @@ with $b = a + c$ $\leadsto$ \texttt{b} might be larger than 1!
 }
 \pause
 $A'$ $\leftarrow$ subsample $k$ attributes from $A$;\\
-let $s$ be the \emph{best split value} of attribute $a \in A'$ according to criterion $c$;\\ 
+let $v$ be the \emph{best split value} of attribute $a \in A'$ according to criterion $c$;\\ 
 \pause
-Create edges with constraint $s \leq x.a$ and $s > x.a$;\\
+Create edges with constraint $\vec{x}^{(i)}.a \leq v$ and $\vec{x}^{(i)}.a > v$;\\
 BuildTree($\{ (\vec{x}^{(i)}, y^{(i)}) \in D | \vec{x}^{(i)}.a \leq v\}$, $A$);\\
 BuildTree($\{ (\vec{x}^{(i)}, y^{(i)}) \in D | \vec{x}^{(i)}.a > v\}$, $A$);
 	
@@ -355,7 +355,7 @@ $y$ $\leftarrow$ $\frac{1}{n}\sum_{i}^n y_i$;\\
 %----------------------------------------------------------------------
 \begin{frame}{Configuration Space of Regression Random Forest}
 
-Task: \hands
+Task: \hands [5min]
 \begin{itemize}
   \item What are design decisions of a regression random forest?
   \item What could be a reasonable configuration space?  
@@ -366,21 +366,22 @@ Task: \hands
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Levels of Programming by Optimization {Hoos 2012}}
+\begin{frame}[c]{Levels of Programming by Optimization \litw{Hoos 2012}}
 
 \begin{description}
 \item[Level 0] Already exposed hyperparameters
 \pause
 \item[Level 1] Make hardwired design choices accessible
 \pause
-\item[Level 2] Design choices are already considered during software development
+\item[Level 2] Design choices are already considered\\ during software development
 \pause 
 \item[Level 3] Seek design choices in software development
 \end{description}
 
 \pause
+\bigskip
 
-$\leadsto$ The field of search-based software engineering is closely related to AutoML.
+$\leadsto$ The field of search-based software engineering is\\ closely related to AutoML.
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -395,7 +396,7 @@ Given
   \item a set of hyperparameters $\pcs$ of a machine learning algorithms $\algo$
   \item a cost metric or loss function $\loss$ (e.g., predictive error)
 \end{itemize}
-we want to find the hyperparameter configuration minimizing the cost metric wrt the dataset:
+we want to find the hyperparameter configuration that minimies the cost metric wrt the dataset:
 
 \begin{equation}
 \conf^* \in \argmin_{\conf \in \pcs} \loss(\algo(\conf), \dataset) \nonumber
@@ -482,7 +483,7 @@ gamma | algo in {SVM]
 \centering
 \includegraphics[width=1.0\textwidth]{images/cash}
 
-\hfill Source: Komer et al. 2019
+\hfill Source: \lit{Komer et al. 2019}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -494,6 +495,9 @@ We can use set of algorithms:
 \begin{itemize}
   \item for example, we want to apply a set of preprocessors
   \item Each algorithm gets a binary hyperparameter
+  \begin{itemize}
+  	\item $2^n$ possible combinations for $n$ preprocessors	
+  \end{itemize}
 \end{itemize}
 
 \begin{verbatim}
@@ -511,6 +515,7 @@ pca_dim | pca in {True}
 
 So far, we assumed that each hyperparameter has a pre-defined domain.
 
+\medskip
 Problems:
 \begin{itemize}
   \item sometime we don't know a good range
@@ -522,14 +527,14 @@ Problems:
   \medskip
   \item for pipelines, we might don't know the size of the pipeline
   \begin{itemize}
-    \item some compoenents could be part of the pipeline multiple times
+    \item some components could be part of the pipeline multiple times
   \end{itemize}
 \end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{TPOT {Olson et al. 2016}}
+\begin{frame}[c]{TPOT \litw{Olson et al. 2016}}
 
 \centering
 \includegraphics[width=0.8\textwidth]{images/tpot_tree}
@@ -543,22 +548,21 @@ Problems:
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{HyperOpt}
+\begin{frame}[c]{Distributions instead of Bounds (HyperOpt \litw{Bergstra et al. 2013})}
 
 \begin{itemize}
   \item instead of a bound range, HyperOpt also allows for (unbounded) distributions
   \begin{itemize}
-    \item sampling of gamma (of SVM) could be done according to log-normal distribution (with given statistics) 
+    \item sampling of gamma (of SVM) could be done according to\\ log-normal distribution (with given statistics) 
   \end{itemize}
-  \item Advantage: allows for flexible definition of expert knowledge
-  \item Disadvantage: hard to find a good distribution if expert knowledge is limited
+  \item Advantage:\\ allows for flexible definition of expert knowledge
+  \item Disadvantage:\\ hard to find a good distribution if expert knowledge is limited
 \end{itemize}
-
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Increasing Bounds {???}}
+\begin{frame}[c]{Increasing Bounds \litw{Shahriari et al. 2015}}
 
 \begin{enumerate}
   \item start with distributions making it very unlikely\\ to sample outside of fairly narrow bounds
@@ -570,7 +574,7 @@ Problems:
 
 Remark:
 \begin{itemize}
-  \item similar ideas can be used for save optimization
+  \item similar ideas can be used for safe optimization
   \begin{itemize}
     \item quite important if a failed configuration incurs great (monetary) costs, \\
           a robot is destroyed because of its configuration
@@ -586,7 +590,6 @@ Remark:
 To train a deep neural network, we have many crucial design decisions \hands
 \pause
 
-Examples:
 \begin{itemize}
   \item number of layers
   \item number of neurons in each layer
@@ -607,7 +610,7 @@ Examples:
   \item \ldots
 \end{itemize}
 
-$\leadsto$ global optimization!
+$\leadsto$ joint global optimization of hyperparameters and architecture!
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -647,18 +650,18 @@ we want to find the hyperparameter configuration minimizing the cost metric wrt 
   \pause
   \item Better practice:
   \begin{itemize}
-    \item jointly optimize hyperparameters and architecture design {Zela et al. 2018}
+    \item jointly optimize hyperparameters and architecture design\\ \lit{Zela et al. 2018}
   \end{itemize}
 \end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Shapes of Deep Neural Networks {???}}
+\begin{frame}[c]{Shapes of Deep Neural Networks \litw{Kotila 2017}}
 
 \begin{itemize}
   \item Many human-designed networks follow a pattern
-  \item whether this is a good idea is not studied well
+  \item whether this is a good idea is not well studied
   \item Advantage: The number of hyperparameters gets smaller
   \begin{itemize}
     \item E.g., instead of tuning the number of neurons in each layer\\ ($\leadsto$ one hyperparameter per layer),\\
@@ -666,7 +669,9 @@ we want to find the hyperparameter configuration minimizing the cost metric wrt 
   \end{itemize} 
 \end{itemize}
 
-\textbf{ADD Picture!}
+\medskip
+\centering
+\includegraphics[width=.6\textwidth]{images/nas_shapes.png}
 
 \end{frame}
 %----------------------------------------------------------------------
