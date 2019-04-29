@@ -39,16 +39,17 @@ Design Spaces in Machine Learning
 After this lecture, you will be able to \ldots
 
 \begin{itemize}
-  \item identifiy design decisions of machine learning algorithms
+  \item identify design decisions of machine learning algorithms
   \item explain different types of design decisions and there relations
   \item create design spaces
-  \item discuss the pro and cons of different design space approaches
+  \item discuss the pros and cons of different design space approaches
+  \item explain design spaces for neural architecture search
 \end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Simples Design Decisions: Selection of Algorithm}
+\begin{frame}[c]{Simple Design Decisions: Selection of Algorithm}
 
 \includegraphics[width=1.0\textwidth]{images/sklearn-cheat}
 
@@ -56,7 +57,7 @@ After this lecture, you will be able to \ldots
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Simples Design Decisions: Selection of Algorithm}
+\begin{frame}[c]{Simple Design Decisions: Selection of Algorithm}
 
 \begin{itemize}
   \item categorical design decison: $\{ \algo_1, \algo_2, \algo_3, \ldots, \algo_n\}$
@@ -74,7 +75,7 @@ After this lecture, you will be able to \ldots
   \begin{itemize}
     \item PCA, feature selection, random kitchen sinks, \ldots
   \end{itemize}
-  \item if we only use one preprocessor and one ML algorithm, brute force would need:
+  \item if we only use one preprocessor and one ML algorithm,\\ brute force would require:
   $t \cdot n \cdot l$
 \end{itemize}
 
@@ -146,13 +147,13 @@ we want to find the hyperparameter configuration\\ that minimizes the cost metri
 \begin{frame}[c,fragile]{Design Space and Configuration}
 
 \begin{block}{Design/Configuration Space}
-The combination of several hyperparameter ranges $\pcs_i$ for the $it$-th hyperparameter creates a design space:
+The combination of several hyperparameter ranges $\pcs_i$ for the $i$-th hyperparameter creates a design space:
 $\pcs = \pcs_1 \times \pcs_2 \times \pcs_3 \ldots \times \pcs_n$ 
 
 \pause
 \bigskip
 
-For example the design space of a SVM, would include:
+For example, the design space of a SVM would include:
 
 \begin{verbatim}
 kernel categorical {linear, rbf, poly, sigmoid}
@@ -197,7 +198,7 @@ For example:
 \end{itemize}
 
 \pause
-Example: the default \texttt{kernel} is the RBF-kernel\\
+Example: the default \texttt{kernel} of the SVM could be the RBF-kernel\\
 \texttt{kernel categorical \{linear, rbf, poly, sigmoid\}[rbf]}
 
 \end{frame}
@@ -212,8 +213,6 @@ degree integer [1, 5][3]
 gamma_value float [0.0001, 8.0][2.0]
 \end{verbatim}
 \end{block}
-
-\pause
 
 \begin{itemize}
   \item Some parameters depend on each other
@@ -237,29 +236,58 @@ gamma_value | kernel in {rbf}
 \begin{frame}[c, fragile]{Forbidden Constraints}
 
 \begin{itemize}
-  \item sometimes, combinations of settings are forbidden
+  \item sometimes combinations of settings are forbidden
   \item For example: $a \leq b$
   \smallskip
   \pause
-  \item[$\leadsto$] Try to avoid such constraints\\ because sampling in constrainted spaces gets much harder
+  \item[$\leadsto$] Try to avoid such constraints\\ because sampling in constrained spaces gets much harder
   \smallskip
   \item Sometimes constraints can be rewritten:
 \end{itemize}
 
 \begin{verbatim}
-a float [0,1][0]
-b float [0,1][0]
-a < b
+    a float [0,1][0]
+    b float [0,1][0]
+    a <= b
 \end{verbatim}
 
 Rewrite:
 \begin{verbatim}
-a float [0,1][0]
-c float [0,1][0]
+    a float [0,1][0]
+    c float [0,1][0]
 \end{verbatim}
 
 with $b = a + c$ $\leadsto$ \texttt{b} might be larger than 1! 
 
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c, fragile]{Expert Knowledge: Transformations}
+
+\begin{itemize}
+	\item expert knowledge can help to guide hyperparameter optimization
+	\item For example, some hyperparameters might not be sampled uniformly
+\end{itemize}
+
+\pause
+\medskip
+For example, regularization hyperparameter of SVM:
+
+\begin{verbatim}
+    C float [0.001, 1000.0][1.0]
+\end{verbatim}
+
+\begin{itemize}
+	\item the distance between $999.9$ and $1000.0$ should not be the same as between $0.001$ and $0.101$
+	\smallskip
+	\pause
+	\item[$\leadsto$] We might want to sample here from from a log-scale
+\end{itemize}
+
+\begin{verbatim}
+    C float [0.001, 1000.0][1.0] log
+\end{verbatim}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -276,7 +304,7 @@ with $b = a + c$ $\leadsto$ \texttt{b} might be larger than 1!
 
 \begin{verbatim}
   Hyperparameters:
-    C float [0.001, 1000.0][1.0]
+    C float [0.001, 1000.0][1.0] log
     coef0 float [0.0, 10.0][0.0]
     degree integer [1, 5][3]
     gamma categorical {auto, value}[auto]
@@ -300,10 +328,10 @@ with $b = a + c$ $\leadsto$ \texttt{b} might be larger than 1!
 \Input{$D = \{(\vec{x}^{(i)}, y^{(i)})\}_{i\in \{1\ldots|D|\}}$, attributes A}
 \BlankLine
 \If{current tree depth larger than threshold $t_d$} {
-	  \Return{Leaf with average label $y$}
+	  \Return{Leaf with $\vec{y}$}
 }
 \If{samples size $|D|$ is smaller than threshold $t_n$} {
-	  \Return{Leaf with average label $y$}
+	  \Return{Leaf with $\vec{y}$}
 }
 \pause
 $A'$ $\leftarrow$ subsample $k$ attributes from $A$;\\
@@ -361,8 +389,6 @@ Task: \hands [5min]
   \item What could be a reasonable configuration space?  
 \end{itemize}
 
-
-
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
@@ -396,7 +422,7 @@ Given
   \item a set of hyperparameters $\pcs$ of a machine learning algorithms $\algo$
   \item a cost metric or loss function $\loss$ (e.g., predictive error)
 \end{itemize}
-we want to find the hyperparameter configuration that minimies the cost metric wrt the dataset:
+we want to find the hyperparameter configuration that minimizes $\loss$ wrt the dataset:
 
 \begin{equation}
 \conf^* \in \argmin_{\conf \in \pcs} \loss(\algo(\conf), \dataset) \nonumber
@@ -427,26 +453,27 @@ AutoML includes
 \end{itemize}
 
 \pause
+\bigskip
 $\leadsto$ How to select an algorithm?
 
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{CASH: Combined Algorithm Selection and Hyperparameter Optimization}
+\begin{frame}[c]{CASH \litw{Thornton et al. 2013}}
 
-\begin{block}{Hyperparameter Optimization (HPO)}
+\begin{block}{CASH: Combined Algorithm Selection and Hyperparameter Optimization}
 Given
 \begin{itemize}
   \item a dataset $\dataset$
-  \item a set of algorithms $A = \{\algo_1, \algo_2, \ldots, \algo_k\}$
+  \item a set of algorithms $\mathbf{A} = \{\algo_1, \algo_2, \ldots, \algo_k\}$
   \item a set of hyperparameters $\pcs$ of each machine learning algorithms $\algo_i$
   \item a cost metric or loss function $\loss$ (e.g., predictive error)
 \end{itemize}
-we want to find the best combination of algorithm and its hyperparameter configuration minimizing the cost metric wrt the dataset:
+we want to find the best combination of algorithm and its hyperparameter configuration minimizing $\loss$ wrt the dataset:
 
 \begin{equation}
-(\algo^*, \conf^*) \in \argmin_{\algo \in A, \conf \in \pcs} \loss(\algo(\conf), \dataset) \nonumber
+(\algo^*, \conf^*) \in \argmin_{\algo \in \mathbf{A}, \conf \in \pcs} \loss(\algo(\conf), \dataset) \nonumber
 \end{equation}
 
 \end{block}
@@ -458,7 +485,7 @@ we want to find the best combination of algorithm and its hyperparameter configu
 
 \begin{itemize}
   \item top-level hyperparameter to select algorithm
-  \item conditional constraints for all algorihm-specific hyperparameters
+  \item conditional constraints for all algorithm-specific hyperparameters
 \end{itemize}
 
 \pause
@@ -518,10 +545,10 @@ So far, we assumed that each hyperparameter has a pre-defined domain.
 \medskip
 Problems:
 \begin{itemize}
-  \item sometime we don't know a good range
+  \item sometimes we don't know a good range
   \begin{itemize}
      \item too large range $\leadsto$ very hard optimization problem
-     \item too small range $\leadsto$ we might miss the true optimum
+     \item too small range $\leadsto$ we might miss high-performance areas
   \end{itemize}
   \pause
   \medskip
@@ -530,6 +557,11 @@ Problems:
     \item some components could be part of the pipeline multiple times
   \end{itemize}
 \end{itemize}
+
+\pause
+\bigskip
+
+$\leadsto$ Can we design configuration spaces without explicit bounds?
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -542,7 +574,7 @@ Problems:
 \begin{itemize}
   \item TPOP searches in a space of tree-based pipelines
   \item pipeline can potentially grow in size
-  \item challenge: avoid illegal pipelines
+  \item Challenge: avoid illegal pipelines
 \end{itemize}
 
 \end{frame}
@@ -551,7 +583,7 @@ Problems:
 \begin{frame}[c]{Distributions instead of Bounds (HyperOpt \litw{Bergstra et al. 2013})}
 
 \begin{itemize}
-  \item instead of a bound range, HyperOpt also allows for (unbounded) distributions
+  \item instead of a range, HyperOpt also allows for user-defined distributions
   \begin{itemize}
     \item sampling of gamma (of SVM) could be done according to\\ log-normal distribution (with given statistics) 
   \end{itemize}
@@ -565,7 +597,7 @@ Problems:
 \begin{frame}[c]{Increasing Bounds \litw{Shahriari et al. 2015}}
 
 \begin{enumerate}
-  \item start with distributions making it very unlikely\\ to sample outside of fairly narrow bounds
+  \item start with peaked distributions \\ s.t. it is very unlikely to sample outside of fairly narrow bounds
   \item increase width of distribution over time\\ to search in larger areas over time
 \end{enumerate}
 
@@ -577,7 +609,7 @@ Remark:
   \item similar ideas can be used for safe optimization
   \begin{itemize}
     \item quite important if a failed configuration incurs great (monetary) costs, \\
-          a robot is destroyed because of its configuration
+          a robot is destroyed because of its configuration \lit{Sui et al. 2015}
   \end{itemize}
 \end{itemize}
 
@@ -624,12 +656,20 @@ Given
   \item a set of hyperparameters $\pcs$\\ \textbf{defining the architecture of a deep neural network}
   \item a cost metric or loss function $\loss$ (e.g., predictive error)
 \end{itemize}
-we want to find the hyperparameter configuration minimizing the cost metric wrt the dataset:
+we want to find the hyperparameter configuration minimizing $\loss$ wrt the dataset:
 
 \begin{equation}
 \conf^* \in \argmin_{\conf \in \pcs} \loss(\algo(\conf), \dataset) \nonumber
 \end{equation}
 \end{block}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Global NAS}
+
+\centering
+\includegraphics[width=0.7\textwidth]{images/nas_global.png}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -643,7 +683,7 @@ we want to find the hyperparameter configuration minimizing the cost metric wrt 
   \end{itemize}
   \pause
   \bigskip
-  \item Current pratice: 
+  \item Current practice: 
   \begin{itemize}
     \item hyperparameters (e.g., of the optimizer) are tuned manual or independently from the architecture
   \end{itemize}
@@ -660,9 +700,9 @@ we want to find the hyperparameter configuration minimizing the cost metric wrt 
 \begin{frame}[c]{Shapes of Deep Neural Networks \litw{Kotila 2017}}
 
 \begin{itemize}
-  \item Many human-designed networks follow a pattern
-  \item whether this is a good idea is not well studied
-  \item Advantage: The number of hyperparameters gets smaller
+  \item Many networks designed by humans follow a pattern
+  \item Whether this is a good idea is not well studied
+  \item Advantage: The number of hyperparameters is smaller
   \begin{itemize}
     \item E.g., instead of tuning the number of neurons in each layer\\ ($\leadsto$ one hyperparameter per layer),\\
           a few parameters to define shape
@@ -676,42 +716,41 @@ we want to find the hyperparameter configuration minimizing the cost metric wrt 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Global NAS vs. Cell NAS}
+\begin{frame}[c]{Cell NAS}
 
-\textbf{ADD Slide from last year}
+\centering
+\includegraphics[width=0.7\textwidth]{images/nas_cellsearch.png}
+
+$\leadsto$ Search for cells and repeat these in the final architecture $n$ times.
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Flow of Tensors through Operators}
 
-\textbf{ADD pic from DARTS}
+
+\begin{columns}
+ \column{0.3\textwidth}
+
+\centering
+\includegraphics[width=0.6\textwidth]{images/nas_darts_space_idea.png}
+
+ \column{0.7\textwidth}
 
 \begin{itemize}
-  \item each node is a tensor (i.e., a latent representation of the input data)
-  \item between nodes operators change the data\\ (e.g., cnn layer or batch norm)
-  \begin{itemize}  
-     \item includes no-op operators to deactivate edges
-  \end{itemize}
+	\item each node is a tensor (i.e., a latent representation of the input data)
+	\item between nodes operators change the data\\ (e.g., convolution or max pooling)
+	\begin{itemize}  
+		\item includes no-op operators to deactivate edges
+	\end{itemize}
 \end{itemize}
 
 
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{One-Shot Architecture}
+\begin{flushright}
+	Source: \lit{Liu et al. 2019}
+\end{flushright}
 
-\begin{itemize}
-  \item Parent architecture: Between nodes, we have several operators 
-  \item Child architecture: find subset of operators
-  \item[$\leadsto$] We will see in a later session how to do it
-\end{itemize}
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Slide}
-
+\end{columns}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -721,12 +760,26 @@ we want to find the hyperparameter configuration minimizing the cost metric wrt 
 Now, you should be able to \ldots
 
 \begin{itemize}
-  \item identifiy design decisions of machine learning algorithms
+  \item identify design decisions of machine learning algorithms
   \item explain different types of design decisions and there relations
   \item create design spaces
   \item discuss the pro and cons of different design space approaches
+  \item explain design spaces for neural architecture search
 \end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Literature [These are links]}
 
+\begin{itemize}
+	\item \lit{\href{https://www.cs.ubc.ca/~hoos/Publ/Hoos10.pdf}{Programming by Optimization. Hoos 2012}}
+	\item \lit{\href{https://ml.informatik.uni-freiburg.de/papers/13-KDD2013-AutoWEKA.pdf}{AutoWEKA and CASH. Thornton et al. 2013}}
+	\item \lit{\href{https://www.automl.org/wp-content/uploads/2018/12/tpot.pdf}{TPOT. Olson and Moore. 2019}}
+	\item \lit{\href{https://www.automl.org/wp-content/uploads/2018/12/hyperopt-sklearn-1.pdf}{Hyperopt-Sklearn. Komer et al. 2019}}
+	\item \lit{\href{http://proceedings.mlr.press/v51/shahriari16.html}{Unbounded Bayesian Optimization via Regularization. Shahriari et al. 2016}}
+	\item \lit{\href{https://arxiv.org/abs/1806.09055}{DARTS: Differentiable Architecture Search. Liu et al. 2019}}			
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
