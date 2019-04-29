@@ -320,6 +320,36 @@ For example, regularization hyperparameter of SVM:
 
 \end{frame}
 %----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c, fragile]{Optimization of Random Seeds?}
+
+Is the random seed a valid design decision?
+
+\medskip
+
+\begin{block}{Output: trained model}
+	If the output of your AutoML tool is a trained model:
+	\begin{itemize}
+		\item your goal is to obtain the best trained model
+		\item[$\leadsto$] tune your random seed!
+	\end{itemize}
+\end{block}
+
+\pause	
+\medskip
+	
+\begin{block}{Output: best configuration}
+	If the output of your AutoML tool is the best configuration:
+	\begin{itemize}
+		\item your goal is to obtain a configuration that performs well after refitting 
+		\item[$\leadsto$] don't tune your random seed!
+		\item[$\leadsto$] obtain configuration that performs well on many random seeds
+	\end{itemize}
+\end{block}
+
+
+\end{frame}
+%----------------------------------------------------------------------
 \section{Design Space from Algorithm}
 %----------------------------------------------------------------------
 \begin{frame}[c]{Algorithm: Randomized Regression Tree}
@@ -422,7 +452,7 @@ Given
   \item a set of hyperparameters $\pcs$ of a machine learning algorithms $\algo$
   \item a cost metric or loss function $\loss$ (e.g., predictive error)
 \end{itemize}
-we want to find the hyperparameter configuration that minimizes $\loss$ wrt the dataset:
+we want to find a hyperparameter configuration $\conf \in \pcs$ that minimizes $\loss$ wrt $\dataset$:
 
 \begin{equation}
 \conf^* \in \argmin_{\conf \in \pcs} \loss(\algo(\conf), \dataset) \nonumber
@@ -470,7 +500,7 @@ Given
   \item a set of hyperparameters $\pcs$ of each machine learning algorithms $\algo_i$
   \item a cost metric or loss function $\loss$ (e.g., predictive error)
 \end{itemize}
-we want to find the best combination of algorithm and its hyperparameter configuration minimizing $\loss$ wrt the dataset:
+we want to find the best combination of algorithm $\algo \in \mathbf{A}$ and its hyperparameter configuration $\conf \in \pcs$ minimizing $\loss$ wrt $\dataset$:
 
 \begin{equation}
 (\algo^*, \conf^*) \in \argmin_{\algo \in \mathbf{A}, \conf \in \pcs} \loss(\algo(\conf), \dataset) \nonumber
@@ -653,10 +683,10 @@ $\leadsto$ joint global optimization of hyperparameters and architecture!
 Given
 \begin{itemize}
   \item a dataset $\dataset$
-  \item a set of hyperparameters $\pcs$\\ \textbf{defining the architecture of a deep neural network}
+  \item a design space $\pcs$\\ \textbf{defining the architecture of a deep neural network}
   \item a cost metric or loss function $\loss$ (e.g., predictive error)
 \end{itemize}
-we want to find the hyperparameter configuration minimizing $\loss$ wrt the dataset:
+we want to find the configuration $\conf \in pcs$ minimizing $\loss$ wrt the $\dataset$:
 
 \begin{equation}
 \conf^* \in \argmin_{\conf \in \pcs} \loss(\algo(\conf), \dataset) \nonumber
