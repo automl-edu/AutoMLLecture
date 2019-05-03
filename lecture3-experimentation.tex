@@ -109,21 +109,140 @@ Is the following statement correct? \includegraphics[height=1.5em]{images/hands}
 \section{Visualization}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning Curves}
+\begin{frame}[c]{Setup}
 
-TODD
+For the following slides, we have used the following setup:
+
+\begin{itemize}
+	\item Model: simple MLP (from sklearn)\\ with 2 layers with 128 neurons and 64 neurons, resp.
+	\item Dataset: Digits  
+	\item Setting 1: learning rate of $0.001$ 
+	\item Setting 2: learning rate of $0.01$
+\end{itemize}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{A Single Learning Curve (Setting 1)}
+
+\centering
+\includegraphics[width=0.8\textwidth]{scripts/one_learning_curve.jpg}
 
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Aggregated Learning Curves}
+\begin{frame}[c]{$10$ Learning Curves  (Setting 1)}
 
-TODD
+\centering
+\includegraphics[width=0.7\textwidth]{scripts/ten_learning_curves.jpg}
+
+\begin{itemize}
+	\item[$\leadsto$] Deep learning (and most other ML algorithms) are non-deterministc
+	\item[$\leadsto$] Measure performance more than once and estimate noise-level
+\end{itemize}
 
 
 \end{frame}
 %----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Aggregated Learning Curves (Setting 1)}
+
+\centering
+\includegraphics[width=0.7\textwidth]{scripts/hundred_agg_learning_curves.jpg}
+
+\begin{itemize}
+	\item Plot mean and stdev (shaded area) across $n$ (here $100$) random seeds\\
+	\item Remark: Only use mean and stdev\\
+	if noise is somehow normal distributed
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Compare Learning Curves}
+
+\centering
+\includegraphics[width=0.7\textwidth]{scripts/compare_learning_curves.jpg}
+
+\begin{itemize}
+	\item If uncertainties (shaded area) overlap, results might not statistically relevant but due to noise
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Scatter Plot: Train vs. Test}
+
+
+\begin{columns}
+	
+\column{0.5\textwidth}
+
+\centering
+\includegraphics[width=1\textwidth]{scripts/mlp1_test_train_scatter.jpg}
+
+\begin{itemize}
+	\item perfect would be if train and test score are correlated
+	\item here at least not anti-correlated
+\end{itemize}
+
+
+\column{0.5\textwidth}
+
+\pause
+\centering
+\includegraphics[width=1\textwidth]{scripts/mlp2_test_train_scatter.jpg}
+	
+\begin{itemize}
+	\item already perfect training score
+	\item generalization nevertheless not perfect
+\end{itemize}
+	
+\end{columns}
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{eCDF: Distribution of Performance (Setting 1)}
+
+\centering
+\includegraphics[width=0.7\textwidth]{scripts/mlp1_test_ecdf.jpg}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{eCDF: Distribution of Performance}
+
+\centering
+\includegraphics[width=0.7\textwidth]{scripts/mlp12_test_ecdf.jpg}
+
+\begin{enumerate}
+	\item X: sorted error scores
+	\item Y: $[1\ldots\#\text{points}] / \#\text{points}$
+	\item step\_function(X,Y)
+\end{enumerate}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Box Plot: Comparing Two Configurations}
+
+\centering
+\includegraphics[width=0.7\textwidth]{scripts/mlp12_boxplot.jpg}
+
+\begin{itemize}
+	\item if you have paired populations (e.g., configurations evaluated on different datasets),
+			you should generate boxplots with $y_1 / y_2$ 
+	\item[$\leadsto$] insight on how many datasets one of the two performed better
+\end{itemize}
+	
+
+\end{frame}
+%----------------------------------------------------------------------
+
 %----------------------------------------------------------------------
 \begin{frame}[c]{AutoML Systems over Time}
 
@@ -150,38 +269,6 @@ TODD
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Ranked AutoML Systems over Time and Datasets}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Scatter Plot: Comparing Two Configurations}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Box Plot: Comparing Two Configurations}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Box Plot: Comparing Two Configurations}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Scatter Plot: Comparing Train and Validation}
 
 TODD
 
