@@ -1,0 +1,659 @@
+\begin{frame}[c]{}
+
+\centering
+\huge
+Lecture 3:\\
+Experimentation and Visualization
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Where are we? The big picture}
+
+\begin{itemize}
+	\item Introduction
+	\item[$\to$] Background
+	\begin{itemize}
+		\item Design spaces in ML
+		\item[$\to$] Experimentation and visualization
+	\end{itemize}
+	\item Hyperparameter optimization (HPO)
+	\begin{itemize}
+	  \item Bayesian optimization
+	  \item Other black-box techniques
+	  \item Speeding up HPO with multi-fidelity optimization
+	\end{itemize}
+	\item Pentecost (Holiday) -- no lecture
+	\item Architecture search I + II
+	\item Meta-Learning
+	\item Learning to learn $\&$ optimize
+	\item Beyond AutoML: algorithm configuration and control
+	\item Project announcement and closing
+\end{itemize}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{How CS differs from other empirical sciences}
+
+\begin{itemize}
+	\item We have a complete and precise \alert{mathematical description}\\of the object under study
+	\smallskip
+	
+	\item We have complete and precise \alert{control} of the object under study\\ 
+	(and to some degree also the experimental environment)
+	\begin{itemize}
+		\item as a result, experiments can be \alert{reproduced perfectly}
+		\pause
+		\item what do we need for experiments to be reproducible? 
+		\only<2-2>{\includegraphics[height=1.5em]{images/hands}
+		}
+		\only<3->{
+			\begin{itemize}
+				\item  {Code \& dependencies, inputs, environment ($\rightarrow$ VM \& cloud)}
+			\end{itemize}
+			\pause
+		}
+	\end{itemize}
+	\medskip
+	\pause
+	
+	%\only<4->{
+	\item We often have quite \alert{cheap} experiments
+	\begin{itemize}
+		\item price for computers is monotonically decreasing
+		\item often maximal runtimes of 1h; exception: deep learning (up to a week)
+		\item compare e.g., experimental physics: 1 week of beam time per year % Still different from observing new species in the field for half a year / 
+	\end{itemize}
+	\smallskip
+	\pause
+	%}
+	%\only<5->{
+	\item We can conduct and analyze experiments fully \alert{automatically} 
+	\begin{itemize}
+		\item we can gather large amounts of data quickly (e.g., 100 repetitions)
+		\item but: don't confuse statistical significance and relevance
+	\end{itemize}
+	%}	
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Outliers are quite different in computer experiments}
+
+Is the following statement correct? \includegraphics[height=1.5em]{images/hands}
+
+``As usual in other empirical sciences, we (in CS) should take care to \alert{detect and remove outliers} before further analysis.''
+
+\pause
+\bigskip
+
+\begin{block}{Outliers in CS}
+\begin{itemize}
+	\item outliers should be investigated closely -- why is there an outlier?
+	\item outliers are (hopefully) reproducible -- narrow down their reason!
+	\pause
+	\begin{itemize}
+		\item \textbf{Algorithm:} When characterizing runtimes of a randomized algorithm on a single instance of a hard combinatorial problem, \alert{outliers with large values can indicate deep local optima}
+		\pause
+		\item \textbf{Environment:} Outliers with large runtimes can indicate a \alert{problem with the runtime environment} (e.g., file system or network issues)
+		\pause
+		\item \textbf{Instances:}  When characterizing runtimes across a distribution of instances, outliers with small values can indicate trivial instances.
+	\end{itemize}
+\end{itemize}
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+\section{Visualization}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Curves}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Aggregated Learning Curves}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{AutoML Systems over Time}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Aggregated AutoML Systems over Time}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Aggregated AutoML Systems over Time and Datasets}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Ranked AutoML Systems over Time and Datasets}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Scatter Plot: Comparing Two Configurations}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Box Plot: Comparing Two Configurations}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Box Plot: Comparing Two Configurations}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Scatter Plot: Comparing Train and Validation}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Footprints \litw{Smith-Miles et al. 20XX}}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Heatmaps: Comparing several Configurations}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Empirical Cumulative Distribution (eCDF) Plots}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Parallel Coordinate Plots}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{TITLE}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{TITLE}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{TITLE}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{TITLE}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\section{Statistical Hypothesis Testing}
+%----------------------------------------------------------------------
+\begin{frame}[c]{Background: statistical hypothesis tests}
+
+\begin{itemize}
+	\item When we have a lot of data, we need to summarize it
+	\begin{itemize}
+		\item But we already saw that summarization hides a lot of data
+		%	  \item E.g., a single outlier might explain the difference in means
+		\item Ideally, we want to draw high-level conclusions\\
+		(e.g., ``A outperforms B on instances of type X'')
+	\end{itemize}
+	
+	\pause
+	\bigskip
+	
+	\item Problem: we only have a finite number of observations
+	\begin{itemize}
+		\item Can we attribute observed performance differences to chance?
+		\item Are we reasonably sure that a claim we make is reproducible?
+		\item[$\leadsto$] Statistical tests can help
+	\end{itemize}
+	
+	
+\end{itemize}
+
+\medskip
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Statistical hypothesis testing}
+
+\begin{enumerate}
+\item Define initial research hypothesis
+\pause
+\item Derive null $H_0$ and alternative $H_1$ hypothesis
+\begin{itemize}
+	\item Alternative hypothesis should be your research hypothesis
+\end{itemize}
+\pause
+\end{enumerate}	
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{First example: Courtroom Tiral}
+
+\begin{itemize}
+\item A prosecutor tries to prove the guilt of the defendant
+\item $H_0$: \includegraphics[height=1em]{images/hands} \only<2->{The defendant is not guilty
+\begin{itemize}
+	\item Accepted for the moment\\ (``not guilty as long as their guilt is not proven'') 
+\end{itemize}
+}
+\item $H_1$: \includegraphics[height=1em]{images/hands} \only<2->{The defendant is guilty
+\begin{itemize}
+	\item prosecutor hopes to support that
+\end{itemize}
+}
+\pause
+\end{itemize}
+
+\medskip
+\pause
+\bigskip
+\centering
+\begin{tabular}{c|cc}
+\toprule
+& Truly not guilty 	& Truly guilty\\
+\hline
+Acquittal 	& Right decision	& Type II Error\\
+Conviction & Type I Error		& Right decision\\
+\bottomrule
+\end{tabular}	
+
+\bigskip
+$\leadsto$ We want to minimize Type I error!
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Statistical hypothesis testing (cont'd)}
+
+\begin{enumerate}
+\item Define initial research hypothesis
+\item Derive null $H_0$ and alternative $H_1$ hypothesis
+\begin{itemize}
+\item Alternative hypothesis should be your research hypothesis
+\end{itemize}
+\item Consider statistical assumptions
+\begin{itemize}
+\item E.g., is your data Gaussian distributed?
+\end{itemize}
+\pause
+\item Decide test and test statistic $T$
+\begin{itemize}
+\item The correct test depends on your statistical assumptions.
+\item Typically: if you use more assumptions, the test is more powerful\\ (i.e., less Type-I error)
+\end{itemize}
+\pause
+\item Decide significance level $\alpha$\\ (i.e., acceptable Type-I error to reject null hypothesis)
+\pause
+\item Compute observed $t_{obs}$ of test statistic $T$
+\item Calculate $p$-value given $t_{obs}$
+\begin{itemize}
+\item i.e., probability under the null hypothesis of sampling a test statistic as extreme as observed (probability of Type-I error)
+\end{itemize} 
+\pause
+\item If $p < \alpha$, reject null hypothesis in favor of alternative hypothesis
+\begin{itemize}
+\item If $p > \alpha$, it doesn't tell you anything about the null hypothesis!
+\end{itemize}
+\end{enumerate}	
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Second example for a statistical test}
+
+\begin{itemize}
+\item IQ values are known to be normally distributed with $X \sim
+\mathcal{N}(100,15)$
+\begin{itemize}
+\item$\to$ statistical assumption
+\end{itemize}
+% \\with mean $100$ and variance $15$: $X \sim \mathcal{N}(100,15)$
+\item Claim: \alert{``the students in this class are more intelligent
+than average''}
+\bigskip
+\pause
+\item \alert{Null Hypothesis $H_0$}: $\mu=100$ ($\mu$ is the population
+mean of this class)
+\item \alert{Alternative Hypothesis $H_1$}: $\mu>100$ (\alert{one-sided} hypothesis)
+
+\bigskip
+\pause
+
+\item Let's say we observed IQ values $x_i$ of 9 students in the class:
+\begin{itemize}
+\item $\{x_1,\dots,x_9\} = \{116, 128, 125, 119, 89, 99, 105, 116, 118\}$.
+\item The \alert{sample mean} is $\bar{x}=112.8$
+\item Does this data support the claim?
+\end{itemize}	
+
+\end{itemize}	
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Example continued}
+
+\begin{itemize}
+
+\item \alert{Distribution of the test statistic} 
+\begin{itemize}
+\item Under $H_0$, we know that each $x_i \sim \mathcal{N}(100,15)$
+\smallskip
+\item The \alert{test statistic} that we measure is the sample
+mean $\bar{x} = \frac{1}{9} \sum_{i=1}^9 x_i$
+%    \item[-] $\bar{x} \sim  \mathcal{N}(\mu=100,\sigma^2=15/\sqrt{n})=\mathcal{N}(100,5)$
+\bigskip
+\pause
+\item Under $H_0$, the distribution of $\bar{x}$ is
+$\mathcal{N}(100,15/\sqrt{9})$
+\begin{itemize}
+\item[-] Our observation $\bar{x}=112.8$ is quite extreme under that
+distribution
+\end{itemize}
+\end{itemize}	
+\end{itemize}
+
+\begin{center}
+\includegraphics[height=3cm]{images/z_test_1.png}
+\end{center}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{General principle}
+
+\vspace*{-0.2cm}
+\begin{center}
+\includegraphics[height=3cm]{images/z_test_2.png}
+\end{center}
+\vspace*{-0.2cm}
+
+\begin{itemize}
+\item Compare the test statistic (here: $\bar{x}$)\\to its sampling
+distribution under $H_0$
+\pause 
+\medskip
+\item \alert{P-value}: probability $p$ of observing values \alert{at least as extreme as $\bar{x}$}\\
+%  $\leadsto$ this is the %(computed through cumulative distribution function)
+\pause 
+\medskip
+\item Compare $p$ to pre-defined confidence level $\alpha$ (usually
+$\alpha=0.05$);\\\alert{if $p < \alpha$, reject $H_0$}
+\pause 
+\medskip
+\item With $\alpha = 0.01$, would we reject $H_0$ in this case? \hands
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Summary of example}
+
+\begin{itemize}
+\item We just used a so-called \alert{$Z$-test}
+\item $H_0$: $\mu=\mu_0$, $H_1$: $\mu>\mu_0$  
+\item Assumptions: $X \sim \mathcal{N}(\mu,\sigma^2)$ , with known $\mu$ and $\sigma^2$
+
+\medskip
+\pause
+\item \alert{Test statistic}: sample mean $\bar{x}$; evaluate under 
+$\mathcal{N}(\mu=\mu_0,s=\sigma^2/\sqrt{n})$
+\pause
+\smallskip
+\item Equivalent: compute the \alert{Z-statistic}: $Z = (\bar{x}-\mu_0)/s$
+and\\
+evaluate cumulative density $\Phi(Z)$ of $Z$
+under $\mathcal{N}(0,1)$
+\medskip
+\pause
+\begin{itemize}
+\item There are standard tables to look up $\Phi(Z)$ for different values of $Z$
+\item Nowadays, there are standard libraries to compute $\Phi(Z)$
+\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Two-sided tests}
+
+
+\vspace*{-0.2cm}
+\begin{center}
+\includegraphics[height=3.5cm]{images/z_test_3.png}
+\end{center}
+\vspace*{-0.2cm}
+
+\begin{itemize}
+\item Similar to one-sided tests, but testing for extreme values in both tails
+\item Example Z-test: two-sided alternative hypothesis $H_1$:
+$\mu \neq \mu_0$
+\pause
+\smallskip
+\item Compute $Z = (\bar{x}-\mu_0)/s$ as before
+\item Compute $p$-value as $p = 2\Phi(Z)$, to account for both tails
+\pause 
+\medskip
+\item With $\alpha = 0.01$, would we reject $H_0$ in this case? \hands
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{General points about statistical hypothesis tests}
+
+\begin{itemize}
+\item What if $p > \alpha$?
+\begin{itemize}
+\item \alert{Failure to reject $H_0$}
+\item \alert{This does not mean that we accept $H_0$}
+\end{itemize}
+
+
+\pause
+\bigskip
+\item Beware: most tests make some assumptions
+\begin{itemize}
+\item E.g., $Z$-test and popular $t$-test assume \alert{normality}
+\item Our data is often far from normally-distributed
+\begin{itemize}
+\item[$\leadsto$] E.g., exponential runtime distributions of SLS solvers for SAT
+\item[$\leadsto$] E.g., distribution of fitting a neural network\\ with different random seeds is not well studied
+\end{itemize}
+\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{The Wilcoxon rank-sum test for non-normal data}
+
+\begin{itemize}
+\item Compare the distributions of random variables $X$ and $Y$ 
+\begin{itemize}
+\item[-] based on samples $x_1, \dots, x_n$ and $y_1, \dots, y_m$
+\end{itemize}
+\smallskip
+\item Assumptions
+\begin{itemize}
+\item[-] All of $x_1, \dots, x_n$ and $y_1, \dots, y_m$ are independent
+from each other 
+\item[-] Responses are ordinal (we can compare them)
+\end{itemize}  
+\pause
+\item $H_0$: $P(X > Y) = P(Y > X)$
+\pause
+\item $H_1$: $P(X > Y) > P(Y > X)$ (one-sided)
+\medskip
+\pause
+\item Test statistic
+\begin{itemize}
+\item[-] Order all elements $x_i$ and $y_j$ and give them ranks
+(1 for smallest)
+\item[-] Compute the sum of ranks of $x_i$ and of $y_j$
+\smallskip
+\pause
+\end{itemize}
+\item Under $H_0$, the distribution of that test statistic is known\\
+$\leadsto$ can evaluate how extreme the observed test statistic is
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{The permutation test: another test for non-normal data}
+
+\begin{itemize}
+	\item Framework for testing several types of claims
+	\item E.g., $H_0$: $X$ and $Y$ have \alert{equal means}
+	\item Test statistic: \alert{$t = \frac{1}{n}\sum_{i=1}^n x_i  - 
+		\frac{1}{m}\sum_{j=1}^m y_j$}
+	\pause
+	\medskip
+	\item The sampling distribution to compare $t$ against:
+	\begin{itemize}
+		\item Put $x_1, \dots, x_n$ and $y_1, \dots, y_m$ into a single pool
+		\item S = []; repeat, e.g., 10\,000 times
+		\begin{itemize}
+			\item[-] draw a random permutation \& permute pool with it
+			\item[-] add test statistic over permuted pool to $S$
+		\end{itemize}
+	\end{itemize}
+	\pause
+	\medskip
+	\item $p$-value: percentile of $s$ in $S$:\\
+	fraction of samples $s$ in $S$ with $s < t$
+	
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Example for Permutation test}
+
+TODO
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Paired vs.\ unpaired tests}
+
+TODO
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Goals}
+
+After this lecture, you will be able to \ldots
+
+\begin{itemize}
+  \item ...
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{TITLE}
+
+TODD
+
+
+\end{frame}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Goals}
+
+Now, you should be able to \ldots
+
+\begin{itemize}
+  \item ...
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Literature [These are links]}
+
+\begin{itemize}
+	\item \lit{\href{URL}{TITLE}}		
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
