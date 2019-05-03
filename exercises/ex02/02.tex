@@ -27,7 +27,7 @@
 \pagestyle{headandfoot}
 
 %%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
-\newcommand{\duedate}{10.05.19 (14:00)}
+\newcommand{\duedate}{10.05.19 (10:00 am)}
 \newcommand{\due}{{\bf This assignment is due on \duedate.} }
 \firstpageheader
 {Due: \duedate \\ Points: 2}
@@ -75,21 +75,20 @@
 		
 		Consider the classification of the examples in the \href{https://archive.ics.uci.edu/ml/datasets/Iris}{Iris Flower Dataset}, which consists of 3 species/classes (\textit{Iris setosa, Iris virginica and Iris versicolor}) and each example has 4 features (\textit{sepal lenght, sepal width, petal length, petal width}). There is a total of 150 examples.
 
-		In a nutshell, KNN assigns a class to an unseen example based on the majority vote of the K most similar instances. We will use three distance metrics as a similarity metric in this exercise: 
+		In a nutshell, KNN assigns a class to an unseen example based on the majority vote of the K most similar instances. We will use two distance metrics as a similarity metric in this exercise: 
 		\begin{itemize}
 			\item Euclidian distance $d_E(x, x^{\prime}) = \sqrt{\sum_{i=1}^n{(x_i - x_i^{\prime})^2}}$
 			\item Manhattan distance $d_M(x, x^{\prime}) = \sum_{i=1}^n{\lvert x_i - x_i^{\prime} \rvert}$
-			\item Hamming distance $d_H(x, x^{\prime}) = \frac{1}{n}\sum_{i=1}^n{\mathbb{I}(x_i \neq x_i^{\prime})},$
 		\end{itemize}
-		 where $n$ is the number of features and $\mathbb{I}$ is the indicator function. When a new test example $x$ is fed to the KNN classifier it performs the two following steps:
+		 where $n$ is the number of features. When a new test example $x$ is fed to the KNN classifier it performs the two following steps:
 		
 		\begin{itemize}
 			\item Computes the distance $d$ between this example and all the examples in the training set.
-			\item For each class $j$ estimate the conditional probability for the example being assigned to that class based on the K closest examples: $$P(y=j|X=x) = \frac{1}{K}\sum_{i\in A}\mathbb{I}(y^{(i)}=j),$$where $A$ is the set of K closest training examples. This way, the KNN classifier assigns to $x$ the class with the highest probability.
+			\item For each class $j$ estimate the conditional probability for the example being assigned to that class based on the K closest examples: $$P(y=j|X=x) = \frac{1}{K}\sum_{i\in A}\mathbb{I}(y^{(i)}=j),$$where $A$ is the set of K closest training examples and $\mathbb{I}$ is the indicator function. This way, the KNN classifier assigns to $x$ the class with the highest probability.
 
 		\end{itemize}	
 		
-		Your first task is to implement by yourself the KNN algorithm in Python so it can learn to classify the examples in the Iris Dataset. For starters select a random value for K as the default one. It should be possible to call your program as \texttt{python knn\_classifier.py -K [some integer] -d [distance metric]}.
+		Your first task is to implement by yourself the KNN algorithm in Python so it can learn to classify the examples in the Iris Dataset. For starters select a random value for K as the default one. It should be possible to call your program as \texttt{python knn\_classifier.py [K value] -d [distance metric]}.
 			
 		Run the code for all three different similarity metrics and report their results in the pdf.
 		
@@ -98,13 +97,13 @@
 		Now we want to tune the value of $K$ and the distance metric $d$ using 10-fold cross-validation as a cost metric. 
 		Provide in the pdf what type of hyperparameters these two are.
 		You have to determine the range of values that K will take $[K_{min}, K_{max}]$ based on the size of your training dataset and plot the accuracy of your model depending on the K value (similar to the plot in slide 12 of Lecture 1) for each distance metric type. 
-		It should be possible to call your program as \texttt{python exhaustive\_search.py}. After that 3 plots will be generated (one for each distance metric).
+		It should be possible to call your program as \texttt{python exhaustive\_search.py}. After that 2 plots will be generated (one for each distance metric).
 		
-		Afterwards you should report in the pdf the optimal value of $K$ and $d$ that you find by this exhaustive search (its called exhaustive since you evaluate all possible configurations in your design space), as well as the accuracy of the classifier on the test set with these values. 
+		Afterwards you should report in the pdf the optimal value(s) of $K$ and $d$ that you find by this exhaustive search (its called exhaustive since you evaluate all possible configurations in your design space), as well as the accuracy of the classifier on the test set with these values. 
 		
-		In the end, you should write a short justification about the chosen range for K and interpret why the cross-validation accuracy goes down for larger/smaller values of K than the optimal one.
+		In the end, you should write a short justification about the chosen range for K and interpret why the cross-validation accuracy goes down for larger/smaller values of K than the optimal one(s).
 
-		[HINT: You can also use the KNN implementation from sklearn in this exercise.]
+		%[HINT: You can also use the KNN implementation from sklearn in this exercise.]
 		
 		\titledquestion{Feedback}[Bonus: 1]
 		For each question in this assignment, state:
