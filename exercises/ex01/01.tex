@@ -1,0 +1,83 @@
+\documentclass{exam}
+\usepackage{amsmath, amsfonts}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[super]{nth}
+
+\DeclareMathOperator*{\argmin}{argmin}
+
+\usepackage[hyperfootnotes=false]{hyperref}
+
+\usepackage[usenames,dvipsnames]{color}
+\newcommand{\note}[1]{
+	\noindent~\\
+	\vspace{0.25cm}
+	\fcolorbox{Red}{Orange}{\parbox{0.99\textwidth}{#1\\}}
+	%{\parbox{0.99\textwidth}{#1\\}}
+	\vspace{0.25cm}
+}
+
+
+\input{../macros}
+%\renewcommand{\hide}[1]{#1}
+
+\qformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+\bonusqformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+
+\pagestyle{headandfoot}
+
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+\newcommand{\duedate}{09.05.19 (14:00)}
+\newcommand{\due}{{\bf This assignment is due on \duedate.} }
+\firstpageheader
+{Due: \duedate \\ Points: 1}
+{{\bf\lecture}\\ \assignment{1}}
+{\lectors\\ \semester}
+
+\runningheader
+{Due: \duedate}
+{\assignment{1}}
+{\semester}
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+
+\firstpagefooter
+{}
+{\thepage}
+{}
+
+\runningfooter
+{}
+{\thepage}
+{}
+
+\headrule
+\pointsinrightmargin
+\bracketedpoints
+\marginpointname{pt.}
+
+
+\begin{document}
+
+\noindent
+The automated machine learning methods you will learn about in this course help you to improve your skill and knowledge for applying machine learning in practice. The goal of this first exercise is to set up teams and learn about git and the workflow for future exercises.\vspace*{5pt}
+
+\begin{questions}
+  \titledquestion{Form teams of $2$ students and get familiar with \emph{git}} [$0.5$]
+    Exercises have to be handed in \emph{teams of $2$} students. Send an email with both names and email addresses to \texttt{automl-lecture@informatik.uni-freiburg.de}. We will then create a BitBucket\footnote{bitbucket.org} repository for each group and send an invitation. Use this repository to upload solutions for exercises.
+  
+  \emph{Note 1:} You must send this email before \textbf{Wednesday, 08/05/2019, 13:00}. \\
+  \emph{Note 2:} To work with BitBucket you will have to use \emph{git}. If you have never worked with \emph{git} before we suggest you take a look at this simple guide \url{http://rogerdudler.github.io/git-guide/}. 
+    \\\vspace*{-5pt}\hspace*{-2pt}
+\\
+
+	\titledquestion{Algorithms with tunable parameters}[$0.5$]
+		Identify two algorithms that have tunable parameters. Describe each algorithm briefly (1-2 sentences, without code) and explain its most important parameters; this includes:
+		\begin{itemize}
+		  \item Why does the parameter influence the performance of the algorithm? 
+		  \item What could be a good range of possible values of the parameter (e.g., $[0,1]$, $[1,1024]$ or $\{yes,no\}$)? Briefly explain your choices.
+		\end{itemize}
+		Submit your solution by uploading a PDF to your BitBucket repository. The PDF has to include the name of the submitter(s).
+		
+\end{questions}
+
+\end{document}
