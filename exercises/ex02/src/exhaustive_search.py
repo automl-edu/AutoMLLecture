@@ -27,6 +27,7 @@ def plot_function(K_values: List[int], cv_scores: Dict[str, List[float]]) -> Non
         ax[i].set_ylabel('CV Accuracy')
         ax[i].grid(True)
 
+    plt.savefig('plots.jpg')
     plt.show()
 
 
@@ -43,15 +44,14 @@ def main(test_portion: float) -> None:
     y = iris.target
 
     # split the data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, 
-                                                        test_size=test_portion, 
-							random_state=28
-							)
-    
+    X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                        test_size=test_portion,
+                                                        random_state=28)
+
     # TODO: define the range of your K and d hyperparameters here as a list.
     K_values = None
     distance_metrics = ['euclidean', 'manhattan']
-    
+
     # dictionary that will hold the cross-validation results for each metric
     cv_scores = {key: [] for key in distance_metrics}
 
@@ -65,11 +65,11 @@ def main(test_portion: float) -> None:
     #       the second one the distance d of the best configuration.
     #       E.g. optimal_config = [[38, 'euclidean'], [3, 'manhattan']]
     optimal_configs = []
-    
+
     # TODO: for each optimal configuration report the performance of KNN on the test set
     for config in optimal_configs:
         accuracy = np.random.randn()
-        logging.info('\nThe accuracy of KNN with (K, d) = (%d, %s) is %.3f.'.format(config[0], 
+        logging.info('\nThe accuracy of KNN with (K, d) = (%d, %s) is %.3f.'.format(config[0],
                                                                                     config[1],
                                                                                     accuracy))
 
@@ -80,9 +80,16 @@ if __name__=='__main__':
     cmdline_parser = argparse.ArgumentParser('KNN Classifier')
 
     # Optional args
-    cmdline_parser.add_argument('-p', default=0.33, type=float, help="test portion")
-    cmdline_parser.add_argument('-v', '--verbose', action='store_true', default=False, help="verbosity level")
- 
+    cmdline_parser.add_argument('-p',
+                                default=0.33,
+                                type=float,
+                                help="test portion")
+    cmdline_parser.add_argument('-v',
+                                '--verbose',
+                                action='store_true',
+                                default=False,
+                                help="verbosity level")
+
     args, unknowns = cmdline_parser.parse_known_args()
     log_lvl = logging.INFO if args.verbose == 'INFO' else logging.DEBUG
     logging.basicConfig(level=log_lvl)

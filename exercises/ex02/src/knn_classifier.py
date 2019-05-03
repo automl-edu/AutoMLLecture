@@ -18,7 +18,7 @@ class KNN(object):
         This method actually does not fit anything. It just keeps track of
         training examples so it can use them for prediction. You do not have
         to change anything here. It might be useful when you do cross-validation,
-	since you use different training subsets for each fold.
+        since you use different training subsets for each fold.
         """
         self.X_train = X_train
         self.y_train = y_train
@@ -27,14 +27,14 @@ class KNN(object):
         """
         Method used to predict the class of test examples.
         Here you should implement the distance with respect
-        to all other examples in the training set and estimate 
+        to all other examples in the training set and estimate
         the class based on the most frequent class of the K
         nearest neighbours.
 
         :X_test: np.ndarray of test examples
-	:distance: distance metric. Either 'euclidean' or 'manhattan'
+        :distance: distance metric. Either 'euclidean' or 'manhattan'
         :return: np.ndarray of predicted classes
-        """ 
+        """
         raise NotImplementedError
 
 
@@ -53,10 +53,9 @@ def main(K: int, distance: str, test_portion: float) -> None:
     y = iris.target
 
     # split the data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, 
-                                                        test_size=test_portion, 
-							random_state=28
-							)
+    X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                        test_size=test_portion,
+                                                        random_state=28)
 
     # instantiate the KNN classifier
     knn = KNN(K)
@@ -77,24 +76,25 @@ if __name__=='__main__':
 
     # Required args
     cmdline_parser.add_argument('K',
-				type=int, 
-				help="number of nearest neighbours")
+                                type=int,
+                                help="number of nearest neighbours")
+
     # Optional args
-    cmdline_parser.add_argument('-d', 
-                                default='euclidean', 
-				type=str, 
-				choices=['euclidean', 'manhattan'],
-				help="distance metric")
-    cmdline_parser.add_argument('-p', 
-                                default=0.3, 
-				type=float, 
-				help="test portion")
-    cmdline_parser.add_argument('-v', 
-                                '--verbose', 
-				action='store_true', 
-				default=False, 
-				help="verbosity level")
- 
+    cmdline_parser.add_argument('-d',
+                                default='euclidean',
+                                type=str,
+                                choices=['euclidean', 'manhattan'],
+                                help="distance metric")
+    cmdline_parser.add_argument('-p',
+                                default=0.3,
+                                type=float,
+                                help="test portion")
+    cmdline_parser.add_argument('-v',
+                                '--verbose',
+                                action='store_true',
+                                default=False,
+                                help="verbosity level")
+
     args, unknowns = cmdline_parser.parse_known_args()
     log_lvl = logging.INFO if args.verbose == 'INFO' else logging.DEBUG
     logging.basicConfig(level=log_lvl)
