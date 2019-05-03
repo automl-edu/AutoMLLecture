@@ -233,6 +233,49 @@ gamma_value | kernel in {rbf}
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
+\begin{frame}[c, fragile]{Remarks (I): Conditional Dependencies}
+
+\begin{block}{Duplicates of Hyperparameters?}
+\begin{itemize}
+	\item Sometimes algorithms have the same sub-hyperparameter\\ (with slightly different meanings)
+	\item Two approaches:
+	\begin{itemize}
+		\item Duplicate hyperparameter and use conditionals \\
+		$\leadsto$ larger configuration space
+		\item a single hyperparameter\\
+		$\leadsto$ optimizer has to learn dependencies on its own
+	\end{itemize}
+    \item Not well studied which of the two ways is better under which conditions
+\end{itemize}
+\end{block}
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c, fragile]{Remarks (II): Conditional Dependencies}
+
+\begin{block}{Imputation}
+	\begin{itemize}
+		\item Inactive hyperparameters can be handled in different ways
+		\item Most trivial approach: imputation of deactivated hyperparameters
+		\begin{enumerate}
+			\item Impute with default value
+			\item Impute with non-existing value
+		\end{enumerate}
+		\pause
+		\medskip
+		\item Risk:
+		\begin{itemize}
+			\item confusing for some optimizers (in particular model-based optimizers)
+		\end{itemize}
+		\pause
+		\item One of the open challenges: best way to handle conditionals
+	\end{itemize}
+\end{block}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
 \begin{frame}[c, fragile]{Forbidden Constraints}
 
 \begin{itemize}
@@ -266,7 +309,7 @@ with $b = a + c$ $\leadsto$ \texttt{b} might be larger than 1!
 \begin{frame}[c, fragile]{Expert Knowledge: Transformations}
 
 \begin{itemize}
-	\item expert knowledge can help to guide hyperparameter optimization
+	\item Expert knowledge can help to guide hyperparameter optimization
 	\item For example, some hyperparameters might not be sampled uniformly
 \end{itemize}
 
@@ -575,34 +618,83 @@ So far, we assumed that each hyperparameter has a pre-defined domain.
 \medskip
 Problems:
 \begin{itemize}
-  \item sometimes we don't know a good range
+  \item for pipelines, we might don't know the size of the pipeline
+	\begin{itemize}
+		\item some components could be part of the pipeline multiple times
+	\end{itemize}
+  \pause
+  \medskip
+  \item sometimes we don't know a good range for a hyperparameter
   \begin{itemize}
      \item too large range $\leadsto$ very hard optimization problem
      \item too small range $\leadsto$ we might miss high-performance areas
   \end{itemize}
-  \pause
-  \medskip
-  \item for pipelines, we might don't know the size of the pipeline
-  \begin{itemize}
-    \item some components could be part of the pipeline multiple times
-  \end{itemize}
+
 \end{itemize}
 
 \pause
 \bigskip
 
-$\leadsto$ Can we design configuration spaces without explicit bounds?
+$\leadsto$ How can we design such configuration spaces?
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{TPOT \litw{Olson et al. 2016}}
+\begin{frame}[c, fragile]{Pipeline: Boolean Options}
+
+
+\begin{verbatim}
+  component_1 categorical {True, False}[True]
+  component_2 categorical {True, False}[False]
+  component_3 categorical {True, False}[False]
+  ...
+\end{verbatim}
+
+\begin{itemize}
+	\item Hard to optimize if 
+	\begin{itemize}
+		\item we also have to find the ordering of the components
+		\item if there is an upper bound on the number of components\\
+		$\leadsto$ leads to many invalid configurations
+		\item Each component can only be chosen once
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c, fragile]{Pipeline: Fixed Pipelines Size}
+
+
+\begin{verbatim}
+step_1 categorical {comp1, comp2, comp3, ..., none}[comp1]
+step_2 categorical {comp1, comp2, comp3, ..., none}[comp2]
+step_3 categorical {comp1, comp2, comp3, ..., none}[none]
+...
+\end{verbatim}
+
+\begin{itemize}
+	\item encode each step of the pipeline with a choice of all possible components
+	\item Hard to optimize if
+	\begin{itemize}
+		\item we don't know a good upper bound of the pipeline size
+		\item there is an upper bound on how often a component can be chosen
+	\end{itemize}
+    \pause
+    \bigskip
+	\item If we don't need to specify the maximum length of the pipeline\\ this design is equivalent to search in a tree of possible pipelines
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Pipeline: TPOT \litw{Olson et al. 2016}}
 
 \centering
 \includegraphics[width=0.8\textwidth]{images/tpot_tree}
 
 \begin{itemize}
-  \item TPOP searches in a space of tree-based pipelines
+  \item TPOT searches in a space of tree-based pipelines
   \item pipeline can potentially grow in size
   \item Challenge: avoid illegal pipelines
 \end{itemize}
@@ -610,7 +702,7 @@ $\leadsto$ Can we design configuration spaces without explicit bounds?
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Distributions instead of Bounds (HyperOpt \litw{Bergstra et al. 2013})}
+\begin{frame}[c]{Bounds: Distributions instead of Bounds\\ (HyperOpt \litw{Bergstra et al. 2013})}
 
 \begin{itemize}
   \item instead of a range, HyperOpt also allows for user-defined distributions
@@ -624,7 +716,7 @@ $\leadsto$ Can we design configuration spaces without explicit bounds?
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Increasing Bounds \litw{Shahriari et al. 2015}}
+\begin{frame}[c]{Bounds: Increasing Bounds \litw{Shahriari et al. 2015}}
 
 \begin{enumerate}
   \item start with peaked distributions \\ s.t. it is very unlikely to sample outside of fairly narrow bounds
