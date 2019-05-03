@@ -27,6 +27,7 @@ def plot_function(K_values: List[int], cv_scores: Dict[str, List[float]]) -> Non
         ax[i].set_ylabel('CV Accuracy')
         ax[i].grid(True)
 
+    plt.savefig('plots.jpg')
     plt.show()
 
 
