@@ -246,7 +246,21 @@ For the following slides, we have used the following setup:
 %----------------------------------------------------------------------
 \begin{frame}[c]{AutoML Systems over Time}
 
-TODD
+\begin{itemize}
+	\item Don't only measure the performance of AutoML systems for a fixed budget because:
+	\begin{enumerate}
+	   \item A priori, it is unknown how long a user will run an AutoML system
+	   \item Some systems perform well for small budgets and some others need more time before performing well
+    \end{enumerate}
+	\pause
+	\item[$leadsto$] AutoML systems should have a good anytime performance
+	\pause
+	\medskip
+	\item Recommendation: plot performance (e.g., accuracy) over time
+	\begin{itemize}
+		\item Similar to learning curves of DNNs 
+	\end{itemize} 
+\end{itemize}
 
 
 \end{frame}
@@ -254,24 +268,59 @@ TODD
 %----------------------------------------------------------------------
 \begin{frame}[c]{Aggregated AutoML Systems over Time}
 
-TODD
+\centering
+\includegraphics[width=0.6\textwidth]{images/MLPOnMnist_tFalse.png}
 
+\begin{itemize}
+	\item Different HPO systems minimizing the error of an MLP on MNIST
+	\item How to do it:
+	\begin{itemize}
+		\item Run each systems several times and log its current incumbent always
+		\item Plot mean and stdev for each system
+		\item Use step functions, because linear interpolation would be too optimistic
+	\end{itemize}
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Aggregated AutoML Systems over Time and Datasets}
 
-TODD
-
+\begin{itemize}
+	\item An AutoML system should not only perform well on a single dataset but on many datasets
+	\item To summarize and compare the performnance accross a set of datasets,
+	we can plot the performance over time and across datasets
+	\pause
+	\item Ways to do it:
+	\begin{enumerate}
+		\item Average cost metric (e.g., error) across datasets
+		\begin{itemize}
+			\item Problem: different scales of errors on different datasets
+		\end{itemize}
+	    \pause
+	    \item Normalize cost metric across datasets,\\
+	    e.g., best seen cost relates to a zero cost
+	    \begin{itemize}
+	    	\item Problem: Minor improvements ($\leq 0.1\%$) might look substantial
+	    \end{itemize}
+	\end{enumerate}
+    \pause
+    \item[$\leadsto$] There is no way around it that you have some kind of information loss 
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Ranked AutoML Systems over Time and Datasets}
 
-TODD
 
+\centering
+\includegraphics[width=0.6\textwidth]{images/rankings_over_time.png}
+
+\begin{itemize}
+	\item Rankings avoid the problem of different scales
+	\item Problem: we don't know whether a better ranking relates to a substantial improvement of the actual cost metric
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
