@@ -34,6 +34,21 @@ Experimentation and Visualization
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
+\begin{frame}[c]{Learning Goals}
+
+After this lecture, you will be able to \ldots
+
+\begin{itemize}
+	\item explain the role of outliers in CS/ML
+	\item compare and visualize the performance of different configurations
+	\item compare and visualize the performance of AutoML systems
+	\item explain and correctly apply statistical hypothesis tests
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
 \begin{frame}[c]{How CS differs from other empirical sciences}
 
 \begin{itemize}
@@ -89,17 +104,17 @@ Is the following statement correct? \includegraphics[height=1.5em]{images/hands}
 \pause
 \bigskip
 
-\begin{block}{Outliers in CS}
+\begin{block}{Outliers in CS/ML}
 \begin{itemize}
 	\item outliers should be investigated closely -- why is there an outlier?
 	\item outliers are (hopefully) reproducible -- narrow down their reason!
 	\pause
 	\begin{itemize}
-		\item \textbf{Algorithm:} When characterizing runtimes of a randomized algorithm on a single instance of a hard combinatorial problem, \alert{outliers with large values can indicate deep local optima}
+		\item \textbf{Algorithm:} When characterizing performance of an optimization algorithm, \alert{outliers with poor values can indicate (deep) local optima}
 		\pause
-		\item \textbf{Environment:} Outliers with large runtimes can indicate a \alert{problem with the runtime environment} (e.g., file system or network issues)
+		\item \textbf{Environment:} Outliers can indicate a \alert{problem with the environment} (e.g., file system or network issues)
 		\pause
-		\item \textbf{Instances:}  When characterizing runtimes across a distribution of instances, outliers with small values can indicate trivial instances.
+		\item \textbf{Instances:}  When characterizing cost across a distribution of datasets, outliers with small values can indicate trivial datasets.
 	\end{itemize}
 \end{itemize}
 \end{block}
@@ -162,7 +177,7 @@ For the following slides, we have used the following setup:
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Compare Learning Curves}
+\begin{frame}[c]{Comparing Learning Curves}
 
 \centering
 \includegraphics[width=0.7\textwidth]{scripts/compare_learning_curves.jpg}
@@ -231,9 +246,12 @@ For the following slides, we have used the following setup:
 \begin{frame}[c]{Box Plot: Comparing Two Configurations}
 
 \centering
-\includegraphics[width=0.7\textwidth]{scripts/mlp12_boxplot.jpg}
+\includegraphics[width=0.6\textwidth]{scripts/mlp12_boxplot.jpg}
 
 \begin{itemize}
+	\item alternative: violin plots
+	\pause
+	\smallskip
 	\item if you have paired populations (e.g., configurations evaluated on different datasets),
 			you should generate boxplots with $y_1 / y_2$ 
 	\item[$\leadsto$] insight on how many datasets one of the two performed better
@@ -253,7 +271,7 @@ For the following slides, we have used the following setup:
 	   \item Some systems perform well for small budgets and some others need more time before performing well
     \end{enumerate}
 	\pause
-	\item[$leadsto$] AutoML systems should have a good anytime performance
+	\item[$\leadsto$] AutoML systems should have a good anytime performance
 	\pause
 	\medskip
 	\item Recommendation: plot performance (e.g., accuracy) over time
@@ -305,7 +323,7 @@ For the following slides, we have used the following setup:
 	    \end{itemize}
 	\end{enumerate}
     \pause
-    \item[$\leadsto$] There is no way around it that you have some kind of information loss 
+    \item[$\leadsto$] There is no way around that you have some kind of information loss 
 \end{itemize}
 
 \end{frame}
@@ -318,16 +336,34 @@ For the following slides, we have used the following setup:
 \includegraphics[width=0.6\textwidth]{images/rankings_over_time.png}
 
 \begin{itemize}
-	\item Rankings avoid the problem of different scales
+	\item Remark: x-axis should be on log-scale
+	\item Ranks avoid the problem of different scales
 	\item Problem: we don't know whether a better ranking relates to a substantial improvement of the actual cost metric
 \end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Algorithm Footprints \litw{Smith-Miles et al. 20XX}}
+\begin{frame}[c]{Scatter Plot: Meta Features}
 
-TODD
+\begin{columns}
+	\column{0.5\textwidth}
+	
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/scatter_dataset_twoconfigs.png}
+	
+	\column{0.5\textwidth}
+	\begin{itemize}
+		\item Compare two systems\\ (or 1 vs rest)
+		\item each dot is a dataset
+		\item color encoding better or worse
+		\item size indicates performance difference
+		\item meta-features (e.g., \#features, \#samples) on axes
+		\begin{itemize}
+			\item using PCA on a larger set of meta-features leads to algorithm footprints \lit{Smith-Miles et al. 2012}
+		\end{itemize}
+	\end{itemize}
+\end{columns}
 
 
 \end{frame}
@@ -335,56 +371,25 @@ TODD
 %----------------------------------------------------------------------
 \begin{frame}[c]{Heatmaps: Comparing several Configurations}
 
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Empirical Cumulative Distribution (eCDF) Plots}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Parallel Coordinate Plots}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{TITLE}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{TITLE}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{TITLE}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{TITLE}
-
-TODD
-
+\begin{columns}
+	\column{0.5\textwidth}
+	
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/heatmap_pipelines.png}
+	
+	\column{0.5\textwidth}
+	
+	\begin{itemize}
+		\item compare many configurations on many datasets
+		\item can reveal:
+		\begin{itemize}
+			\item homogeneity if smooth transition from hard to easy
+			\item heterogeneity if stripes exist (here the case) 
+		\end{itemize}
+	    \item Remark: datasets and configurations should be sorted according to their average cost
+	\end{itemize}
+	
+\end{columns}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -739,49 +744,37 @@ $\leadsto$ can evaluate how extreme the observed test statistic is
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Example for Permutation test}
-
-TODO
-
-\end{frame}
-%-----------------------------------------------------------------------
-
-%----------------------------------------------------------------------
-\begin{frame}[c]{Paired vs.\ unpaired tests}
-
-TODO
-
-\end{frame}
-%-----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Learning Goals}
-
-After this lecture, you will be able to \ldots
+\begin{frame}[c]{Paired vs. unpaired tests}
 
 \begin{itemize}
-  \item ...
+	\item if you have two unsorted populations (e.g., repeated measurements with different random seeds), you use an unpaired test (as discussed above)
+	\item if you can attribute a measurement to concrete objects (e.g., measurments on different datasets), you use a paired test
+	\begin{itemize}
+		\item paired test are more powerful\\
+		(i.e., higher confidence for the same amount of data)
+	\end{itemize}
+    \item Examples for paired permutation tests
+    \begin{itemize}
+    	\item Wilcoxon signed rank test
+    	\item paired permutation test
+    	\begin{itemize}
+    		\item permuation of measurement pairs (e.g., same dataset)
+    	\end{itemize}
+    \end{itemize}
 \end{itemize}
 
 \end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{TITLE}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-
+%-----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals}
 
 Now, you should be able to \ldots
 
 \begin{itemize}
-  \item ...
-\end{itemize}
-
+	\item explain the role of outliers in CS/ML
+	\item compare and visualize the performance of different configurations
+	\item compare and visualize the performance of AutoML systems
+	\item explain and correctly apply statistical hypothesis tests\end{itemize}
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
