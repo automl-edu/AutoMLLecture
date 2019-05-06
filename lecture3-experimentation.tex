@@ -172,6 +172,7 @@ For the following slides, we have used the following setup:
 	\item Plot mean and stdev (shaded area) across $n$ (here $100$) random seeds\\
 	\item Remark: Only use mean and stdev\\
 	if noise is somehow normal distributed
+	\item alternative to stdev is the standard error
 \end{itemize}
 
 \end{frame}
@@ -183,7 +184,7 @@ For the following slides, we have used the following setup:
 \includegraphics[width=0.7\textwidth]{scripts/compare_learning_curves.jpg}
 
 \begin{itemize}
-	\item If uncertainties (shaded area) overlap, results might not statistically relevant but due to noise
+	\item If uncertainties (shaded area) overlap, results might not be statistically relevant but due to noise
 \end{itemize}
 
 \end{frame}
@@ -772,6 +773,31 @@ $\leadsto$ can evaluate how extreme the observed test statistic is
     		\item permuation of measurement pairs (e.g., same dataset)
     	\end{itemize}
     \end{itemize}
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Multiple Test Correction}
+
+\begin{itemize}
+	\item To compare many systems, we apply statistical tests several time\\
+	(once for each pair of systems)
+	\item Each test induces some error (bounded by $\alpha$)
+	\item[$\leadsto$] the error probability for $k$ tests is bounded by $1 - (1 - \alpha)^k$
+	\pause
+	\smallskip
+	\item Better would be if the error probability would not increase with $k$
+	\item[$\leadsto$] multiple testing correction
+	\pause
+	\smallskip
+	\item Bonferronie testing correction: $\alpha_{\text{local}} = \alpha_{\text{global}} / k$
+	\pause
+	\begin{itemize}
+		\item very conservative approach
+		\item there exist other, less conservative approaches
+	\end{itemize}
+	
 \end{itemize}
 
 \end{frame}
