@@ -20,8 +20,8 @@ fig.savefig("one_learning_curve.jpg")
 
 
 fig = plot_optimization_trace_mult_exp(time_list=[list(range(1,100)) for _ in range(0,10)],
-                                 performance_list=[[mlp2_lcurve[i,:]] for i in range(0,10)],
-                                 name_list=["1"]*10,
+                                 performance_list=[[mlp1_lcurve[i,:]] for i in range(0,10)],
+                                 name_list=[""]*10,
                                  ylabel="Error",
                                  xlabel="#Epochs",
                                 properties = {'markersize': 0,
@@ -91,7 +91,6 @@ ax1.step(mlp2_test_sorted,y)
 fig.savefig("mlp12_test_ecdf.jpg")
 
 # Boxplot
-
 fig, ax1 = plt.subplots()
 ax1.boxplot([1 - mlp1_testscores, 1 - mlp2_testscores])
 ax1.set_ylabel('Test Error')

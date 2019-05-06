@@ -78,7 +78,16 @@ print(cs)
 #def_conf = cs.get_default_configuration()
 #eval_mlp(def_conf, seed=1)
 
-#if True:
+if True:
+    results = []
+    for c in cs.sample_configuration(100):
+        test_accs = []
+        for i in range(3):
+            t, a = eval_mlp(c, seed=1)
+            test_accs.append(1 - t)
+        test_accs = np.mean(test_accs)
+        results.append(test_accs)
+    np.savetxt(results, "hundred_configs_test_acc.txt")
 
 
 if False:
