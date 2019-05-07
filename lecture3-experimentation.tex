@@ -3,7 +3,7 @@
 \centering
 \huge
 Lecture 3:\\
-Experimentation and Visualization
+Evaluation and Visualization
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
@@ -14,7 +14,7 @@ Experimentation and Visualization
 	\item[$\to$] Background
 	\begin{itemize}
 		\item Design spaces in ML
-		\item[$\to$] Experimentation and visualization
+		\item[$\to$] Evaluation and visualization
 	\end{itemize}
 	\item Hyperparameter optimization (HPO)
 	\begin{itemize}
@@ -33,6 +33,21 @@ Experimentation and Visualization
 
 \end{frame}
 %----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Goals}
+
+After this lecture, you will be able to \ldots
+
+\begin{itemize}
+	\item explain the role of outliers in CS/ML
+	\item compare and visualize the performance of different configurations
+	\item compare and visualize the performance of AutoML systems
+	\item explain and correctly apply statistical hypothesis tests
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+
 %----------------------------------------------------------------------
 \begin{frame}[c]{How CS differs from other empirical sciences}
 
@@ -89,17 +104,17 @@ Is the following statement correct? \includegraphics[height=1.5em]{images/hands}
 \pause
 \bigskip
 
-\begin{block}{Outliers in CS}
+\begin{block}{Outliers in CS/ML}
 \begin{itemize}
 	\item outliers should be investigated closely -- why is there an outlier?
 	\item outliers are (hopefully) reproducible -- narrow down their reason!
 	\pause
 	\begin{itemize}
-		\item \textbf{Algorithm:} When characterizing runtimes of a randomized algorithm on a single instance of a hard combinatorial problem, \alert{outliers with large values can indicate deep local optima}
+		\item \textbf{Algorithm:} When characterizing performance of an optimization algorithm, \alert{outliers with poor values can indicate (deep) local optima}
 		\pause
-		\item \textbf{Environment:} Outliers with large runtimes can indicate a \alert{problem with the runtime environment} (e.g., file system or network issues)
+		\item \textbf{Environment:} Outliers can indicate a \alert{problem with the environment} (e.g., file system or network issues)
 		\pause
-		\item \textbf{Instances:}  When characterizing runtimes across a distribution of instances, outliers with small values can indicate trivial instances.
+		\item \textbf{Instances:}  When characterizing cost across a distribution of datasets, outliers with small values can indicate trivial datasets.
 	\end{itemize}
 \end{itemize}
 \end{block}
@@ -157,18 +172,19 @@ For the following slides, we have used the following setup:
 	\item Plot mean and stdev (shaded area) across $n$ (here $100$) random seeds\\
 	\item Remark: Only use mean and stdev\\
 	if noise is somehow normal distributed
+	\item alternative to stdev is the standard error
 \end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Compare Learning Curves}
+\begin{frame}[c]{Comparing Learning Curves}
 
 \centering
 \includegraphics[width=0.7\textwidth]{scripts/compare_learning_curves.jpg}
 
 \begin{itemize}
-	\item If uncertainties (shaded area) overlap, results might not statistically relevant but due to noise
+	\item If uncertainties (shaded area) overlap, results might not be statistically relevant but due to noise
 \end{itemize}
 
 \end{frame}
@@ -198,7 +214,7 @@ For the following slides, we have used the following setup:
 	
 \begin{itemize}
 	\item already perfect training score
-	\item generalization nevertheless not perfect
+	\item generalization nevertheless noisy
 \end{itemize}
 	
 \end{columns}
@@ -217,13 +233,16 @@ For the following slides, we have used the following setup:
 \begin{frame}[c]{eCDF: Distribution of Performance}
 
 \centering
-\includegraphics[width=0.7\textwidth]{scripts/mlp12_test_ecdf.jpg}
+\includegraphics[width=0.6\textwidth]{scripts/mlp12_test_ecdf.jpg}
 
+\begin{flushleft}
+How to compute an empirical CDF:
 \begin{enumerate}
 	\item X: sorted error scores
 	\item Y: $[1\ldots\#\text{points}] / \#\text{points}$
 	\item step\_function(X,Y)
 \end{enumerate}
+\end{flushleft}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -231,9 +250,12 @@ For the following slides, we have used the following setup:
 \begin{frame}[c]{Box Plot: Comparing Two Configurations}
 
 \centering
-\includegraphics[width=0.7\textwidth]{scripts/mlp12_boxplot.jpg}
+\includegraphics[width=0.6\textwidth]{scripts/mlp12_boxplot.jpg}
 
 \begin{itemize}
+	\item alternative: violin plots
+	\pause
+	\smallskip
 	\item if you have paired populations (e.g., configurations evaluated on different datasets),
 			you should generate boxplots with $y_1 / y_2$ 
 	\item[$\leadsto$] insight on how many datasets one of the two performed better
@@ -246,7 +268,24 @@ For the following slides, we have used the following setup:
 %----------------------------------------------------------------------
 \begin{frame}[c]{AutoML Systems over Time}
 
-TODD
+\begin{itemize}
+	\item Don't only measure the performance of AutoML systems for a fixed budget because:
+	\begin{enumerate}
+	   \item A priori, it is unknown how long a user will run an AutoML system
+	   \item Some systems perform well for small budgets and some others need more time before performing well
+	   \begin{itemize}
+	   	\item BO-based systems often perform as good as\\ random search in the beginning, but perform very well later on
+	   \end{itemize}
+    \end{enumerate}
+	\pause
+	\item[$\leadsto$] AutoML systems should have a good anytime performance
+	\pause
+	\medskip
+	\item Recommendation: plot performance (e.g., error) over time
+	\begin{itemize}
+		\item Similar to learning curves of DNNs 
+	\end{itemize} 
+\end{itemize}
 
 
 \end{frame}
@@ -254,31 +293,90 @@ TODD
 %----------------------------------------------------------------------
 \begin{frame}[c]{Aggregated AutoML Systems over Time}
 
-TODD
+\centering
+\includegraphics[width=0.5\textwidth]{images/MLPOnMnist_tFalse.png}
 
+\begin{itemize}
+	\item Different HPO systems minimizing the error of an MLP on MNIST
+	\item How to do it:
+	\begin{itemize}
+		\item Run each systems several times and always log its current incumbent 
+		\item Plot mean and stdev for each system after each incumbent update
+		\item Use step functions, because linear interpolation would be\\ too optimistic
+	\end{itemize}
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Aggregated AutoML Systems over Time and Datasets}
 
-TODD
-
+\begin{itemize}
+	\item An AutoML system should not only perform well on a single dataset but on many datasets
+	\item To summarize and compare the performance across a set of datasets,
+	we can plot the performance over time and across datasets
+	\pause
+	\item Ways to do it:
+	\begin{enumerate}
+		\item Average cost metric (e.g., error) across datasets
+		\begin{itemize}
+			\item Problem: different scales of errors on different datasets
+		\end{itemize}
+	    \pause
+	    \item Normalize cost metric across datasets,\\
+	    e.g., best seen cost relates to a zero cost
+	    \begin{itemize}
+	    	\item Problem: Minor improvements ($\leq 0.1\%$) might look substantial
+	    \end{itemize}
+	\end{enumerate}
+    \pause
+    \item[$\leadsto$] There is no way around that you have some kind of information loss 
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Ranked AutoML Systems over Time and Datasets}
 
-TODD
 
+\centering
+\includegraphics[width=0.5\textwidth]{images/rankings_over_time.png}
+
+\begin{itemize}
+	\item Remarks:
+	\begin{itemize}
+		\item x-axis should be on log-scale
+		\item uncertainties (shaded areas) can be obtained via bootstrap sampling
+	\end{itemize}
+    \pause
+    \smallskip
+	\item Ranks avoid the problem of different scales
+	\item Problem: we don't know whether a better ranking relates to a substantial improvement of the actual cost metric
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Algorithm Footprints \litw{Smith-Miles et al. 20XX}}
+\begin{frame}[c]{Scatter Plot: Meta Features}
 
-TODD
+\begin{columns}
+	\column{0.5\textwidth}
+	
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/scatter_dataset_twoconfigs.png}
+	
+	\column{0.5\textwidth}
+	\begin{itemize}
+		\item Compare two systems\\ (or 1 vs rest)
+		\item each dot is a dataset
+		\item color encoding better or worse
+		\item size indicates performance difference
+		\item meta-features (e.g., \#features, \#samples) on axes
+		\begin{itemize}
+			\item using PCA on a larger set of meta-features leads to algorithm footprints \lit{Smith-Miles et al. 2012}
+		\end{itemize}
+	\end{itemize}
+\end{columns}
 
 
 \end{frame}
@@ -286,56 +384,25 @@ TODD
 %----------------------------------------------------------------------
 \begin{frame}[c]{Heatmaps: Comparing several Configurations}
 
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Empirical Cumulative Distribution (eCDF) Plots}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Parallel Coordinate Plots}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{TITLE}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{TITLE}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{TITLE}
-
-TODD
-
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{TITLE}
-
-TODD
-
+\begin{columns}
+	\column{0.5\textwidth}
+	
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/heatmap_pipelines.png}
+	
+	\column{0.5\textwidth}
+	
+	\begin{itemize}
+		\item compare many configurations on many datasets
+		\item can reveal:
+		\begin{itemize}
+			\item homogeneity if smooth transition from hard to easy
+			\item heterogeneity if stripes exist (here the case) 
+		\end{itemize}
+	    \item Remark: datasets and configurations should be sorted according to their average cost
+	\end{itemize}
+	
+\end{columns}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -380,7 +447,6 @@ TODD
 \begin{itemize}
 	\item Alternative hypothesis should be your research hypothesis
 \end{itemize}
-\pause
 \end{enumerate}	
 
 \end{frame}
@@ -617,7 +683,7 @@ $\mu \neq \mu_0$
 \item E.g., $Z$-test and popular $t$-test assume \alert{normality}
 \item Our data is often far from normally-distributed
 \begin{itemize}
-\item[$\leadsto$] E.g., exponential runtime distributions of SLS solvers for SAT
+\item[$\leadsto$] E.g., exponential runtime distributions of local search optimizers
 \item[$\leadsto$] E.g., distribution of fitting a neural network\\ with different random seeds is not well studied
 \end{itemize}
 \end{itemize}
@@ -690,56 +756,74 @@ $\leadsto$ can evaluate how extreme the observed test statistic is
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Example for Permutation test}
-
-TODO
-
-\end{frame}
-%-----------------------------------------------------------------------
-
-%----------------------------------------------------------------------
-\begin{frame}[c]{Paired vs.\ unpaired tests}
-
-TODO
-
-\end{frame}
-%-----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Learning Goals}
-
-After this lecture, you will be able to \ldots
+\begin{frame}[c]{Paired vs. unpaired tests}
 
 \begin{itemize}
-  \item ...
+	\item if you have two unsorted populations (e.g., repeated measurements with different random seeds), you use an unpaired test (as discussed above)
+	\item if you can attribute a measurement to concrete objects (e.g., measurments on different datasets), you use a paired test
+	\begin{itemize}
+		\item paired test are more powerful\\
+		(i.e., higher confidence for the same amount of data)
+	\end{itemize}
+    \item Examples for paired permutation tests
+    \begin{itemize}
+    	\item Wilcoxon signed rank test
+    	\item paired permutation test
+    	\begin{itemize}
+    		\item permuation of measurement pairs (e.g., same dataset)
+    	\end{itemize}
+    \end{itemize}
 \end{itemize}
 
 \end{frame}
+%-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{TITLE}
+\begin{frame}[c]{Multiple Test Correction}
 
-TODD
-
+\begin{itemize}
+	\item To compare many systems, we apply statistical tests several time\\
+	(once for each pair of systems)
+	\item Each test induces some error (bounded by $\alpha$)
+	\item[$\leadsto$] the error probability for $k$ tests is bounded by $1 - (1 - \alpha)^k$
+	\pause
+	\smallskip
+	\item Better would be if the error probability would not increase with $k$
+	\item[$\leadsto$] multiple testing correction
+	\pause
+	\smallskip
+	\item Bonferronie testing correction: $\alpha_{\text{local}} = \alpha_{\text{global}} / k$
+	\pause
+	\begin{itemize}
+		\item very conservative approach
+		\item there exist other, less conservative approaches
+	\end{itemize}
+	
+\end{itemize}
 
 \end{frame}
-%----------------------------------------------------------------------
-
+%-----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals}
 
 Now, you should be able to \ldots
 
 \begin{itemize}
-  \item ...
-\end{itemize}
-
+	\item explain the role of outliers in CS/ML
+	\item compare and visualize the performance of different configurations
+	\item compare and visualize the performance of AutoML systems
+	\item explain and correctly apply statistical hypothesis tests\end{itemize}
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Literature [These are links]}
 
 \begin{itemize}
-	\item \lit{\href{URL}{TITLE}}		
+	\item \lit{\href{https://link.springer.com/content/pdf/10.1023\%2FA\%3A1022623814640.pdf}{P. Langley 1988. Machine Learning as an Experimental Science}}		
+    \item \lit{\href{https://www.semanticscholar.org/paper/Machine-Learning-as-an-Experimental-Science-(-)-Drummond/07f052798f17cc761d9e6551c85732e0a41cebb5}{C. Drummod 2006. Machine Learning as an Experimental Science (Revisited)}}	
+    \item \lit{\href{http://www.jmlr.org/papers/v7/demsar06a}{J. Demsar 2006. Statistical Comparisons of Classifiers over Multiple Data Sets}}	
+    \item \lit{\href{https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001745}{Wilson et al. 2014. Best Practices for Scientific Computing}}	
+    \item \lit{\href{https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510}{Wilson et al. 2017. Good enough practices in scientific computing}}	
+    
 \end{itemize}
 
 \end{frame}
