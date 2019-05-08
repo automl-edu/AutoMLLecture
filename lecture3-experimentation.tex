@@ -114,14 +114,14 @@ Is the following statement correct? \includegraphics[height=1.5em]{images/hands}
 		\pause
 		\item \textbf{Environment:} Outliers can indicate a \alert{problem with the environment} (e.g., file system or network issues)
 		\pause
-		\item \textbf{Instances:}  When characterizing cost across a distribution of datasets, outliers with small values can indicate trivial datasets.
+		\item \textbf{Datasets:}  When characterizing cost across a distribution of datasets, outliers with small values can indicate trivial datasets.
 	\end{itemize}
 \end{itemize}
 \end{block}
 
 \end{frame}
 %-----------------------------------------------------------------------
-\section{Visualization}
+\section{Visualization of Configuration Performance}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Setup}
@@ -152,7 +152,7 @@ For the following slides, we have used the following setup:
 \begin{frame}[c]{$10$ Learning Curves  (Setting 1)}
 
 \centering
-\includegraphics[width=0.7\textwidth]{scripts/ten_learning_curves.jpg}
+\includegraphics[width=0.6\textwidth]{scripts/ten_learning_curves.jpg}
 
 \begin{itemize}
 	\item[$\leadsto$] Deep learning (and most other ML algorithms) are non-deterministc
@@ -166,13 +166,13 @@ For the following slides, we have used the following setup:
 \begin{frame}[c]{Aggregated Learning Curves (Setting 1)}
 
 \centering
-\includegraphics[width=0.7\textwidth]{scripts/hundred_agg_learning_curves.jpg}
+\includegraphics[width=0.6\textwidth]{scripts/hundred_agg_learning_curves.jpg}
 
 \begin{itemize}
 	\item Plot mean and stdev (shaded area) across $n$ (here $100$) random seeds\\
-	\item Remark: Only use mean and stdev\\
+	\item Only use mean and stdev
 	if noise is somehow normal distributed
-	\item alternative to stdev is the standard error
+	\item alternatives are the mean+standard error or median+25/75-percentiles
 \end{itemize}
 
 \end{frame}
@@ -184,7 +184,7 @@ For the following slides, we have used the following setup:
 \includegraphics[width=0.7\textwidth]{scripts/compare_learning_curves.jpg}
 
 \begin{itemize}
-	\item If uncertainties (shaded area) overlap, results might not be statistically relevant but due to noise
+	\item If uncertainties (shaded area) overlap, results might not be statistically significant but due to noise
 \end{itemize}
 
 \end{frame}
@@ -198,6 +198,7 @@ For the following slides, we have used the following setup:
 \column{0.5\textwidth}
 
 \centering
+Setting 1
 \includegraphics[width=1\textwidth]{scripts/mlp1_test_train_scatter.jpg}
 
 \begin{itemize}
@@ -210,6 +211,7 @@ For the following slides, we have used the following setup:
 
 \pause
 \centering
+Setting 2
 \includegraphics[width=1\textwidth]{scripts/mlp2_test_train_scatter.jpg}
 	
 \begin{itemize}
@@ -225,7 +227,17 @@ For the following slides, we have used the following setup:
 \begin{frame}[c]{eCDF: Distribution of Performance (Setting 1)}
 
 \centering
-\includegraphics[width=0.7\textwidth]{scripts/mlp1_test_ecdf.jpg}
+\includegraphics[width=0.6\textwidth]{scripts/mlp1_test_ecdf.jpg}
+
+\begin{flushleft}
+	How to compute an empirical CDF:
+	\begin{enumerate}
+		\item X: sorted error scores
+		\item Y: $[1\ldots\#\text{points}] / \#\text{points}$
+		\item step\_function(X,Y)
+	\end{enumerate}
+\end{flushleft}
+
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -235,14 +247,8 @@ For the following slides, we have used the following setup:
 \centering
 \includegraphics[width=0.6\textwidth]{scripts/mlp12_test_ecdf.jpg}
 
-\begin{flushleft}
-How to compute an empirical CDF:
-\begin{enumerate}
-	\item X: sorted error scores
-	\item Y: $[1\ldots\#\text{points}] / \#\text{points}$
-	\item step\_function(X,Y)
-\end{enumerate}
-\end{flushleft}
+
+Which curve corresponds to which setting? \hands
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -257,14 +263,16 @@ How to compute an empirical CDF:
 	\pause
 	\smallskip
 	\item if you have paired populations (e.g., configurations evaluated on different datasets),
-			you should generate boxplots with $y_1 / y_2$ 
+			you should generate boxplots with $\loss / \loss_{\text{baseline}}$ 
 	\item[$\leadsto$] insight on how many datasets one of the two performed better
 \end{itemize}
 	
 
 \end{frame}
 %----------------------------------------------------------------------
-
+%-----------------------------------------------------------------------
+\section{Visualization of AutoML Performance}
+%----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{AutoML Systems over Time}
 
@@ -318,13 +326,13 @@ How to compute an empirical CDF:
 	\pause
 	\item Ways to do it:
 	\begin{enumerate}
-		\item Average cost metric (e.g., error) across datasets
+		\item Average loss metric (e.g., error) across datasets
 		\begin{itemize}
 			\item Problem: different scales of errors on different datasets
 		\end{itemize}
 	    \pause
-	    \item Normalize cost metric across datasets,\\
-	    e.g., best seen cost relates to a zero cost
+	    \item Normalize loss metric across datasets,\\
+	    e.g., best seen loss relates to a zero cost
 	    \begin{itemize}
 	    	\item Problem: Minor improvements ($\leq 0.1\%$) might look substantial
 	    \end{itemize}
@@ -678,7 +686,7 @@ $\mu \neq \mu_0$
 
 \pause
 \bigskip
-\item Beware: most tests make some assumptions
+\item Beware (i): most tests make some assumptions
 \begin{itemize}
 \item E.g., $Z$-test and popular $t$-test assume \alert{normality}
 \item Our data is often far from normally-distributed
@@ -687,7 +695,12 @@ $\mu \neq \mu_0$
 \item[$\leadsto$] E.g., distribution of fitting a neural network\\ with different random seeds is not well studied
 \end{itemize}
 \end{itemize}
-
+\medskip
+\pause
+\item Beware (ii): if you use cross-validation, you cannot apply statistical tests because observations are not independent
+\begin{itemize}
+	\item if you use bootstrap sampling, observations are independent
+\end{itemize}
 \end{itemize}
 
 \end{frame}
@@ -760,7 +773,7 @@ $\leadsto$ can evaluate how extreme the observed test statistic is
 
 \begin{itemize}
 	\item if you have two unsorted populations (e.g., repeated measurements with different random seeds), you use an unpaired test (as discussed above)
-	\item if you can attribute a measurement to concrete objects (e.g., measurments on different datasets), you use a paired test
+	\item if you can attribute a measurement to concrete objects (e.g., measurements on different datasets), you use a paired test
 	\begin{itemize}
 		\item paired test are more powerful\\
 		(i.e., higher confidence for the same amount of data)
@@ -770,7 +783,7 @@ $\leadsto$ can evaluate how extreme the observed test statistic is
     	\item Wilcoxon signed rank test
     	\item paired permutation test
     	\begin{itemize}
-    		\item permuation of measurement pairs (e.g., same dataset)
+    		\item permutation of measurement pairs (e.g., same dataset)
     	\end{itemize}
     \end{itemize}
 \end{itemize}
@@ -778,7 +791,7 @@ $\leadsto$ can evaluate how extreme the observed test statistic is
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Multiple Test Correction}
+\begin{frame}[c]{Multiple Testing Correction}
 
 \begin{itemize}
 	\item To compare many systems, we apply statistical tests several time\\
@@ -803,6 +816,26 @@ $\leadsto$ can evaluate how extreme the observed test statistic is
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
+\begin{frame}[c]{Checklist for good scientific practices}
+
+Incomplete list of good scientific practices (specifically for students):
+\begin{enumerate}
+	\item keep track of your code and design decisions (on all levels)
+	\item measure performance of randomized algorithms multiple times\\
+		  and show uncertainty of results
+	\item apply suitable statistical tests to check for significance
+	\item choose a metric that is relevant for the application
+	\item always add legends, axis labels and so on in plots
+	\item be aware of other research results
+	\item avoid peaking at your test data
+	\begin{itemize}
+		\item no cherry-picking!
+	\end{itemize}
+\end{enumerate}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals}
 
 Now, you should be able to \ldots
@@ -822,7 +855,8 @@ Now, you should be able to \ldots
     \item \lit{\href{https://www.semanticscholar.org/paper/Machine-Learning-as-an-Experimental-Science-(-)-Drummond/07f052798f17cc761d9e6551c85732e0a41cebb5}{C. Drummod 2006. Machine Learning as an Experimental Science (Revisited)}}	
     \item \lit{\href{http://www.jmlr.org/papers/v7/demsar06a}{J. Demsar 2006. Statistical Comparisons of Classifiers over Multiple Data Sets}}	
     \item \lit{\href{https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001745}{Wilson et al. 2014. Best Practices for Scientific Computing}}	
-    \item \lit{\href{https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510}{Wilson et al. 2017. Good enough practices in scientific computing}}	
+    \item \lit{\href{https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510}{Wilson et al. 2017. Good enough practices in scientific computing}}
+    
     
 \end{itemize}
 

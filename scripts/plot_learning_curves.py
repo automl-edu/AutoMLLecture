@@ -62,15 +62,15 @@ mlp2_trainscores = np.loadtxt("mlp2_train_scores.txt")
 fig, ax1 = plt.subplots()
 ax1.scatter(mlp1_trainscores, 1- mlp1_testscores)
 ax1.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
-ax1.set_xlabel('Train Error')
-ax1.set_ylabel('Test Error')
+ax1.set_xlabel('Train Accuracy')
+ax1.set_ylabel('Test Accuracy')
 fig.savefig("mlp1_test_train_scatter.jpg")
 
 fig, ax1 = plt.subplots()
 ax1.scatter(mlp2_trainscores, 1- mlp2_testscores)
 ax1.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
-ax1.set_xlabel('Train Error')
-ax1.set_ylabel('Test Error')
+ax1.set_xlabel('Train Accuracy')
+ax1.set_ylabel('Test Accuracy')
 fig.savefig("mlp2_test_train_scatter.jpg")
 
 
@@ -81,7 +81,7 @@ y = np.array(range(1,100)) / 99
 
 fig, ax1 = plt.subplots()
 ax1.step(mlp1_test_sorted,y)
-ax1.set_xlabel('Test Error')
+ax1.set_xlabel('Test Accuracy')
 ax1.set_ylabel('P(L<X)')
 
 fig.savefig("mlp1_test_ecdf.jpg")
@@ -93,5 +93,5 @@ fig.savefig("mlp12_test_ecdf.jpg")
 # Boxplot
 fig, ax1 = plt.subplots()
 ax1.boxplot([1 - mlp1_testscores, 1 - mlp2_testscores])
-ax1.set_ylabel('Test Error')
+ax1.set_ylabel('Test Accuracy')
 fig.savefig("mlp12_boxplot.jpg")
