@@ -20,8 +20,8 @@ Design Spaces in Machine Learning
 	\begin{itemize}
 	  \item Bayesian optimization
 	  \item Other black-box techniques
+      \item Speeding up HPO with multi-fidelity optimization
 	\end{itemize}
-	\item Speeding up HPO with multi-fidelity optimization
 	\item Pentecost (Holiday) -- no lecture
 	\item Architecture search I + II
 	\item Meta-Learning
@@ -75,7 +75,7 @@ After this lecture, you will be able to \ldots
   \begin{itemize}
     \item PCA, feature selection, random kitchen sinks, \ldots
   \end{itemize}
-  \item if we only use one preprocessor and one ML algorithm,\\ exhaustive force would require:
+  \item if we only use one preprocessor and one ML algorithm,\\ exhaustive search would require:
   $t \cdot n \cdot l$
 \end{itemize}
 
@@ -400,7 +400,7 @@ Is the random seed a valid design decision?
 \begin{algorithm}[H]
 \Input{$D = \{(\vec{x}^{(i)}, y^{(i)})\}_{i\in \{1\ldots|D|\}}$, attributes A}
 \BlankLine
-\If{current tree depth larger than threshold $t_d$} {
+\If{current tree depth is larger than threshold $t_d$} {
 	  \Return{Leaf with $\vec{y}$}
 }
 \If{samples size $|D|$ is smaller than threshold $t_n$} {
@@ -454,13 +454,25 @@ $y$ $\leftarrow$ $\frac{1}{n}\sum_{i}^n y_i$;\\
 
 \end{frame}
 %----------------------------------------------------------------------
-\begin{frame}{Configuration Space of Regression Random Forest}
+\begin{frame}[fragile]{Configuration Space of Regression Random Forest}
 
 Task: \hands [5min]
 \begin{itemize}
   \item What are design decisions of a regression random forest?
   \item What could be a reasonable configuration space?  
 \end{itemize}
+
+\bigskip
+\pause
+
+\begin{verbatim}
+n_trees integer [1, 100][10] log
+d_bootstrap float [0.1, 1.0][1.0]
+c_criterion categorical {mse, mae}
+k_attributes float [0.1, 1.0][0.6]
+t_n integer [1,10][1]
+t_d integer [2,1024][1024]log
+\end{verbatim}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -583,28 +595,6 @@ gamma | algo in {SVM]
 
 \end{frame}
 %----------------------------------------------------------------------
-
-%----------------------------------------------------------------------
-\begin{frame}[c, fragile]{Select several Algorithms}
-
-We can use set of algorithms:
-\begin{itemize}
-  \item for example, we want to apply a set of preprocessors
-  \item Each algorithm gets a binary hyperparameter
-  \begin{itemize}
-  	\item $2^n$ possible combinations for $n$ preprocessors	
-  \end{itemize}
-\end{itemize}
-
-\begin{verbatim}
-normalize categorical {True, False}[False]
-pca categorical {True, False}[False]
-pca_dim integer [1,100][10]
-pca_dim | pca in {True}
-\end{verbatim}
-
-\end{frame}
-%----------------------------------------------------------------------
 \section{Unbounded Configuration Spaces}
 %----------------------------------------------------------------------
 \begin{frame}[c]{Bounded Configuration Spaces}
@@ -647,12 +637,12 @@ $\leadsto$ How can we design such configuration spaces?
 \end{verbatim}
 
 \begin{itemize}
-	\item Hard to optimize if 
+	\item Hard to optimize/not applicable if 
 	\begin{itemize}
 		\item we also have to find the ordering of the components
 		\item if there is an upper bound on the number of components\\
 		$\leadsto$ leads to many invalid configurations
-		\item Each component can only be chosen once
+		\item each component should be chosen more than once
 	\end{itemize}
 \end{itemize}
 
@@ -671,7 +661,7 @@ step_3 categorical {comp1, comp2, comp3, ..., none}[none]
 
 \begin{itemize}
 	\item encode each step of the pipeline with a choice between\\ all possible components
-	\item Hard to optimize if
+	\item Hard to optimize/not applicable if
 	\begin{itemize}
 		\item we don't know a good upper bound of the pipeline size
 		\item there is an upper bound on how often a component can be chosen
