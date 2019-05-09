@@ -58,21 +58,21 @@
 
 \begin{document}
 	\gccs
-	Having learned about different ways to empirically evaluate the performances of algorithms and automl systems in this exercise you will now implement some of these techniques. Add your code creating plots and outputting statistics to \texttt{main.py} (callable as \verb|python main.py|). Furthermore, combine all plots and answers to the questions into one PDF. Needless to say, that we expect all plots to have axes labels and a legend.
+	Having learned about different ways to empirically evaluate the performances of algorithms and automl systems in this exercise you will now implement some of these techniques. Add your code creating plots and outputting statistics to \texttt{main.py} (callable as \verb|python main.py|). Furthermore, combine all plots and answers to the questions into one PDF. We expect all plots to have axes labels and a legend!
 	\begin{questions}
 		\titledquestion{Visualization and Evaluation}[3]
-		\verb|data.csv| contains \textit{RMSE} score of two algorithms $A$ and $B$ on $n=419$ datasets. The method \verb|load_data()| loads this dataset as an $n \times 2$ \textit{numpy array}.
+		\verb|data.csv| contains \textit{error} values of two algorithms $A$ and $B$ on $n=419$ datasets. The method \verb|load_data()| loads this dataset as an $n \times 2$ \textit{numpy array}.
 		\begin{parts}
 			\part[1] Create a scatterplot comparing the performance of $A$ and $B$. Use different markers for the following three categories of datasets:
 			\begin{itemize}
-				\item algorithm $A$ achieved an \textit{RMSE} value that is $0.1$ lower than that of $B$
-				\item algorithm $B$ achieved an \textit{RMSE} value that is $0.1$ lower than that of $A$
+				\item algorithm $A$ achieved an \textit{error} value that is $0.1$ lower than that of $B$
+				\item algorithm $B$ achieved an \textit{error} value that is $0.1$ lower than that of $A$
 				\item other
 			\end{itemize}
 			How many datasets are in each category? Report overall mean and standard deviation as well as median and quartile values for $A$ and $B$.
-			\part[0.5] Plot the empirical cumulative distribution function (eCDF) of $A$ and $B$ as shown in the lecture. What are the probabilities of $A$ and $B$ to achieve an \textit{RMSE} value of $0.4$ and lower (it is okay to estimate the value from the plot).
+			\part[0.5] Plot the empirical cumulative distribution function (eCDF) of $A$ and $B$ as shown in the lecture. What are the probabilities of $A$ and $B$ to achieve an \textit{error} value of $0.4$ and lower (it is okay to estimate the value from the plot).
 			\part[0.5] Create a boxplot\footnote{using e.g. \url{https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.violinplot.html}} and a violin plot\footnote{using e.g. \url{https://matplotlib.org/api/_as_gen/matplotlib.pyplot.boxplot.html}} for $A$ and $B$. Write one sentence to describe the difference between these two kinds of plots.
-			\part[1] Implement a paired permutation test to determine whether $A$ and $B$ have equal means. In your solution state what is $H_0$, $H_1$ and which $\alpha$-value you used?
+			\part[1] Implement a paired permutation test to determine whether the mean of $A$ is better than the mean of $B$. In your solution state what is $H_0$, $H_1$ and which $\alpha$-value you used?
 		\end{parts}
 	
 	\titledquestion{Feedback}[Bonus: 1]
