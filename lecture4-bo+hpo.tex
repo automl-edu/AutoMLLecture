@@ -220,7 +220,92 @@ Cons:
 %-----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Bayesian Optimization \litw{J. Mockus 1977}}
+\begin{frame}[c,fragile]{Optimization for HPO}
+
+\begin{itemize}
+	\item HPO is expensive $\leadsto$ we need also a greedy optimization approach
+	\item basically, all black-box optimization approaches could be used
+	\begin{itemize}
+		\item Local search
+		\begin{itemize}
+			\item hypothesis: HPO surfaces have many local optima s.t. local search gets easily trapped in local optima
+		\end{itemize}
+	 	\medskip
+		\item population-based evolution strategies (more next week)
+		\begin{itemize}
+			\item often needs many function evaluations to perform well
+		\end{itemize}
+		\medskip
+		\item model-based approaches
+		\begin{itemize}
+			\item Idea: use an surrogate model to approximate the unknown function to be optimized
+		\end{itemize}
+	    \item Remark: there are also combinations of these approaches (such as model-based ES)
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Model-based Optimization \litw{Bergstra et al. 2011}}
+
+\begin{itemize}
+	\item Assume that we already observed some configuration and the corresponding loss $D = \{(\conf_i, y_i))\}_{i=1}^N$
+	\begin{itemize}
+		\item let's use $y_i = f(\lambda)$ as a short form for $\loss(\algo_\conf, \dataset_{train}, \dataset_{valid})$
+	\end{itemize}
+	\item We could approximate the good region of the configuration space $\pcs$
+\end{itemize}
+
+$$
+p(x|y) = \begin{cases}
+l(x) \text{ if } y < y^*\\
+g(x) \text{ otherwise} 
+\end{cases}
+$$
+
+where 
+\begin{itemize}
+	\item $y^*$ is an empirical threshold for a well-performing configuration (e.g., a $\gamma$ percentile of all observed $y$ in $D$)
+	\item $l(x)$ models the density of the well-performing region based on $D$
+	\begin{itemize}
+		\item Note that we minimize!
+	\end{itemize}
+	\item $g(x)$ models the density of the poorly performing region based on $D$
+	\item $g$ and $l$ can be modeled by kernel density estimator (KDE)
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Model-based Optimization \litw{Bergstra et al. 2011}}
+
+UPDATE!
+
+\begin{algorithm}[H]
+	\Input{Search Space $\mathcal{X}$,
+		black box function $f$, 
+		acquisition function $\alpha$,
+		maximal number of function evaluations $m$
+	}
+	\BlankLine
+	$\mathcal{D}_0$ $\leftarrow$ initial\_design($\mathcal{X}$); \\
+	\For{n = $1, 2, \ldots m - |D_0|$}{
+		%\While{$B$ not exhausted} {
+		$\surro$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
+		select $x_{n}$ by optimizing $x_{n} \in \argmax_{x \in \mathcal{X}} \alpha(x; \mathcal{D}_{n-1}, \surro)$;\\
+		Query $y_{n} := f(x_{n})$;\\
+		Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}$;\\
+	}
+	\Return{Best $x$ according to $D_m$ or $\surro$}
+	\caption{Bayesian Optimization (BO)}
+\end{algorithm}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Bayesian Optimization \litw{J. Mockus 1977, D .Jones et al. 1998}}
 
 \begin{columns}
 
@@ -260,7 +345,31 @@ Moving pieces:
 
 \end{frame}
 %-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Bayesian Optimization: Algorithm}
 
+\begin{algorithm}[H]
+	\Input{Search Space $\mathcal{X}$,
+		black box function $f$, 
+		acquisition function $\alpha$,
+		maximal number of function evaluations $m$
+	}
+	\BlankLine
+	$\mathcal{D}_0$ $\leftarrow$ initial\_design($\mathcal{X}$); \\
+	\For{n = $1, 2, \ldots m - |D_0|$}{
+		%\While{$B$ not exhausted} {
+		$\surro$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
+		select $x_{n}$ by optimizing $x_{n} \in \argmax_{x \in \mathcal{X}} \alpha(x; \mathcal{D}_{n-1}, \surro)$;\\
+		Query $y_{n} := f(x_{n})$;\\
+		Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}$;\\
+	}
+	\Return{Best $x$ according to $D_m$ or $\surro$}
+	\caption{Bayesian Optimization (BO)}
+\end{algorithm}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
 \begin{frame}[c,fragile]{Bayesian Optimization}
 
