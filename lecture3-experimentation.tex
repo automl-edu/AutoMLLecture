@@ -425,7 +425,7 @@ Which curve corresponds to which setting? \hands
 		\item But we already saw that summarization hides a lot of data
 		%	  \item E.g., a single outlier might explain the difference in means
 		\item Ideally, we want to draw high-level conclusions\\
-		(e.g., ``A outperforms B on instances of type X'')
+		(e.g., ``A outperforms B on datasets of type X'')
 	\end{itemize}
 	
 	\pause
@@ -481,12 +481,12 @@ Which curve corresponds to which setting? \hands
 \pause
 \bigskip
 \centering
-\begin{tabular}{c|cc}
+\begin{tabular}{r|cc}
 \toprule
 & Truly not guilty 	& Truly guilty\\
 \hline
-Acquittal 	& Right decision	& Type II Error\\
-Conviction & Type I Error		& Right decision\\
+Found not guilty 	& Acquittal & Type II Error\\
+Found guilty & Type I Error		& Conviction\\
 \bottomrule
 \end{tabular}	
 
@@ -587,7 +587,8 @@ distribution
 \end{itemize}
 
 \begin{center}
-\includegraphics[height=3cm]{images/z_test_1.png}
+%\includegraphics[height=3cm]{images/z_test_1.png}
+\input{tikz/z_test_1}
 \end{center}
 
 \end{frame}
@@ -597,7 +598,8 @@ distribution
 
 \vspace*{-0.2cm}
 \begin{center}
-\includegraphics[height=3cm]{images/z_test_2.png}
+%\includegraphics[height=3cm]{images/z_test_2.png}
+\input{tikz/z_test_2}
 \end{center}
 \vspace*{-0.2cm}
 
@@ -635,7 +637,7 @@ $\mathcal{N}(\mu=\mu_0,s=\sigma^2/\sqrt{n})$
 \smallskip
 \item Equivalent: compute the \alert{Z-statistic}: $Z = (\bar{x}-\mu_0)/s$
 and\\
-evaluate cumulative density $\Phi(Z)$ of $Z$
+evaluate cumulative distribution $\Phi(Z)$ of $Z$
 under $\mathcal{N}(0,1)$
 \medskip
 \pause
@@ -654,7 +656,8 @@ under $\mathcal{N}(0,1)$
 
 \vspace*{-0.2cm}
 \begin{center}
-\includegraphics[height=3.5cm]{images/z_test_3.png}
+%\includegraphics[height=3.5cm]{images/z_test_3.png}
+\input{tikz/z_test_3}
 \end{center}
 \vspace*{-0.2cm}
 
@@ -697,10 +700,10 @@ $\mu \neq \mu_0$
 \end{itemize}
 \medskip
 \pause
-\item Beware (ii): if you use cross-validation, you cannot apply statistical tests because observations are not independent
-\begin{itemize}
-	\item if you use bootstrap sampling, observations are independent
-\end{itemize}
+\item Beware (ii): if you use cross-validation, observations are not independent (you cannot apply statistical tests that assume independence)
+%\begin{itemize}
+%	\item if you use bootstrap sampling, observations are independent
+%\end{itemize}
 \end{itemize}
 
 \end{frame}
@@ -798,6 +801,14 @@ $\leadsto$ can evaluate how extreme the observed test statistic is
 	(once for each pair of systems)
 	\item Each test induces some error (bounded by $\alpha$)
 	\item[$\leadsto$] the error probability for $k$ tests is bounded by $1 - (1 - \alpha)^k$
+	\begin{table}
+		{\small
+		\begin{tabular}{c|rrrrrrr}
+			$k$ & $ 1$ & $ 2$ & $ 3$ & $ 4$ & $ 5$ & $ 6$ & $ 7$\\
+			\hline
+			$1-(1-0.05)^k$ & $0.05$ & $0.10$ & $0.14$ & $0.19$ & $0.23$ & $0.27$ & $0.30$
+		\end{tabular}}
+	\end{table}
 	\pause
 	\smallskip
 	\item Better would be if the error probability would not increase with $k$
@@ -827,7 +838,7 @@ Incomplete list of good scientific practices (specifically for students):
 	\item choose a metric that is relevant for the application
 	\item always add legends, axis labels and so on in plots
 	\item be aware of other research results
-	\item avoid peaking at your test data
+	\item avoid peeking at your test data
 	\begin{itemize}
 		\item no cherry-picking!
 	\end{itemize}
