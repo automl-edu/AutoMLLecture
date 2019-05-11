@@ -700,7 +700,7 @@ $\mu \neq \mu_0$
 \end{itemize}
 \medskip
 \pause
-\item Beware (ii): if you use cross-validation observations are not independent (you cannot apply statistical tests that assume independence)
+\item Beware (ii): if you use cross-validation, observations are not independent (you cannot apply statistical tests that assume independence)
 %\begin{itemize}
 %	\item if you use bootstrap sampling, observations are independent
 %\end{itemize}
@@ -801,6 +801,14 @@ $\leadsto$ can evaluate how extreme the observed test statistic is
 	(once for each pair of systems)
 	\item Each test induces some error (bounded by $\alpha$)
 	\item[$\leadsto$] the error probability for $k$ tests is bounded by $1 - (1 - \alpha)^k$
+	\begin{table}
+		{\small
+		\begin{tabular}{c|rrrrrrr}
+			$k$ & $ 1$ & $ 2$ & $ 3$ & $ 4$ & $ 5$ & $ 6$ & $ 7$\\
+			\hline
+			$1-(1-0.05)^k$ & $0.05$ & $0.10$ & $0.14$ & $0.19$ & $0.23$ & $0.27$ & $0.30$
+		\end{tabular}}
+	\end{table}
 	\pause
 	\smallskip
 	\item Better would be if the error probability would not increase with $k$
