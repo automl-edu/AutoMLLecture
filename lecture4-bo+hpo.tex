@@ -247,7 +247,7 @@ Cons:
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Model-based Optimization \litw{Bergstra et al. 2011}}
+\begin{frame}[c,fragile]{Tree-Parzen Estimator \litw{Bergstra et al. 2011}}
 
 \begin{itemize}
 	\item Assume that we already observed some configuration and the corresponding loss $D = \{(\conf_i, y_i))\}_{i=1}^N$
@@ -258,49 +258,89 @@ Cons:
 \end{itemize}
 
 $$
-p(x|y) = \begin{cases}
-l(x) \text{ if } y < y^*\\
-g(x) \text{ otherwise} 
+p(\conf|y) = \begin{cases}
+l(\conf) \text{ if } y < y^*\\
+g(\conf) \text{ otherwise} 
 \end{cases}
 $$
 
 where 
 \begin{itemize}
 	\item $y^*$ is an empirical threshold for a well-performing configuration (e.g., a $\gamma$ percentile of all observed $y$ in $D$)
-	\item $l(x)$ models the density of the well-performing region based on $D$
+	\item $l(\conf)$ models the density of the well-performing region based on $D$
 	\begin{itemize}
 		\item Note that we minimize!
 	\end{itemize}
-	\item $g(x)$ models the density of the poorly performing region based on $D$
+	\item $g(\conf)$ models the density of the poorly performing region based on $D$
 	\item $g$ and $l$ can be modeled by kernel density estimator (KDE)
 \end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Model-based Optimization \litw{Bergstra et al. 2011}}
-
-UPDATE!
+\begin{frame}[c,fragile]{Optimization with Tree-Parzen Estimator \litw{Bergstra et al. 2011}}
 
 \begin{algorithm}[H]
-	\Input{Search Space $\mathcal{X}$,
-		black box function $f$, 
-		acquisition function $\alpha$,
-		maximal number of function evaluations $m$
+	\Input{Configuration Space $\pcs$,
+		black box function $f$,
+		maximal number of function evaluations $m$,
+		percentile $\gamma$
 	}
 	\BlankLine
-	$\mathcal{D}_0$ $\leftarrow$ initial\_design($\mathcal{X}$); \\
+	$D_0$ $\leftarrow$ initial\_design($\pcs$); \\
+	\pause
 	\For{n = $1, 2, \ldots m - |D_0|$}{
-		%\While{$B$ not exhausted} {
-		$\surro$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
-		select $x_{n}$ by optimizing $x_{n} \in \argmax_{x \in \mathcal{X}} \alpha(x; \mathcal{D}_{n-1}, \surro)$;\\
-		Query $y_{n} := f(x_{n})$;\\
-		Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}$;\\
+		$D_\text{good}, D_\text{bad}$ $\leftarrow$ Split $D_{n-1}$ into good and bad observations according to $\gamma$ percentile of all observed $y$;\\
+		\pause
+		$l(\conf)$ $\leftarrow$ fit KDE on $D_\text{good}$;\\
+		$g(\conf)$ $\leftarrow$ fit KDE on $D_\text{bad}$;\\
+		\pause
+		select $\conf_{n}$ by optimizing $\conf_{n} \in \argmax_{\conf \in \pcs} l(\conf) / g(\conf)$;\\
+		\pause
+		Query $y_{n} := f(\lambda_{n})$;\\
+		Add observation to data $D_{n} := D_{n-1} \cup \{\langle \lambda_{n}, y_{n} \rangle \}$;\\
 	}
-	\Return{Best $x$ according to $D_m$ or $\surro$}
-	\caption{Bayesian Optimization (BO)}
+	\Return{Best observed $\lambda$ according to $D_m$}
+	\caption{Optimization with TPE}
 \end{algorithm}
 
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Optimization with Tree-Parzen Estimator \litw{Bergstra et al. 2011}}
+
+\centering
+\includegraphics[width=0.8\textwidth]{images/TPE.png}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Optimization with Tree-Parzen Estimator \litw{Bergstra et al. 2011}}
+
+
+Remarks:
+
+\begin{itemize}
+	\item TPE models $p(\conf | y)$
+	\begin{itemize}
+		\item we can multiply it with a prior to add expert knowledge
+	\end{itemize}
+	\smallskip
+	\pause
+	\item Performance of TPE depends on:
+	\begin{enumerate}
+		\item setting of $\gamma$ to trade-off exploration and exploitation
+		\item length scale of KDE 
+	\end{enumerate}
+	\pause
+	\smallskip
+	\item optimizing $l(\lambda)/g(\lambda)$ is equivalent to optimizing expected improvement as acquisition function in Bayesian Optimization (more in a second)
+	\pause
+	\smallskip
+	\item successful tool implementing TPE is HyperOpt
+\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
