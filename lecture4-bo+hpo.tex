@@ -298,7 +298,7 @@ where
 		select $\conf_{n}$ by optimizing $\conf_{n} \in \argmax_{\conf \in \pcs} l(\conf) / g(\conf)$;\\
 		\pause
 		Query $y_{n} := f(\lambda_{n})$;\\
-		Add observation to data $D_{n} := D_{n-1} \cup \{\langle \lambda_{n}, y_{n} \rangle \}$;\\
+		Add observation to data $D_{n} := D_{n-1} \cup \{\langle \conf_{n}, y_{n} \rangle \}$;\\
 	}
 	\Return{Best observed $\lambda$ according to $D_m$}
 	\caption{Optimization with TPE}
@@ -332,11 +332,11 @@ Remarks:
 	\item Performance of TPE depends on:
 	\begin{enumerate}
 		\item setting of $\gamma$ to trade-off exploration and exploitation
-		\item length scale of KDE 
+		\item band width of the KDEs 
 	\end{enumerate}
 	\pause
 	\smallskip
-	\item optimizing $l(\lambda)/g(\lambda)$ is equivalent to optimizing expected improvement as acquisition function in Bayesian Optimization (more in a second)
+	\item optimizing $l(\conf)/g(\conf)$ is equivalent to optimizing expected improvement as acquisition function in Bayesian Optimization\\ (more in a second)
 	\pause
 	\smallskip
 	\item successful tool implementing TPE is HyperOpt
@@ -361,7 +361,7 @@ Remarks:
 \column{0.55\textwidth}
 General Approach:
 \begin{enumerate}
-  \item Fit model on collected observations $\langle{}\conf, f(\conf)\rangle{}$
+  \item Fit model $p(y | \conf)$ on collected observations $\langle{}\conf, f(\conf)\rangle{}$
   \pause
   \item use acquisition function $a$ to trade off exploration and exploitation
   \pause
@@ -398,7 +398,7 @@ Moving pieces:
 	$\mathcal{D}_0$ $\leftarrow$ initial\_design($\mathcal{X}$); \\
 	\For{n = $1, 2, \ldots m - |D_0|$}{
 		%\While{$B$ not exhausted} {
-		$\surro$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
+		$\surro: \conf \mapsto f(\lambda)$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
 		select $x_{n}$ by optimizing $x_{n} \in \argmax_{x \in \mathcal{X}} \alpha(x; \mathcal{D}_{n-1}, \surro)$;\\
 		Query $y_{n} := f(x_{n})$;\\
 		Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}$;\\
@@ -432,9 +432,255 @@ Cons:
 
 \end{frame}
 %-----------------------------------------------------------------------
+\section{Surrogate Models}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c,fragile]{Surrograte Model}
 
+Required features
+
+\begin{itemize}
+	\item Mandatory:
+	\begin{itemize}
+		\item Regression model
+		\item Uncertainty estimates
+	\end{itemize}
+	\pause
+	\item Preferable:
+	\begin{itemize}
+		\item accurate predictions
+		\item cheap-to-train
+		\item scales with the complexity of the data\\ (number of features and observations)
+		\item can handle different types of features\\ (categorical and continuous)
+	\end{itemize}
+\end{itemize}
+
+\pause
+Common choice: Gaussian Processes\\
+Our choice: Random Forests
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c]{Gaussian Process}
+
+\begin{itemize}
+	\item There can be several explanations (i.e., functions)\\ for a set of observations
+	\item A good model would integrate over all these possible explanations (and weight them by their probability)
+	\item Gaussian Processes (GPs) do exactly that by using a normal distribution assumption at each point.
+\end{itemize}
+
+\begin{block}{Informal Definition}
+A Gaussian process is a collection of random variables, any finite number of which have a joint Gaussian distribution
+\end{block}
+
+\centering
+\includegraphics[width=0.5\textwidth]{images/bo_pic1.png}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c]{Gaussian Process: Prior}
+
+\centering
+\includegraphics[width=0.5\textwidth]{images/gp_prior.png}
+
+\begin{itemize}
+	\item Samples from the prior are zero-mean, with values drawn from a multivariate Gaussian distribution $\mathcal{N}(0,\mathbf{K})$
+	\item The kernel $\mathbf{K}$ tells 
+	us how correlated the function values\\ at two points are
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c]{Gaussian Process: RBF Kernel}
+
+\begin{equation}
+k(x_i,x_j) = \exp \left(- \frac{1}{2\theta^2} || x_i - x_j ||^2 \right) \nonumber
+\end{equation}
+
+\centering
+\includegraphics[width=0.8\textwidth]{images/gp_rbf_kernel.png}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c]{Gaussian Process: Posterior}
+
+\centering
+\includegraphics[width=0.9\textwidth]{images/gp_postrior.png}
+
+
+\begin{eqnarray}
+P(f_{t+1} | D_t, \vec{x}_{t+1})  =& \mathcal{N}(\mu_t(\vec{x}_{t+1}),\sigma_t^2(\vec{x}_{t+1})) \text{ where} \nonumber\\ 
+\mu_t(\vec{x}_{t+1})  =& \mathbf{k}^T\mathbf{K}^{-1}f_{1:t} \nonumber \\ 
+\sigma_t^2(\vec{x}_{t+1}) =& k(\vec{x}_{t+1},\vec{x}_{t+1}) \nonumber \mathbf{k}^T\mathbf{K}^-1\mathbf{k}
+\end{eqnarray}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c]{Gaussian Process: Remarks}
+
+\begin{itemize}
+	\item GPs are very good models for small-dimensional, continuous functions
+	\item Advantage: we can encode in the kernel expert knowledge about the design space
+	\pause
+	\item Disadvantage: we have to define a good kernel for each application\\ (if we don't optimize small-dimensional, continuous functions) 
+	\begin{itemize}
+		 \item e.g., special kernels for categorical hyperparameters and conditional dependencies
+	\end{itemize}
+	\smallskip
+	\pause
+	\item GPs have a cubic scaling with the number of observations (because of inverting the kernel)
+	\begin{itemize}
+		\item to address this issue there are sparse GPs \lit{Snelson and Ghahramani. 2005}
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c,fragile]{Random Forests as Surrogate Models}
+
+
+\centering
+\includegraphics[width=0.55\textwidth]{images/random_forest_pic}
+
+\begin{itemize}
+\item Train:
+\begin{itemize}
+	\item $n$ decision (or regression) trees
+	\item subsampled training data for each tree (with bootstrapping)
+	\item (subsampled feature set for each split)
+	\pause
+	\item[$\leadsto$] each tree gives us a possible explanation for the observations
+\end{itemize}
+
+\pause
+
+\item Predict
+\begin{itemize}
+	\item Obtain prediction of each tree
+	\item Aggregate predictions (e.g., average)
+	\pause
+	\item Uncertainty of predictions: stdev across tree predictions 
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c,fragile]{Advantages and Disadvantages of Random Forests}
+
+
+\begin{columns}
+\column{0.5\textwidth}
+Pros:
+\begin{itemize}
+\item Cheap to train
+\item Scales well with \#observations
+\begin{itemize}
+	\item Worst-case complexity for $T$ tress with $n$ data points of dimensionality $p$: $\mathcal O(T\cdot p \cdot n^2 \log{n})$
+\end{itemize}
+\item training can be parallelized
+\item Can handle continuous and categorical features
+\begin{itemize}
+	\item most RF implementations can handle only continuous features
+\end{itemize}
+\end{itemize}
+
+\column{0.5\textwidth}
+Cons:
+\begin{itemize}
+\item Poor uncertainty estimates
+\item No extrapolation
+\begin{itemize}
+	\item last seen value for extrapolation (constant)
+	\item no prior
+\end{itemize}
+\end{itemize}
+
+\end{columns}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c,fragile]{Deep Neural Networks as Surrogate Models}
+
+\begin{itemize}
+	\item DNNs are known to have good predictions given big data
+	\item In Bayesian Optimization (BO), we have (often) little data
+	\item DNNs are not known for very good uncertainty estimates
+	\item Nevertheless, we can use DNN for BO
+\end{itemize}
+
+\centering
+\includegraphics[width=0.5\textwidth]{images/bo_dnn.png}
+\begin{flushright}
+	Source: \lit{Springerberger et al. 2016}
+\end{flushright}
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%----------------------------------------------------------------------
+\begin{frame}[c]{Preprocessing Configuration}
+
+\begin{block}{Convert $\conf$ for ML Model}
+\begin{itemize}
+\item continuous and integer parameter can be directly passed
+\begin{itemize}
+\item scaled to $[0,1]$
+\end{itemize}
+\pause
+\item categorical parameters should be encoded if necessary
+\begin{itemize}
+\item e.$\,$g., random forest can handle categorical parameter natively\\
+(Not all implementations are able to do it!) 
+\item use one-hot encoding if necessary:
+\begin{itemize}
+	\item add new variable for each possible value $v_i$
+	\item set one of these variable to one (depending on the configuration)
+\end{itemize}
+\end{itemize}
+\pause
+\item ordinal parameters can be converted to integers or also one-hot encoded
+\end{itemize}
+\end{block}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Preprocessing Configuration (cont'd)}
+
+\begin{block}{Conditional Hyperparameters}
+\begin{itemize}
+\item Configuration spaces often have a hierarchical structure
+\item e.$\,$g., hyperparameter A is only active if heuristic H is used
+\pause
+\item[$\leadsto$] List of hyperparameter values has missing entries because of inactive hyperparameters
+\medskip
+\pause
+\item Fixes:
+\begin{itemize}
+\item Impute missing data, e.$\,$g., by default setting
+\item Mark these inactive hyperparameters and let the model deal with it\\
+e.$\,$g., a random forest could only split on active parameters
+\end{itemize}
+\end{itemize}
+\end{block}
+
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Acquisition Functions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}[c,fragile]{The Role of the Acquisition Function}
 \begin{itemize}
   \item Given: a model $\hat{f}:\confs \rightarrow \mathds{R}$ that predicts the quality $\mu(\conf)$ for each configuration $\conf$ and its standard deviation $\sigma(\conf)$ ($\leadsto$ uncertainty)
@@ -530,143 +776,6 @@ TODO
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[c,fragile]{Surrograte model Model}
-
-Required features
-
-\begin{itemize}
-  \item Mandatory:
-  \begin{itemize}
-    \item Regression model
-	\item Uncertainty estimates
-  \end{itemize}
-  \pause
-  \item Preferable:
-  \begin{itemize}
-    \item accurate predictions
-    \item cheap-to-train
-    \item scales with the complexity of the data\\ (number of features and observations)
-    \item can handle different types of features\\ (categorical and continuous)
-  \end{itemize}
-\end{itemize}
-
-\pause
-Common choice: Gaussian Processes\\
-Our choice: Random Forests
-
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[c,fragile]{Recap Random Forests}
-
-
-\centering
-\includegraphics[width=0.55\textwidth]{images/random_forest_pic}
-
-\begin{itemize}
-  \item Train:
-  \begin{itemize}
-    \item $n$ decision (or regression) trees (potentially with pruning)
-    \item subsampled training data for each tree (with bootstrapping)
-    \item subsampled feature set for each split
-  \end{itemize}
-  \item Predict
-  \begin{itemize}
-    \item Obtain prediction of each tree
-    \item Aggregate predictions (voting, average, \ldots)
-    \pause
-    \item Uncertainty predictions: average across tree predictions 
-  \end{itemize}
-\end{itemize}
-
-
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[c,fragile]{Advantages and Disadvantages of Random Forests}
-
-
-\begin{columns}
-\column{0.5\textwidth}
-Pros:
-\begin{itemize}
-  \item Cheap to train
-  \item Scales well with \#observations
-  \begin{itemize}
-    \item Worst-case complexity for $T$ tress with $n$ data points of dimensionality $p$: $\mathcal O(T\cdot p \cdot n^2 \log{n})$
-  \end{itemize}
-  \item training can be parallelized
-  \item Can handle continuous and categorical features
-  \begin{itemize}
-    \item most RF implementations can handle only continuous features
-  \end{itemize}
-\end{itemize}
-
-\column{0.5\textwidth}
-Cons:
-\begin{itemize}
-  \item Poor uncertainty estimates
-  \item No extrapolation
-  \begin{itemize}
-    \item last seen value for extrapolation (constant)
-  \end{itemize}
-\end{itemize}
-
-\end{columns}
-
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%----------------------------------------------------------------------
-\begin{frame}[c]{Preprocessing Configuration}
-
-\begin{block}{Convert $\conf$ for ML Model}
-  \begin{itemize}
-    \item continuous and integer parameter can be directly passed
-    \begin{itemize}
-      \item scaled to $[0,1]$
-    \end{itemize}
-    \pause
-    \item categorical parameters should be encoded if necessary
-    \begin{itemize}
-      \item e.$\,$g., random forest can handle categorical parameter natively\\
-      (Not all implementations are able to do it!) 
-      \item use one-hot encoding if necessary:
-      \begin{itemize}
-        \item add new variable for each possible value $v_i$
-        \item set one of these variable to one (depending on the configuration)
-      \end{itemize}
-    \end{itemize}
-    \pause
-    \item ordinal parameters can be converted to integers or also one-hot encoded
-  \end{itemize}
-\end{block}
-
-
-\end{frame}
-%-----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Preprocessing Configuration (cont'd)}
-
-\begin{block}{Conditional Hyperparameters}
-  \begin{itemize}
-    \item Configuration spaces often have a hierarchical structure
-    \item e.$\,$g., hyperparameter A is only active if heuristic H is used
-    \pause
-    \item[$\leadsto$] List of hyperparameter values has missing entries because of inactive hyperparameters
-    \medskip
-    \pause
-    \item Fixes:
-    \begin{itemize}
-    	\item Impute missing data, e.$\,$g., by default setting
-    	\item Mark these inactive hyperparameters and let the model deal with it\\
-    		  e.$\,$g., a random forest could only split on active parameters
-    \end{itemize}
-  \end{itemize}
-\end{block}
-
-\end{frame}
 %-----------------------------------------------------------------------
 {\setbeamertemplate{logo}{}
 \begin{frame}[c,fragile]{Important Design Dimensions in BO}
