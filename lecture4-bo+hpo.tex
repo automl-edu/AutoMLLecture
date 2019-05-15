@@ -50,6 +50,7 @@ After this lecture, you will be able to \ldots
 
 \end{frame}
 %-----------------------------------------------------------------------
+\section{Hyperparameter Optimization and Black-Box Optimization}
 %----------------------------------------------------------------------
 \begin{frame}[c]{How to Optimize Black Box Functions?}
 
@@ -101,7 +102,7 @@ Only interaction: Query of function at $x$ to obtain $f(x)$
 	
 	\vspace*{2.25cm}
 	
-	What could be challenges in hyperparameter optimization?
+	What could be challenges in hyperparameter optimization? [2min]
 	
 	\bigskip
 	
@@ -238,7 +239,7 @@ Cons:
 		\medskip
 		\item model-based approaches
 		\begin{itemize}
-			\item Idea: use an surrogate model to approximate the unknown function to be optimized
+			\item Idea: use an surrogate model to approximate the unknown function to be optimized and do parts of the optimization on these surrogate models
 		\end{itemize}
 	    \item Remark: there are also combinations of these approaches (such as model-based ES)
 	\end{itemize}
@@ -247,6 +248,33 @@ Cons:
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Black-Box Optimization: Remarks}
+
+\begin{itemize}
+	\item Expensive black-box optimization is a quite common problem in many disciplines 
+	(not only limited to HPO)
+	\item Examples include:
+	\begin{itemize}
+		\item General algorithm configuration
+		\item parameter optimization of expensive simulations
+		\item automatic design of experiments (e.g., in material science)
+		\item tuning of robots
+		\item experimental particle physics
+		\item and many more ...
+	\end{itemize}
+	\medskip
+	\pause
+	\item You should consider model-based optimization approaches,\\ such as Bayesian Optimization, if ...
+	\begin{enumerate}
+		\item you can afford only a few function evaluations
+		\item you don't care too much about the overhead induced by the optimization algorithm
+	\end{enumerate}
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+\section{Tree-Parzen Estimator}
+%-----------------------------------------------------------------------
 \begin{frame}[c,fragile]{Tree-Parzen Estimator \litw{Bergstra et al. 2011}}
 
 \begin{itemize}
@@ -254,7 +282,8 @@ Cons:
 	\begin{itemize}
 		\item let's use $y_i = f(\lambda)$ as a short form for $\loss(\algo_\conf, \dataset_{train}, \dataset_{valid})$
 	\end{itemize}
-	\item We could approximate the good region of the configuration space $\pcs$
+	\pause
+	\item We could approximate the good and the bad regions of the configuration space $\pcs$
 \end{itemize}
 
 $$
@@ -344,8 +373,9 @@ Remarks:
 
 \end{frame}
 %-----------------------------------------------------------------------
+\section{Bayesian Optimization}
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Bayesian Optimization \litw{J. Mockus 1977, D .Jones et al. 1998}}
+\begin{frame}[c,fragile]{Bayesian Optimization \litw{Mockus 1977, Jones et al. 1998}}
 
 \begin{columns}
 
@@ -361,7 +391,7 @@ Remarks:
 \column{0.55\textwidth}
 General Approach:
 \begin{enumerate}
-  \item Fit model $p(y | \conf)$ on collected observations $\langle{}\conf, f(\conf)\rangle{}$
+  \item Fit model $p((f()\conf) | \conf)$ on collected observations $\langle{}\conf, f(\conf)\rangle{}$
   \pause
   \item use acquisition function $a$ to trade off exploration and exploitation
   \pause
@@ -452,11 +482,15 @@ Required features
 		\item scales with the complexity of the data\\ (number of features and observations)
 		\item can handle different types of features\\ (categorical and continuous)
 	\end{itemize}
+	\pause
+	\medskip
+	\item Candidates:
+	\begin{itemize}
+		\item Gaussian Processes (quite common)
+		\item Random Forests (our choice)
+		\item Deep Neural Networks (recent trend)
+	\end{itemize}
 \end{itemize}
-
-\pause
-Common choice: Gaussian Processes\\
-Our choice: Random Forests
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -528,13 +562,13 @@ P(f_{t+1} | D_t, \vec{x}_{t+1})  =& \mathcal{N}(\mu_t(\vec{x}_{t+1}),\sigma_t^2(
 	\pause
 	\item Disadvantage: we have to define a good kernel for each application\\ (if we don't optimize small-dimensional, continuous functions) 
 	\begin{itemize}
-		 \item e.g., special kernels for categorical hyperparameters and conditional dependencies
+		 \item e.g., special kernels for categorical hyperparameters and\\ conditional dependencies
 	\end{itemize}
 	\smallskip
 	\pause
-	\item GPs have a cubic scaling with the number of observations (because of inverting the kernel)
+	\item GPs have a cubic scaling with the number of observations\\ (because of inverting the kernel)
 	\begin{itemize}
-		\item to address this issue there are sparse GPs \lit{Snelson and Ghahramani. 2005}
+		\item to address this issue, there are sparse GPs\\ \lit{Snelson and Ghahramani. 2005}
 	\end{itemize}
 \end{itemize}
 
@@ -625,53 +659,69 @@ Cons:
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%----------------------------------------------------------------------
-\begin{frame}[c]{Preprocessing Configuration}
 
-\begin{block}{Convert $\conf$ for ML Model}
-\begin{itemize}
-\item continuous and integer parameter can be directly passed
-\begin{itemize}
-\item scaled to $[0,1]$
-\end{itemize}
-\pause
-\item categorical parameters should be encoded if necessary
-\begin{itemize}
-\item e.$\,$g., random forest can handle categorical parameter natively\\
-(Not all implementations are able to do it!) 
-\item use one-hot encoding if necessary:
-\begin{itemize}
-	\item add new variable for each possible value $v_i$
-	\item set one of these variable to one (depending on the configuration)
-\end{itemize}
-\end{itemize}
-\pause
-\item ordinal parameters can be converted to integers or also one-hot encoded
-\end{itemize}
-\end{block}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c,fragile]{DNGO~\litw{Snoek et al. 2015}}
 
+\begin{itemize}
+	\item Main idea: combine DNN with a Bayesian linear regression
+	\smallskip 
+	\pause
+	\item 1st step: Train a DNN with linear regression as last layer to get an embedding $\phi(x)$
+	\smallskip
+	\pause
+	\item Replace last layer by Bayesian linear regressor
+	\begin{itemize}
+		\item Bayesian linear regression has two hyperparameters $\alpha$, $\beta$ 
+		\item Snoek et al. used slice sampling to integrate these out
+	\end{itemize}
+	\pause
+	\item DNGO scales much better than GPs: 
+\end{itemize}
+
+\centering
+\includegraphics[width=0.5\textwidth]{images/dngo_scaling.png}
+\begin{flushright}
+	source: \lit{Snoek et al. 2015}
+\end{flushright}
 
 \end{frame}
-%-----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Preprocessing Configuration (cont'd)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c,fragile]{DNGO: Meta-Design Decisions~\litw{Snoek et al. 2015}}
 
-\begin{block}{Conditional Hyperparameters}
+\centering
+\includegraphics[width=0.9\textwidth]{images/dngo_activation.png}
+
 \begin{itemize}
-\item Configuration spaces often have a hierarchical structure
-\item e.$\,$g., hyperparameter A is only active if heuristic H is used
-\pause
-\item[$\leadsto$] List of hyperparameter values has missing entries because of inactive hyperparameters
-\medskip
-\pause
-\item Fixes:
+	\item the activation function is quite important to get good uncertainty estimates
+	\item other hyperparameters (such as the architecture of the DNN) are also crucial
+	\begin{itemize}
+		\item Snoek et al. used BO to optimize these hyperparameters (as a meta-meta problem)
+		\item however, the impact of this meta-meta tuning is unknown
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c,fragile]{Further approaches for BO with DNNs}
+
 \begin{itemize}
-\item Impute missing data, e.$\,$g., by default setting
-\item Mark these inactive hyperparameters and let the model deal with it\\
-e.$\,$g., a random forest could only split on active parameters
+	\item \lit{Springenberger et al. 2016} proposed  Bayesian Optimization with Hamiltonian Monte Carlo Artificial Neural
+	Networks (BOHAMIANN) 
+	\begin{itemize}
+		\item uses stochastic gradient	Hamiltonian Monte Carlo (SGHMC) for a truly Bayesian approach 
+	\end{itemize}
+	\medskip
+	\pause
+	\item \lit{Lu et al. 2018} proposed to use structured variationally auto-encoders
+	\begin{enumerate}
+		\item learn an embedding into a small-dimensional latent space
+		\item the latent representation is fed into a GP
+	\end{enumerate}
 \end{itemize}
-\end{itemize}
-\end{block}
 
 \end{frame}
 
@@ -769,13 +819,86 @@ e.$\,$g., a random forest could only split on active parameters
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[c,fragile]{Entropy Search}
+\begin{frame}[c,fragile]{Entropy Search~\litw{Hennig and Schuler 2012}}
 
-TODO
+\begin{itemize}
+	\item Idea: Learn the probability that $x$ is the minimum
+\end{itemize}
+
+$$
+p_{\text{min}}(x) = p[x \in \argmin f(x)]
+$$
+
+\begin{itemize}
+	\item try to minimize the entropy of the estimated $p_\text{min}$ distribution
+	\item Parts of the approach
+	\begin{enumerate}
+		\item Estimate $p(f)$ e.g., using a GP (as before)
+		\item Discretize $p_\text{min}$ to some representer points
+		\item Approximate $p_\text{min}$ by using monte-carle simulations
+		\item The acquisition function basically measures how the entropy of $p_\text{min}$ is reduced if we would a new observations
+		\begin{itemize}
+			\item relates to gaining more information where the optimum is
+		\end{itemize}
+	\end{enumerate}
+	\pause
+	\item Remark: This approach does not necessarily samples at the peak of $p_\text{min}$;\\
+	You have to trust your model to obtain the expected best $x$ 
+\end{itemize}
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Practical Considerations}
+%----------------------------------------------------------------------
+\begin{frame}[c]{Preprocessing Configuration}
 
+\begin{block}{Convert $\conf$ for ML Model}
+\begin{itemize}
+\item continuous and integer parameter can be directly passed
+\begin{itemize}
+\item scaled to $[0,1]$
+\end{itemize}
+\pause
+\item categorical parameters should be encoded if necessary
+\begin{itemize}
+\item e.$\,$g., random forest can handle categorical parameter natively\\
+(Not all implementations are able to do it!) 
+\item use one-hot encoding if necessary:
+\begin{itemize}
+	\item add new variable for each possible value $v_i$
+	\item set one of these variable to one (depending on the configuration)
+\end{itemize}
+\end{itemize}
+\pause
+\item ordinal parameters can be converted to integers or also one-hot encoded
+\end{itemize}
+\end{block}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Preprocessing Configuration (cont'd)}
+
+\begin{block}{Conditional Hyperparameters}
+\begin{itemize}
+\item Configuration spaces often have a hierarchical structure
+\item e.$\,$g., hyperparameter A is only active if heuristic H is used
+\pause
+\item[$\leadsto$] List of hyperparameter values has missing entries because of inactive hyperparameters
+\medskip
+\pause
+\item Fixes:
+\begin{itemize}
+\item Impute missing data, e.$\,$g., by default setting
+\item Mark these inactive hyperparameters and let the model deal with it\\
+e.$\,$g., a random forest could only split on active parameters
+\end{itemize}
+\end{itemize}
+\end{block}
+
+\end{frame}
 %-----------------------------------------------------------------------
 {\setbeamertemplate{logo}{}
 \begin{frame}[c,fragile]{Important Design Dimensions in BO}
@@ -846,12 +969,24 @@ After this lecture, you are able to \ldots
 \begin{itemize}
 	\item explain the \alert{challenges in hyperparameter optimization}
 	\item efficiently optimize black box functions via \alert{Bayesian Optimization}
-	\begin{itemize}
-		\item discuss the advantages of different \alert{surrogate models}
-		\item explain the idea of \alert{acquisition functions} to trade off exploration and exploitation
-	\end{itemize}
-	\item define \alert{configuration spaces}
-	\item understand \alert{grey-boxes} for hyperparameter optimization (HPO)
+	\item discuss the advantages of different \alert{surrogate models}
+	\item explain the idea of \alert{acquisition functions} to trade off exploration and exploitation
+	\item consider important design decsisions for BO
 \end{itemize}
 \end{frame}
 %-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Literature [These are links]}
+
+\begin{itemize}
+	\item \lit{\href{https://www.cs.ox.ac.uk/people/nando.defreitas/publications/BayesOptLoop.pdf}{Shahriari et al. 2017. Taking the Human Out of the Loop:
+			A Review of Bayesian Optimization}}		
+	\item 	
+	
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+
+
