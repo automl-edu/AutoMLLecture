@@ -3,7 +3,7 @@
 \centering
 \huge
 Lecture 4:\\
-Hyperparameter optimization\\
+Hyperparameter Optimization\\
 Bayesian Optimization
 \end{frame}
 %----------------------------------------------------------------------
@@ -11,14 +11,14 @@ Bayesian Optimization
 
 \begin{itemize}
 	\item Introduction
-	\item[$\to$] Background
+	\item Background
 	\begin{itemize}
 		\item Design spaces in ML
-		\item[$\to$] Evaluation and visualization
+		\item Evaluation and visualization
 	\end{itemize}
-	\item Hyperparameter optimization (HPO)
+	\item[$\to$] Hyperparameter optimization (HPO)
 	\begin{itemize}
-		\item Bayesian optimization
+		\item[$\to$] Bayesian optimization
 		\item Other black-box techniques
 		\item Speeding up HPO with multi-fidelity optimization
 	\end{itemize}
@@ -39,12 +39,11 @@ Bayesian Optimization
 After this lecture, you will be able to \ldots
 
 \begin{itemize}
-  \item explain the \alert{challenges in hyperparameter optimization}
-  \item efficiently optimize black box functions via \alert{Bayesian Optimization}
-  \begin{itemize}
-    \item discuss the advantages of different \alert{surrogate models}
-    \item explain the idea of \alert{acquisition functions} to trade off exploration and exploitation
-  \end{itemize}
+	\item explain the \alert{challenges in hyperparameter optimization}
+	\item efficiently optimize black box functions via \alert{Bayesian Optimization}
+	\item discuss the advantages of different \alert{surrogate models}
+	\item explain the idea of \alert{acquisition functions} to trade off exploration and exploitation
+	\item consider important \alert{design decisions} for BO
 \end{itemize}
 
 
@@ -100,7 +99,7 @@ Only interaction: Query of function at $x$ to obtain $f(x)$
 {%
 	\centering
 	
-	\vspace*{2.25cm}
+%	\vspace*{2.25cm}
 	
 	What could be challenges in hyperparameter optimization? [2min]
 	
@@ -108,7 +107,12 @@ Only interaction: Query of function at $x$ to obtain $f(x)$
 	
 	\includegraphics[width=0.2\textwidth]{images/hands.png}
 }%
-\pause
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Challenges in HPO}
+
 \begin{itemize}
   \item function evaluations are very expensive
   \begin{itemize}
@@ -136,6 +140,8 @@ Only interaction: Query of function at $x$ to obtain $f(x)$
     \item Output: loss
     \item Note: no gradient information available
   \end{itemize}
+  \pause
+  \item (We discuss grey-box approaches in later sessions)
 \end{itemize}
 
 \end{frame}
@@ -224,17 +230,17 @@ Cons:
 \begin{frame}[c,fragile]{Optimization for HPO}
 
 \begin{itemize}
-	\item HPO is expensive $\leadsto$ we need also a greedy optimization approach
-	\item basically, all black-box optimization approaches could be used
+	\item HPO is expensive $\leadsto$ we need also a greedy component
+	\item Basically all black-box optimization approaches can be used
 	\begin{itemize}
 		\item Local search
 		\begin{itemize}
-			\item hypothesis: HPO surfaces have many local optima s.t. local search gets easily trapped in local optima
+			\item hypothesis: HPO surfaces have many local optima\\ such that local search gets easily trapped in local optima
 		\end{itemize}
 	 	\medskip
 		\item population-based evolution strategies (more next week)
 		\begin{itemize}
-			\item often needs many function evaluations to perform well
+			\item hypothesis: often needs many function evaluations to perform well
 		\end{itemize}
 		\medskip
 		\item model-based approaches
@@ -295,12 +301,15 @@ $$
 
 where 
 \begin{itemize}
-	\item $y^*$ is an empirical threshold for a well-performing configuration (e.g., a $\gamma$ percentile of all observed $y$ in $D$)
+	\item $y^*$ is an empirical threshold for a well-performing configuration\\ (e.g., a $\gamma$ percentile of all observed $y$ in $D$)
+	\pause
 	\item $l(\conf)$ models the density of the well-performing region based on $D$
 	\begin{itemize}
 		\item Note that we minimize!
 	\end{itemize}
+	\pause
 	\item $g(\conf)$ models the density of the poorly performing region based on $D$
+	\pause
 	\item $g$ and $l$ can be modeled by kernel density estimator (KDE)
 \end{itemize}
 
@@ -365,7 +374,7 @@ Remarks:
 	\end{enumerate}
 	\pause
 	\smallskip
-	\item optimizing $l(\conf)/g(\conf)$ is equivalent to optimizing expected improvement as acquisition function in Bayesian Optimization\\ (more in a second)
+	\item optimizing $l(\conf)/g(\conf)$ is equivalent to optimizing \emph{expected improvement} as acquisition function in Bayesian Optimization\\ (more in a second)
 	\pause
 	\smallskip
 	\item successful tool implementing TPE is HyperOpt
@@ -391,7 +400,7 @@ Remarks:
 \column{0.55\textwidth}
 General Approach:
 \begin{enumerate}
-  \item Fit model $p((f()\conf) | \conf)$ on collected observations $\langle{}\conf, f(\conf)\rangle{}$
+  \item Fit model $p(f(\conf) | \conf)$ on collected observations $\langle{}\conf_t, f(\conf_t)\rangle{}$
   \pause
   \item use acquisition function $a$ to trade off exploration and exploitation
   \pause
@@ -428,7 +437,7 @@ Moving pieces:
 	$\mathcal{D}_0$ $\leftarrow$ initial\_design($\mathcal{X}$); \\
 	\For{n = $1, 2, \ldots m - |D_0|$}{
 		%\While{$B$ not exhausted} {
-		$\surro: \conf \mapsto f(\lambda)$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
+		$\surro: \conf \mapsto y$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
 		select $x_{n}$ by optimizing $x_{n} \in \argmax_{x \in \mathcal{X}} \alpha(x; \mathcal{D}_{n-1}, \surro)$;\\
 		Query $y_{n} := f(x_{n})$;\\
 		Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}$;\\
@@ -487,7 +496,7 @@ Required features
 	\item Candidates:
 	\begin{itemize}
 		\item Gaussian Processes (quite common)
-		\item Random Forests (our choice)
+		\item Random Forests (our default choice)
 		\item Deep Neural Networks (recent trend)
 	\end{itemize}
 \end{itemize}
@@ -499,13 +508,17 @@ Required features
 
 \begin{itemize}
 	\item There can be several explanations (i.e., functions)\\ for a set of observations
+	\pause
 	\item A good model would integrate over all these possible explanations (and weight them by their probability)
+	\pause
 	\item Gaussian Processes (GPs) do exactly that by using a normal distribution assumption at each point.
 \end{itemize}
 
 \begin{block}{Informal Definition}
 A Gaussian process is a collection of random variables, any finite number of which have a joint Gaussian distribution
 \end{block}
+
+\pause
 
 \centering
 \includegraphics[width=0.5\textwidth]{images/bo_pic1.png}
@@ -606,6 +619,39 @@ P(f_{t+1} | D_t, \vec{x}_{t+1})  =& \mathcal{N}(\mu_t(\vec{x}_{t+1}),\sigma_t^2(
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c,fragile]{Random Forest's Hyperparameters}
+
+\begin{columns}
+	\column{0.5\textwidth}
+	
+	\centering
+	w bootstrapping and\\ w/o random splits
+	
+	\includegraphics[width=0.7\textwidth]{images/rf_boot_middle_split.png}
+	
+	
+	w bootstrapping and\\ w/ random splits
+	
+	\includegraphics[width=0.7\textwidth]{images/rf_boot_rand_split.png}
+
+	
+	\column{0.5\textwidth}
+
+	\centering
+	w/o bootstrapping and\\ w/o random splits
+	
+	\includegraphics[width=0.7\textwidth]{images/rf_noboot_middle_split.png}
+	
+	
+	w/o bootstrapping and\\ w/ random splits
+	
+	\includegraphics[width=0.7\textwidth]{images/rf_noboot_rand_split.png}
+	
+\end{columns}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[c,fragile]{Advantages and Disadvantages of Random Forests}
 
 
@@ -630,11 +676,13 @@ Cons:
 \begin{itemize}
 \item Poor uncertainty estimates
 \item No extrapolation
-\begin{itemize}
-	\item last seen value for extrapolation (constant)
-	\item no prior
+	\begin{itemize}
+		\item last seen value for extrapolation (constant)
+		\item no prior
+	\end{itemize}
 \end{itemize}
-\end{itemize}
+
+\includegraphics[width=0.8\textwidth]{images/rf_noboot_rand_split.png}
 
 \end{columns}
 
@@ -697,7 +745,7 @@ Cons:
 	\item the activation function is quite important to get good uncertainty estimates
 	\item other hyperparameters (such as the architecture of the DNN) are also crucial
 	\begin{itemize}
-		\item Snoek et al. used BO to optimize these hyperparameters (as a meta-meta problem)
+		\item Snoek et al. used BO to optimize these hyperparameters\\ (as a meta-meta problem)
 		\item however, the impact of this meta-meta tuning is unknown
 	\end{itemize}
 \end{itemize}
@@ -741,7 +789,7 @@ Cons:
   \pause
   \item Which configuration should we select next? Need to trade off: 
   \begin{itemize}
-    \item \alert{Exploitation}\\(sampling where the predicted mean $\mu(\conf)$ is high)
+    \item \alert{Exploitation}\\(sampling where the predicted mean $\mu(\conf)$ is small)
     \item \alert{Exploration}\\(sampling where we're uncertain about f; i.e., $\sigma(\conf)$ is high)
   \end{itemize}
   \medskip
@@ -834,15 +882,14 @@ $$
 	\item Parts of the approach
 	\begin{enumerate}
 		\item Estimate $p(f)$ e.g., using a GP (as before)
-		\item Discretize $p_\text{min}$ to some representer points
-		\item Approximate $p_\text{min}$ by using monte-carle simulations
-		\item The acquisition function basically measures how the entropy of $p_\text{min}$ is reduced if we would a new observations
+		\item Approximate $p_\text{min}$ by representer points and  monte-carle simulations
+		\item The acquisition function basically measures how the entropy of $p_\text{min}$ is reduced if we would add a new observations
 		\begin{itemize}
 			\item relates to gaining more information where the optimum is
 		\end{itemize}
 	\end{enumerate}
 	\pause
-	\item Remark: This approach does not necessarily samples at the peak of $p_\text{min}$;\\
+	\item[$\leadsto$] This approach does not necessarily samples at the peak of $p_\text{min}$;\\
 	You have to trust your model to obtain the expected best $x$ 
 \end{itemize}
 
@@ -953,7 +1000,7 @@ e.$\,$g., a random forest could only split on active parameters
 			\begin{itemize}
 				\item Alternative to exploration via randomly sampled points
 				\item explore the space before the actual BO takes place
-				\item Pro: will improve the EPM in early iterations
+				\item Pro: will improve the model in early iterations
 				\item Con: will invest a considerable number of function evaluations without taking the already gathered knowledge into account
 			\end{itemize}
 		\end{minipage}
@@ -971,7 +1018,7 @@ After this lecture, you are able to \ldots
 	\item efficiently optimize black box functions via \alert{Bayesian Optimization}
 	\item discuss the advantages of different \alert{surrogate models}
 	\item explain the idea of \alert{acquisition functions} to trade off exploration and exploitation
-	\item consider important design decsisions for BO
+	\item consider important \alert{design decisions} for BO
 \end{itemize}
 \end{frame}
 %-----------------------------------------------------------------------
@@ -980,9 +1027,12 @@ After this lecture, you are able to \ldots
 \begin{frame}[c]{Literature [These are links]}
 
 \begin{itemize}
+	\item \lit{\href{https://link.springer.com/article/10.1023/A:1008306431147}{Jones et al. 1998. Efficient Global Optimization of Expensive Black-Box Functions}}		
+	\item \lit{\href{https://arxiv.org/abs/0912.3995}{Srinivas et al. 2009. Gaussian Process Optimization in the Bandit Setting: No Regret and Experimental Design
+	}}		
+	\item \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011. Sequential Model-Based Optimization for General Algorithm Configuration}}	
 	\item \lit{\href{https://www.cs.ox.ac.uk/people/nando.defreitas/publications/BayesOptLoop.pdf}{Shahriari et al. 2017. Taking the Human Out of the Loop:
 			A Review of Bayesian Optimization}}		
-	\item 	
 	
 \end{itemize}
 
