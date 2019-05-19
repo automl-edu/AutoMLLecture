@@ -101,11 +101,6 @@ def run_bo(acquisition, max_iter, init=25, random=True, acq_add=1, seed=1):
         y.append(f(x_))
     return y
 
-def run_rand(max_iter, seed):
-    rng = np.random.RandomState(seed)
-    x = rng.uniform(-15, 10, max_iter).reshape(-1, 1)
-    return [f([i, ]) for i in x]
-
 def main(num_evals, init_size, repetitions, random, seed):
     # TODO Modify as you want
     for i in range(repetitions):
