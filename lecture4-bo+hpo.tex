@@ -230,7 +230,7 @@ Cons:
 \begin{frame}[c,fragile]{Optimization for HPO}
 
 \begin{itemize}
-	\item HPO is expensive $\leadsto$ we need also a greedy component
+	\item HPO is expensive $\leadsto$ we also need a greedy component
 	\item Basically all black-box optimization approaches can be used
 	\begin{itemize}
 		\item Local search
@@ -247,7 +247,7 @@ Cons:
 		\begin{itemize}
 			\item Idea: use an surrogate model to approximate the unknown function to be optimized and do parts of the optimization on these surrogate models
 		\end{itemize}
-	    \item Remark: there are also combinations of these approaches (such as model-based ES)
+	    \item Remark: there are also combinations of these approaches\\ (such as model-based ES)
 	\end{itemize}
 \end{itemize}
 
@@ -333,7 +333,8 @@ where
 		$l(\conf)$ $\leftarrow$ fit KDE on $D_\text{good}$;\\
 		$g(\conf)$ $\leftarrow$ fit KDE on $D_\text{bad}$;\\
 		\pause
-		select $\conf_{n}$ by optimizing $\conf_{n} \in \argmax_{\conf \in \pcs} l(\conf) / g(\conf)$;\\
+		$\Lambda_\text{cand}$ $\leftarrow$ draw examples according to $\l$;\\
+		select $\conf_{n}$ by optimizing $\conf_{n} \in \argmax_{\conf \in \Lambda_\text{cand}} l(\conf) / g(\conf)$;\\
 		\pause
 		Query $y_{n} := f(\lambda_{n})$;\\
 		Add observation to data $D_{n} := D_{n-1} \cup \{\langle \conf_{n}, y_{n} \rangle \}$;\\
@@ -561,7 +562,7 @@ k(x_i,x_j) = \exp \left(- \frac{1}{2\theta^2} || x_i - x_j ||^2 \right) \nonumbe
 \begin{eqnarray}
 P(f_{t+1} | D_t, \vec{x}_{t+1})  =& \mathcal{N}(\mu_t(\vec{x}_{t+1}),\sigma_t^2(\vec{x}_{t+1})) \text{ where} \nonumber\\ 
 \mu_t(\vec{x}_{t+1})  =& \mathbf{k}^T\mathbf{K}^{-1}f_{1:t} \nonumber \\ 
-\sigma_t^2(\vec{x}_{t+1}) =& k(\vec{x}_{t+1},\vec{x}_{t+1}) \nonumber \mathbf{k}^T\mathbf{K}^-1\mathbf{k}
+\sigma_t^2(\vec{x}_{t+1}) =& k(\vec{x}_{t+1},\vec{x}_{t+1}) \nonumber \mathbf{k}^T\mathbf{K}^{-1}\mathbf{k}
 \end{eqnarray}
 
 \end{frame}
