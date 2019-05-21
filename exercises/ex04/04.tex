@@ -62,7 +62,7 @@
 		\titledquestion{Bayesian Optimization for HPO}[4]
 		We provide you with a rough structure of the BO loop using a Gaussian Process. You will implement the remaining parts to \textbf{minimize} a synthetic 1D function.
 		\begin{parts}
-		\part[1] Implement the acquisition functions \textit{Expected Improvement} and \textit{Upper Confidence Bound} as presented in the lecture (use \texttt{NumPy} and \texttt{SciPy} wherever possible for efficiency). Keep in mind that you will use \texttt{scipy.minimize} to optimize the acquisition function.
+		\part[1] Implement the acquisition functions \textit{Expected Improvement} and \textit{Lower Confidence Bound}\footnote{Similar to \textit{Lower Confidence Bound}, but for minimizing an objective value} as presented in the lecture (use \texttt{NumPy} and \texttt{SciPy} wherever possible for efficiency). Keep in mind that you will use \texttt{scipy.minimize} to optimize the acquisition function.
 		\part[1] Generate plots that demonstrate the functionality of the BO loop and of the implemented acquisition functions, e.g. best-so-far seen function value over time and the acquisition function values at different time steps. Add all plots to a PDF and briefly discuss what you can learn from these plots.
 		\part[1] Implement Grid Search and Random Search.
 		\part[1] Compare your implementations of BO against Random Search and Grid Search for at most 50 function evaluations\footnote{Hint: Your implementations of BO should perform better than Random Search.}
