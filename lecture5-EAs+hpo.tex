@@ -30,6 +30,7 @@ Hyperparameter Optimization using Evolutionary Algorithms
 	\item Project announcement and closing
 \end{itemize}
 
+
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
@@ -49,7 +50,7 @@ Who knows evolutionary algorithms or nature inspired algorithms? If so, name som
 After this lecture, you will be able to \ldots
 
 \begin{itemize}
-	\item explain the foundations of \alert{evolutionary algorithms}
+	\item explain the basics of \alert{evolutionary algorithms}
 	\item discuss the \alert{different types of evolutionary algorithms}
 	\item efficiently tune \alert{HPO using evolutionary algorithms}
 	\item discuss importance of \alert{evolutionary algorithms to solve many optimization problems}
@@ -62,7 +63,9 @@ After this lecture, you will be able to \ldots
 %\begin{frame}[c]{Optimization}
 %\includegraphics[width=1.0\textwidth]{new_images/optimization.png}
 %\end{frame}
+
 %-----------------------------------------------------------------------
+\section{Basics of Evolutionary Algorithms}
 %----------------------------------------------------------------------
 
 \begin{frame}[c]{Nature Inspired Algorithms}
@@ -111,6 +114,7 @@ is a family of algorithms for global optimization inspired from biological evolu
 \includegraphics[width=0.6\textwidth]{new_images/EAs0.jpeg}
 \end{frame}
 %----------------------------------------------------------------------
+\section{How Evolutionary Algorithms Work}
 %----------------------------------------------------------------------
 
 \begin{frame}[c]{How Evolutionary Algorithms Work}
@@ -190,7 +194,7 @@ Each individual is a solution of the problem being solved
 \begin{frame}{How Evolutionary Algorithms Work}
 \begin{center}
 \begin{block}{Maintain Population}
-We will maintain a population of size $NP$
+Maintain a population of size $NP$
 \end{block}
 
 \includegraphics[width=9cm]{new_images/EAs_pop.png} 
@@ -203,7 +207,7 @@ We will maintain a population of size $NP$
 \begin{frame}{How Evolutionary Algorithms Work}
 \begin{center}
 \begin{block}{Maintain Population}
-We will maintain a population of size $NP$ 
+Maintain a population of size $NP$ 
 \begin{itemize}
     \item Initializing $NP$ $D$- dimensional individuals uniformly distributed within the search space 
     \item Different $rand$ values are instantiated for each $i$ and $j$
@@ -268,6 +272,7 @@ Cons:
 \end{block}
 \end{frame}
 %----------------------------------------------------------------------
+\section{Different Types of Evolutionary Algorithms}
 %----------------------------------------------------------------------
 
 \begin{frame}{Different Types of Evolutionary Algorithms}
@@ -295,22 +300,8 @@ The differences include almost all aspect of evolutionary search including:
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-\begin{frame}{Challenges in EAs}
-\begin{itemize}
-    \item Classical EAs are sensitive to control parameter settings
-    \begin{itemize}
-        \item for some EAs, the performance is highly dependent on the settings of mutation rate, crossover rate and population size 
-    \end{itemize}
-    \item Many researchers tackle this problem by developing successful \alert{self-adaptive mechanisms} for control parameter settings 
-    \begin{itemize}
-        \item adapt the settings of mutation and crossover rates using mathematical distributions such as: Cauchy, Normal, ... etc 
-    \end{itemize}
-\end{itemize}
-\begin{center}
-\includegraphics[width=0.38\textwidth]{new_images/EAc.png}
-\end{center}    
-\end{frame}
 %----------------------------------------------------------------------
+%\subsection{Evolution Strategy (ES)}
 %----------------------------------------------------------------------
 
 \begin{frame}{Evolution Strategy (ES) \litw{Beyer and Schwefel. 2002}}
@@ -345,6 +336,7 @@ selection operator is based on fitness rankings, not actual fitness values
 
 \end{frame}
 %----------------------------------------------------------------------
+%\subsection{Genetic Algorithm (GA)}
 %----------------------------------------------------------------------
 
 \begin{frame}{Genetic Algorithm (GA) \litw{Mitchell. 1998}}
@@ -376,6 +368,7 @@ Bit Flip mutation \\
 \end{minipage}
 \end{frame}
 %----------------------------------------------------------------------
+%\subsection{Differential Evolution (DE)}
 %----------------------------------------------------------------------
 
 \begin{frame}{Differential Evolution (DE) \litw{Storn and Price. 1995}}
@@ -474,6 +467,7 @@ The time to execute DE grows linearly with the size of the problem (dimension, $
 
 \end{frame}
 %----------------------------------------------------------------------
+\section{EAs for Hyperparameter Optimization}
 %----------------------------------------------------------------------
 
 \begin{frame}{EAs Applied to HPO}
@@ -672,6 +666,25 @@ Method & Encoding & EAs & Aspects evolved \\
     \item A very useful link about \lit{\href{http://www.evolutionaryrobotics.org/}{ER}}
 \end{itemize}
 \end{frame}
+
+%----------------------------------------------------------------------
+\section{Practical Considerations}
+%----------------------------------------------------------------------
+\begin{frame}{Challenges in EAs}
+\begin{itemize}
+    \item Classical EAs are sensitive to control parameter settings
+    \begin{itemize}
+        \item for some EAs, the performance is highly dependent on the settings of mutation rate, crossover rate and population size 
+    \end{itemize}
+    \item Many researchers tackle this problem by developing successful \alert{self-adaptive mechanisms} for control parameter settings 
+    \begin{itemize}
+        \item adapt the settings of mutation and crossover rates using mathematical distributions such as: Cauchy, Normal, ... etc 
+    \end{itemize}
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.38\textwidth]{new_images/EAc.png}
+\end{center}    
+\end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
@@ -695,7 +708,7 @@ Over a large set of  problems, it is impossible to find a single best algorithm!
 Now, you are able to \ldots
 
 \begin{itemize}
-	\item explain the foundations of \alert{evolutionary algorithms}
+	\item explain the basics of \alert{evolutionary algorithms}
 	\item discuss the \alert{different types of evolutionary algorithms}
 	\item efficiently tune \alert{HPO using evolutionary algorithms}
 	\item discuss importance of \alert{evolutionary algorithms to solve many optimization problems}
