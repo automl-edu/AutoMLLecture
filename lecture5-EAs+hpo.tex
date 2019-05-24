@@ -133,6 +133,8 @@ is a family of algorithms for global optimization inspired from biological evolu
 \includegraphics[width=\textwidth]{new_images/EAs4.png} 
 \end{minipage}
 \end{center}
+
+\tiny{\lit{\href{https://www.brutalhack.com/blog/our-experiment-design/}{source}}}
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
@@ -156,7 +158,7 @@ is a family of algorithms for global optimization inspired from biological evolu
 	\While{($FE$ $<$ $FE_{max}$)}{
 		mutate($pop_g$);\\
 		$offspring_g$ $\leftarrow$ crossover($pop_g$);\\
-		$fitness-offspring_g$ $\leftarrow$ evaluate\_population($offspring_g$); \\
+		$fitness_g$ $\leftarrow$ evaluate\_population($offspring_g$); \\
 		\pause
 		$pop_{g+1}$,$fitness_{g+1}$ $\leftarrow$ select($pop_g$,$offspring_g$); \\
 	    $g$ = $g$+1;\\
@@ -249,32 +251,67 @@ Generate a new child (offspring) through mutation and crossover operations
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
+\begin{frame}{EAs Applied to HPO}
+Task: \hands [2min] \linebreak
+Why might EAs be an interesting approach for HPO and many other real-life applications?
+\pause
+\begin{itemize}
+    \item very intuitive to use EAs for hyper-parameter tuning/optimization  
+    \item can handle different data types
+    %\item EAs has proven a powerful mechanism in improving life-forms and forming ever more complex species
+    \item driven by surprisingly simple operations, nevertheless produced astonishing results
+    \item time complexity is low compared to other model-based methods
+    \begin{itemize}
+        \item no need to fit a model and evaluate it performance on validation data, hence the process is not expensive like in BO
+        \item parallelizable as a population of $N$ individuals can be evaluated in parallel on $N$ machines  
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
+\begin{frame}{EAs Applied to HPO}
+\begin{block}{General Concept}
+We will generally define HPO problem as we wish to find the best combination of parameters that maximizes/minimizes some objective function (or fitness) by
+\begin{itemize}
+    \item define a population of $NP$ random individuals (or solutions) $\rightarrow$ $pop_{g0}$
+    \item start the evolutionary search by evolving $pop_g$ using mutation (and/or) crossover $\rightarrow$ $popnew_g$
+    \item survival of the fittest $\rightarrow$ best individuals is now $pop_{g+1}$  
+    \item we will accept a final solution once we have either ran the algorithm for some maximum number of iterations, or we have reached some fitness threshold
+\end{itemize}
+\end{block}
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
 
 \begin{frame}{Evolutionary Algorithms}
-
-\begin{block}{Pros and Cons}
+\begin{block}{Pros and Cons of classical EAs}
 Pros:
 \begin{itemize}
     \item derivative-free methods
     \item can solve variety of optimization problems and real-world applications
+    \pause
     \item highly parallelizable
     \item conceptually simple, yet powerful enough to solve complex problems
     \item time complexity is low compared to other algorithms
+    \pause
 \end{itemize}
 
 Cons:
 \begin{itemize}
     \item stagnation: optimization process does not progress anymore
     \item premature convergence: algorithm converges to a single solution, but that solution is not as high quality as expected
+    \pause
     \item loss of population diversity for solving complex optimization problems
     \item lacks a good balance between exploration and exploitation 
 \end{itemize}
 \end{block}
 \end{frame}
+
 %----------------------------------------------------------------------
 \section{Different Types of Evolutionary Algorithms}
 %----------------------------------------------------------------------
-
 \begin{frame}{Different Types of Evolutionary Algorithms}
 Task: \hands [2min] \linebreak \linebreak
 Although different EAs are similar at highest level, each of these varieties implements an EA in a different manner. What are the possible differences? 
@@ -309,10 +346,17 @@ An optimization technique based on ideas of evolution.
 \begin{itemize}
     \item introduced in the early 1960s and then it developed further
     \item search operators are mutation and selection 
+    \pause
     \item mutation operator adds a random number to each vector component, where the mutation rate or individual step size is usually governed by 
     \begin{itemize}
-        \item self-adaptation mechanism 
+        \item self-adaptation mechanism uses multivariate normal distribution 
         \item covariance matrix adaptation (CMA-ES) 
+        \pause
+        \begin{itemize}
+            \item represents the pairwise dependencies between the variables
+            \item learns a second order model of the objective function using the ranking of candidate solutions (NOT the derivative nor function values are required)   
+            
+        \end{itemize}
     \end{itemize}
 \end{itemize}
 \begin{center}
@@ -324,7 +368,7 @@ An optimization technique based on ideas of evolution.
 %----------------------------------------------------------------------
 
 \begin{frame}{Evolution Strategy (ES)}
-selection operator is based on fitness rankings, not actual fitness values  
+Selection operator is based on fitness rankings, not actual fitness values  
 \begin{itemize}
     \item $(1+\lambda)-$ES $ \rightarrow$ general ES rule in which $\lambda$ mutant vectors are generated and compete with the parent, and the best mutant becomes the parent for next generation
     \item $(1+1)-$ES $\rightarrow$ simplest ES
@@ -365,6 +409,7 @@ Single-point crossover \\
 Bit Flip mutation \\
 \includegraphics[width=4cm,height=0.6cm]{new_images/GA_mut1.png}\\
 \includegraphics[width=4cm,height=0.6cm]{new_images/GA_mut2.png} \vspace{2.5cm}\\
+\tiny{\lit{\href{https://www.kip.uni-heidelberg.de/vision/previous-projects/evolvable-hardware/evolutionary-algorithms/}{source}}}
 \end{minipage}
 \end{frame}
 %----------------------------------------------------------------------
@@ -415,7 +460,7 @@ One of the simplest, yet effective, stochastic direct search EA
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-\begin{frame}{Differential Evolution (DE)}
+\begin{frame}{Differential Evolution (DE) \litw{Das and Suganthan. 2011}}
 \centering
 \includegraphics[width=1.0\textwidth]{new_images/DE4.png}\\
 \begin{minipage}{0.43\textwidth}
@@ -434,7 +479,7 @@ One of the simplest, yet effective, stochastic direct search EA
 \begin{itemize}
     \item Binomial (Uniform) Crossover:
     \item Components of the donor vector enter into the trial offspring vector in the following way\\
-    Let $j_{rand}$ be a randomly chosen integer between 1,...,$D$
+    Let $j_{rand}$ be a randomly chosen integer between 1,...,$D$, and $CR$ is the crossover rate
 \end{itemize}
 \includegraphics[width=0.7\textwidth]{new_images/DE9.png}\\
 \end{frame}
@@ -455,42 +500,6 @@ One of the simplest, yet effective, stochastic direct search EA
 %----------------------------------------------------------------------
 \section{EAs for Hyperparameter Optimization}
 %----------------------------------------------------------------------
-
-\begin{frame}{EAs Applied to HPO}
-Task: \hands [2min] \linebreak
-Why might EAs be an interesting approach for HPO and many other real-life applications?
-
-\pause
-\begin{itemize}
-    \item very intuitive to use EAs for hyper-parameter tuning/optimization  
-    \item can handle different data types
-    %\item EAs has proven a powerful mechanism in improving life-forms and forming ever more complex species
-    \item driven by surprisingly simple operations, nevertheless produced astonishing results
-    \item time complexity is low compared to other model-based methods
-    \begin{itemize}
-        \item no need to fit a model and evaluate it performance on validation data, hence the process is not expensive like in BO
-        \item parallelizable as a population of $N$ individuals can be evaluated in parallel on $N$ machines  
-    \end{itemize}
-\end{itemize}
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-
-\begin{frame}{EAs Applied to HPO}
-\begin{block}{General Concept}
-We will generally define HPO problem as we wish to find the best combination of parameters that maximizes/minimizes some objective function (or fitness) by
-\begin{itemize}
-    \item define a population of $NP$ random individuals (or solutions) $\rightarrow$ $pop_{g0}$
-    \item start the evolutionary search by evolving $pop_g$ using mutation (and/or) crossover $\rightarrow$ $popnew_g$
-    \item survival of the fittest $\rightarrow$ best individuals is now $pop_{g+1}$  
-    \item we will accept a final solution once we have either ran the algorithm for some maximum number of iterations, or we have reached some fitness threshold
-\end{itemize}
-\end{block}
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-
 \begin{frame}{Tree-based Pipeline Optimization tool \litw{Olson et al. 2016}
 \includegraphics[width=0.1\textwidth]{new_images/TPOT.png}}
 \begin{itemize}
@@ -595,11 +604,11 @@ Method & Encoding & EAs & Aspects evolved \\
 \begin{itemize}
     \item ES to Play Atari Games/MuJoCo
     \begin{itemize}
-        \item a simple algorithm, natural ES (NES) is introduced in 2017 as a scalable alternative to RL
+        \item a simple algorithm, natural ES (NES) is introduced in 2017 as a scalable alternative to RL \lit{Salimans et al. 2017}
         \begin{itemize}
             \item performs competitively with the best deep reinforcement learning algorithms, including deep Q-networks (DQN) and policy gradient methods (A3C)
         \end{itemize}
-        \item canonical ES, introduced in 2018, outperformed NES to play Atari games
+        \item canonical ES, introduced in 2018, outperformed NES to play Atari games \lit{Chrabaszcz et al. 2018}
         \item evolves networks with 1.7 million parameters
     \end{itemize}
 \end{itemize}
@@ -612,15 +621,15 @@ Method & Encoding & EAs & Aspects evolved \\
 
 \begin{frame}{What's More?}
 \begin{itemize}
-    \item Large-scale evolution of image classifiers \litw{Real et al. 2017}
+    \item Large-scale evolution of image classifiers \lit{Real et al. 2017}
     \begin{itemize}
         \item the use of a simple EA to discover good models for CIFAR-10 and CIFAR-100 datasets, and reach high accuracies of around 95.6$\%$ and 77.0$\%$ respectively. 
     \end{itemize}
-    \item HPO of DNNs using CMA-ES \litw{Loshchilov and Hutter 2016}
+    \item HPO of DNNs using CMA-ES \lit{Loshchilov and Hutter 2016}
     \begin{itemize}
         \item tuned the hyperparameters of a convolutional neural network for the MNIST dataset of 19 hyperparameters, and outperformed state-of-the-art BO methods
     \end{itemize}
-    \item Deep Neuroevolution \litw{Such et al. 2018}
+    \item Deep Neuroevolution \lit{Such et al. 2018}
     \begin{itemize}
         \item GAs are competitive alternative for training DNNs for RL
         \item evolves DNNs with a simple GA that performs well on hard deep RL problems (Atari game)
@@ -658,7 +667,7 @@ Method & Encoding & EAs & Aspects evolved \\
 %----------------------------------------------------------------------
 \begin{frame}{Challenges in EAs}
 \begin{itemize}
-    \item Classical EAs are sensitive to control parameter settings
+    \item Classical EAs are sensitive to control hyperparameters setting
     \begin{itemize}
         \item for some EAs, the performance is highly dependent on the settings of mutation rate, crossover rate and population size 
     \end{itemize}
@@ -675,17 +684,26 @@ Method & Encoding & EAs & Aspects evolved \\
 %----------------------------------------------------------------------
 
 \begin{frame}{General Remark}
-Do you like evolutionary algorithms as much as I do? \hands \\~\\
-\begin{minipage}[c]{0.49\textwidth}
-\includegraphics[width=\textwidth]{new_images/end2.jpg}
-\end{minipage}
-\begin{minipage}[c]{0.49\textwidth}
-\includegraphics[width=\textwidth]{new_images/end1.jpg} 
-\end{minipage}
-
 \begin{block}{No Free Lunch Theorem- NFL}
 Over a large set of  problems, it is impossible to find a single best algorithm!
-\end{block}
+\end{block} \\~\\
+\begin{minipage}[c]{0.49\textwidth}
+\begin{itemize}
+    \item for each specific problem there are suitable candidate algorithms
+    \item you have to study and test them to know which one is the best fit for your problem
+    \item you have to fine tune the algorithm's hyperparameters before you judge which one is the best
+\end{itemize}
+\end{minipage}
+\begin{minipage}[c]{0.49\textwidth}
+\includegraphics[width=\textwidth]{new_images/end1.jpg}
+\end{minipage}
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
+\begin{frame}{General Remark}
+Do you like evolutionary algorithms as much as I do? \hands \\~\\
+\includegraphics[width=\textwidth]{new_images/end2.jpg}
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
@@ -704,7 +722,6 @@ Now, you are able to \ldots
 %----------------------------------------------------------------------
 
 \begin{frame}[c]{Literature [These are links]}
-
 \begin{itemize}
 	\item \lit{\href{https://www.researchgate.net/publication/249645112_A_Brief_Review_of_Nature-Inspired_Algorithms_for_Optimization}{A Brief Review of Nature-Inspired Algorithms for Optimization. Fister et al. 2013}}
 	
@@ -716,11 +733,28 @@ Now, you are able to \ldots
 	
 	\item \lit{\href{http://www1.icsi.berkeley.edu/~storn/code.html}{Storn and Price. 1995. Differential Evolution}}
 	
+	\item \lit{\href{https://ieeexplore.ieee.org/document/5601760}{Das and Suganthan. 2011. Differential Evolution}}
+	
+	\item \lit{\href{http://www1.icsi.berkeley.edu/~storn/code.html}{Storn and Price. 1995. Differential Evolution}}
+	
 	\item \lit{\href{https://link.springer.com/chapter/10.1007/978-3-319-31204-0_9}{Olson et al. 2016. TPOT}}
+	
 	\item \lit{\href{https://github.com/EpistasisLab/tpot}{GitHubTPOT}}
 	
-	% Add neuroevolution
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
+\begin{frame}[c]{Literature [These are links]}
+\begin{itemize}
+	
 	\item \lit{\href{https://www.oreilly.com/ideas/neuroevolution-a-different-kind-of-deep-learning}{Stanley 2017. Neuroevolution: A different kind of deep learning}}
+	
+	\item \lit{\href{https://arxiv.org/abs/1703.03864}{Salimans et al. 2017. Evolution Strategies as a Scalable Alternative to Reinforcement Learning}}
+	
+	\item \lit{\href{https://www.ijcai.org/proceedings/2018/0197.pdf}{Chrabaszcz et al. 2018. Back to Basics: Benchmarking Canonical Evolution Strategies for Playing Atari}}
 	
 	\item \lit{\href{https://arxiv.org/abs/1703.01041}{Real et al. 2017. Large-Scale Evolution of Image Classifiers}}
 	
@@ -733,4 +767,3 @@ Now, you are able to \ldots
 \end{itemize}
 
 \end{frame}
-%----------------------------------------------------------------------
