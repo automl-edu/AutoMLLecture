@@ -72,7 +72,7 @@ After this lecture, you will be able to \ldots
 \begin{itemize}
 	\item Nowadays, most new algorithms are nature-inspired, because they have been developed by drawing inspiration from nature
 	\begin{itemize}
-	    \item Majority are based on some successful characteristics of biological system
+	    \item majority are based on some successful characteristics of biological system
 	\end{itemize}
 \end{itemize}
 \centering
@@ -179,8 +179,8 @@ is a family of algorithms for global optimization inspired from biological evolu
 \begin{block}{Representation}
 Each individual is a solution of the problem being solved 
 \begin{itemize}
-    \item Solutions are represented as vectors of size $D$ with each value taken from some domain
-    \item May wish to constrain the values taken in each domain above and below
+    \item solutions are represented as vectors of size $D$ with each value taken from some domain
+    \item each parameter $x_i$ in $X$ should be within the search range of the problem being solved [$Min$,$Max$]
 \end{itemize}
 \end{block}
 
@@ -209,8 +209,8 @@ Maintain a population of size $NP$
 \begin{block}{Maintain Population}
 Maintain a population of size $NP$ 
 \begin{itemize}
-    \item Initializing $NP$ $D$- dimensional individuals uniformly distributed within the search space 
-    \item Different $rand$ values are instantiated for each $i$ and $j$
+    \item initialize $NP$ $D$- dimensional individuals uniformly distributed within the search space 
+    \item different $rand$ values are instantiated for each $i$ and $j$
 \end{itemize}
 \end{block}
 
@@ -238,7 +238,7 @@ Generate a new child (offspring) through mutation and crossover operations
 \begin{frame}{How Evolutionary Algorithms Work}
 \begin{block}{Parent Selection Mechanism}
 
-"Survival of the fitter principle": the offspring is compared with the parent and the one with a better fitness is forwarded to the next generation population
+"Survival of the fitter principle": each offspring is compared with its parent(s) and the one with a better fitness is forwarded to the next generation population
 \begin{itemize}
     \item high quality solutions more likely to become parents than low quality
 \end{itemize}
@@ -452,20 +452,6 @@ One of the simplest, yet effective, stochastic direct search EA
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-
-\begin{frame}{General Remark}
-Task: \hands [2min] \linebreak
-What is the time complexity of DE?\\~\\
-\pause
-
-The time to execute DE grows linearly with the size of the problem (dimension, $D$)\\
-\begin{itemize}
-    \item Note: DE operation itself NOT evaluating function values which depends on complexity of function being solved\\     
-    \item all the internal operations are linear in time: vector selection, trial vector creation and survivor selection
-    \item there is no sorting in the classic DE algorithm, but of course there are many variants that do implement sorting based on function value prior to selection
-\end{itemize}
-
-\end{frame}
 %----------------------------------------------------------------------
 \section{EAs for Hyperparameter Optimization}
 %----------------------------------------------------------------------
