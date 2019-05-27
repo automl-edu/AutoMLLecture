@@ -19,7 +19,7 @@ Hyperparameter Optimization using Evolutionary Algorithms
 	\item [$\to$] Hyperparameter optimization (HPO)
 	\begin{itemize}
 	  \item Bayesian optimization
-	  \item [$\to$] Nature inspired algorithms/Evolutionary Algorithms (EAs) 
+	  \item [$\to$] Evolutionary Algorithms (EAs) 
 	  \item Speeding up HPO with multi-fidelity optimization
 	\end{itemize}
 	\item Pentecost (Holiday) -- no lecture
@@ -36,7 +36,7 @@ Hyperparameter Optimization using Evolutionary Algorithms
 %----------------------------------------------------------------------
 
 \begin{frame}{Evolutionary Algorithms}
-Task: \hands [2min] \linebreak
+Task: \hands [1min] \linebreak
 
 Who knows evolutionary algorithms or nature inspired algorithms? If so, name some examples? 
 \begin{center}
@@ -53,7 +53,7 @@ After this lecture, you will be able to \ldots
 	\item explain the basics of \alert{evolutionary algorithms}
 	\item discuss the \alert{different types of evolutionary algorithms}
 	\item efficiently tune \alert{HPO using evolutionary algorithms}
-	\item discuss importance of \alert{evolutionary algorithms to solve many optimization problems}
+	\item discuss importance of \alert{evolutionary algorithms to solve many} optimization problems
 \end{itemize}
 
 \end{frame}
@@ -72,7 +72,7 @@ After this lecture, you will be able to \ldots
 \begin{itemize}
 	\item Nowadays, most new algorithms are nature-inspired, because they have been developed by drawing inspiration from nature
 	\begin{itemize}
-	    \item majority are based on some successful characteristics of biological system
+	    \item majority of these algorithms are based on some successful characteristics of biological system
 	\end{itemize}
 \end{itemize}
 \centering
@@ -101,7 +101,7 @@ After this lecture, you will be able to \ldots
 
 \begin{frame}[c]{Nature Inspired Algorithms for Optimization}
 \begin{block}{Evolutionary Computation (EC)}
-is a family of algorithms for global optimization inspired from biological evolution.
+is a family of algorithms for global optimization which are inspired by biological evolution
 \begin{itemize}
     \item Evolutionary Algorithms (EAs) are subset of EC, and generic population-based optimization algorithms.
 \end{itemize}
@@ -117,71 +117,15 @@ is a family of algorithms for global optimization inspired from biological evolu
 \section{How Evolutionary Algorithms Work}
 %----------------------------------------------------------------------
 
-\begin{frame}[c]{How Evolutionary Algorithms Work}
-\begin{itemize}
-    \item Basic steps of an evolutionary algorithms are: 
-    \begin{itemize}
-        \item Initialization, Mutation, Recombination (Crossover), Selection
-    \end{itemize}
-\end{itemize}
-\pause
-\begin{center}
-\begin{minipage}[c]{0.49\textwidth}
-\includegraphics[width=\textwidth]{new_images/EAs1.png}
-\end{minipage}
-\begin{minipage}[c]{0.49\textwidth}
-\includegraphics[width=\textwidth]{new_images/EAs4.png} 
-\end{minipage}
-\end{center}
-
-\tiny{\lit{\href{https://www.brutalhack.com/blog/our-experiment-design/}{source}}}
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-
-\begin{frame}[c,fragile]{How Evolutionary Algorithms Work}
-\begin{algorithm}[H]
-	\Input{black-box function $f$,
-	    dimension $D$,
-		maximal number of function evaluations $FE_{max}$,
-		population size $NP$,
-		mutation rate,
-		crossover rate
-	}
-	\BlankLine
-	$g$ = 0, $FE$ = 0;\\
-	\pause
-	$pop_g$ $\leftarrow$ initial\_population($NP$,$D$); \\
-	$fitness_g$ $\leftarrow$ evaluate\_population($pop_g$); \\
-	$FE$ = $NP$; \\
-	\pause
-	\While{($FE$ $<$ $FE_{max}$)}{
-		mutate($pop_g$);\\
-		$offspring_g$ $\leftarrow$ crossover($pop_g$);\\
-		$fitness_g$ $\leftarrow$ evaluate\_population($offspring_g$); \\
-		\pause
-		$pop_{g+1}$,$fitness_{g+1}$ $\leftarrow$ select($pop_g$,$offspring_g$); \\
-	    $g$ = $g$+1;\\
-	}
-	\Return{Best individual $X$ in $pop$ according to $fitness$}
-	\caption{Optimization with EA}
-\end{algorithm}
-
-
-%\includegraphics[width=6cm]{new_images/EAs1.png}
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-
 \begin{frame}{How Evolutionary Algorithms Work}
 \begin{center}
 %\includegraphics[width=6.9cm]{new_images/EAs55.png} 
 
 \begin{block}{Representation}
-Each individual is a solution of the problem being solved 
+Each solution of the problem being solved is namely an individual 
 \begin{itemize}
     \item solutions are represented as vectors of size $D$ with each value taken from some domain
+    \item solutions can also be matrices, network or probably any data structure
     \item each parameter $x_i$ in $X$ should be within the search range of the problem being solved [$Min$,$Max$]
 \end{itemize}
 \end{block}
@@ -251,6 +195,66 @@ Generate a new child (offspring) through mutation and crossover operations
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
+
+\begin{frame}[c]{How Evolutionary Algorithms Work}
+\begin{itemize}
+    \item The basic steps of an evolutionary algorithm are: 
+    \begin{itemize}
+        \item Initialization, Mutation, Recombination, Selection
+    \end{itemize}
+\end{itemize}
+\pause
+\begin{center}
+\begin{minipage}[c]{0.49\textwidth}
+\includegraphics[width=\textwidth]{new_images/EAs1.png}
+\end{minipage}
+\begin{minipage}[c]{0.49\textwidth}
+\includegraphics[width=\textwidth]{new_images/EAs4.png} 
+\end{minipage}
+\end{center}
+\begin{itemize}
+    \item Mutation and recombination can be performed in any order
+\end{itemize}
+\tiny{\lit{\href{https://www.brutalhack.com/blog/our-experiment-design/}{source}}}
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
+\begin{frame}[c,fragile]{How Evolutionary Algorithms Work}
+\begin{algorithm}[H]
+	\Input{black-box function $f$,
+	    dimension $D$,
+		maximal number of function evaluations $FE_{max}$,
+		population size $NP$,
+		mutation rate and
+		crossover rate
+	}
+	\BlankLine
+	$g$ = 0, $FE$ = 0;\\
+	\pause
+	$pop_g$ $\leftarrow$ initial\_population($NP$, $D$); \\
+	$fitness_g$ $\leftarrow$ evaluate\_population($pop_g$); \\
+	$FE$ = $NP$; \\
+	\pause
+	\While{($FE$ $<$ $FE_{max}$)}{
+		mutate($pop_g$);\\
+		$offspring_g$ $\leftarrow$ crossover($pop_g$);\\
+		$fitness_g$ $\leftarrow$ evaluate\_population($offspring_g$); \\
+		\pause
+		$pop_{g+1}$,$fitness_{g+1}$ $\leftarrow$ select($pop_g$,$offspring_g$); \\
+	    $g$ = $g$+1;\\
+	}
+	\Return{best individual $X$ in $pop$ according to $fitness$}
+	\caption{Optimization with EA}
+\end{algorithm}
+
+
+%\includegraphics[width=6cm]{new_images/EAs1.png}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
 \begin{frame}{EAs Applied to HPO}
 Task: \hands [2min] \linebreak
 Why might EAs be an interesting approach for HPO and many other real-life applications?
@@ -262,7 +266,7 @@ Why might EAs be an interesting approach for HPO and many other real-life applic
     \item driven by surprisingly simple operations, nevertheless produced astonishing results
     \item time complexity is low compared to other model-based methods
     \begin{itemize}
-        \item no need to fit a model and evaluate it performance on validation data, hence the process is not expensive like in BO
+        \item no need to fit a model and evaluate it on validation data, hence the process is not expensive like in BO
         \item parallelizable as a population of $N$ individuals can be evaluated in parallel on $N$ machines  
     \end{itemize}
 \end{itemize}
@@ -277,8 +281,8 @@ We will generally define HPO problem as we wish to find the best combination of 
 \begin{itemize}
     \item define a population of $NP$ random individuals (or solutions) $\rightarrow$ $pop_{g0}$
     \item start the evolutionary search by evolving $pop_g$ using mutation (and/or) crossover $\rightarrow$ $popnew_g$
-    \item survival of the fittest $\rightarrow$ best individuals is now $pop_{g+1}$  
-    \item we will accept a final solution once we have either ran the algorithm for some maximum number of iterations, or we have reached some fitness threshold
+    \item survival of the fittest $\rightarrow$ best individuals are now $pop_{g+1}$  
+    \item we will accept a final solution once we have either run the algorithm for some maximum number of iterations, or we have reached some fitness threshold
 \end{itemize}
 \end{block}
 \end{frame}
@@ -303,7 +307,7 @@ Cons:
     \item stagnation: optimization process does not progress anymore
     \item premature convergence: algorithm converges to a single solution, but that solution is not as high quality as expected
     \pause
-    \item loss of population diversity for solving complex optimization problems
+    \item diversity of population structures: loss of population diversity for solving complex optimization problems
     \item lacks a good balance between exploration and exploitation 
 \end{itemize}
 \end{block}
@@ -328,10 +332,13 @@ Task: \hands [2min] \linebreak \linebreak
 Although different EAs are similar at highest level, each of these varieties implements an EA in a different manner. What are the possible differences? \linebreak
 The differences include almost all aspect of evolutionary search including:
 \begin{itemize}
-    \item Choices of representation for individual structures
-    \item \textbf{Forms of mutation and crossover operations}
-    \item Types of selection mechanism used
-    \item Measures of performance
+    \item choices of representation for individual structures
+    \item \textbf{forms of mutation and crossover operations}
+    \item types of selection mechanism used
+    \begin{itemize}
+        \item there is more than one kind of selection, e.g.\ best of offspring, or best of offspring and parents, i.e.\ selection can be more complex than comparing an offspring to a parent
+    \end{itemize}
+    \item measures of performance
 \end{itemize}
 \end{frame}
 %----------------------------------------------------------------------
@@ -347,7 +354,7 @@ An optimization technique based on ideas of evolution.
     \item introduced in the early 1960s and then it developed further
     \item search operators are mutation and selection 
     \pause
-    \item mutation operator adds a random number to each vector component, where the mutation rate or individual step size is usually governed by 
+    \item mutation operator adds a random number to each vector component, where the magnitude of the added random number is called step-size, and usually governed by 
     \begin{itemize}
         \item self-adaptation mechanism uses multivariate normal distribution 
         \item covariance matrix adaptation (CMA-ES) 
@@ -388,7 +395,7 @@ The most popular type of EA which is inspired from the process of natural select
 \begin{itemize}
     \item introduced by Holland in 1960 based on the concept of Darwin's theory of evolution
     \item requires a genetic representation of the solution domain and a fitness function to evaluate the solution domain $\rightarrow$ encoding 
-    \item applies genetic operators which are crossover and mutation (sometimes both, sometimes one)
+    \item applies search operators which are crossover and mutation (sometimes both, sometimes one)
 \end{itemize}
 \begin{center}
 \includegraphics[width=0.5\textwidth]{new_images/GA_0.png}    
@@ -422,7 +429,7 @@ One of the simplest, yet effective, stochastic direct search EA
     \item introduced by Storn and Price in 1995
     \item outperformed several variants of GA and other EAs over a wide variety of optimization problems
     \item very easy to implement in any standard programming language
-    \item very few control parameters (typically three for a standard DE) and their effects on the performance have been well studied
+    \item very few control parameters (typically three for a standard DE) and their effects on performance have been well studied
     \item complexity is very low as  compared to some of the most competitive continuous optimizers like CMA-ES
 \end{itemize}
 \end{frame}
@@ -448,7 +455,8 @@ One of the simplest, yet effective, stochastic direct search EA
 \centering
 \includegraphics[width=1.0\textwidth]{new_images/DE4.png}\\
 \begin{itemize}
-    \item For each vector select three other parameter vectors randomly
+    \item There are many mutation strategies, classical one is DE\textbackslash rand\textbackslash1
+    \item For each individual, randomly select three different individuals
     \item Add the weighted difference of two of the parameter vectors to the third to form a donor vector\\
     \begin{center}
         \includegraphics[width=0.5\textwidth]{new_images/DE5.png}
@@ -489,7 +497,7 @@ One of the simplest, yet effective, stochastic direct search EA
 \begin{frame}{Differential Evolution (DE)}
 \includegraphics[width=1.0\textwidth]{new_images/DE10.png}\\~\\
 \begin{itemize}
-    \item "Survival of the fitter" principle \\
+    \item "Survival of the fitter" principle (minimization problem) \\
 \end{itemize}
 \centering
 \includegraphics[width=0.5\textwidth]{new_images/EAs_selec.png}
@@ -526,7 +534,7 @@ One of the simplest, yet effective, stochastic direct search EA
 
 \begin{frame}{Neuroevolution \litw{Stanley 2017}}
 \begin{itemize}
-    \item is a ML technique that applies EAs to construct artificial neural networks (ANN), topology and rules. i.e.\ tuning NNs using EAs
+    \item is a ML technique that applies EAs to construct artificial neural networks (ANN), typologies and rules. i.e.\ tuning NNs using EAs
     \item is highly general; it allows learning without explicit targets, with only sparse feedback, and with arbitrary neural models and network structures
     \item is an effective approach to solve reinforcement learning problems, and applied in evolutionary robotics and artificial life
 \end{itemize}
@@ -539,9 +547,9 @@ One of the simplest, yet effective, stochastic direct search EA
 \begin{frame}{Neuroevolution}
 Different features for neuroevolution algorithms:
 \begin{itemize}
-    \item Conventional neuroevolution: evolve the weights for a fixed network topology 
-    \item Topology and Weight Evolving Artificial Neural Network algorithms (TWEANNs): evolve both the topology of the network and its weights
-    \item Evolve the structure of ANNs in parallel to its parameters or separately
+    \item conventional neuroevolution: evolve the weights for a fixed network topology 
+    \item topology and Weight Evolving Artificial Neural Network algorithms (TWEANNs): evolve both the topology of the network and its weights
+    \item evolve the structure of ANNs in parallel to its parameters or separately
 \end{itemize}
 \centering
 \includegraphics[width=0.7\textwidth]{new_images/NE1.png}
@@ -552,8 +560,9 @@ Different features for neuroevolution algorithms:
 \begin{frame}{Neuroevolution}
 \begin{block}{Neuroevolution vs. Gradient descent}
 Despite the fact that most NNs use gradient descent, neuroevolution are competitive with sophisticated modern gradient descent DL algorithms. Why?
+\pause
 \begin{itemize}
-    \item because neuroevolution was found to be less likely to get stuck in local minimal. Many researchers at OpenAI and Uber proved that a simple neuroevolution algorithm is superior method  
+    \item because neuroevolution was found to be less likely to get stuck in local minimal. Many researchers at OpenAI and Uber proved that a simple neuroevolution algorithm is comparable/better than other methods  
     \item neuroevolution is succeeding where it had failed before due to the increased computational power available in the 2010s
     \item neuroevolution methods are powerful especially in continuous domains compared to reinforcement learning
 \end{itemize}
@@ -600,7 +609,7 @@ Method & Encoding & EAs & Aspects evolved \\
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-\begin{frame}{What's More?}
+\begin{frame}{What's Else using EAs?}
 \begin{itemize}
     \item ES to Play Atari Games/MuJoCo
     \begin{itemize}
@@ -619,7 +628,7 @@ Method & Encoding & EAs & Aspects evolved \\
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-\begin{frame}{What's More?}
+\begin{frame}{What's Else using EAs?}
 \begin{itemize}
     \item Large-scale evolution of image classifiers \lit{Real et al. 2017}
     \begin{itemize}
@@ -641,11 +650,11 @@ Method & Encoding & EAs & Aspects evolved \\
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-\begin{frame}{What's More?}
+\begin{frame}{What's Else using EAs?}
 \begin{itemize}
     \item Evolutionary Robotics (ER)
     \begin{itemize}
-        \item research field which uses EAs to develop hardware, controllers and strategies for autonomous robots. 
+        \item research field which uses EAs to develop hardware, controllers and strategies for autonomous robots
         \item population consists of candidate controllers which may be drawn from ANNs
         \item goal is to use the evolutionary search to evolve population and generate the best so-found controller using mutation and crossover operations
     \end{itemize}
@@ -658,7 +667,8 @@ Method & Encoding & EAs & Aspects evolved \\
 \end{minipage}
 \linebreak
 \begin{itemize}
-    \item A very useful link about \lit{\href{http://www.evolutionaryrobotics.org/}{ER}}
+    \item A very useful 
+    \lit{\href{http://www.evolutionaryrobotics.org/}link} about ER
 \end{itemize}
 \end{frame}
 
