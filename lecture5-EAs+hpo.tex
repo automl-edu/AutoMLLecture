@@ -242,6 +242,7 @@ Generate a new child (offspring) through mutation and crossover operations
 		$fitness_g$ $\leftarrow$ evaluate\_population($offspring_g$); \\
 		\pause
 		$pop_{g+1}$,$fitness_{g+1}$ $\leftarrow$ select($pop_g$,$offspring_g$); \\
+		$FE$ = $FE$ + $NP$; \\
 	    $g$ = $g$+1;\\
 	}
 	\Return{best individual $X$ in $pop$ according to $fitness$}
@@ -267,7 +268,7 @@ Why might EAs be an interesting approach for HPO and many other real-life applic
     \item time complexity is low compared to other model-based methods
     \begin{itemize}
         \item no need to fit a model and evaluate it on validation data, hence the process is not expensive like in BO
-        \item parallelizable as a population of $N$ individuals can be evaluated in parallel on $N$ machines  
+        \item parallelizable as a population of $NP$ individuals can be evaluated in parallel on $NP$ machines  
     \end{itemize}
 \end{itemize}
 
@@ -511,7 +512,7 @@ One of the simplest, yet effective, stochastic direct search EA
 \begin{frame}{Tree-based Pipeline Optimization tool \litw{Olson et al. 2016}
 \includegraphics[width=0.1\textwidth]{new_images/TPOT.png}}
 \begin{itemize}
-    \item the very first AutoML method for hyperparameter tuning using genetic programming, and won the best paper award in GECCO 2016 
+    \item the very first AutoML method for hyperparameter tuning using genetic programming (GP)
     \item \lit{\href{https://github.com/EpistasisLab/tpot}{GitHubTPOT}}: is built on top of scikit-learn
     \item automate the most tedious part of machine learning by intelligently exploring thousands of possible pipelines to find the best one for tested data 
 \end{itemize}
@@ -524,10 +525,14 @@ One of the simplest, yet effective, stochastic direct search EA
 \begin{frame}{Tree-based Pipeline Optimization tool \litw{Olson et al. 2016}
 \includegraphics[width=0.1\textwidth]{new_images/TPOT.png}}
 \begin{itemize}
-    \item once evolutionary search is done, TPOT generates the best found pipeline as a Python code so you start from there \\~\\
+    \item data set flows through the pipeline operators, which add, remove, and modify the features in a successive manner
+    \item population is a randomly generated fixed number of tree-based pipelines
+    \item GP builds trees of mathematical functions to maximize the final classification accuracy of the pipeline
+    \item GP is used to evolve the sequence of pipeline operators (using crossover and mutation) that acted on the data set as well as the parameters of these operators, e.g.\ , the number of trees in a random forest or the number of feature pairs to select during feature selection
+    \item once evolutionary search is done, TPOT generates the best found pipeline as a Python code so you start from there
 \end{itemize}
-\centering
-\includegraphics[width=0.8\textwidth]{new_images/tpot4.png}\\
+%\centering
+%\includegraphics[width=0.8\textwidth]{new_images/tpot4.png}\\
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
