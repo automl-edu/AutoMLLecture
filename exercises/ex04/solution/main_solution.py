@@ -44,11 +44,10 @@ def EI(x, model, eta, add=None):
     x = np.array([x]).reshape([-1, 1])
     m, s = model.predict(x, return_std=True)
     if s == 0: s = 1e-9
-    d = norm(loc=m, scale=s)
+    d = norm(loc=0, scale=1)
     delta = eta-m
-    ei = delta * d.cdf(1-delta/s) + s * d.pdf(delta/s)
-    r = -ei
-    return r
+    ei = delta * d.cdf(delta/s) + s * d.pdf(delta/s)
+    return -ei
 
 def UCB(x, model, eta, add=None):
     """
@@ -86,7 +85,7 @@ def run_bo(acquisition, max_iter, init=25, random=True, acq_add=1, seed=1):
         logging.debug('Sample #%d' % (init + i))
         #Feel free to adjust the hyperparameters
         gp = Pipeline([["standardize", StandardScaler()],
-                      ["GP", GPR(kernel=Matern(nu=2.5), normalize_y=True, n_restarts_optimizer=10)], 
+                      ["GP", GPR(kernel=Matern(nu=2.5), alpha=1, normalize_y=True, n_restarts_optimizer=10)], 
                     ])
         gp.fit(x, y)  # fit the model
 
@@ -114,11 +113,11 @@ def run_rand(max_iter, seed):
 
 def main(num_evals, init_size, repetitions, random, seed):
     # Do some plots
-    rng = np.random.RandomState(5)
+    rng = np.random.RandomState(2)
     x = rng.uniform(-15, 10, 10).reshape(-1, 1)
     y = [f([i, ]) for i in x]
     gp = Pipeline([["standardize", StandardScaler()],
-                  ["GP", GPR(kernel=Matern(nu=2.5), normalize_y=True, n_restarts_optimizer=10)], 
+                  ["GP", GPR(kernel=Matern(nu=2.5), alpha=1.e-4, normalize_y=True, n_restarts_optimizer=10)], 
                 ])
     gp.fit(x, y)  # fit the model
     
@@ -131,16 +130,23 @@ def main(num_evals, init_size, repetitions, random, seed):
     m, s = gp.predict(x_axis.reshape([-1, 1]), return_std=True)
     m = m.flatten()
     s = s.flatten()
+
+    plt.subplot(211)
     plt.scatter(x, y)
     plt.plot(x_axis, y_func, label="true")
-    plt.plot(x_axis, ei, label="ei")
     plt.plot(x_axis, ucb, label="ucb")
     plt.plot(x_axis, m, label="model")
     plt.fill_between(x_axis, m-s, m+s, alpha=0.5)
     #plt.yscale("log")
     plt.legend()
-    plt.show()
+    plt.ylabel("f(x)")
+    plt.xlabel("x0")
+
+    plt.subplot(212)
+    plt.plot(x_axis, ei, label="ei")
     
+    plt.savefig("BO.png")
+    plt.show()
     
     #sys.exit(1)
     # Actually run BO
@@ -167,7 +173,10 @@ def main(num_evals, init_size, repetitions, random, seed):
         plt.fill_between(np.arange(0, m.shape[0]), m+s, m-s, alpha=0.2)
 
     plt.yscale("log")
+    plt.ylabel("function value")
+    plt.xlabel("function evaluations")
     plt.legend()
+    plt.savefig("BO_comp.png")
     plt.show()
 
 if __name__ == '__main__':
