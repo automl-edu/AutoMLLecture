@@ -1,0 +1,80 @@
+\documentclass{exam}
+\usepackage{amsmath, amsfonts}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[super]{nth}
+
+\DeclareMathOperator*{\argmin}{argmin}
+
+\usepackage[hyperfootnotes=false]{hyperref}
+
+\usepackage[usenames,dvipsnames]{color}
+\newcommand{\note}[1]{
+	\noindent~\\
+	\vspace{0.25cm}
+	\fcolorbox{Red}{Orange}{\parbox{0.99\textwidth}{#1\\}}
+	%{\parbox{0.99\textwidth}{#1\\}}
+	\vspace{0.25cm}
+}
+
+
+\input{../macros.tex}
+%\renewcommand{\hide}[1]{#1}
+
+\qformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+\bonusqformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+
+\pagestyle{headandfoot}
+
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+\newcommand{\duedate}{31.05.19 (10:00)}
+\newcommand{\due}{{\bf This assignment is due on \duedate.} }
+\firstpageheader
+{Due: \duedate \\ Points: 5}
+{{\bf\lecture}\\ \assignment{5}}
+{\lectors\\ \semester}
+
+\runningheader
+{Due: \duedate}
+{\assignment{5}}
+{\semester}
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+
+\firstpagefooter
+{}
+{\thepage}
+{}
+
+\runningfooter
+{}
+{\thepage}
+{}
+
+\headrule
+\pointsinrightmargin
+\bracketedpoints
+\marginpointname{pt.}
+
+\begin{document}
+	\gccs
+	Now that you have learned about evolutionary algorithms such as Differential Evolution (DE) you will implement the following yourself.
+	\begin{questions}
+		\titledquestion{Differential Evolution for HPO}[5]
+		We provide you with the objective function to be optimized (see \texttt{src/main.py}). You will implement DE to \textbf{minimize} this function.
+		\begin{parts}
+		\part[3.5] Implement the evolutionary loop of DE which consists of initialization, mutation, crossover and selection operations. Use random initialization and a population size of 10 individuals (\i.e. $NP$=10). For the mutation and crossover rates, use $F$=0.5 and $CR$=0.5 respectively.\footnote{Hint: Your implementation of DE should perform boundary checking after mutation to be within the search range of the problem being solved (use random re-generation for that).}   
+		\part[1.5] Generate plots that demonstrate the functionality of DE algorithm, e.g. best-so-far seen function value over time. Compare your results of DE against BO, Random Search and Gird Search for 100 function evaluations. Add all plots to a PDF and briefly discuss what you can learn from these plots, and add some observations about computational time for DE versus other compared optimizers.\footnote{Hint: Your implementation of DE should run for 20 generations.} 
+	\end{parts}
+		
+		\titledquestion{Feedback}[Bonus: 0.5]
+		For each question in this assignment, state:
+		\begin{itemize}
+			\item How long you worked on it.
+			\item What you learned.
+			\item Anything you would improve in this question if you were teaching the course.
+		\end{itemize}
+	\end{questions}
+	
+	\noindent
+	\due Submit your solution for the tasks by uploading a PDF to your groups BitBucket repository. The PDF has to include the name of the submitter(s).
+\end{document}
