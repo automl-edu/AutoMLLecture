@@ -149,7 +149,7 @@ For the following slides, we have used the following setup:
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{$10$ Learning Curves  (Setting 1)}
+\begin{frame}[c]{$10$ Learning Curves (Setting 1)}
 
 \centering
 \includegraphics[width=0.6\textwidth]{scripts/ten_learning_curves.jpg}
@@ -170,7 +170,7 @@ For the following slides, we have used the following setup:
 
 \begin{itemize}
 	\item Plot mean and stdev (shaded area) across $n$ (here $100$) random seeds\\
-	\item Only use mean and stdev
+	\item Only use mean and stdevarcSepA=[0pt]
 	if noise is somehow normal distributed
 	\item alternatives are the mean+standard error or median+25/75-percentiles
 \end{itemize}
@@ -351,16 +351,46 @@ Which curve corresponds to which setting? \hands
 \includegraphics[width=0.5\textwidth]{images/rankings_over_time.png}
 
 \begin{itemize}
-	\item Remarks:
-	\begin{itemize}
-		\item x-axis should be on log-scale
-		\item uncertainties (shaded areas) can be obtained via bootstrap sampling
-	\end{itemize}
+	\item Remark: x-axis should be on log-scale
     \pause
     \smallskip
 	\item Ranks avoid the problem of different scales
 	\item Problem: we don't know whether a better ranking relates to a substantial improvement of the actual cost metric
 \end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Uncertainties in Ranking Plots}
+
+Given:
+\begin{itemize}
+	\item $k$ systems you want compare
+	\item $n$ runs of each system
+	\item $d$ datasets
+\end{itemize}
+
+\pause
+\begin{block}{Across Datasets ($d > 1$)}
+
+\begin{enumerate}
+	\item for each system and dataset, average performance across the $n$ runs
+	\item compute ranking on each datasets
+	\item compute mean and stdev across rankings
+\end{enumerate}
+
+\end{block}
+
+\pause
+\begin{block}{On a single dataset ($d = 1$)}
+	\begin{enumerate}
+		\item for each system, sample a single run out of the $n$ runs
+		\item compute ranking on these samples
+		\item repeat 1. and 2. at least $10\ 000$ times to obtain many rankings
+		\item compute mean and stdev across rankings
+	\end{enumerate}
+	
+\end{block}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -757,8 +787,8 @@ $\leadsto$ can evaluate how extreme the observed test statistic is
 	\medskip
 	\item The sampling distribution to compare $t$ against:
 	\begin{itemize}
-		\item Put $x_1, \dots, x_n$ and $y_1, \dots, y_m$ into a single pool
-		\item S = []; repeat, e.g., 10\,000 times
+		\item Put $\{x_1, \dots, x_n\}$ and $\{y_1, \dots, y_m\}$ into a single pool
+		\item $S$ = []; repeat, e.g., 10\,000 times
 		\begin{itemize}
 			\item[-] draw a random permutation \& permute pool with it
 			\item[-] add test statistic over permuted pool to $S$
@@ -795,6 +825,29 @@ $\leadsto$ can evaluate how extreme the observed test statistic is
 
 \end{frame}
 %-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Paired Permutation Test}
+
+Given: 
+
+\begin{itemize}
+	\item \alert{ordered} observations $[x_1, ... x_n]$ in $X$ (resp. in $Y$) where each observation is attributed to concrete objects
+\end{itemize}
+
+\pause
+
+\begin{itemize}
+	\item S = []; repeat, e.g., 10\,000 times
+	\begin{enumerate}
+		\item $X'$ = [] and $Y'$ = []
+		\item for each \alert{pair of observations $\langle x_i, y_i \rangle$} sample whether (i) you put $x_i$ into $X'$ and $y_i$ into $Y'$ or (ii) $x_i$ into $Y'$ and $y_i$ into $X'$. 
+		\item add test statistic based on $X'$ and $Y'$ to $S$
+	\end{enumerate}
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
 %----------------------------------------------------------------------
 \begin{frame}[c]{Multiple Testing Correction}
 
