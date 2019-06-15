@@ -468,14 +468,12 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 		\item Also the meta learning level can benefit from AutoML\\ \lit{Lindauer et al. 2015}
 	\end{itemize}
 	\pause
-	\item Algorithm selection is not limited to machine learning as an application
-	\begin{itemize}
-		\item Algorithm selection can be applied to any algorithm class where 
-		\begin{enumerate}
-			\item we have a discrete portfolio of algorithms to choose from
-			\item the tasks (aka. datasets) are sensitive to the algorithm choice (so called heterogeneous instances)
-		\end{enumerate}
-	\end{itemize}
+	\item Algorithm selection is not limited to machine learning
+	\item Algorithm selection can be applied to any algorithm class where 
+	\begin{enumerate}
+		\item we have a discrete portfolio of algorithms to choose from
+		\item the tasks (aka. datasets) are sensitive to the algorithm choice (so called heterogeneous instances)
+	\end{enumerate}
 	\pause
 	\item There is a benchmark library for algorithm selection data called ASlib (\url{www.aslib.net}) \lit{Bischl et al. 2016}
 \end{itemize}
@@ -485,8 +483,41 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 %-----------------------------------------------------------------------
 \section{AutoML Warmstarting}
 %----------------------------------------------------------------------
-\begin{frame}[c]{XXX}
+\begin{frame}[c]{Warmstarting}
 
+\begin{itemize}
+	\item Recap: Instead of starting from a random configuration we often start from a expert-defined configuration for hyperparameter optimization (HPO)
+	\pause
+	\item We also know that the default configuration often does not perform well on a new dataset
+	\begin{itemize}
+		\item Otherwise there would be no point in HPO
+	\end{itemize}
+	\pause
+	\item Question:\\ \alert{Can we learn from previous datasets $\mdata$ how to initialize HPO?}
+	\begin{itemize}
+		\item the same ideas also apply to NAS
+		\item for simplicity we focus on HPO 
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Multi-Configuration Initialization}
+
+\begin{itemize}
+	\item Idea: Instead of a single starting point, use a \alert{portfolio $\Lambda_{init}$} as an initial design
+	\item Assume that we applied HPO already to many datasets $\mdata$ and\\
+	obtained a well-performing configuration on all of them $\hat{\lambda}_\dataset$
+	\item Straightforward idea: 
+	$$\Lambda_{init} = \bigcup_{\dataset \in \mdata} \{ \hat{\lambda}_\dataset \}$$
+	\item Problems:
+	\begin{itemize}
+		\item If $|\mdata|$ is too large, HPO will be dominated by $\Lambda_{init}$
+		\item $\Lambda_{init}$ has potentially a lot of similar configurations\\
+		$\leadsto$ $\Lambda_{init}$ is not complementary
+	\end{itemize}
+\end{itemize}
 
 
 \end{frame}
