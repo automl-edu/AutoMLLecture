@@ -2,7 +2,7 @@
 
 \centering
 \huge
-Lecture 8+9:\\
+Lectures 9+10:\\
 Meta-Learning I+II
 \end{frame}
 %----------------------------------------------------------------------
@@ -15,11 +15,11 @@ Meta-Learning I+II
 		\item Design spaces in ML
 		\item Evaluation and visualization
 	\end{itemize}
-	\item[$\to$] Hyperparameter optimization (HPO)
+	\item Hyperparameter optimization (HPO)
 	\begin{itemize}
 		\item Bayesian optimization
 		\item Other black-box techniques
-		\item Speeding up HPO with multi-fidelity optimization
+		\item More details on Gaussian processes
 	\end{itemize}
 	\item Pentecost (Holiday) -- no lecture
 	\item Architecture search I + II
@@ -482,8 +482,11 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 	\item Algorithm selection is not limited to machine learning
 	\item Algorithm selection can be applied to any algorithm class where 
 	\begin{enumerate}
+		\pause
 		\item we have a discrete portfolio of algorithms to choose from
+		\pause
 		\item the tasks (aka. datasets) are sensitive to the algorithm choice (so called heterogeneous instances)
+		\pause
 		\item we have informative meta-features (a.k.a. instance features)\\
 		(only partially true for ML)
 	\end{enumerate}
@@ -577,6 +580,88 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 	\item \alert{Remark}: $c(\Lambda)$ is defined as a \alert{submodular} function\\
 	(i.e., adding a specific $\lambda$ early in the process gains you more than adding it in later iterations)
 	\item[$\leadsto$] At most away from optimum by factor of $0.63$\\ (see \lit{Streeter \& Golovin '07})
+\end{itemize}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Feature-based Initial Portfolios}
+
+\begin{itemize}
+	\item Instead of throwing away parts of $\Lambda_{init}$, \\
+	we can try to select on the fly which ones to use
+	\pause
+	\item Idea similar to algorithm selection
+	\begin{enumerate}
+		\item Compute meta-featues for a given new dataset
+		\item Select $k$-nearest datasets from $\mdata$ wrt meta-features
+		\item Use the optimized $\lambda$ of these $k$ datasets
+	\end{enumerate}
+	\pause
+	\medskip
+	\item Problem: If you have very little time for AutoML,
+	you might not invest time in meta-feature computation
+\end{itemize}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Model-Warmstarting}
+
+\begin{itemize}
+	\item Many HPO optimizers make use of some kind of a predictive model,\\
+	e.g., Bayesian optimization
+	\pause
+	\item By running HPO over and over again on different datasets,
+	we can actually learn something about the search landscape
+	\begin{itemize}
+		\item E.g., what are bad regions of the configuration space in general
+	\end{itemize}
+	\pause
+	\smallskip
+	\item Given: $n$ predictive models $\surro_i$ from HPO on $\mdata$
+	\item \alert{How can we use these $\surro_i$ to speed up HPO?}
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Model-Warmstarting: Direct Predictions}
+
+\begin{itemize}
+	\item You could train a model $\surro: \lambda \times \dataset \mapsto c(\lambda, \dataset)$ to predict the cost of a configuration $\lambda$ on a dataset $\dataset$ 
+	\item Use $\surro$ to augment your search (e.g., in BO) and update it with newly collected data in the current dataset
+	\item Problems:
+	\begin{itemize}
+		\item Training this big model $\surro$ might take too long
+		\item You can't completely ignore misleading knowledge from dissimilar datasets
+	\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Model-Warmstarting: Combined Models}
+
+\begin{itemize}
+	\item Instead of one big model, you can train an ensemble of models
+	$$ \surro_{\texttt{combined}} = w_0 \surro + \sum_{i=1}^{|\mdata|} w_i \surro_i$$
+	\pause
+	\item Advantages:
+	\begin{itemize}
+		\item only $\surro$ and $\vec{w}$ has to be updated for new observations
+		\item after "some" observations, it will start to focus on $\surro$ 
+		\item Thus it can recover from misleading knowledge
+	\end{itemize}
+	\medskip
+	\pause
+	\item We can use SGD to train weights $\vec{w}$
+	\pause
+	\item Possible to also use more complex models such as DNNs
 \end{itemize}
 
 
