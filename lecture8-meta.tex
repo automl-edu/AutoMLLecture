@@ -23,7 +23,7 @@ Meta-Learning I+II
 	\end{itemize}
 	\item Pentecost (Holiday) -- no lecture
 	\item Architecture search I + II
-	\item[$\to$] Meta-Learning I ++ II
+	\item[$\to$] Meta-Learning I + II
 	\item Beyond AutoML: algorithm configuration and control
 	\item Project announcement and closing
 \end{itemize}
@@ -57,8 +57,8 @@ There were two great tutorials on meta-learning recently:
 \end{itemize}
 
 \begin{itemize}
+	\item We can't cover all the stuff in details
 	\item Strong recommendation to watch both tutorials
-	\item We can't cover all the stuff today
 	\item Parts of the material used today was inspired by these tutorials
 \end{itemize}
 
@@ -87,17 +87,17 @@ There were two great tutorials on meta-learning recently:
 
 	\node (task1) [data, text width=6em] {Task~1};
 	\node (learn1) [activity, below of=task1, text width=6em] {Learning};
-	\node (models1) [activity, below of=learn1, text width=6em] {Models};
+	\node (models1) [data, below of=learn1, text width=6em] {Models};
 	\node (perf1) [data, below of=models1, text width=6em] {Performance};
 	
 	\node (task2) [data, right of=task1, node distance=4.5cm, text width=6em] {Task~2};
 	\node (learn2) [activity, below of=task2, text width=6em] {Learning};
-	\node (models2) [activity, below of=learn2, text width=6em] {Models};
+	\node (models2) [data, below of=learn2, text width=6em] {Models};
 	\node (perf2) [data, below of=models2, text width=6em] {Performance};
 	
 	\node (task3) [data, right of=task2, node distance=4.5cm, text width=6em] {Task~3};
 	\node (learn3) [activity, below of=task3, text width=6em] {Learning};
-	\node (models3) [activity, below of=learn3, text width=6em] {Models};
+	\node (models3) [data, below of=learn3, text width=6em] {Models};
 	\node (perf3) [data, below of=models3, text width=6em] {Performance};
 	
 	\draw[myarrow] (task1) -- (learn1);
@@ -115,8 +115,18 @@ There were two great tutorials on meta-learning recently:
 	\draw[myarrow] (learn3) -- (models3);
 	\draw[myarrow] (models3) -- (perf3);
 	
-	\draw[myarrow] (learn1) -- node[above] {Meta-Learn} (learn2);
-	\draw[myarrow] (learn2) -- node[above] {Meta-Learn} (learn3);	
+	\pause
+	
+	\draw[myarrow, dashed] (learn1) -- node[above] {\alert{Meta-Learn}} (learn2);
+	\draw[myarrow, dashed] (learn2) -- node[above] {\alert{Meta-Learn}} (learn3);	
+	
+	\pause
+	\draw[myarrow, dashed] (models1) -- node[above] {\alert{Meta-Learn}} (models2);
+	\draw[myarrow, dashed] (models2) -- node[above] {\alert{Meta-Learn}} (models3);
+	
+	\pause
+	\draw[myarrow, dashed] (perf1) -- node[above] {\alert{Meta-Learn}} (perf2);
+	\draw[myarrow, dashed] (perf2) -- node[above] {\alert{Meta-Learn}} (perf3);
 \end{tikzpicture}
 
 \end{frame}
@@ -220,17 +230,17 @@ In meta-learning, we want to learn:
 
 The meta-learning problem is:
 \begin{equation}
-\argmax_{\theta} \log p(\theta | \mdata)
+\theta^* \in \argmax_{\theta} \log p(\theta | \mdata)
 \end{equation}
 
 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{AutoML $\subset$ Meta Learning}
+\begin{frame}[c]{AutoML $\subset$ Meta-Learning}
 
 \begin{itemize}
-	\item AutoML can be seen as special case of meta learning
+	\item AutoML can be seen as a special case of meta-learning
 	\pause
 	\medskip
 	\item $\theta$ could be:
@@ -250,13 +260,13 @@ The meta-learning problem is:
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Meta Learning $\subset$ AutoML}
+\begin{frame}[c]{Meta-Learning $\subset$ AutoML}
 
 \begin{itemize}
-	\item Meta learning can be powerful to complement AutoML
+	\item Meta-learning can be powerful to complement AutoML
 	\pause
 	\medskip
-	\item we can learn a a lot of things $\mdata$ to improve the performance on new datasets
+	\item We can learn a a lot of things $\mdata$ to improve the performance on new datasets
 	\begin{itemize}
 		\item pre-initialization of networks weights\\
 		(e.g., pre-train on imagenet and fine-tune on a new dataset)
@@ -280,11 +290,11 @@ The meta-learning problem is:
 	humans get an intuition \alert{what works well on which dataset}
 	\pause
 	\item E.g., humans came up with rule of thumbs:\\
-	"On small datasets, we use a SVM, on mid-size dataset a RF 
+	"On small datasets we use a SVM, on mid-size dataset a RF\\ 
 	and on big data a DNN"
 	\pause
 	\item Although these rule thumbs are quite useful,
-	they are often not correct and too strongly simplified
+	they are often not correct and simplify real applications too strongly
 	\pause
 	\item \alert{Question}: Can we learn from data which algorithm we should use for a given dataset?
 \end{itemize}
@@ -309,14 +319,11 @@ The meta-learning problem is:
 	$$\int_{\mdata} c(s(\dataset),\dataset) p(\dataset)  d\dataset$$
 \end{block}
 
-\bigskip
-\pause
-
 
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Meta Features in Machine Learning}
+\begin{frame}[c]{Meta-Features in Machine Learning}
 	
 To learn the mapping $s: \dataset \mapsto \algo$, we need a way to represent $\dataset$
 
@@ -325,7 +332,7 @@ To learn the mapping $s: \dataset \mapsto \algo$, we need a way to represent $\d
 \end{center}
 
 
-What kind of ``Meta features'' could describe a dataset? \hands
+What kind of ``Meta-features'' could describe a dataset? \hands
 
 \pause
 \begin{itemize}
@@ -376,14 +383,14 @@ What kind of ``Meta features'' could describe a dataset? \hands
 
 We assume for a discrete set of datasets from $\mdata$ that
 \begin{itemize}
-	\item we have pre-computed the meta features on all datasets
+	\item we have \alert{pre-computed meta-features} on all datasets
 	\pause
 	\begin{itemize}
 		\item if our cost metric is not related to runtime,\\
 		we assume that the cost for computing the meta features is\\ negligible compared to training a model
 	\end{itemize}
 	\pause
-	\item we have measured the cost $c(\algo, \dataset)$ on all possible pairs $\langle \algo, \dataset\rangle$
+	\item we have measured the \alert{cost $c(\algo, \dataset)$} on all possible pairs $\langle \algo, \dataset\rangle$
 \end{itemize}
 
 \pause
@@ -399,7 +406,7 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 \begin{itemize}
 	\item Given a new dataset and its meta-features $f(\dataset)$
 	\item we "only" need to predict the performance of all algorithms $\algo \in \portfolio$
-	\item Train for each algorithm $\algo \in \portfolio$, a regression model to predict its cost $c(\dataset)$ given the meta features:
+	\item For each algorithm $\algo \in \portfolio$, we train a regression model to predict its cost $c(\algo,\dataset)$ given $\dataset$'s meta features:
 	$$\hat{m}_\algo: f(\dataset) \mapsto c(\algo, \dataset) $$
 	\pause
 	\item Selection for given test $\dataset_{\text{test}}$:
@@ -407,9 +414,9 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 	\pause
 	\item Remarks:
 	\begin{itemize}
-		\item As regression model, we can use essential whatever you want\\
+		\item As regression approach, we can essentially use whatever you want\\
 		e.g., ridge regression, a random forest or a neural network
-		\item We could also train one joint model, we indicator features of the algorithms
+		\item We could also train one joint model with indicator features for the algorithms
 	\end{itemize}
 \end{itemize}
 
@@ -426,8 +433,12 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 	$$s: \dataset \mapsto \algo$$
 	\pause
 	\item We can use common approach for multi-class classification
-	\item Algorithm selection has special characteristic:\\
+	\item Algorithm selection has a special characteristic:\\
 	\alert{Some datasets are more sensitive to algorithm selection than others}
+	\begin{itemize}
+		\item for very easy datasets, it might not matter which algorithm to use
+		\item for very hard datasets (e.g., because of poor data quality),\\ all algorithms might fail
+	\end{itemize}
 	
 \end{itemize}
 
@@ -473,6 +484,8 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 	\begin{enumerate}
 		\item we have a discrete portfolio of algorithms to choose from
 		\item the tasks (aka. datasets) are sensitive to the algorithm choice (so called heterogeneous instances)
+		\item we have informative meta-features (a.k.a. instance features)\\
+		(only partially true for ML)
 	\end{enumerate}
 	\pause
 	\item There is a benchmark library for algorithm selection data called ASlib (\url{www.aslib.net}) \lit{Bischl et al. 2016}
@@ -493,7 +506,7 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 		\item Otherwise there would be no point in HPO
 	\end{itemize}
 	\pause
-	\item Question:\\ \alert{Can we learn from previous datasets $\mdata$ how to initialize HPO?}
+	\item \alert{Can we learn from previous datasets $\mdata$ how to initialize HPO?}
 	\begin{itemize}
 		\item the same ideas also apply to NAS
 		\item for simplicity we focus on HPO 
@@ -517,6 +530,53 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 		\item $\Lambda_{init}$ has potentially a lot of similar configurations\\
 		$\leadsto$ $\Lambda_{init}$ is not complementary
 	\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Portfolio Construction Approach}
+
+\begin{itemize}
+	\item Given
+	\begin{itemize}
+		\item a large portfolio of configurations
+		\item the cost of each configuration on all $\dataset \in \mdata$ 
+	\end{itemize} 
+	\pause
+	\item Goal: Select a subset of complementary configurations that cover $\mdata$ well
+	\begin{eqnarray}
+	\argmax_{\Lambda' \subset \Lambda_{init}} c(\Lambda')\nonumber\\
+	\text{s.t. } |\Lambda'| \leq k \nonumber 
+	\end{eqnarray}
+	\item where $k$ is a user-defined upper bound on the portfolio size
+	\pause
+$$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in \Lambda'} c(\conf, \dataset) $$
+	\pause
+	\medskip
+	\item Even if all cost values are known, exhaustive search is infeasible for reasonable sizes of $\Lambda_{init}$ and $k$
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Greedy Portfolio Construction Approach}
+
+\begin{itemize}
+	\item We can greedily construct the portfolio by adding one configuration at a time
+	\pause
+	\item In each iteration, we have already a selected portfolio $\Lambda_i$ and want to add a single configuration maximizing its contribution
+	\begin{eqnarray}
+	\lambda_{i+1} \in \argmax_{\lambda \in \Lambda_{init}} c(\Lambda_i) - c(\Lambda_i \cup \{\lambda\})
+	\end{eqnarray}
+	\item Re-iterate: $\Lambda_{i+1} = \Lambda_i \cup \{\lambda_{i+1}\}$
+	\pause
+	\medskip
+	\item \alert{Remark}: $c(\Lambda)$ is defined as a \alert{submodular} function\\
+	(i.e., adding a specific $\lambda$ early in the process gains you more than adding it in later iterations)
+	\item[$\leadsto$] At most away from optimum by factor of $0.63$\\ (see \lit{Streeter \& Golovin '07})
 \end{itemize}
 
 
