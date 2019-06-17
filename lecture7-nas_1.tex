@@ -174,7 +174,7 @@ Inception-v4 blocks \lit{Szegedy et al. 2017}
 		\item \alert{Recent work aims for efficiency}
 		\begin{itemize}
 			\begin{footnotesize}
-			\item Weight sharing \lit{Pham et al,’18; Bender et al, ’18; Liu et al, ‘18}
+			\item Weight sharing \lit{Pham et al,’18; Bender et al, ’18; Liu et al, ‘18; Xie et al. ’19; Cai et al. ’19}
 			\item Network morphisms \lit{Chen et al, ’16; Cai et al, ’17 \& ‘18; Elsken et al, ’17 \& 18}
 			\item Multi-fidelity optimization \lit{Klein et al, ‘16; Li et al, ‘18; Falkner et al, ‘18}
 			\end{footnotesize}
@@ -210,7 +210,7 @@ Inception-v4 blocks \lit{Szegedy et al. 2017}
 \begin{frame}[c]{Cell Search Spaces}
 \centering
 \includegraphics[height=.8\textheight]{images_lec7/s26}\\
-Introduced by \lit{Zoph et al.’18}
+Introduced by Zoph et al.’18
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
@@ -252,7 +252,7 @@ Introduced by \lit{Zoph et al.’18}
 \centering
 \begin{itemize}
 	\item[--] Directed Acyclic Graph (DAG) representation of architectures
-	\item[--] Each node a lattent representation; each edge an operation/motif
+	\item[--] Each node a latent representation; each edge an operation/motif
 	\item[--] Multiple levels of hierarchy for motifs; e.g. $o_1^{(2)}$ is a level-2 motif, 
 	$o_1^{(3)}$ is a level-3 motif
 \end{itemize}
@@ -264,8 +264,44 @@ Introduced by \lit{Zoph et al.’18}
 %-----------------------------------------------------------------------
 \section{Blackbox Optimization for Neural Architecture Search}
 %-----------------------------------------------------------------------
+\begin{frame}[c]{Reinforcement Learning \litw{Zoph \& Le, ICLR 2016}}
+\centering
+\begin{itemize}
+	\item Key idea: Use a configuration string to represent the structure and connections in a NN
+	\begin{itemize}
+		\item[--] E.g.: ["Input to layer 1: 0", "Input to layer 2: 0", "Layer 2: conv"]
+	\end{itemize}
+	\item Use RNN ("\alert{Controller}") to generate this string that specifies the NN
+	\item Train this NN ("\alert{Child Network}") and see how it performs on validation set
+	\item Use \alert{REINFORCE/PPO} to update the parameters of the Controller RNN based on the performance of
+	child models
+\end{itemize}
 
-\begin{frame}[c]{Reinforcement Learning}
+{\centering
+	\includegraphics[width=.6\textwidth]{images_lec7/s27}
+}
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
+\begin{frame}[c]{Learning CNN cells with RL \litw{Zoph \& Le, ’16; Zoph et al. ’17}}
+\centering
+
+\begin{itemize}
+	\footnotesize{
+	\item RNN controller makes $2\times 5B$ softmax predictions in total 
+	(5B for \textit{normal} and 5B for \textit{reduction} cells)
+	\item Determines both topology and operations in each node of the graph
+	}
+\end{itemize}
+\includegraphics[width=.8\textwidth]{images_lec7/RL_conv_cell}
+\includegraphics[width=.7\textwidth]{images_lec7/RL_normal_reduction}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
+\begin{frame}[c]{Reinforcement Learning \litw{Zoph \& Le, ’16; Zoph et al. ’17}}
 \begin{itemize}
 	\item Reinforcement Learning \lit{Zoph \& Le, ICLR 2016}
 	\begin{itemize}
@@ -275,10 +311,6 @@ Introduced by \lit{Zoph et al.’18}
 		\item Hyperparameter optimization only as postprocessing
 	\end{itemize}
 \end{itemize}
-
-{\centering
-	\includegraphics[width=\textwidth]{images_lec7/s27}
-}
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
@@ -302,9 +334,9 @@ Introduced by \lit{Zoph et al.’18}
 
 \centering
 \begin{itemize}
-	\item Standard evlutionary algorithm, but oldest solutions are dropped from
+	\item Standard evolutionary algorithm, but oldest solutions are dropped from
 	population P, instead of the worst.
-	\item Same cell search space as in \lit{Zoph et al ’18}\\
+	\item Same cell search space as in Zoph et al ’18\\
 \end{itemize}
 
 \begin{columns}[T]
@@ -358,6 +390,20 @@ Introduced by \lit{Zoph et al.’18}
 %\end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
+\begin{frame}[c]{DARTS: Differentiable Architecture Search \litw{Liu et al. ’18}}
+
+	\begin{itemize}
+
+	\item 2 cell types
+	\begin{itemize}
+            \item[$\Rightarrow$] \alert{Normal} - keep spatial resolution unchanged.
+            \item[$\Rightarrow$] \alert{Reduction} - reduce spatial resolution by a factor of 2.
+        \end{itemize}
+	\end{itemize}
+	
+\end{frame}
+
+%----------------------------------------------------
 \begin{frame}[c]{DARTS: Cell Search Space}
 
 	\begin{itemize}
@@ -394,9 +440,9 @@ Introduced by \lit{Zoph et al.’18}
         \begin{centering}
         {\footnotesize
         \begin{itemize}
-            \item 8 operations: $sep\_conv\_3$$\times$$3$, $sep\_conv\_5$$\times$$5$, $dil\_conv\_3$$\times$$3$, $dil\_conv\_5$$\times$$5$, $max\_pool\_3$$\times$$3$, $avg\_pool\_3$$\times$$3$, \textit{identity} and \textit{zero}
             \item $x^{(j)} = \sum_{i<j}\tilde{o}^{(i,j)}(x^{(i)}) = \sum_{i<j}\sum_{o\in\mathcal{O}}\frac{e^{\alpha_{o}^{(i,j)}}}{\sum_{o^{\prime}\in\mathcal{O}}e^{\alpha_{o^{\prime}}^{(i,j)}}}o(x^{(i)})$
             \item $o^{(i,j)} = \argmax_{o\in\mathcal{O}}\alpha_{o}^{(i,j)}$
+            \item 8 operations: $sep\_conv\_3$$\times$$3$, $sep\_conv\_5$$\times$$5$, $dil\_conv\_3$$\times$$3$, $dil\_conv\_5$$\times$$5$, $max\_pool\_3$$\times$$3$, $avg\_pool\_3$$\times$$3$, \textit{identity} and \textit{zero}
         \end{itemize}}%
         \end{centering}
 
