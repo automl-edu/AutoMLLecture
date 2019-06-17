@@ -670,7 +670,39 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 %-----------------------------------------------------------------------
 \section{Few Shot Learning}
 %----------------------------------------------------------------------
-\begin{frame}[c]{XXX}
+\begin{frame}[c]{DataSets}
+
+\centering
+\includegraphics[width=.8\textwidth]{images/metalearning_datasets.png}
+
+\lit{Ravi and Larochelle. 2017}
+\smallskip
+
+$\leadsto$ Assumption: At meta-test we only have a few examples ("few shots") from a similar task
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Optimization-based Initialization \litw{Fin et al. 2017}}
+
+\begin{itemize}
+	\item Idea: Acquire $\phi$ through optimization
+	$$\max_{\phi_i} \log p(\dataset^{\text{train}}_i | \phi) + \log p(\phi_i | \theta)$$
+	\pause
+	\smallskip
+	\item[$\leadsto$] Meta-parameters $\theta$ serve as a prior
+	\pause
+	\smallskip
+	\item One successful form of prior knowledge is the initialization of DNNs for fine-tuning:
+	$$ \phi \leftarrow \theta - \alpha \nabla_\theta \loss(\theta, \dataset^{\text{tr}})$$
+	where $\theta$ are pre-trained weights and $\dataset^{\text{tr}}$ is training data for a new task
+	\pause
+	\smallskip
+	\item Meta-learning task:
+	$$\min_{\theta} \sum_{\text{task } i} \loss(\theta - \alpha \nabla_\theta \loss(\theta, \dataset_i^{\text{train}}),  \dataset_i^{\text{test}})$$
+	
+\end{itemize}
+
 
 
 
