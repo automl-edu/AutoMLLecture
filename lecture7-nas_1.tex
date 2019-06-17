@@ -65,7 +65,7 @@ After this lecture, you will be able to \ldots
 \end{itemize}
 	
 \includegraphics[width=0.5\textwidth]{images_lec7/architectures_perf.png}\\
-\lit{Canziani et al. 2017}
+Larger circles, more network parameters \lit{Canziani et al. 2017}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -97,46 +97,35 @@ Inception-v4 blocks \lit{Szegedy et al. 2017}
 \begin{frame}[c]{Brief history and early approaches}
 \centering
 \begin{itemize}
-	\item Neuroevolution (already since the 1990s)
+\footnotesize{
+	\item \alert{Neuroevolution} (already since the 1990s)
 	\begin{itemize}
 		\item Some authors used evolutionary algorithms for the
-		architecture, optimizing the weights with SGD
+		architecture, optimizing the weights with SGD \lit{Stanley and Miikkulainen, 2002}
 		\item Others optimized both architecture and weights with
 		evolutionary methods
 	\end{itemize}
+}
 \end{itemize}
 
 %\hspace{1cm}
 \begin{columns}
 \column{0.47\textwidth}
-\includegraphics[width=0.9\textwidth]{images_lec7/neat.png}
+\includegraphics[width=0.8\textwidth]{images_lec7/neat.png}
 \column{0.4\textwidth}
-\includegraphics[width=0.8\textwidth]{images_lec7/neat_2.png}
+\includegraphics[width=0.7\textwidth]{images_lec7/neat_2.png}
 \end{columns}
-\end{frame}
-%-----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Brief history and early approaches}
+
+\pause
 \begin{itemize}
-	\item Bayesian optimization
+\footnotesize{
+	\item \alert{Bayesian optimization (BO)}
 	\begin{itemize}
-		\item Bergstra et al, 2013: optimized 238 hyperparameters of a vision
-		architecture with TPE
-		\item Domhan et al. 2015: optimized CNN with up to 6 layers with SMAC
-		\begin{itemize}
-			\item[--] \alert{81 hyperparameters} including 9 network 
-			and 12 architectural layer-wise hyperparameters. 
-			\item[--] New best results on CIFAR-10 without data augmentation
-		\end{itemize}
-		\item Mendoza et al, 2016: joint optimization of architecture and
-		hyperparameters in fully-connected network
-		\begin{itemize}
-			\item[--] \alert{29 hyperparameters} including 14 network and 15 
-			architectural layer-wise hyperparameters.
-			\item[--] First Auto-DL system to win a competition dataset against 
-			human experts.
-		\end{itemize}
+		\item Encode the architecture as a vector space
+		\item i.e. optimize number of layers, number of filters, kernel width, etc.
+		\item Use BO to search in this vectorized space \lit{Bergstra et al. 2013, Domhan et al. 2015, Mendoza et al. 2015}
 	\end{itemize}
+}
 \end{itemize}
 \end{frame}
 %-----------------------------------------------------------------------
@@ -267,7 +256,7 @@ What are some pros and cons of the cell search space compared to the chain-struc
 	\end{itemize}
 	\item Use RNN ("\alert{Controller}") to generate this string that specifies the NN
 	\item Train this NN ("\alert{Child Network}") and see how it performs on validation set
-	\item Use \alert{REINFORCE/PPO} to update the parameters of the Controller RNN based on the performance of
+	\item Use \alert{Reinforcement Learning (RL)} to update the parameters of the Controller RNN based on the performance of
 	child models
 \end{itemize}
 
@@ -290,6 +279,7 @@ What are some pros and cons of the cell search space compared to the chain-struc
 		\item[--] Filter width/height, stride width/height, number of filters	
 	\end{itemize}
 	\item Each child model was trained for 50 epochs
+	\item The final chosen architecture is trained for longer (600 epochs)
 	
 }
 \end{itemize}
@@ -307,7 +297,7 @@ What are some pros and cons of the cell search space compared to the chain-struc
 	architecture, optimizing the weights with SGD
 	\item Large computational demands \alert{800 GPUs for 2 weeks, 
 	12.800 architectures evaluated}
-	\item Hyperparameter optimization only as postprocessing
+	\item Hyperparameter optimization only as postprocessing, which may potentially play an important role during search
 }
 \end{itemize}
 \end{frame}
@@ -407,31 +397,6 @@ What are some pros and cons of the cell search space compared to the chain-struc
 \includegraphics[width=.9\textwidth]{images_lec7/amoebanet_A.png}
 
 \end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Bayesian Optimization}
-\begin{itemize}
-	\item \alert{Joint optimization of a vision architecture} with 238 hyperparameters 
-	using TPE \lit{Bergstra et al. ’13}
-	\item \alert{Auto-Net}
-	\begin{itemize}
-		\item Joint architecture and hyperparameter search with SMAC
-		\item First Auto-DL system to win a competition dataset 
-		against human experts \lit{Mendoza et al. ’16}
-	\end{itemize}
-	\item \alert{Kernels for GP-based NAS}
-	\begin{itemize}
-		\item Arc kernel \lit{Swersky et al. ’13}
-		\item NASBOT \lit{Kandasamy et al. ’18}
-	\end{itemize}
-	\item \alert{Sequential model-based optimization}
-	\begin{itemize}
-		\item PNAS \lit{Liu et al. ’18}
-	\end{itemize}
-\end{itemize}
-
-\end{frame}
-
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
@@ -572,7 +537,7 @@ What are some pros and cons of the cell search space compared to the chain-struc
 \begin{frame}{DARTS: Deriving the final cell}
     \begin{itemize}
         \item After search finishes keep $\argmax_{o\in\mathcal{O}}\alpha_{o}^{(i,j)}$ as the optimal (non-zero) operation connecting node \textit{i} to \textit{j}
-        \item Following Zoph et al, ‘17, keep top-2 incoming operations in each node
+        \item Following Zoph et al, ‘18, keep top-2 incoming operations in each node
     \end{itemize}
 
     \begin{figure}[t]
@@ -670,23 +635,50 @@ What are some pros and cons of the cell search space compared to the chain-struc
 %----------------------------------------------------
 %----------------------------------------------------
 
-\begin{frame}[t]{Are NAS strategies better than Random Search?}
+\begin{frame}[t]{Other works that aim for efficiency}
 \centering
+
 \begin{itemize}
-\footnotesize{
-	\item \alert{Random search with weight sharing} \lit{Li and Talwalkar. ‘19}, finds model with comparable performance several SOTA NAS methods.
-	\item Sciuto et al. (2019) find that a \alert{randomly sampled architecture} outperforms 3 one-shot NAS methods.
-	\item Xie et al. (2019) exploit \alert{random connectivity} in a large neural networks, showing that it is comparable to other architectures found by NAS methods on ImageNet.
-}
+	\item DARTS follow-up works:
+	\begin{itemize}
+	\footnotesize{
+		\item \alert{SNAS} \lit{Xie et al. ‘19}, optimize the architecture by sampling discrete paths from the one-shot model
+		\item \alert{ProxylessNAS} \lit{Cai et al. ‘19}: memory-efficient variant of DARTS
+	}
+	\end{itemize}
 \end{itemize}
 
-\begin{figure}[t!]
-    \centering
-    \includegraphics[width=0.59\textwidth]{images_lec7/random_cnn.png}
-    \includegraphics[width=0.3\textwidth]{images_lec7/randomly_wired.png}
-\end{figure}
+\begin{itemize}
+	\item \alert{Graph Hypernetworks for NAS} \lit{Zhang et al. ‘19}
+	\begin{itemize}
+	\footnotesize{
+		\item Use hypernetwork to generate the weights of the sampled architectures
+	}
+	\end{itemize}
+\end{itemize}
+
+\begin{itemize}
+	\item Approaches based on Random Search:
+	\begin{itemize}
+	\footnotesize{
+		\item \alert{RandomNAS} \lit{Li and Talwalkar. ‘19}: Randomly samples architectures from the one-shot model.
+		\item Xie et al. (2019) exploit \alert{random connectivity} in a large neural networks, showing that it is comparable to other architectures found by NAS methods on ImageNet.
+	}
+	\end{itemize}
+\end{itemize}
 
 \end{frame}
 
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Goals}
+
+Now you are able to \ldots
+
+\begin{itemize}
+	\item describe different \alert{search spaces} for neural architecture search (NAS)
+	\item describe various \alert{optimization methods for NAS}
+	\item explain various \alert{speedup techniques for NAS}
+\end{itemize}
 
 
+\end{frame}
