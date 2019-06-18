@@ -475,7 +475,7 @@ What are some pros and cons of the cell search space compared to the chain-struc
         {\footnotesize
         \begin{itemize}
             \item $x^{(j)} = \sum_{i<j}\tilde{o}^{(i,j)}(x^{(i)}) = \sum_{i<j}\sum_{o\in\mathcal{O}}\frac{e^{\alpha_{o}^{(i,j)}}}{\sum_{o^{\prime}\in\mathcal{O}}e^{\alpha_{o^{\prime}}^{(i,j)}}}o(x^{(i)})$
-            \item $o^{(i,j)} = \argmax_{o\in\mathcal{O}}\alpha_{o}^{(i,j)}$
+            \item $o^{(i,j)} \in \argmax_{o\in\mathcal{O}}\alpha_{o}^{(i,j)}$
             \item 8 operations: $sep\_conv\_3$$\times$$3$, $sep\_conv\_5$$\times$$5$, $dil\_conv\_3$$\times$$3$, $dil\_conv\_5$$\times$$5$, $max\_pool\_3$$\times$$3$, $avg\_pool\_3$$\times$$3$, \textit{identity} and \textit{zero}
         \end{itemize}}%
         \end{centering}
