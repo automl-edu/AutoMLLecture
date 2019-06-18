@@ -480,12 +480,12 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 	\end{itemize}
 	\pause
 	\item Algorithm selection is not limited to machine learning
-	\item Algorithm selection can be applied to any algorithm class where 
+	\item Algorithm selection can be applied to any application where 
 	\begin{enumerate}
 		\pause
 		\item we have a discrete portfolio of algorithms to choose from
 		\pause
-		\item the tasks (aka. datasets) are sensitive to the algorithm choice (so called heterogeneous instances)
+		\item the tasks (a.k.a. datasets) are sensitive to the algorithm choice\\ (so called heterogeneous instances)
 		\pause
 		\item we have informative meta-features (a.k.a. instance features)\\
 		(only partially true for ML)
@@ -509,7 +509,8 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 		\item Otherwise there would be no point in HPO
 	\end{itemize}
 	\pause
-	\item \alert{Can we learn from previous datasets $\mdata$ how to initialize HPO?}
+	\item \alert{Can we learn from previous datasets $\mdata$ how to initialize HPO?}\\
+	(i.e., running an initial design)
 	\begin{itemize}
 		\item the same ideas also apply to NAS
 		\item for simplicity we focus on HPO 
@@ -572,7 +573,7 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 	\pause
 	\item In each iteration, we have already a selected portfolio $\Lambda_i$ and want to add a single configuration maximizing its contribution
 	\begin{eqnarray}
-	\lambda_{i+1} \in \argmax_{\lambda \in \Lambda_{init}} c(\Lambda_i) - c(\Lambda_i \cup \{\lambda\})
+	\lambda_{i+1} \in \argmax_{\lambda \in \Lambda} c(\Lambda_i) - c(\Lambda_i \cup \{\lambda\})
 	\end{eqnarray}
 	\item Re-iterate: $\Lambda_{i+1} = \Lambda_i \cup \{\lambda_{i+1}\}$
 	\pause
@@ -633,7 +634,9 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 
 \begin{itemize}
 	\item You could train a model $\surro: \lambda \times \dataset \mapsto c(\lambda, \dataset)$ to predict the cost of a configuration $\lambda$ on a dataset $\dataset$ 
+	\pause
 	\item Use $\surro$ to augment your search (e.g., in BO) and update it with newly collected data in the current dataset
+	\pause
 	\item Problems:
 	\begin{itemize}
 		\item Training this big model $\surro$ might take too long
@@ -662,6 +665,12 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 	\item We can use SGD to train weights $\vec{w}$
 	\pause
 	\item Possible to also use more complex models such as DNNs
+	\pause
+	\medskip
+	\item a learnt initial design and model-warmstarting can be combined
+	\begin{itemize}
+		\item combination can perform even better than the better of these two
+	\end{itemize}
 \end{itemize}
 
 
@@ -670,13 +679,20 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 %-----------------------------------------------------------------------
 \section{Few Shot Learning}
 %----------------------------------------------------------------------
-\begin{frame}[c]{DataSets}
+\begin{frame}[c]{DataSets: Meta-Train, Meta-Test}
 
-\centering
-\includegraphics[width=.8\textwidth]{images/metalearning_datasets.png}
+\begin{center}
+\includegraphics[width=.6\textwidth]{images/metalearning_datasets.png}
 
 \lit{Ravi and Larochelle. 2017}
+\end{center}
 \smallskip
+
+Notation: 
+\begin{itemize}
+	\item meta-train: $\mdata = \{(\dataset^{\text{train}}_1,\dataset^{\text{test}}_1), \ldots, \dataset^{\text{train}}_n,\dataset^{\text{test}}_n)  \}$
+\end{itemize}
+
 
 $\leadsto$ Assumption: At meta-test we only have a few examples ("few shots") from a similar task
 
@@ -687,24 +703,86 @@ $\leadsto$ Assumption: At meta-test we only have a few examples ("few shots") fr
 
 \begin{itemize}
 	\item Idea: Acquire $\phi$ through optimization
-	$$\max_{\phi_i} \log p(\dataset^{\text{train}}_i | \phi) + \log p(\phi_i | \theta)$$
+	$$\argmax_{\phi_i} \log p(\dataset^{\text{train}}_i | \phi) + \log p(\phi_i | \theta)$$
 	\pause
 	\smallskip
 	\item[$\leadsto$] Meta-parameters $\theta$ serve as a prior
 	\pause
 	\smallskip
-	\item One successful form of prior knowledge is the initialization of DNNs for fine-tuning:
-	$$ \phi \leftarrow \theta - \alpha \nabla_\theta \loss(\theta, \dataset^{\text{tr}})$$
-	where $\theta$ are pre-trained weights and $\dataset^{\text{tr}}$ is training data for a new task
+	\item One successful form of prior knowledge is the initialization of DNNs for fine-tuning (at test time):
+	$$ \phi \leftarrow \theta - \alpha \nabla_\theta \loss(\theta, \dataset^{\text{train}})$$
+	where $\theta$ are pre-trained weights and $\dataset^{\text{train}}$ is data for a new task
 	\pause
 	\smallskip
 	\item Meta-learning task:
-	$$\min_{\theta} \sum_{\text{task } i} \loss(\theta - \alpha \nabla_\theta \loss(\theta, \dataset_i^{\text{train}}),  \dataset_i^{\text{test}})$$
+	$$\argmin_{\theta} \sum_{\text{task } i} \loss(\theta - \alpha \nabla_\theta \loss(\theta, \dataset_i^{\text{train}}),  \dataset_i^{\text{test}})$$
 	
 \end{itemize}
 
 
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Model-Agnostic Meta-Learning (MAML) \litw{Fin et al. 2017}}
 
+	$$\argmin_{\theta} \sum_{\text{task } i} \loss(\theta - \alpha \nabla_\theta \loss(\theta, \dataset_i^{\text{train}}),  \dataset_i^{\text{test}})$$
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{images/maml.png}
+\end{center}
+\smallskip
+where $\phi_i^*$ are the optimal weights for Task $i$
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{MAML Algorithm \litw{Fin et al. 2017}}
+
+\begin{algorithm}[H]
+	\Input{Distribution $p(\mathcal{T})$ over tasks, learning rates $\alpha$ and $\beta$
+	}
+	\BlankLine
+	randomly initilize $\theta$;\\
+	\pause
+	\While{not done}{
+		Sample batch of tasks $\mathcal{T}_i \sim p(\mathcal{T})$;\\
+		\pause
+		\ForEach{$\mathcal{T}_i$}{
+			Evaluate $\nabla_\theta \loss_{\mathcal{T}_i}(f_{\theta_i})$ with respect to K examples;\\
+			\pause
+			Compute adapted parameters with gradient descent: $\theta_i' \rightarrow \theta_i - \alpha \nabla_\theta \loss_{\mathcal{T}_i}(f_{\theta_i})$;\\
+			}
+		\pause
+		Update $\theta \rightarrow \theta - \beta \nabla_\theta \sum_{\mathcal{T}\sim p(\mathcal{T})} \loss_{\mathcal{T}_i}(f_{\theta'_i})$;\\
+	}
+	
+\Return{Pre-trained weights $\theta$}
+\end{algorithm}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Discussion of MAML}
+
+\begin{itemize}
+	\item MAML can improve the performance on \alert{few-short learning task}\\
+	(i.e., we only have few examples for each task)\\
+	where we use only a \alert{few update steps}
+	\pause
+	\smallskip
+	\item MAML uses \alert{second-order derivatives} which makes it only applicable to small datasets\\
+	\begin{itemize}
+		\item first-order approximations can also perform quite well
+	\end{itemize}
+	\pause
+	\smallskip
+	\item MAML-fine-tuning requires \alert{backpropagation through the entire network}
+	\begin{itemize}
+		\item in traditional fine-tuning, we only fine-tune the last layer(s)
+	\end{itemize}
+	
+\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
