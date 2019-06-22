@@ -12,6 +12,13 @@
 
 \newcommand{\litw}[1]{{\footnotesize\color{black!20}[#1]}}
 
+
+\newcommand{\myframe}[2]{\begin{frame}[c]{#1}#2\end{frame}}
+\newcommand{\myframetop}[2]{\begin{frame}{#1}#2\end{frame}}
+\newcommand{\myit}[1]{\begin{itemize}#1\end{itemize}}
+\newcommand{\myblock}[2]{\begin{block}{#1}#2\end{block}}
+
+
 % algorithm macros
 
 % \newcommand{\myparagraph}[1]{
@@ -19,13 +26,6 @@
 % 	\noindent
 % 	\textbf{#1}.
 % }
-
-
-\newcommand{\myframe}[2]{\begin{frame}[c]{#1}#2\end{frame}}
-\newcommand{\myframetop}[2]{\begin{frame}{#1}#2\end{frame}}
-\newcommand{\myit}[1]{\begin{itemize}#1\end{itemize}}
-\newcommand{\myblock}[2]{\begin{block}{#1}#2\end{block}}
-
 
 %Holgers Notation
 % \newcommand{\insts}[0]{I}
@@ -210,3 +210,7 @@
 \newcommand{\vbar}{$\,\;|$\hspace*{-1em}\raisebox{-0.3mm}{$\,\;\;|$}}
 \newcommand{\vendbar}{\raisebox{+0.4mm}{$\,\;|$}}
 \newcommand{\vend}{$\,\:\lfloor$}
+
+
+\newcommand{\goleft}[2][.7]{\parbox[t]{#1\linewidth}{\strut\raggedright #2\strut}}
+\newcommand{\rightimage}[2][.3]{\mbox{}\hfill\raisebox{1em-\height}[0pt][0pt]{\includegraphics[width=#1\linewidth]{#2}}\vspace*{-\baselineskip}}
