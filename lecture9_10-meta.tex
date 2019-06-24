@@ -1024,17 +1024,16 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \begin{frame}[c]{Recap: Reinforcement Learning \litw{Barto \& Sutton; RL Book}}
 
 \begin{center}
-\includegraphics[width=0.5\textwidth]{images/suttonbarto_rl.png}
+\includegraphics[width=0.6\textwidth]{images/suttonbarto_rl.png}
 \end{center}
 
 \pause
 
 \begin{eqnarray}
-\pi^* \argmax_{\pi} V^{\pi} (s)  \nonumber\\
-= \argmax_{\pi} \mathbb{E}[R | s, \pi] \nonumber
+\pi^* \argmax_{\pi} \mathbb{E}_{\pi} \left[ \sum^{T}_{t=1} \gamma^{t-1} r_t \mid s_0 \right] \nonumber
 \end{eqnarray}
 
-The goal is to find the optimal policy $\pi^{*}: s \mapsto a$ starting in a state $s$\\ (or in expectation of $s$) s.t. following $\pi^{*}$ from $s$ maximizes the expected reward~$R$.
+The goal is to find the optimal policy $\pi^{*}: s \mapsto a$ starting in a state $s_0$\\ (or in expectation of $s_0$) s.t. following $\pi^{*}$ from $s$ maximizes the expected (discounted) reward~$R$.
 
 
 \end{frame}
@@ -1080,7 +1079,123 @@ The goal is to find the optimal policy $\pi^{*}: s \mapsto a$ starting in a stat
 
 \end{frame}
 %----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c, fragile]{Learning Acquisition Functions\newline Results \litw{Volpp et al.'19}}
 
+\begin{itemize}
+	\item Instead of learning everything, it might be sufficient to \alert{learn hand-design heuristics}
+	\item In Bayesian Optimization (BO), the most critical hand-design heuristic is the acquisition function
+	\begin{itemize}
+		\item trade-off between exploitation and exploration
+		\item Depending on the problem at hand, you might need a different acquisition function
+		\item Choices:
+		\begin{itemize}
+			\item probability of improvement (PI)
+			\item expected improvement (EI)
+			\item upper confidence bounds (UCB)
+			\item entropy search (ES) -- quite expensive!
+			\item knowledge gradient (KG)
+			\item ...
+		\end{itemize} 
+	\end{itemize}
+	\item \alert{Idea:} Learn a \emph{neural acquisition function} from data
+\end{itemize}
+
+$\leadsto$ Replace acquisition function 
+
+\end{frame}
+%----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Bayesian Optimization: Algorithm}
+
+\begin{algorithm}[H]
+	\Input{Search Space $\mathcal{X}$,
+		black box function $f$, 
+		\alert{acquisition function $\alpha$,}
+		maximal number of function evaluations $m$
+	}
+	\BlankLine
+	$\mathcal{D}_0$ $\leftarrow$ initial\_design($\mathcal{X}$); \\
+	\For{n = $1, 2, \ldots m - |D_0|$}{
+		$\surro: \conf \mapsto y$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
+		select $x_{n}$ by optimizing $x_{n} \in \argmax_{x \in \mathcal{X}} \alert{\alpha(x; \mathcal{D}_{n-1}, \surro)}$;\\
+		Query $y_{n} := f(x_{n})$;\\
+		Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}$;
+	}
+	\Return{Best $x$ according to $D_m$ or $\surro$}
+	\caption{Bayesian Optimization (BO)}
+\end{algorithm}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Neural Acquisition Function \litw{Volpp et al.'19}}
+
+Although the acquisition function $\alpha$ depends on the history $\mathcal{D}_{n-1}$ and the predictive model $\surro$, $\alpha$ mainly makes use of the predictive mean $\mu$ and variance $\sigma^2$.
+
+\pause
+\bigskip
+
+Neural acquisition function (AF):
+
+\begin{eqnarray}
+\alpha_\theta(x) = \alpha_\theta(\mu_t(x), \sigma_t(x)) \nonumber
+\end{eqnarray}
+
+where $\theta$ are the parameters of a neural network,\\ and $\mu$ and $sigma$ are its inputs.
+
+\begin{itemize}
+	\item Since the input is not $x$, it allows to learn scalable acquisition function
+	\item No calibration of hyperparameter necessary, once the neural AF is learnt
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{RL to train Neural AF \litw{Volpp et al.'19}}
+
+\begin{description}
+	\item[Policy $\pi_\theta$:] Neural acquisition function $\alpha_\theta$
+	\pause
+	\item[Episode:] run of $\pi$ on $f\in \mathcal{F}'$
+	\pause
+	\item[State $s_t$:] $\mu_t$ and $\sigma_t$ on a set of points $\xi_t$
+	\pause
+	\item[Action $a_t$:] Sampling point $x_t$
+	\pause
+	\item[Reward $r_t$:] negative simple regret
+	\pause
+	\item[Transition probability]: Noisy evaluation of $f$ and the predictive model update
+\end{description}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{State \litw{Volpp et al.'19}}
+
+\begin{itemize}
+	\item The state is described by a discrete set of points $\xi = \{\xi_n\}^N_{n=1}$
+	\pause
+	\item We feed these points through the predictive model and the neural AF to obtain $\alpha_\theta(\xi_i) = \alpha_\theta(\mu_t(\xi_i), \sigma_t(\xi_i)) $
+	\pause
+	\item $\alpha_\theta(\xi_i)$ are interpreted as the logits of multinomial distribution, s.t.
+	$$\pi_\alpha(\cdot \mid s_t) = \text{Mult}\left[\alpha_\theta(\xi_1), \ldots, \alpha_\theta(\xi_N) \right] $$
+	\pause
+	\item Due to the curse of dimensionality, we need a two step approach to sample $\xi_n$
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Learning Acquisition Functions\newline Results \litw{Volpp et al.'19}}
+
+\centering
+\includegraphics[width=1.0\textwidth]{images/l2acq.png}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals}
