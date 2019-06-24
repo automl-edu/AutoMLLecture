@@ -811,7 +811,7 @@ where $\phi_i^*$ are the optimal weights for Task $i$
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\section{Learning to Learn/Optimize}
+\section{Learning to Learn \& Optimize}
 %----------------------------------------------------------------------
 \begin{frame}[c]{Learning to Learn}
 
@@ -928,6 +928,76 @@ $\leadsto$ fails on other activation functions
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
+\begin{frame}[c]{Learning Step Size Controllers \litw{Daniel et al'16}}
+
+\begin{itemize}
+	\item \alert{Idea:} Learn the hyperparameters of the weight update 
+\end{itemize}
+
+\begin{equation}
+\theta_{t+1} = \theta_t - \alpha_t \nabla f(\theta_t) \nonumber
+\end{equation}
+
+\begin{itemize}
+	\item For simple SGD, this would be simply the learning rate $\alpha$
+	\pause
+	\item \alert{Note}: $\alpha$ have to be adapted in the course of the training
+	\begin{itemize}
+		\item similar to learning rate schedules (e.g., cosine annealing)
+	\end{itemize}
+	\medskip
+	\pause
+	\item Idea: Use reinforcement learning to learn a policy $\pi: s \mapsto a$ to control the learning rate (or other adaptive hyperparameters)
+\end{itemize}
+
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Recap: Reinforcement Learning \litw{Barto \& Sutton; RL Book}}
+
+\begin{center}
+	\includegraphics[width=0.6\textwidth]{images/suttonbarto_rl.png}
+\end{center}
+
+\pause
+
+\begin{eqnarray}
+\pi^* \argmax_{\pi} \mathbb{E}_{\pi} \left[ \sum^{T}_{t=1} \gamma^{t-1} r_t \mid s_0 \right] \nonumber
+\end{eqnarray}
+
+The goal is to find the optimal policy $\pi^{*}: s \mapsto a$ starting in a state $s_0$\\ (or in expectation of $s_0$) s.t. following $\pi^{*}$ from $s$ maximizes the expected (discounted) reward~$R$.
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{RL for Step Size Controllers}
+
+\begin{block}{State}
+	\begin{itemize}
+		\item Predictive change in function value
+	\end{itemize}
+\begin{eqnarray}
+\phi_1 = \log \left( \text{Var}(\Delta \tilde{f}_i ) \right) \nonumber \\
+\Delta \tilde{f}_i = \tilde{f}(x_i; \theta + \delta \theta) - f(x_i; \theta) \nonumber
+\end{eqnarray}
+where $\tilde{f}(x_i; \theta + \delta \theta)$ is done by a first order Taylor expansion
+
+\begin{itemize}
+	\item Disagreement of function values
+\end{itemize}
+
+$$ \phi_2 = \log \left(\text{Var}(f(x_i; \theta)) \right)$$
+
+
+\end{block}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
 \begin{frame}[c]{Learning Black-box Optimization~\litw{Chen et al'17}}
 
 \begin{block}{Black Box Optimization Setting}
@@ -1017,24 +1087,6 @@ y_t \sim p(y|x_t)\nonumber
 
 \tiny
 Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with-rl/}
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Recap: Reinforcement Learning \litw{Barto \& Sutton; RL Book}}
-
-\begin{center}
-\includegraphics[width=0.6\textwidth]{images/suttonbarto_rl.png}
-\end{center}
-
-\pause
-
-\begin{eqnarray}
-\pi^* \argmax_{\pi} \mathbb{E}_{\pi} \left[ \sum^{T}_{t=1} \gamma^{t-1} r_t \mid s_0 \right] \nonumber
-\end{eqnarray}
-
-The goal is to find the optimal policy $\pi^{*}: s \mapsto a$ starting in a state $s_0$\\ (or in expectation of $s_0$) s.t. following $\pi^{*}$ from $s$ maximizes the expected (discounted) reward~$R$.
-
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -1159,12 +1211,18 @@ where $\theta$ are the parameters of a neural network,\\ and $\mu$ and $sigma$ a
 	\item[Policy $\pi_\theta$:] Neural acquisition function $\alpha_\theta$
 	\pause
 	\item[Episode:] run of $\pi$ on $f\in \mathcal{F}'$
+	\begin{itemize}
+		\item $\mathcal{F}$ is a set of functions we can sample functions from
+	\end{itemize}
 	\pause
 	\item[State $s_t$:] $\mu_t$ and $\sigma_t$ on a set of points $\xi_t$
 	\pause
-	\item[Action $a_t$:] Sampling point $x_t$
+	\item[Action $a_t$:] Sampled point $x_t$
 	\pause
-	\item[Reward $r_t$:] negative simple regret
+	\item[Reward $r_t$:] negative simple regret: $r_t = f(x^*) - f(\hat{x})$
+	\begin{itemize}
+		\item assumes that we can estimate the optimal $x^*$ for \emph{training} functions
+	\end{itemize}
 	\pause
 	\item[Transition probability]: Noisy evaluation of $f$ and the predictive model update
 \end{description}
@@ -1175,14 +1233,19 @@ where $\theta$ are the parameters of a neural network,\\ and $\mu$ and $sigma$ a
 \begin{frame}[c]{State \litw{Volpp et al.'19}}
 
 \begin{itemize}
-	\item The state is described by a discrete set of points $\xi = \{\xi_n\}^N_{n=1}$
+	\item The state is described by a discrete set of points $\xi_t = \{\xi_n\}^N_{n=1}$
 	\pause
 	\item We feed these points through the predictive model and the neural AF to obtain $\alpha_\theta(\xi_i) = \alpha_\theta(\mu_t(\xi_i), \sigma_t(\xi_i)) $
 	\pause
 	\item $\alpha_\theta(\xi_i)$ are interpreted as the logits of multinomial distribution, s.t.
 	$$\pi_\alpha(\cdot \mid s_t) = \text{Mult}\left[\alpha_\theta(\xi_1), \ldots, \alpha_\theta(\xi_N) \right] $$
 	\pause
-	\item Due to the curse of dimensionality, we need a two step approach to sample $\xi_n$
+	\item Due to curse of dimensionality, we need a two step approach for~$\xi_t$
+	\begin{enumerate}
+		\item sample $\xi_{\text{global}}$ using a coarse Sobol grid
+		\item sample $\xi_{\text{local}}$ using local optimization starting from the best samples in $\xi_{\text{global}}$
+	\end{enumerate}
+	\item[$\leadsto$] $\xi_t = \xi_{\text{global}} \cup \xi_{\text{lokal}}$ 
 \end{itemize}
 
 \end{frame}
@@ -1193,6 +1256,25 @@ where $\theta$ are the parameters of a neural network,\\ and $\mu$ and $sigma$ a
 \centering
 \includegraphics[width=1.0\textwidth]{images/l2acq.png}
 
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Results on Artificial Functions \litw{Volpp et al.'19}}
+
+\centering
+\includegraphics[width=1.0\textwidth]{images/l2acq_results.png}
+
+\medskip
+
+\begin{itemize}
+	\item Approach by \lit{Volpp et al. '19} called MetaBO
+	\item MetaBO performs better than other acquisition functions (EI, GP-UBC, PI) and other baselines (Random, TAF)
+\end{itemize}
+
+\pause
+
+\alert{Assumption}: You have a family of functions at hand that resembles your target functions.
 
 \end{frame}
 %-----------------------------------------------------------------------
