@@ -40,6 +40,10 @@ After this lecture, you will be able to \ldots
 	\item ...
 \end{itemize}
 
+\pause
+\medskip
+\alert{Warning:} I gave my best to unify the notation of different papers here. Please keep that in mind if you read the original papers.
+
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
@@ -939,15 +943,17 @@ $\leadsto$ fails on other activation functions
 \end{equation}
 
 \begin{itemize}
-	\item For simple SGD, this would be simply the learning rate $\alpha$
+	\item For SGD, this would be for example the learning rate $\alpha$
 	\pause
 	\item \alert{Note}: $\alpha$ have to be adapted in the course of the training
 	\begin{itemize}
 		\item similar to learning rate schedules (e.g., cosine annealing)
 	\end{itemize}
+	\pause
+	\item \alert{Note(ii)}: later we denote the learnt hyperparameters as $\lambda$
 	\medskip
 	\pause
-	\item Idea: Use reinforcement learning to learn a policy $\pi: s \mapsto a$ to control the learning rate (or other adaptive hyperparameters)
+	\item \alert{Idea:} Use reinforcement learning to learn a policy $\pi: s \mapsto a$ to control the learning rate (or other adaptive hyperparameters)
 \end{itemize}
 
 
@@ -973,27 +979,73 @@ The goal is to find the optimal policy $\pi^{*}: s \mapsto a$ starting in a stat
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Controllers}
+\begin{frame}[c]{RL for Step Size Controllers: State \litw{Daniel et al'16}}
 
-\begin{block}{State}
-	\begin{itemize}
-		\item Predictive change in function value
-	\end{itemize}
-\begin{eqnarray}
-\phi_1 = \log \left( \text{Var}(\Delta \tilde{f}_i ) \right) \nonumber \\
-\Delta \tilde{f}_i = \tilde{f}(x_i; \theta + \delta \theta) - f(x_i; \theta) \nonumber
-\end{eqnarray}
+\textbf{Predictive change in function value:}
+
+$$s_1 = \log \left( \text{Var}(\Delta \tilde{f}_i ) \right)$$
+$$\Delta \tilde{f}_i = \tilde{f}(x_i; \theta + \delta \theta) - f(x_i; \theta)$$
+
 where $\tilde{f}(x_i; \theta + \delta \theta)$ is done by a first order Taylor expansion
 
+\pause
+\textbf{Disagreement of function values:}
+$$ s_2 = \log \left(\text{Var}(f(x_i; \theta)) \right)$$
+
+\pause
+
+\textbf{Discounted Average} (smoothing noise from mini-batches):
+$$\hat{s}_i \leftarrow \gamma \hat{s_i} + (1 - \gamma) s_i$$
+
+\pause
+
+\textbf{Uncertainty Estimate}:
+$$s_{K+i} \leftarrow \gamma s_{K+i} + (1-\gamma) (s_i - \hat{s}_i)^2$$
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{RL for Step Size Controllers: Learning \litw{Daniel et al'16}}
+
+Reward (average loss improvement over time):
+
+$$r = \frac{1}{T-1} \sum_{t=2}^T \left(\log(\loss_{t-1}) - \log(\loss_t)\right)$$
+
+\pause
+
+Optimal Policy:
+
+$$\pi^*(\lambda \mid s) \in \argmax_{\pi} \int \int p(s) \pi(\lambda\mid s)r(\lambda,s) \texttt{d}s \texttt{d}\lambda $$
+
+\pause
+
+The policy $\pi$ is learnt as a controller $\lambda = g(s, \phi)$; leading to
+
+$$\pi^*(\phi) \in \argmax_{\pi} \int \int p(s) \pi(\phi)r(g(s;\phi),s) \texttt{d}s \texttt{d}\lambda $$
+
+\pause
+
 \begin{itemize}
-	\item Disagreement of function values
+	\item can be learnt for example via Relative Entropy Policy Search (REPS) \lit{Peter et al. 2010}
 \end{itemize}
 
-$$ \phi_2 = \log \left(\text{Var}(f(x_i; \theta)) \right)$$
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{RL for Step Size Controllers: Training \litw{Daniel et al'16}}
 
+\begin{itemize}
+	\item We want to obtain robust policies, i.e., good performance for many different DNN architectures
+	\begin{itemize}
+		\item[$\leadsto$] Sample architectures e.g., with different numbers of filters and layers
+		\item[$\leadsto$] (Sub-)Sample dataset
+		\item[$\leadsto$] Sample number of optimization steps
+	\end{itemize}
+\end{itemize}
 
-\end{block}
-
+\centering
+\includegraphics[width=0.6\textwidth]{images/l2stepsizecontroler_mnist_training.png}
 
 \end{frame}
 %----------------------------------------------------------------------
