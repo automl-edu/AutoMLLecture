@@ -751,13 +751,37 @@ where $\phi_i^*$ are the optimal weights for Task $i$
 		\ForEach{$\mathcal{T}_i$}{
 			Evaluate $\nabla_\theta \loss_{\mathcal{T}_i}(f_{\theta_i})$ with respect to K examples;\\
 			\pause
-			Compute adapted parameters with gradient descent: $\theta_i' \rightarrow \theta_i - \alpha \nabla_\theta \loss_{\mathcal{T}_i}(f_{\theta_i})$;\\
+			Compute adapted parameters with gradient descent:\newline $\theta_i' \rightarrow \theta_i - \alpha \nabla_\theta \loss_{\mathcal{T}_i}(f_{\theta_i})$;
 			}
 		\pause
-		Update $\theta \rightarrow \theta - \beta \nabla_\theta \sum_{\mathcal{T}\sim p(\mathcal{T})} \loss_{\mathcal{T}_i}(f_{\theta'_i})$;\\
+		Update $\theta \rightarrow \theta - \beta \nabla_\theta \sum_{\mathcal{T}\sim p(\mathcal{T})} \loss_{\mathcal{T}_i}(f_{\theta'_i})$;
 	}
 	
 \Return{Pre-trained weights $\theta$}
+\end{algorithm}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{MAML Algorithm for Supervised Learning\litw{Fin et al. 2017}}
+
+\begin{algorithm}[H]
+	\Input{Distribution $p(\mathcal{T})$ over tasks, learning rates $\alpha$ and $\beta$
+	}
+	\BlankLine
+	randomly initilize $\theta$;\\
+	\While{not done}{
+		Sample batch of tasks $\mathcal{T}_i \sim p(\mathcal{T})$;\\
+		\ForEach{$\mathcal{T}_i$}{
+			\alert{Sample $K$ datapoints $\dataset = \{x^{(j)}, y^{(j)} \}$ from $\mathcal{T}_i$;}\\
+			Evaluate $\nabla_\theta \loss_{\mathcal{T}_i}(f_{\theta_i})$ \alert{using $\dataset$ and $ \loss_{\mathcal{T}_i}$};\\
+			Compute adapted parameters with gradient descent:\newline $\theta_i' \rightarrow \theta_i - \alpha \nabla_\theta \loss_{\mathcal{T}_i}(f_{\theta_i})$;\\
+			\alert{Sample datapoints $\dataset' = \{x^{(j)}, y^{(j)}\}$ from $\mathcal{T}_i$ for the meta-update;}
+		}
+		Update $\theta \rightarrow \theta - \beta \nabla_\theta \sum_{\mathcal{T}\sim p(\mathcal{T})} \loss_{\mathcal{T}_i}(f_{\theta'_i})$ using each \alert{$\dataset'$ and $\loss_{\mathcal{T}_i}$};
+	}
+	
+	\Return{Pre-trained weights $\theta$}
 \end{algorithm}
 
 \end{frame}
@@ -789,12 +813,274 @@ where $\phi_i^*$ are the optimal weights for Task $i$
 %-----------------------------------------------------------------------
 \section{Learning to Learn/Optimize}
 %----------------------------------------------------------------------
-\begin{frame}[c]{XXX}
+\begin{frame}[c]{Learning to Learn}
+
+\begin{block}{Idea}
+	\begin{itemize}
+		\item Learn algorithms directly, i.e., how to search in the solution space
+		\item First idea: learn weight updates of a neural network
+	\end{itemize}
+\end{block}
+
+\pause
+
+\begin{block}{Learning to learn by gradient descent by gradient descent\newline \litw{Andrychowicz et al'16}}
+	Weight updates (note: \alert{$\theta$ denote DNN weights!}):
+	\begin{equation}
+	\theta_{t+1} = \theta_t - \alpha_t \nabla f(\theta_t) \nonumber
+	\end{equation}
+	\pause
+	Even more general:
+	\begin{equation}
+	\theta_{t+1} = \theta_t + g_t(\nabla f(\theta_t), \phi) \nonumber
+	\end{equation}
+	where $g$ is the optimizer and $\phi$ are the parameters of the optimizer $g$.\\
+	\pause
+	$\leadsto$ \alert{Goal: Optimize $f$ wrt $\theta$ by learning $g$}
+\end{block}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn: Objective \litw{Andrychowicz et al'16}}
+
+\vspace{-0.5cm}
+\begin{equation}
+\mathcal{L}(\phi) = \mathbb{E}\left[ f(\theta^*(f,\phi)) \right]\nonumber
+\end{equation}
+
+where $\mathcal{L}$ is a loss function and $\theta^*(f,\phi)$ are the optimized weights $\theta^*$ by using the optimizer parameterized with $\phi$ on function $f$.
+
+\pause
+
+%\vspace{-0.5cm}
+\begin{equation}
+\mathcal{L}(\phi) = \mathbb{E}\left[\sum_{t=1}^T w_t f(\theta_t)\right]\nonumber
+\end{equation}
+
+\pause
+where $w_t$ are arbitrary weights associated with each time step
+and 
+
+\pause
+\vspace{-0.5cm}
+\begin{eqnarray}
+\theta_{t+1} = \theta_t + g_t\\\nonumber
+\begin{pmatrix}g_t\\h_{t+1}\end{pmatrix} = m(\nabla_\theta f(\theta_t), h_t, \phi)\nonumber
+\end{eqnarray}
+
+\pause
+$\leadsto$ Goal: Learn $m$ via $\phi$ by using gradient descent by optimizing $\mathcal{L}$ \\
+\pause
+$\leadsto$ ``Learning to learn gradient descent by gradient descent''
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn: LSTM approach \litw{Andrychowicz et al'16}}
+
+\begin{description}
+\item[Optimizee] Target network to be trained
+\item[Optimizer] LSTM with hidden state $h_t$ that predicts weight updates $g_t$
+\end{description}
+
+\medskip
+
+\includegraphics[width=1\textwidth]{images/learning_to_learn_lstm}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn with LSTM: Results \litw{Andrychowicz et al'16}}
+
+\centering
+\includegraphics[width=0.7\textwidth]{images/l2l_mnist_base}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn with LSTM: Results \litw{Andrychowicz et al'16}}
+
+Changing the original architecture of the DNN:
+\smallskip
+
+\centering
+\includegraphics[width=0.9\textwidth]{images/l2l_mnist_okchange}
+
+$\leadsto$ learnt optimizer is robust against some architectural changes
+
+\pause
+\smallskip
+How can we learn the weight updates for larger networks? \hands
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn with LSTM: Results\newline \litw{Andrychowicz et al'16}}
+
+Changing the activation function to ReLU:
+\smallskip
+
+\centering
+\includegraphics[width=0.6\textwidth]{images/l2l_mnist_relu}
+
+$\leadsto$ fails on other activation functions
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Black-box Optimization~\litw{Chen et al'17}}
+
+\begin{block}{Black Box Optimization Setting}
+\begin{enumerate}
+\item Given the current state of knowledge $h_t$ propose a query point $x_t$
+\item Observe the response $y_t$
+\item Update any internal statistics to produce $h_{t+1}$
+\end{enumerate}
+\end{block}
+
+\pause
+
+\begin{block}{Learning Black Box Optimization}
+Essentially, same idea as before:
+\begin{eqnarray}
+h_t, x_t = \text{RNN}_\phi(h_{t-1}, x_{t-1}, y_{t-1}) \nonumber \\
+y_t \sim p(y|x_t)\nonumber
+\end{eqnarray}
+
+\begin{itemize}
+\item Using recurrent neural network (RNN) to predict next $x_t$.
+\item $h_t$ is the internal hidden state 
+\pause
+\item \alert{Remark:} in a black-box setting, we don't have gradient information!
+\end{itemize}
+
+\end{block}
 
 
 
 \end{frame}
-%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Black-box Optimization: Loss Functions\newline \litw{Chen et al'17}}
+
+\begin{itemize}
+\item Sum loss: Provides more information than final loss
+\end{itemize}
+\begin{equation}
+\mathcal{L}_{\text{sum}}(\phi) = \mathbb{E}_{f,y_{1:T-1}}\left[\sum_{t=1}^T f(x_t)\right]\nonumber
+\end{equation}
+
+\pause
+
+\begin{itemize}
+\item EI loss: Try to learn behavior of Bayesian optimizer based on expected improvement (EI)
+\begin{itemize}
+\item requires model (e.g., GP)
+\end{itemize}
+\end{itemize}
+\begin{equation}
+\mathcal{L}_{\text{EI}}(\phi) = - \mathbb{E}_{f,y_{1:T-1}}\left[\sum_{t=1}^T \text{EI}(x_t | y_{1:t-1})\right]\nonumber
+\end{equation}
+
+\pause
+
+\begin{itemize}
+\item Observed Improvement Loss:
+\end{itemize}
+
+\begin{equation}
+\mathcal{L}_{\text{OI}}(\phi) = \mathbb{E}_{f,y_{1:T-1}}\left[\sum_{t=1}^T \min \left\{f(x_t) - \min_{i<t}(f(x_i)),0 \right\}  \right]\nonumber
+\end{equation}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Black-box Optimization: Results\newline \litw{Chen et al'17}}
+
+\centering
+\includegraphics[width=0.6\textwidth]{images/l2bo_hartmann3}
+
+\begin{itemize}
+\item Hartmann3 is an artifical function with 3 dimensions
+\pause
+\item[$\leadsto$] $\mathcal{L}_{\text{OI}}$ and $\mathcal{L}_{\text{EI}}$ perform best
+\item[$\leadsto$] $\mathcal{L}_{\text{OI}}$ easier to compute than $\mathcal{L}_{\text{EI}}$\\ because we need a predictive model to compute EI 
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning\newline \litw{Li and Malik'17}}
+
+\centering
+\includegraphics[width=0.6\textwidth]{images/l2o_comic}
+
+\tiny
+Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with-rl/}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Recap: Reinforcement Learning \litw{Barto \& Sutton; RL Book}}
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{images/suttonbarto_rl.png}
+\end{center}
+
+\pause
+
+\begin{eqnarray}
+\pi^* \argmax_{\pi} V^{\pi} (s)  \nonumber\\
+= \argmax_{\pi} \mathbb{E}[R | s, \pi] \nonumber
+\end{eqnarray}
+
+The goal is to find the optimal policy $\pi^{*}: s \mapsto a$ starting in a state $s$\\ (or in expectation of $s$) s.t. following $\pi^{*}$ from $s$ maximizes the expected reward~$R$.
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning\newline \litw{Li and Malik'17}}
+
+\begin{block}{Reinforcement Learning for Learning to Optimize}
+\begin{description}
+\item[State] current location, objective values and gradients evaluated at the current and past locations
+\pause
+\item[Action] Step update $\Delta x$
+\pause
+\item[Transition] $x_t \leftarrow x_{t-1} + \Delta x$
+\pause
+\item[Cost/Reward] Objective value at the current location
+\begin{itemize}
+\item Since the RL agent will optimize the cumulative cost, this is equivalent to $\mathcal{L}_{\text{sum}}$
+\item encourages the policy to reach the minimum of the objective function as quickly as possible
+\end{itemize}
+\pause
+\item[Policy] DNN predicting $\mu_d$ of Gaussian (with constant variance $\sigma^2$)\\ for dimension $d$; sample $\Delta x_d \sim \mathcal{N}(\mu_d, \sigma^2)$
+\pause
+\item[Training Set] randomly generated objective functions
+\end{description}
+\end{block}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning\newline Results \litw{Li and Malik'17}}
+
+\centering
+\includegraphics[width=0.5\textwidth]{images/l2o_dnn}
+
+\begin{itemize}
+\item 2-layer DNN with ReLUs
+\item Training datasets for training RL agent:\\ four multivariate Gaussians and sampling 25 points from each
+\begin{itemize}
+\item[$\leadsto$] hard toy problem
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+
 
 %----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals}
