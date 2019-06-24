@@ -23,7 +23,7 @@ Neural Architecture Search (Part 2) \\
 		\item More details on Gaussian processes
 	\end{itemize}
 	\item Pentecost (Holiday) -- no lecture
-	\item[$\to$]  Architecture search I + II \& Multi-fidelity
+	\item[$\to$]  Architecture search I + II \& Multi-fidelity Optimization
 	\item Meta-Learning
 	\item Learning to learn $\&$ optimize
 	\item Beyond AutoML: algorithm configuration and control
@@ -81,7 +81,9 @@ Neural Architecture Search (Part 2) \\
 	\begin{itemize}
 		\item[--] \alert{Change the network structure, but not the modelled function}
 		\item[--] i.e., for every input the network yields the same output as before applying
-		some network morphisms operations, such as ``Net2DeeperNet'', ``Net2WiderNet'', etc.
+		the network morphisms 
+		
+		\item[--] Example operations: ``Net2DeeperNet'', ``Net2WiderNet'', etc.
 	\end{itemize}
     \end{itemize}
 
@@ -266,7 +268,7 @@ All learning curves vs. learning curves with early termination
 	\item Disadvantages of this model? \includegraphics[height=0.08\textheight]{images/hands.png}
 \pause
 	\myit{
-		\item Relies on manually-created parametric curves
+		\item Relies on manually-selected parametric families of curves
 		\item Does not take into account hyperparameters used 
 		\myit{
 			\item[$\rightarrow$] can't learn across hyperparameters
@@ -284,7 +286,7 @@ All learning curves vs. learning curves with early termination
 \begin{frame}[c,fragile]{Freeze-Thaw Bayesian Optimization (Swersky et al, 2014)}
 
 \myit{
-	\item Use a Gaussian process with input $\vtheta$ and $t$; special kernel for $t$
+	\item Use a Gaussian process with inputs $\conf$ and $t$; special kernel for $t$
 	\item For $N$ configurations and $T$ epochs each: $O(N^3 t^3)$ $\rightarrow$ approximation
 	\item Iteratively: either extend existing configuration or try new one
 \pause
@@ -317,8 +319,8 @@ All learning curves vs. learning curves with early termination
 	\item Disadvantages of this model? \includegraphics[height=0.1\textheight]{images/hands.png}
 	\pause
 	\myit{
-		\item \goleft[.45]{Relies on manually-created parametric curves}
-		\item \goleft[.45]{Cannot quickly integrate new information from extending the curve / new runs}
+		\item \goleft[.45]{Relies on manually-selected parametric families of curves}
+		\item \goleft[.45]{Cannot quickly integrate new information from extending the current curve \\ (or from new runs)}
 	}
 }
 \end{frame}
@@ -472,7 +474,7 @@ All learning curves vs. learning curves with early termination
 \myframe{Refresher: Entropy Search}{
 	\myit{
 		\item Define the $p_{\text{min}}$ distribution given data $\mathcal{D}$:
-		$$p_{\text{min}}(x \mid \alert{\mathcal{D}}) := p[x \in \argmin_{x\in X} f(x) \mid \alert{\mathcal{D}}]$$
+		$$p_{\text{min}}(x' \mid \alert{\mathcal{D}}) := p(x' \in \argmin_{x\in X} f(x) \mid \alert{\mathcal{D}})$$
 	
 		\item Entropy search aims to minimize the entropy \alert{$H[p_\text{min}]$} 
 		\item In a nutshell:
@@ -485,7 +487,7 @@ All learning curves vs. learning curves with early termination
 	}
 \vspace*{0.5cm}
 	\[a_{\text{ES}}(x) := \mathds{E}_{\alert{p(y\mid x, \mathcal{D})}} 
-	\left[   H[p_{\text{min}}(\cdot \mid \alert{\mathcal{D} \cup \{(x, y)\}} \right]\]
+	\left[   H[p_{\text{min}}(\cdot \mid \alert{\mathcal{D} \cup \{(x, y)\}})] \right]\]
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -493,7 +495,7 @@ All learning curves vs. learning curves with early termination
 \myframe{Multi-fidelity Bayesian Optimization with Entropy Search}{
 	\myit{
 		\item We care about the $p_{\text{min}}$ distribution for the maximal budget $B$:
-		$$p_{\text{min}}(x \mid \mathcal{D}) := p[x \in \argmin_{x\in X} f(x\alert{,B}) \mid \mathcal{D}]$$
+		$$p_{\text{min}}(x' \mid \mathcal{D}) := p(x' \in \argmin_{x\in X} f(x\alert{,B}) \mid \mathcal{D})$$
 	
 		\item We still want to minimize the entropy $H[p_\text{min}]$
 \pause
@@ -505,7 +507,7 @@ All learning curves vs. learning curves with early termination
 	}
 \vspace*{0.5cm}
 	\[a_{\text{ES}}(x,b) := \mathds{E}_{\alert{p(y\mid (x, b), \mathcal{D})}} 
-	\left[   \frac{H[p_{\text{min}}(\cdot \mid \alert{\mathcal{D}})] - H[p_{\text{min}}(\cdot \mid \alert{\mathcal{D} \cup \{((x,b), y)\}}]}{\alert{c(x,b)}} \right]\]
+	\left[   \frac{H[p_{\text{min}}(\cdot \mid \alert{\mathcal{D}})] - H[p_{\text{min}}(\cdot \mid \alert{\mathcal{D} \cup \{((x,b), y)\}})]}{\alert{c(x,b)}} \right]\]
 
 }
 
@@ -938,7 +940,7 @@ All learning curves vs. learning curves with early termination
 \medskip		
 		\item To fix this, we created a \alert{tabular surrogate benchmark}
 		\myit{
-			\item Small cell search space with 423k unique architectures
+			\item Small cell search space with 423k unique architectures for CIFAR-10
 			\item Evaluated each of them \& stored result in a table
 			\item Result: \alert{you can now quickly evaluate NAS algorithms on your laptop}
 \medskip
