@@ -1,0 +1,126 @@
+\documentclass{exam}
+\usepackage{amsmath, amsfonts}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[super]{nth}
+\usepackage{booktabs}
+
+\DeclareMathOperator*{\argmin}{argmin}
+
+\usepackage[hyperfootnotes=false]{hyperref}
+
+\usepackage[usenames,dvipsnames]{color}
+\newcommand{\note}[1]{
+	\noindent~\\
+	\vspace{0.25cm}
+	\fcolorbox{Red}{Orange}{\parbox{0.99\textwidth}{#1\\}}
+	%{\parbox{0.99\textwidth}{#1\\}}
+	\vspace{0.25cm}
+}
+
+
+\input{../macros.tex}
+%\renewcommand{\hide}[1]{#1}
+
+\qformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+\bonusqformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+
+\pagestyle{headandfoot}
+
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+\newcommand{\duedate}{12.06.19 (10:00)}
+\newcommand{\due}{{\bf This assignment is due on \duedate.} }
+\firstpageheader
+{Due: \duedate \\ Points: 10}
+{{\bf\lecture}\\ \assignment{10}}
+{\lectors\\ \semester}
+
+\runningheader
+{Due: \duedate}
+{\assignment{6}}
+{\semester}
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+
+\firstpagefooter
+{}
+{\thepage}
+{}
+
+\runningfooter
+{}
+{\thepage}
+{}
+
+\headrule
+\pointsinrightmargin
+\bracketedpoints
+\marginpointname{pt.}
+
+
+
+
+\newcommand{\parents}{p}
+\newcommand{\negation}[1]{\overline{#1}}
+%\newcommand{\tuple}[1]{\langle #1 \rangle}
+\newcommand{\tuple}[1]{\left<#1\right>}
+\newcommand{\dom}[1]{dom(#1)}              % domain
+
+\newcommand{\false}{false}
+\newcommand{\true}{true}
+\newcommand{\TRUE}{{\mbox{\scriptsize \em TRUE}}}
+\newcommand{\FALSE}{{\mbox{\scriptsize \em FALSE}}}
+
+\newcommand{\bSigma}{\bm{\Sigma}}
+\newcommand{\bmu}{\bm{\mu}}
+\newcommand{\bx}{\bm{x}}
+\newcommand{\by}{\bm{y}}
+\newcommand{\bX}{\bm{X}}
+\newcommand{\bI}{\bm{I}}
+\newcommand{\bw}{\bm{w}}
+\newcommand{\ba}{\bm{a}}
+\newcommand{\bb}{\bm{b}}
+\newcommand{\bk}{\bm{k}}  
+\newcommand{\inv}{^{-1}}
+
+\newcommand{\norm}{{\mathcal{N}}}
+
+\newcommand\transpose{^{\textrm{\tiny{\sf{T}}}}}
+
+\begin{document}
+	\gccs
+	Now that you have learned about the application of reinforcement learning for learning to learn and algorithm control, you will implement
+	a basic RL agent yourself.
+	\begin{questions}
+		\titledquestion{Q-Learning}[10]
+		We present you a simple environment (based on the OpenAI gym standard), in which your agent has to learn to approximate a Sigmoid function.
+		
+		\begin{parts}
+		\part[2] Implement a tabular function approximator that is able to handle float data, by mapping float state feature to the closest integer.
+		
+		\part[5] Implement the Q-learning algorithm. Train your agent on the provided environment in its default configuration for $10\,000$ training episodes.
+			Your agent will have to learn a policy of length 11 with action space $\{0, 1, 2\}$. The optimal policy will result in a reward of roughly $10.16$
+			and looks like $0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2$.
+			
+			If your agent at first does not produce the optimal policy play around with the learning rate $\alpha$ and the exploration factor $\epsilon$.
+			In your PDF report all learning rates and exploration factors you tried and the resulting policies.
+			
+			In your own words explain how the learning rate and the exploration factor influence the Q-learning on this deterministic environment.
+
+		\part[3] In the same folder you called \texttt{main.py} from, the results of training will be stored. Plot the true reward against the expected reward for all
+			learning rates and exploration factors you tried and add them to your PDF. 
+
+		\end{parts}
+
+		\titledquestion{Feedback}[Bonus: 0.5]
+		For each question in this assignment, state:
+		\begin{itemize}
+			\item How long you worked on it.
+			\item What you learned.
+			\item Anything you would improve in this question if you were teaching the course.
+		\end{itemize}
+	\end{questions}
+	
+	\noindent
+	\due Submit your solution for the tasks by uploading a PDF to your groups BitBucket repository. The PDF has to include the name of the submitter(s).
+\end{document}
