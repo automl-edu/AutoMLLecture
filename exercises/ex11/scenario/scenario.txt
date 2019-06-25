@@ -1,0 +1,11 @@
+algo=python -u satenstein/wrapper.py
+paramfile=satenstein/params.pcs
+instance_file=
+test_instance_file=
+feature_file=
+overall_obj=
+run_obj=
+deterministic=
+wallclock-limit=
+cutoff_time=
+
