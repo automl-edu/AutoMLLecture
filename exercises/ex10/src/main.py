@@ -45,6 +45,11 @@ class SigmoidMultiValAction(Env):
         self._prev_state = None
 
     def step(self, action: int):
+        """
+        Advance on step forward
+        :param action: int
+        :return: next state, reward, done, misc
+        """
         r = 1-np.abs(self._sig(self._c_step) - (action / (self.action_space.n - 1)))
         remaining_budget = self.n_steps - self._c_step
         next_state = [remaining_budget, self.shift, self.slope, action]
@@ -57,6 +62,11 @@ class SigmoidMultiValAction(Env):
         return np.array(next_state), r, self._c_step > self.n_steps, {}
 
     def reset(self):
+        """
+        Reset the environment.
+        Always needed before starting a new episode.
+        :return: Start state
+        """
         if self.noise:
             self.shift = self.rng.normal(self.n_steps/2, self.n_steps/4)
             self.slope = self.rng.choice([-1, 1]) * self.rng.uniform() * 2  # negative slope
@@ -77,37 +87,19 @@ class QTable(dict):
         :param float_to_int: flag to determine if state values need to be rounded to the closest integer
         """
         super().__init__(**kwargs)
-        self.n_actions = n_actions
-        self.float_to_int = float_to_int
-        self.__table = defaultdict(lambda: np.zeros(n_actions))
+        raise NotImplementedError
 
     def __getitem__(self, item):
-        try:
-            table_state, table_action = item
-            if self.float_to_int:
-                table_state = map(int, table_state)
-            return self.__table[tuple(table_state)][table_action]
-        except ValueError:
-            if self.float_to_int:
-                item = map(int, item)
-            return self.__table[tuple(item)]
+        raise NotImplementedError
 
     def __setitem__(self, key, value):
-        try:
-            table_state, table_action = key
-            if self.float_to_int:
-                table_state = map(int, table_state)
-            self.__table[tuple(table_state)][table_action] = value
-        except ValueError:
-            if self.float_to_int:
-                key = map(int, key)
-            self.__table[tuple(key)] = value
+        raise NotImplementedError
 
     def __contains__(self, item):
-        return tuple(item) in self.__table.keys()
+        raise NotImplementedError
 
     def keys(self):
-        return self.__table.keys()
+        raise NotImplementedError
 
 
 def make_epsilon_greedy_policy(Q: QTable, epsilon: float, nA: int) -> callable:
@@ -151,32 +143,6 @@ def get_decay_schedule(start_val: float, decay_start: int, num_episodes: int, ty
                           np.linspace(start_val, 0, (num_episodes - decay_start))])
     else:
         raise NotImplementedError
-
-
-def update(Q: QTable, environment: SigmoidMultiValAction, policy: callable, alpha: float, discount_factor: float):
-    """
-    Q update
-    :param Q: state-action value look-up table
-    :param environment: environment to use
-    :param policy: the current policy
-    :param alpha: learning rate
-    :param discount_factor: discounting factor
-    """
-    # Need to parse to string to easily handle list as state with defdict
-    policy_state = environment.reset()
-    episode_length, cummulative_reward = 0, 0
-    expected_reward = np.max(Q[policy_state])
-    while True:  # roll out episode
-        policy_action = np.random.choice(list(range(environment.action_space.n)), p=policy(policy_state))
-        s_, policy_reward, policy_done, _ = environment.step(policy_action)
-        cummulative_reward += policy_reward
-        episode_length += 1
-        Q[[policy_state, policy_action]] = Q[[policy_state, policy_action]] + alpha * (
-                (policy_reward + discount_factor * Q[[s_, np.argmax(Q[s_])]]) - Q[[policy_state, policy_action]])
-        if policy_done:
-            break
-        policy_state = s_
-    return Q, cummulative_reward, expected_reward, episode_length  # Q, cumulative reward
 
 
 def greedy_eval_Q(Q: QTable, this_environment: SigmoidMultiValAction, nevaluations: int = 1):
@@ -248,7 +214,6 @@ def q_learning(environment: SigmoidMultiValAction,
         if (i_episode + 1) % 100 == 0:
             print("\rEpisode {:>5d}/{}\tReward: {:>4.2f}".format(i_episode + 1, num_episodes, train_reward), end='')
         # TODO rollout episode following the current policy and update Q
-        Q, _, _, _ = update(Q, environment, policy, alpha, discount_factor)
 
         # Keep track of training reward
         train_reward, train_expected_reward = greedy_eval_Q(Q, environment, nevaluations=number_of_evaluations)

@@ -45,6 +45,11 @@ class SigmoidMultiValAction(Env):
         self._prev_state = None
 
     def step(self, action: int):
+        """
+        Advance on step forward
+        :param action: int
+        :return: next state, reward, done, misc
+        """
         r = 1-np.abs(self._sig(self._c_step) - (action / (self.action_space.n - 1)))
         remaining_budget = self.n_steps - self._c_step
         next_state = [remaining_budget, self.shift, self.slope, action]
@@ -57,6 +62,11 @@ class SigmoidMultiValAction(Env):
         return np.array(next_state), r, self._c_step > self.n_steps, {}
 
     def reset(self):
+        """
+        Reset the environment.
+        Always needed before starting a new episode.
+        :return: Start state
+        """
         if self.noise:
             self.shift = self.rng.normal(self.n_steps/2, self.n_steps/4)
             self.slope = self.rng.choice([-1, 1]) * self.rng.uniform() * 2  # negative slope
@@ -300,7 +310,7 @@ if __name__ == '__main__':
                         default=.125,
                         help='Learning rate',
                         type=float)
-    
+
     # In such a limited state and action space, having a large exploration factor helps to quickly explore the whole
     # environment. Additionally due to the deterministic nature of the environment we quickly learn the true reward
     # landscape through high exploration values.
