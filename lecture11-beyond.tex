@@ -1,0 +1,895 @@
+\begin{frame}[c]{}
+
+\centering
+\huge
+Lectures 11:\\
+Beyond AutoML: Algorithm Configuration and Control
+\end{frame}
+%----------------------------------------------------------------------
+\begin{frame}[c]{Where are we? The big picture}
+
+\begin{itemize}
+	\item Introduction
+	\item Background
+	\begin{itemize}
+		\item Design spaces in ML
+		\item Evaluation and visualization
+	\end{itemize}
+	\item Hyperparameter optimization (HPO)
+	\begin{itemize}
+		\item Bayesian optimization
+		\item Other black-box techniques
+		\item More details on Gaussian processes
+	\end{itemize}
+	\item Pentecost (Holiday) -- no lecture
+	\item Architecture search I + II
+	\item Meta-Learning I + II
+	\item[$\to$] Beyond AutoML: algorithm configuration and control
+	\item Project announcement and closing
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Goals}
+
+After these two lectures, you will be able to \ldots
+
+\begin{itemize}
+	\item 
+\end{itemize}
+
+\pause
+\medskip
+\alert{Warning:} I gave my best to \alert{unify the notation} of different papers here. Please keep that in mind if you read the original papers which use different notations.
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Further Material}
+
+There is one recent tutorials on algorithm configuration:
+
+\begin{itemize}
+	\item ICML'19: Frank Hutter and Kevin Leyton-Brown on\\
+	"Algorithm configuration: learning in the space of algorithm designs"\\
+	\footnotesize{\url{https://www.facebook.com/icml.imls/videos/vb.118896271958230/2044426569187107/}}
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+\section{Algorithm Configuration}
+%----------------------------------------------------------------------
+\begin{frame}[c]{Generalization of HPO}
+
+\begin{itemize}
+	\item hyperparameter optimization (HPO) is not limited to ML
+	\pause
+	\item in fact, you can optimize the performance of any algorithm by means of HPO if
+	\begin{enumerate}
+		\item the algorithm at hand has parameters that influence its performance
+		\item you care about the empirical performance of an algorithm
+	\end{enumerate}
+	\pause
+ 	\smallskip
+ 	\item a limitation of HPO is that we assume that we care only about a single task (i.e., dataset or input to the algorithm)
+ 	\smallskip
+ 	\item[$\leadsto$] \alert{Can we find an algorithm's configuration that performs well and robustly across a set of tasks?}
+ 	\begin{itemize}
+ 		\item An hyperparameter configuration for a set of datasets
+ 		\item A parameter configuration of a SAT solver for a set of SAT instances
+ 		\item A parameter configuration of a AI planning solver for a set of planning problems
+ 		\item \ldots
+ 	\end{itemize}
+ 	\item[$\leadsto$] \alert{Algorithm configuration}
+\end{itemize}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Configuration Visualized}
+
+\centering
+\scalebox{0.5}{
+	\includegraphics{images/Configuration-Process.pdf}
+}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Configuration -- in More Detail}
+
+\bigskip
+
+\centering
+\scalebox{0.75}{
+	\input{tikz/ac}
+}
+
+\bigskip
+
+\begin{block}{Definition}
+	Given a parameterized algorithm $\algo$ with possible parameter settings $\confs$, \pause 
+	a set of training problem instances $\insts$, \pause 
+	and a cost metric $m: \confs \times \insts \rightarrow \perf$, \pause 
+	the algorithm configuration problem is 
+	to \alert{find a parameter configuration $\conf^* \in \confs$ 
+		that minimizes $m$ across the instances in $\insts$}.
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Configuration -- Full Formal Definition}
+
+\begin{block}{Definition}
+An instance of the algorithm configuration problem
+is a 5-tuple $(\algo, \pcs, \instD, \cutoff, m)$ where:
+\begin{itemize}
+	\item $\algo$ is a parameterized algorithm;
+	\item $\pcs$ is the parameter configuration space of $\algo$;
+	\item $\instD$ is a distribution over problem instances with domain $\insts$;
+	\pause
+	\item $\cutoff < \infty$ is a \alert{cutoff time}, after which each run of $\algo$ will be terminated if still running
+	\pause
+	\item $m: \confs \times \insts \rightarrow \mathds{R}$ is a function that
+	measures the observed cost of running $\algo(\conf)$ on an instance $\inst \in
+	\insts$ with cutoff time $\cutoff$ 
+	%  \item $s$ is a statistical population parameter\\ (e.g., expectation, median,  or variance)
+\end{itemize}
+\pause
+The cost of a candidate solution $\conf\in\confs$ is
+%\begin{equation}
+%\hat{\conf} \in \argmin_{\conf \in \pcs}
+\alert{$c(\conf) = \mathds{E}_{\inst \sim \instD} (m(\conf,\inst))$}.\\
+The goal is to find \alert{$\conf^* \in \argmin_{\conf \in \pcs} c(\conf)$}.
+%\end{equation}
+
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Cutoff Time $\kappa$}
+
+
+Why is it important to impose a cutoff time?
+\hands
+
+\pause
+
+\begin{itemize}
+\item Some configurations might be very poor; e.g., never solve an instance
+\pause
+%worst-case runtime to solve an NP-hard problem
+\item Without it, algorithm configuration even becomes undecidable:
+\end{itemize}
+
+\begin{block}{Theorem}
+Algorithm configuration with $\kappa = \infty$ is undecidable.
+\end{block}
+
+\pause
+
+
+\begin{block}{Proof by reduction of halting problem to algorithm configuration}
+\begin{itemize}
+\item Define cost of my\_algo with one Boolean parameter:
+\vspace*{-0.4cm}
+\begin{eqnarray}
+\nonumber{}  m(\conf= \langle true \rangle,\inst )&=&
+\begin{cases}
+1, & \text{if $A$ halts on $\pi$}\\
+0, & \text{otherwise}.
+\end{cases}\\
+\nonumber{}  m(\conf=\langle false \rangle, \pi) &=& 0.5.
+\end{eqnarray}
+\pause
+\vspace*{-0.6cm}
+\item Then, solving AC for my\_algo and $\inst$ solves the halting problem for $A$:
+\begin{itemize}
+\item $\conf^* = \langle false \rangle$ implies that $A$ halts on $\pi$ 
+\item $\conf^* = \langle true \rangle$ implies that $A$ does not halt on $\pi$ 
+\end{itemize}
+\end{itemize}
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Distribution of Instances}
+
+We usually have a finite number of instances from a given application
+\begin{itemize}
+\item We want to do well on that type of instances
+\item Future instances of this type should be solved well 
+\end{itemize}
+
+\pause
+\bigskip
+
+Like in machine learning
+\begin{itemize}
+\item We split the instances into a \alert{training set} and a \alert{test set}
+\item We configure algorithms on the training instances
+\item We only use the test instances afterwards
+\begin{itemize}
+\item[$\to$] unbiased estimate of generalization performance for unseen instances
+\end{itemize}  
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Challenges of Algorithm Configuration}
+
+\begin{itemize}
+\item \alert{Structured high-dimensional parameter space}
+\begin{itemize}
+\item categorical vs. continuous parameters
+\item conditionals between parameters
+\end{itemize}
+\pause
+\medskip
+\item \alert{Stochastic optimization}
+\begin{itemize}
+\item Randomized algorithms: optimization across various seeds
+\item Distribution of benchmark instances (often wide range of hardness)
+\item Subsumes so-called \emph{multi-armed bandit problem}
+\end{itemize}
+\pause
+\medskip
+\item Some instance sets are \alert{heterogeneous},\\i.e., no single configuration performs well on all instances\\ 
+$\leadsto$ combination of algorithm configuration and selection
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+\section{ParamILS: iterated local search in parameter space}
+
+
+%-------------------------------------------------------------
+\begin{frame}[c,fragile]{A Simple Manual Approach for Configuration}
+
+\NoCaptionOfAlgo
+\LinesNotNumbered
+\begin{algorithm}[H]
+Start with some configuration $\conf$\;
+\onslide<4->
+\Repeat{no more improvement possible (or ``good enough'')}{
+\onslide<2->
+Modify a single parameter\;
+\onslide<3->
+\If{results on benchmark set improve}
+{
+keep new configuration\;
+}
+\onslide<4->
+}
+\caption{\textbf{Algorithm 1: Manual Greedy Algorithm Configuration}}
+\end{algorithm}
+
+\pause
+\smallskip
+
+$\leadsto$ also called "greedy first improvement"
+
+\end{frame}
+%-------------------------------------------------------------
+
+
+
+
+%-------------------------------------------------------------
+\begin{frame}[c,fragile]{The \paramils{} Framework}
+
+\vspace*{-0.3cm}ParamILS = Iterated Local Search in parameter configuration space
+\bigskip
+
+\onslide<2->
+\NoCaptionOfAlgo
+\LinesNotNumbered
+\begin{algorithm}[H]
+Choose initial parameter configuration $\conf$\\
+Perform \cemph{teal}{subsidiary local search} on $\theta$\\
+\onslide<6->
+\While{time budget left}{
+\onslide<3->
+$\conf_{lm} \leftarrow \conf$ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~// last local optimum\;
+\onslide<4->
+Perform \cemph{orange}{perturbation} on $\theta$\;
+Perform \cemph{teal}{subsidiary local search} on $\theta$\;
+
+Based on \cemph{green!60!black!100}{acceptance criterion},
+keep $\conf$ or revert to $\conf:=\conf_{lm}$
+\onslide<5->
+
+With probability $p_{restart}$ randomly pick new $\theta$ 
+\onslide<6->
+}
+\caption{\textbf{Algorithm 2: ParamILS}}
+\end{algorithm}
+\onslide<7->
+
+\bigskip
+$\leadsto$ Performs \alert{biased random walk over local optima}
+
+\end{frame}
+%-------------------------------------------------------------
+
+
+
+%-------------------------------------------------------------
+\begin{frame}[c,fragile]{The \paramils{} Framework}
+
+\paramils{} is an algorithm framework made up of building blocks:
+
+\begin{itemize}
+\item In practice, \paramils{} implements these as follows:
+\begin{itemize}
+\item \cemph{teal}{Subsidiary local search}: greedy first improvement
+\item \cemph{orange}{Perturbation}: 3 random moves in 1-exchange neighbourhood
+\item \cemph{green!60!black!100}{Acceptance criterion}: always improve better configuration
+\item Note: these choices are not necessarily optimal \ldots
+\end{itemize}
+
+\pause
+\bigskip
+
+\item \paramils{} performs a sequence of \emph{pairwise} comparisons
+\begin{itemize}
+\item \alert{is $\conf'$ better than current $\conf$}?
+\item 2 instantiations that answer this question based on different runs of $\conf$ and $\conf'$: \alert{BasicILS} and \alert{FocusedILS}
+\end{itemize}   
+\end{itemize}
+
+
+\end{frame}
+%-------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{BasicILS(N)}
+%: one instantiation of ``is $\conf'$ better than $\conf$?''
+
+\begin{itemize}
+\item \alert{BasicILS(N)} uses a pretty basic comparison: \textit{better$_N(\conf', \conf)$}:
+\begin{itemize}
+\item Compare $\conf'$ and $\conf$ based on $N$ instances 
+\pause
+\item How does this relate to cross-validation? \hands
+\end{itemize}  
+
+\bigskip
+\pause
+\item Problem: How to set $N$? Problems of large $N$? Small $N$? \hands
+\pause
+\begin{itemize}
+\item Problem of large $N$: evaluations are slow
+\item Problem of small $N$: overfitting to a small set of instances
+\item[$\leadsto$] Tradeoff: Choose $N$ of moderate size 
+\end{itemize}
+
+\end{itemize}
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{BasicILS(N)}
+
+
+Question: \alert{Which} $N$ instances should we use? \hands
+\begin{enumerate}
+\item $N$ different instances for each configuration
+\item The same set of $N$ instances for the entire run
+\end{enumerate}
+
+\bigskip
+\pause
+Answer: the same $N$ instances, so that we compare apples with apples
+\begin{itemize}
+\item[] (but: using the same instances can also yield overtuning) 
+\end{itemize}
+\bigskip
+
+
+If we sampled different instances for each configuration:
+\begin{itemize}
+\item Some configurations would randomly get easier instances
+\item Those configurations would look better than they really are
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{BasicILS(N)}
+
+Question: For randomized algorithms, how should we set the seeds? \hands
+\begin{enumerate}
+\item Sample a new seed for each algorithm run
+\item Fix the seeds together with the instances
+\end{enumerate}
+\bigskip
+\pause
+Answer: just like for instances, fix them to compare apples to apples
+
+\bigskip
+\pause
+In summary, for each run of BasicILS(N): \\pick $N$ (instance, seed) pairs and use them for evaluating each $\conf$.\\
+\pause
+(Different BasicILS runs can use different instances and seeds.)
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[fragile]{The concept of overtuning}
+
+Very related to overfitting in machine learning 
+\begin{itemize}
+\item Performance improves on the training set
+\item Performance does not improve on the test set, and may even degrade
+\end{itemize}	
+
+More pronounced for more heterogeneous benchmark sets 
+\begin{itemize}
+\item But it even happens for very homogeneous sets
+\item Indeed, one can even overfit on a single instace, to the \alert{seeds} used for training 
+\end{itemize}	
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}[fragile]{Overtuning Visualized}
+
+\begin{itemize}
+\item Example: minimizing SLS solver runlengths for a single SAT instance
+\item \alert{Training cost}, e.g., with N=100:\\average runlengths across 100 runs with different seeds
+\item \alert{Test cost} of $\hat{\conf}$ here based on 1000 new seeds 
+\end{itemize}	
+
+\pause
+
+
+\begin{center}
+\only<2>{\includegraphics[scale=0.13]{images/basicils100_training.png}}
+\only<3>{\includegraphics[scale=0.13]{images/basicils100_training_and_test.png}}
+\end{center}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}[fragile]{BasicILS(N) Test Results with Various N}
+
+\begin{itemize}
+\item Example: minimizing SLS solver runlengths for a single SAT instance
+\item \alert{Training cost}, e.g., with N=?:\\average runlengths across N runs with different seeds
+\item \alert{Test cost} of $\hat{\conf}$ here based on 1000 new seeds 
+\end{itemize}	
+
+\pause
+
+\begin{multicols}{2}
+\begin{center}
+\includegraphics[scale=0.2]{images/basicils_unlabled.png}
+\end{center}
+\columnbreak{}
+\pause
+Which of these results corresponds to $N=1$, $N=10$, and $N=100$?\\
+\hands
+
+\pause
+\medskip
+
+\begin{enumerate}
+\item N=1: blue, N=10: red,\\ N=100 dashed black
+\item N=1: dashed black,\\ N=10: red, N=100 blue
+\end{enumerate}
+
+\pause
+Correct Answer: 1
+
+
+\end{multicols}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}[fragile]{Overtuning is Stronger For Smaller Training Sets}
+
+\begin{center}
+\includegraphics[scale=0.15]{images/basicils100_training_and_test.png}
+\includegraphics[scale=0.15]{images/basicils1_training_and_test.png}
+\end{center}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{FocusedILS}
+
+Intuition: get the best of both worlds
+\begin{itemize}
+\item Perform more runs for good configurations
+\begin{itemize}
+\item[-] to avoid overtuning
+\end{itemize}
+\item Quickly reject poor configurations
+\begin{itemize}
+\item[-] to make progress more quickly
+\end{itemize}
+\end{itemize}
+
+\pause
+
+\begin{block}{Definition: $N(\conf)$ and $c_N(\conf)$}
+\alert{$N(\conf)$} denotes the number of runs executed for $\conf$ so far.\\
+\alert{$\hat{c}_N(\conf)$} denotes the cost estimate of $\conf$ based on $N$ runs.
+\end{block}
+
+\pause
+In the beginning: $N(\conf)=0$ for every configuration $\conf$
+
+\end{frame}
+
+%-----------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{FocusedILS}
+
+
+\begin{block}{Definition: domination}
+\alert{$\conf_1$ dominates $\conf_2$} if 
+\begin{itemize}
+\item $N(\conf_1) \ge N(\conf_2)$ and 
+\item $\hat{c}_{N(\conf_2)}(\conf_1) \le \hat{c}_{N(\conf_2)}(\conf_2)$.
+\end{itemize}
+I.e.: we have at least as many runs for $\conf_1$ and its cost is at least as low.
+\end{block}
+
+\pause
+
+\begin{block}{\textit{better$_{Foc}$($\conf', \conf$)} in a nutshell}
+\begin{itemize}
+\item In \paramils{}: $\conf$ is always the current configuration to beat
+\pause
+\item Perform runs of $\conf'$ until either
+\begin{itemize}
+\item $\conf$ dominates $\conf'$ $\leadsto$ reject $\conf'$, or
+\item $\conf'$ dominates $\conf$ $\leadsto$ change current configuration $(\conf \leftarrow \conf')$
+\end{itemize}
+\pause	
+\item Over time: perform extra runs of $\conf$ to gain more confidence in it
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+%-----------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Toy Example for FocusedILS}
+
+
+\begin{itemize}
+\item Let $\conf$ be the current configuration in the ILS (evaluated on $\pi_1, \pi_2, \pi_3$)
+\item We'll look at neighbours $\conf'$ and $\conf''$
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{l ccc}
+& $\inst_1$ & $\inst_2$ & $\inst_3$ \\
+\hline
+$\conf$ 	& 3 		& 2			& 10	\onslide<2->\\
+\hline
+$\conf'$		& \onslide<3->{2}			& \onslide<4->{10} 		& \\
+& 			& \onslide<5->{$\to$ reject, since $\hat{c}_2(\conf')=6 > \hat{c}_2(\conf)=2.5$} & \\
+\hline
+\onslide<6->{$\conf''$}		& \onslide<6->{3}			& \onslide<7->{1} 		& \onslide<8->{5}\\
+\end{tabular}
+\end{center}
+
+\onslide<9->
+\begin{itemize}
+\item Move to neighbour $\conf''$ in the ILS: $\conf \leftarrow \conf''$
+\item Perform an additional run for new $\conf$ to increase confidence over time
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[fragile]{FocusedILS achieves the best of both worlds}
+
+Fast progress and no overtuning
+
+\begin{center}
+Test performance\\
+\only<1>{\includegraphics[scale=0.25]{images/basicils.png}}
+\only<2>{\includegraphics[scale=0.25]{images/focusedils.png}}
+\end{center}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Different Types of Overtuning}
+
+One can overtune to various specifics of the training setup
+\begin{itemize}
+\item Overtuning to the specific instances used in the training set 
+\item Overtuning to the specific seeds used in the training set
+\pause
+\item Overtuning to the (small) runtime cutoff used during training 
+\item Overtuning to a particular machine type
+\pause
+\item Overtuning to the type of instances in the training set
+\begin{itemize}
+\item These should just be drawn according to the distribution of interest
+\item But in practice, the distribution might change over time 
+\end{itemize}	 
+\end{itemize}	
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Adaptive capping}
+
+\begin{itemize}
+\item Assumptions
+\begin{itemize} 
+\item optimization of runtime
+\item each configuration run has a time limit (e.g., $300$ sec)
+\end{itemize}
+\pause    
+
+\item E.g., $\conf$ needed $1$ sec to solve $\inst_1$
+\begin{itemize}
+\item Do we need to run $\conf'$ for $300$ sec?
+\item Terminate evaluation of $\conf'$ once guaranteed to be worse than $\conf$
+\end{itemize}
+\pause
+\bigskip    
+\item[$\leadsto$] To compare against $\conf$ based on $N$ runs,\\we can terminate evaluation of $\conf'$ after time $\sum_{i=1}^N m(\conf,\inst_i)$
+\end{itemize}
+
+\pause
+\begin{theorem}
+Adaptive capping does not change the trajectory of \paramils{}, it only makes it faster. 
+\end{theorem}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Toy-Example: Adaptive capping}
+
+runtime cutoff $\kappa = 300$, comparison based on 3 instances (using $\hat{c}_3$)
+
+\begin{center}
+\begin{tabular}{l ccc}
+& $\inst_1$ & $\inst_2$ & $\inst_3$ \\
+\hline
+$\conf$ 	& 4 		& 2			& 1	\onslide<2->\\
+\hline
+\multicolumn{3}{l}{\emph{Without adaptive capping}}\\
+$\conf'$		& \onslide<3->{3}			& \onslide<4->{300} 		& \onslide<5->{50}\\
+& 			&  & \onslide<6->{$\to$ reject $\conf'$ (\alert{cost: 353})}\onslide<7->\\
+\hline
+\multicolumn{3}{l}{\onslide<7->{\emph{With adaptive capping}}}\\
+%\onslide<5->{$\kappa$}			& \onslide<6->{$4-0=4$}	& \onslide<8->{$6-3=3$} 	& \onslide<10->{$7-5=2$}\\
+$\conf'$\onslide<8->			& \onslide<8->{3}		& \onslide<9->{300} 		& \onslide<10->\\
+& 						& \multicolumn{2}{l}{\onslide<10->$\to$ \alert{cut off} after $\kappa=4$ seconds, reject $\conf'$ (\alert{cost: 7})} \\
+\hline
+\end{tabular}
+\end{center}
+
+%\onslide<10->
+%$\kappa=4$ seconds: (4+2+1)-3
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}[c]{State-of-the-art Algorithm Configuration}
+
+SMAC: Sequential Model-based Algorithm Configuration =
+
+\begin{itemize}
+	\item + Bayesian Optimization (instead of local search)
+	\item + aggressive racing
+	\item + adaptive capping
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{SMAC: Putting it all Together}
+%\\\litw{Hutter et al. 2011}}
+
+\LinesNotNumbered
+\begin{algorithm}[H]
+	\Input{%
+		instance set $\insts$,
+		Algorithm $\algo$ with configuration space $\confs$,
+		Initial configuration $\conf_0$,
+		performance metric $c$,
+		Configuration budget $b$
+	}
+	\Output{best incumbent configuration $\hat{\conf}$}
+	\BlankLine
+	run history H $\leftarrow$ initial design based on $\conf_0$; \tcp*{H = $(\conf, \inst, c(\inst,\conf))_i$}
+	\While{$b$ remains} {
+		\pause
+		$\epm \leftarrow$ train empirical performance model based on run history H;\\
+		\pause
+		$\confs_{challengers} \leftarrow$ select configurations based on $\epm$;\\
+		\pause
+		$\hat{\conf}$, H $\leftarrow$ intensify($\confs_{challengers}$, $\hat{\conf}$); \tcp*{racing and capping}
+	}
+	\pause
+	\Return{$\hat{\conf}$}
+	\caption{SMAC}
+\end{algorithm}
+
+\end{frame}
+%-----------------------------------------------------------------
+\section{Algorithm Control}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Dynamic Heuristics}
+
+\begin{itemize}
+	\item Many heuristics in algorithms are dynamic and adaptive
+	\begin{enumerate}
+		\item the algorithm's behavior changes over time
+		\item the algorithm's behavior changes based on internal statistics
+	\end{enumerate}
+	\medskip
+	\item these heuristics might control other parameters of the algorithms
+	\pause
+	\smallskip
+	\item example: learning rate schedules for training DNNs
+	\begin{enumerate}
+		\item exponential decaying learning rate: based on number of iterations, learning rate decreases
+		\pause
+		\item Reduce learning rate on plateaus: if the learning stagnates for some time, the learning rate is decreased by a factor
+	\end{enumerate}
+	\pause
+	\item What examples for dynamic heuristics can you think of? \hands
+	\pause
+	\item other examples: restart probability of search, mutation rate of evolutionary algorithms, \ldots  
+	
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Parametrization of Learning Rate Schedules}
+
+\begin{itemize}
+\item How would we parameterize learning rate schedules?
+\begin{enumerate}
+	\item exponential decaying learning rate:
+	\begin{itemize}
+		\item initial learning rate
+		\item minimal learning rate
+		\item multiplicative factor
+	\end{itemize}
+	\pause
+	\item Reduce learning rate on plateaus:
+	\begin{itemize}
+		\item patience (in number of epochs)
+		\item patience threshold
+		\item decreasing factor
+		\item cool-down break (in number of epochs)
+	\end{itemize}
+\end{enumerate}
+\pause
+\medskip
+\item[$\leadsto$] Many parameters only to control a single parameter (learning rate)
+\pause   
+\item Still not guaranteed that optimal setting of learning rate schedules will lead to optimal learning rate behavior
+\begin{itemize}
+	\item Learning rate schedules are only heuristics
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Control \litw{Biedenkapp et al. 2019}}
+
+\begin{itemize}
+	\item Goal: control a (set of) hyperparameter(s) during the run
+	\item Problem can be defined as an MDP $\mdp\coloneqq(\states,\actions,\transitions,\rewards)$
+	\begin{description}
+		\item[State Space $\states$] At each time step $t$, internal state $s_t$ of the target algorihtm being controlled.
+		\item[Action space $\actions$] Given a state $s_t$, the controller has to decide how to change the value $v\in\actions_h$
+		of a hyperparameter $h$.
+		\item[Transition Function $\transitions$] dynamics of the algorithm at hand transitioning from $s_t$ to $s_{t+1}$ by applying action $a_t$ with probability $t(s_t, a_t, s_{t+1})$
+		\item[Reward $\rewards$] Either sparse reward at the end of the algorithm run or intermediate run quality estimate
+		
+	\end{description}
+\end{itemize}
+
+\pause
+
+\vspace*{-0.5cm}            
+\begin{align}
+\policy^*(s)&\in
+\argmax_{a\in\actions} \rewards(s,a)+\mathcal{Q}_{\policy^*}(s,a) \nonumber\\
+\mathcal{Q}_{\policy}(s,a)&=
+\mathbb{E}_{\policy}\left[\sum_{k=0}^\infty\gamma^k r_{t+k+1}| s_t=s, a_t=a\right]\nonumber
+\end{align}
+
+\end{frame}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Control across Instances \litw{Biedenkapp et al. 2019}}
+
+\input{tikz/control.tex}
+
+\bigskip
+
+Following the same arguments as for algorithm configuration\\
+we want to learn a \alert{robust performance across instances $\inst \in \insts$}
+
+\end{frame}
+%----------------------------------------------------------------------
+
+%-----------------------------------------------------------------
+\begin{frame}[c]{Learning Goals}
+
+After these lectures, you are able to \ldots
+
+\begin{itemize}
+	\item 
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Literature [These are links]}
+
+\begin{itemize}
+	\item \lit{\href{https://arxiv.org/abs/1811.11597}{Automated Algorithm Selection: Survey and Perspectives}}	
+	
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+
+
