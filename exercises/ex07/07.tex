@@ -29,11 +29,11 @@
 \pagestyle{headandfoot}
 
 %%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
-\newcommand{\duedate}{07.06.19 (10:00)}
+\newcommand{\duedate}{28.06.19 (10:00)}
 \newcommand{\due}{{\bf This assignment is due on \duedate.} }
 \firstpageheader
-{Due: \duedate \\ Points: 6}
-{{\bf\lecture}\\ \assignment{6}}
+{Due: \duedate \\ Points: 7}
+{{\bf\lecture}\\ \assignment{7}}
 {\lectors\\ \semester}
 
 \runningheader
@@ -89,8 +89,20 @@
 
 \begin{document}
 	\gccs
-	Now that you have learned about the theory behind GPs, you will have to use that theory to implement GPs yourself.
+	Now that you have learned about different search spaces and optimization methods for neural architecture search (NAS), you will use these concepts to implement a specialized NAS method.
 	\begin{questions}
+		\titledquestion{Search Spaces}[2]
+		In this exercise you will have to compute the search space size in a cell search space. Suppose we have a \textit{normal} and \textit{reduction}
+		cell stacked to form the search model (see Slide 29 Lecture 7). As illustrated in Slide 30 of Lecture 7, each of these cells can be represented as a Directed Acyclic Graph (DAG),
+		where the yellow-labeled nodes are the inputs from the previous and previous-previous cells, the blue-labeled nodes are the so-called intermediate nodes, where the output tensors of the
+		incoming edges are added element-wise. The dashed edges are a mixture/combination of operations in the operation set $\mathcal{O}$.
+		The solid lines going to the output node (red-labeled node) just denote that the feature maps out of the intermediate nodes are concatenated to form the cell output tensor, and do not
+		perform any operation as the dashed edges.
+
+		Decisions are made only on the dashed edges and intermediate nodes. On each of these edges we want to select one out of $\lvert \mathcal{O}\rvert$ possible operations and on each
+		intermediate node the \textit{top-K} inputs (see Slide 32 Lecture 7). Given $\lvert \mathcal{O}\rvert = 7$, $K=2$ and 4 intermediate nodes in both normal and reduction cells,
+		compute the total number of possible architectures in this search space.
+
 		\titledquestion{Differentiable Architecture Search}[5]
 		In this second part of the exercise you will run DARTS for finding an optimal CNN architecture on MNIST.
 		The search model is defined in \texttt{model\_search.py}. It contains three stacked cells: 
