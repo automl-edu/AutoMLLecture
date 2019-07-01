@@ -35,8 +35,9 @@ class NASOptimizer(object):
         """
         Return a randomly sampled configuration.
         """
-        config = self.cs.sample_configuration()
-        return config
+	# TODO: return one randomly sampled configuration from self.cs
+        
+	return config
 
     def train_and_eval(self, config: CS.Configuration):
         """
@@ -45,17 +46,13 @@ class NASOptimizer(object):
         already been trained and evaluated, we just do table
         look-ups without the need to train the neural net.
         """
-        # query validation error from the tabular benchmark
-        y, cost = self.benchmark.objective_function(config)
+        # TODO: query validation error from the tabular benchmark
 
-        # update incumbent
-        if y <= self.curr_incumbent_error:
-            self.curr_incumbent = config
-            self.curr_incumbent_error = y
-        self.incumbent_trajectory.append(self.curr_incumbent)
-        self.incumbent_trajectory_error.append(self.curr_incumbent_error)
-        self.curr_wallclock += cost
+        # TODO: check if config is better than current incumbent
+	
+	# TODO: updated the incumbent trajectory
 
+	# return the validation error and cost of the queried config
         return y, cost
 
 
@@ -105,31 +102,26 @@ class Evolution(NASOptimizer):
             self.population.append(config)
             self.history[config] = y
 
-        # Carry out evolution in cycles. Each cycle produces a model and removes
+        # Carry out evolution in cycles (n_iters). Each cycle produces a model and removes
         # another.
         while len(self.history) < n_iters:
             # Sample randomly chosen models from the current population.
-            sample = {}
+            sample = {} # keys: config, values: validation errors
             while len(sample) < sample_size:
-                candidate = random.choice(list(self.population))
-                sample[candidate] = self.history[candidate]
+	    	# TODO: randomly choose one architecture from population
+		#       and add it to sample
 
             # The parent is the best model in the sample.
-            parent = min(sample, key=lambda x: sample[x])
+	    # TODO: get the best model in the current sample
+            parent = None
 
-            # Create the child model and evaluate it.
-            child_config = self.mutate_arch(parent)
-            y, _ = self.train_and_eval(child_config)
+            # TODO: Create the child model and evaluate it.
             
-            self.population.append(child_config)
-            self.history[child_config] = y
+            # TODO: add the child to the population and history
 
-            # Remove the oldest configuration.
-            if regularized:
-                self.population.popleft()
-            else:
-                best_config = min(list(self.population), key=lambda x: self.history[x])
-                self.population.remove(best_config)
+	    # TODO: based on the regularized argument value
+	    #       remove the oldest or the worst architecture
+	    #       from the population
 
 
     def mutate_arch(self, parent_arch):

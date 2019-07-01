@@ -1,4 +1,3 @@
-pytorch>=1.0
+tensorflow
 numpy
 scipy
-torchvision
