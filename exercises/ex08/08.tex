@@ -89,38 +89,34 @@
 
 \begin{document}
         \gccs
-	In this exercise you will learn how to run your NAS optimization algorithms on \href{https://github.com/google-research/nasbench}{NAS-Bench-101}. To avoid that you waste too much time training the sampled architectures, we will not optimize the actual benchmark but instead use a tabular benchmark [Ying et al, 2019; Klein et al, 2019]. In NAS-Bench-101 every CNN architecture in the cell search space was trained and evaluated 4 independent times. This was done for 4 different budgets (training epochs), however here we will only use the results for the highest budget (108 epochs).
+	In this exercise you will learn how to run your NAS optimization algorithms on \href{https://github.com/google-research/nasbench}{NAS-Bench-101}. To avoid that you waste too much time training the sampled architectures, we will not optimize the actual benchmark but instead use a tabular benchmark. Refer to \href{https://arxiv.org/abs/1902.09635}{"NAS-Bench-101: Towards Reproducible Neural Architecture Search"} for more details about the search space and encoding. 
+	
+	In NAS-Bench-101 every CNN architecture in the cell search space was trained and evaluated 4 independent times. This was done for 4 different budgets (training epochs), however here we will only use the results for the highest budget (108 epochs).
 The results are compiled into a database, such that we can simply look up the performance of a hyperparameter configuration instead of training it from scratch.
 
-The code below shows how we can load the benchmark together with the configuration space.
-Each hyperparameter configuration is encoded as a $\texttt{Configuration}$ object and we can easily convert it to a $\texttt{numpy}$ array or a $\texttt{dictionary}$. Note that, if we convert it to a numpy array, all values are normalized to be in $[0, 1]$.
-
-If we evaluate a hyperparameter configuration, we get the validation error and the time it had taken to train this configuration. When we generated this benchmark, we evaluated each hyperparameter configuration 4 times, and, for every table lookup, we pick one of these 4 trials uniformly at random. This simulates the typical noise that comes with hyperparameter optimization problems.
 
 	\begin{questions}
-		\titledquestion{Differentiable Architecture Search}[5]
-		In this second part of the exercise you will run DARTS for finding an optimal CNN architecture on MNIST.
-		The search model is defined in \texttt{model\_search.py}. It contains three stacked cells: 
-		reduction-normal-reduction. The architecture search problem is to find an optimal operation out of
-		$\mathcal{O} = \{conv\_3x3,\\ max\_pool\_3x3, avg\_pool\_3x3, Identity\}$ in each edge
-		of these cells. The number of intermediate nodes is 2. 
+		\titledquestion{Getting started with NAS-Bench-101}[1]
+		$\texttt{NASBench\_example.py}$ shows how we can load the benchmark together with the configuration space. Before running this script make sure you have installed all the dependencies (including tensorflow, pytorch, nasbench, etc.) as shown in $\texttt{setup.sh}$. To execute the setup run $\texttt{bash setup.sh}$.
+		Each hyperparameter configuration is encoded as a $\texttt{Configuration}$ object and we can easily convert it to a $\texttt{numpy}$ array or a $\texttt{dictionary}$. Note that, if we convert it to a numpy array, all values are normalized to be in $[0, 1]$.
+
+		If we evaluate a hyperparameter configuration, we get the validation error and the time it had taken to train this configuration. When we generated this benchmark, we evaluated each hyperparameter configuration 4 times, and, for every table lookup, we pick one of these 4 trials uniformly at random. This simulates the typical noise that comes with hyperparameter optimization problems.
 		
+		Here you will just have to run $\texttt{python NASBench\_example.py > logs/log.txt}$ and push the resulting $\texttt{log.txt}$ to your Bitbucket repository.
+		
+		\titledquestion{Blackbox optimization on NAS-Bench-101}[7]
+		In this exercise you will have to run the command $\texttt{python main.py}$ which will execute Random Search (RS), Regularized Evolution (RE) and Non-regularized Evolution (non-RE) on NAS-Bench-101. But before running this command you will have to fill the missing code in $\texttt{optimizers.py}$.
 		\begin{parts}
-		\part[3] In order to create the architecture continuous relaxation,
-		we need to define a \textit{MixedOp}, which is a convex combination of the operations outputs connecting two nodes
-		in the cells. It is defined as follows: $$x^{(j)} = \sum_{i<j}\tilde{o}^{(i,j)}(x^{(i)}) = \sum_{i<j}\sum_{o\in\mathcal{O}}\frac{e^{\alpha_{o}^{(i,j)}}}{\sum_{o^{\prime}\in\mathcal{O}}e^{\alpha_{o^{\prime}}^{(i,j)}}}o(x^{(i)})$$
+		\part[3] 
+		In the $\texttt{NASOptimizer}$ base class you will have to implement two methods which return a sampled configuration (architecture in this case) from the configuration space, and that query the validation + runtime of a specific configuration and update the incumbent trajectory.
 
-		Based on this formulation you have to fill in the code in lines 46-57 of \texttt{model\_search.py} in order to 
-		compute the output tensor $x^{(j)}$ of the MixedOp.
-
-		\part[2] Having defined the search model, we now need to run the DARTS optimization loop (Algorithmi 1, Slide 31 of Lecture 7). We will use the first-order approximation. Your task is going to be only to write the lines of code that compute the architectural updates in lines 43-49 of \texttt{train\_search.py}. Afterwards, you should be able to run \texttt{python train\_search.py} without any errors. This will conduct the search for 5 epochs and write in a directory named \texttt{logs/} the output logs and a file with the optimal architecture configuration.\\
-
-		In the end, to generate a visualization of the found cells run \texttt{python visualize.py}. This should generate two \texttt{.pdf} files named \texttt{normal.pdf} and \texttt{reduction.pdf}.
-		Push the contents written in \texttt{logs/} together with the two \texttt{.pdf} files generated by the visualization script to your Bitbucket repository.\\
-
-		\textbf{NOTE}: Running \texttt{train\_search.py} on a GPU machine takes a few minutes. This might scale to more than 1h when running on a CPU machine.
-
+		\part[4] 
+		Afterwards, you will have to implement (non-)RE based on the pseudocode presented in Slide 24, Lecture 7. RE keeps a population of architectures and each time it does an update, it discards the oldest architecture configuration present in the current population. On the other hand, non-RE discards the worst architecture. Everything else is the same as RE.
 		\end{parts}
+		
+		Now you are ready to run $\texttt{python main.py}$. It runs by default RS, RE and non-RE by default 20 independent times for 100 function evaluations ($\texttt{n\_iters}$). You may change their values if you want. After the optimization is finished, a plot $\texttt{logs/plot.png}$ will be generated. You will have to push this plot together with $\texttt{optimizers.py}$ in your Bitbucket repository.
+		
+		\textbf{NOTE:} $\texttt{main.py}$ should run on a CPU machine in less than a minute (with the default arguments).
 
 		\titledquestion{Feedback}[Bonus: 0.5]
 		For each question in this assignment, state:
