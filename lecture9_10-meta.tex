@@ -34,15 +34,21 @@ Meta-Learning I+II
 %----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals}
 
-After this lecture, you will be able to \ldots
+After these two lectures, you will be able to \ldots
 
 \begin{itemize}
-	\item ...
+	\item explain the \alert{high-level principles of meta-learning} and its facets
+	\item use \alert{algorithm selection} to predict the best algorithm for a dataset
+	\item improve the performance of AutoML tools by \alert{warmstarting its search}
+	\item \alert{transfer knowledge} between DNNs by determining initial weights
+	\item \alert{learn} a DNN which can \alert{train} another DNNs
+	\item \alert{learn} a policy \alert{to optimize} a black-box function
+	\item \alert{learn} policies to either \alert{replace} algorithm components\\ or to \alert{control} hyperparameters
 \end{itemize}
 
 \pause
 \medskip
-\alert{Warning:} I gave my best to unify the notation of different papers here. Please keep that in mind if you read the original papers.
+\alert{Warning:} I gave my best to \alert{unify the notation} of different papers here. Please keep that in mind if you read the original papers which use different notations.
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -54,10 +60,10 @@ There were two great tutorials on meta-learning recently:
 \begin{itemize}
 	\item NeurIPS'18: Frank Hutter and Joaquin Vanschoren
 	"Automatic Machine Learning (AutoML): A Tutorial"
-	\url{https://videoken.com/embed/5A4xbv5nd8c}
+	\footnotesize{\url{https://videoken.com/embed/5A4xbv5nd8c}}
 	\item ICML'19: Chelsea Finn and Sergey Levine on\\
 	"Meta-Learning: from Few-Short Learning to Rapid Reinforcement Learning"\\
-	\url{https://www.facebook.com/icml.imls/videos/400619163874853/}
+	\footnotesize{\url{https://www.facebook.com/icml.imls/videos/400619163874853/}}
 \end{itemize}
 
 \begin{itemize}
@@ -74,14 +80,14 @@ There were two great tutorials on meta-learning recently:
 \begin{frame}[c]{The Idea of Meta-Learning}
 
 \begin{itemize}
-	\item Learning essential never stops
+	\item Learning essentially never stops
 	\begin{itemize}
 		\item We learn several models on the same task (e.g., dataset)
 		\item We learn models on new tasks
 	\end{itemize}
     \pause
     \item Learning is often done from scratch
-    \item[$\leadsto$] We humans don't start from scratch all the time,
+    \item[$\leadsto$] We humans don't start from scratch all the time,\\
     but we learned how to learn!
 \end{itemize}
 
@@ -176,9 +182,13 @@ Dataset:
 Learning a model $\phi$ (e.g., weights of a neural network):
 \begin{eqnarray}
 \argmax_{\phi} \log p(\phi|\dataset)\\
+\pause
 = \argmax_{\phi} \log p(\dataset | \phi) + \log p(\phi) \\
+\pause
 = \argmax_{\phi} \sum_i \log p(y_i | x_i, \phi) + \log p(\phi)
 \end{eqnarray}
+
+\pause
 
 Challenge:
 \begin{itemize}
@@ -254,7 +264,8 @@ The meta-learning problem is:
 	\end{itemize}
 	\pause
 	\medskip
-	\item What would be $\mdata$ here?
+	\item What would be $\mdata$ here? \hands
+	\pause
 	\begin{itemize}
 		\item the train and validation dataset?
 		\item a dataset on which we optimized $\lambda$ (e.g., CIFAR-10)\\ such that we can use it on another dataset (e.g., imagenet)
@@ -270,7 +281,7 @@ The meta-learning problem is:
 	\item Meta-learning can be powerful to complement AutoML
 	\pause
 	\medskip
-	\item We can learn a a lot of things $\mdata$ to improve the performance on new datasets
+	\item We can learn a lot of things $\mdata$ to improve the performance on new datasets
 	\begin{itemize}
 		\item pre-initialization of networks weights\\
 		(e.g., pre-train on imagenet and fine-tune on a new dataset)
@@ -294,7 +305,7 @@ The meta-learning problem is:
 	humans get an intuition \alert{what works well on which dataset}
 	\pause
 	\item E.g., humans came up with rule of thumbs:\\
-	"On small datasets we use a SVM, on mid-size dataset a RF\\ 
+	"On small datasets we use an SVM, on mid-size dataset a RF\\ 
 	and on big data a DNN"
 	\pause
 	\item Although these rule thumbs are quite useful,
@@ -320,7 +331,7 @@ The meta-learning problem is:
 	the \emph{per-instance algorithm selection problem} is to find a mapping 
 	$s: \dataset \mapsto \algo$ 
 	that optimizes 
-	$$\int_{\mdata} c(s(\dataset),\dataset) p(\dataset)  d\dataset$$
+	$$\argmin_{s} \int_{\mdata} c(s(\dataset),\dataset) p(\dataset)  d\dataset$$
 \end{block}
 
 
@@ -352,34 +363,6 @@ What kind of ``Meta-features'' could describe a dataset? \hands
 \end{itemize}
 	
 	
-\end{frame}
-%-----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Meta Features in Machine Learning}
-
-To learn the mapping $s: \dataset \mapsto \algo$, we need a way to represent $\dataset$
-
-\begin{center}
-	\includegraphics[width=0.7\textwidth]{images/ml_data}
-\end{center}
-
-
-What kind of ``Meta features'' could describe a dataset? \hands
-
-\pause
-\begin{itemize}
-	\item number of observations (samples)
-	\item number of features
-	\item number of classes
-	\item number of categorical features
-	\item number of numeric features
-	\item percentage of numeric features
-	\item number of missing features
-	%\item number of observations belonging to most frequent class
-	\item Probing: accuracy of a small decision tree
-\end{itemize}
-
-
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
@@ -420,6 +403,7 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 	\begin{itemize}
 		\item As regression approach, we can essentially use whatever you want\\
 		e.g., ridge regression, a random forest or a neural network
+		\pause
 		\item We could also train one joint model with indicator features for the algorithms
 	\end{itemize}
 \end{itemize}
@@ -437,11 +421,13 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 	$$s: \dataset \mapsto \algo$$
 	\pause
 	\item We can use common approach for multi-class classification
+	\pause
 	\item Algorithm selection has a special characteristic:\\
 	\alert{Some datasets are more sensitive to algorithm selection than others}
 	\begin{itemize}
 		\item for very easy datasets, it might not matter which algorithm to use
 		\item for very hard datasets (e.g., because of poor data quality),\\ all algorithms might fail
+		\item for all others, it might be important to select the right algorithm
 	\end{itemize}
 	
 \end{itemize}
@@ -453,16 +439,18 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 \begin{frame}[c]{Pairwise Cost-Sensitive Classification Problem \litw{Xu et al. 2011}}
 
 \begin{itemize}
-	\item The sensitivity of a dataset $\dataset$ to algorithm selection across a portfolio is somehow hard to measure
+	\item The cost-sensitivity of a dataset $\dataset$ to algorithm selection across a portfolio is somehow hard to measure
 	\pause
-	\item For each pair of algorithms $\langle \algo_i, \algo_j \rangle$ we can easily measure the sensitivity by
+	\item For each pair of algorithms $\langle \algo_i, \algo_j \rangle$ we can easily measure the cost-sensitivity by
 	$$sim(\dataset, \algo_i, \algo_j) = || c(\algo_i, \dataset) - c(\algo_j, \dataset) ||$$
 	\pause
 	\item Train for each pair of algorithms a classification model $s_{ \algo_i, \algo_j}$ predicting which algorithm performs better
+	\pause
 	\item consider for each training dataset $\dataset_{\text{train}}$ the $sim(\dataset_{\text{train}}, \algo_i, \algo_j)$
 	\begin{itemize}
 		\item cost-sensitive classification is often possible by modifying the loss function or split metric in tree-based approaches
 	\end{itemize}
+	\pause
 	\item Selection for given test $\dataset_{\text{test}}$:
 	$$\argmax_{\algo \in \portfolio} \sum_{\algo' \in \portfolio} s_{\algo, \algo'}(f(\dataset_{\text{test}})) $$
 	
@@ -474,9 +462,9 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 \begin{frame}[c]{Remarks on Algorithm Selection}
 
 \begin{itemize}
-	\item Pairwise cost-sensitive classification requires $\sim |\portfolio|^2$ models
+	\item Pairwise cost-sensitive classification requires $\sim |\portfolio|^2 / 2$ models
 	\pause
-	\item From our experience, pairwise cost-sensitive approaches perform often better than regression approaches, but not always
+	\item From our experience, pairwise cost-sensitive approaches often perform better than regression approaches, but not always
 	\pause
 	\item We use machine learning to optimize machine learning
 	\begin{itemize}
@@ -489,7 +477,7 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 		\pause
 		\item we have a discrete portfolio of algorithms to choose from
 		\pause
-		\item the tasks (a.k.a. datasets) are sensitive to the algorithm choice\\ (so called heterogeneous instances)
+		\item the tasks (a.k.a. datasets) are sensitive to the algorithm choice\\ (so called heterogeneous tasks/instances)
 		\pause
 		\item we have informative meta-features (a.k.a. instance features)\\
 		(only partially true for ML)
@@ -528,15 +516,19 @@ $\leadsto$ We have two matrices as training data,\\ one with meta-features and o
 
 \begin{itemize}
 	\item Idea: Instead of a single starting point, use a \alert{portfolio $\Lambda_{init}$} as an initial design
+	\pause
 	\item Assume that we applied HPO already to many datasets $\mdata$ and\\
 	obtained a well-performing configuration on all of them $\hat{\lambda}_\dataset$
+	\pause
 	\item Straightforward idea: 
 	$$\Lambda_{init} = \bigcup_{\dataset \in \mdata} \{ \hat{\lambda}_\dataset \}$$
-	\item Problems:
+	\pause
+	\item Problems: \hands?
+	\pause
 	\begin{itemize}
 		\item If $|\mdata|$ is too large, HPO will be dominated by $\Lambda_{init}$
 		\item $\Lambda_{init}$ has potentially a lot of similar configurations\\
-		$\leadsto$ $\Lambda_{init}$ is not complementary
+		$\leadsto$ $\Lambda_{init}$ is not complementary, thus inefficient for warmstarting
 	\end{itemize}
 \end{itemize}
 
@@ -606,7 +598,7 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 	\pause
 	\medskip
 	\item Problem: If you have very little time for AutoML,
-	you might not invest time in meta-feature computation
+	you don't want to invest time in meta-feature computation
 \end{itemize}
 
 
@@ -626,8 +618,8 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 	\end{itemize}
 	\pause
 	\smallskip
-	\item Given: $n$ predictive models $\surro_i$ from HPO on $\mdata$
-	\item \alert{How can we use these $\surro_i$ to speed up HPO?}
+	\item Given: $n$ predictive models $\surro_{\dataset_i}: \pcs \to \mathbb{R}$ from HPO on $\mdata$
+	\item \alert{How can we use these $\surro_{\dataset_i}$ to speed up HPO?}
 \end{itemize}
 
 
@@ -637,13 +629,13 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 \begin{frame}[c]{Model-Warmstarting: Direct Predictions}
 
 \begin{itemize}
-	\item You could train a model $\surro: \lambda \times \dataset \mapsto c(\lambda, \dataset)$ to predict the cost of a configuration $\lambda$ on a dataset $\dataset$ 
+	\item You could train a model $\surro_{\mdata}: \lambda \times \dataset \mapsto c(\lambda, \dataset)$ to predict the cost of a configuration $\lambda$ on a dataset $\dataset$ 
 	\pause
-	\item Use $\surro$ to augment your search (e.g., in BO) and update it with newly collected data in the current dataset
+	\item Use $\surro_{\mdata}$ to augment your search (e.g., in BO) and update it with newly collected data in the current dataset
 	\pause
 	\item Problems:
 	\begin{itemize}
-		\item Training this big model $\surro$ might take too long
+		\item Updating this big model $\surro_{\mdata}$ might take too long
 		\item You can't completely ignore misleading knowledge from dissimilar datasets
 	\end{itemize}
 \end{itemize}
@@ -655,8 +647,8 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 \begin{frame}[c]{Model-Warmstarting: Combined Models}
 
 \begin{itemize}
-	\item Instead of one big model, you can train an ensemble of models
-	$$ \surro_{\texttt{combined}} = w_0 \surro + \sum_{i=1}^{|\mdata|} w_i \surro_i$$
+	\item Instead of one big model, you can train an ensemble of models,\\ e.g., a linear combination
+	$$ \surro_{\texttt{combined}} = w_0 \surro + \sum_{\dataset_i \in \mdata} w_i \surro_{\dataset_i}$$
 	\pause
 	\item Advantages:
 	\begin{itemize}
@@ -666,7 +658,7 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 	\end{itemize}
 	\medskip
 	\pause
-	\item We can use SGD to train weights $\vec{w}$
+	\item We can use SGD to train weights $\vec{w}$ on our recent observations
 	\pause
 	\item Possible to also use more complex models such as DNNs
 	\pause
@@ -681,7 +673,7 @@ $$		c(\Lambda') = \frac{1}{|\mdata|} \sum_{\dataset \in \mdata} \min_{\conf \in 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\section{Few Shot Learning}
+\section{Transfer Learning \& Few Shot Learning}
 %----------------------------------------------------------------------
 \begin{frame}[c]{DataSets: Meta-Train, Meta-Test}
 
@@ -736,7 +728,7 @@ $\leadsto$ Assumption: At meta-test we only have a few examples ("few shots") fr
 \includegraphics[width=0.6\textwidth]{images/maml.png}
 \end{center}
 \smallskip
-where $\phi_i^*$ are the optimal weights for Task $i$
+where $\theta_i^*$ are the optimal weights for Task $i$
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -801,13 +793,13 @@ where $\phi_i^*$ are the optimal weights for Task $i$
 	\smallskip
 	\item MAML uses \alert{second-order derivatives} which makes it only applicable to small datasets\\
 	\begin{itemize}
-		\item first-order approximations can also perform quite well
+		\item first-order approximation of MAML can also perform quite well
 	\end{itemize}
 	\pause
 	\smallskip
 	\item MAML-fine-tuning requires \alert{backpropagation through the entire network}
 	\begin{itemize}
-		\item in traditional fine-tuning, we only fine-tune the last layer(s)
+		\item in "traditional" fine-tuning, we only fine-tune the last layer(s)
 	\end{itemize}
 	
 \end{itemize}
@@ -1334,11 +1326,18 @@ where $\theta$ are the parameters of a neural network,\\ and $\mu$ and $sigma$ a
 %----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals}
 
-After this lecture, you are able to \ldots
+After these lectures, you are able to \ldots
 
 \begin{itemize}
-	\item ...
+	\item explain the \alert{high-level principles of meta-learning} and its facets
+	\item use \alert{algorithm selection} to predict the best algorithm for a dataset
+	\item improve the performance of AutoML tools by \alert{warmstarting its search}
+	\item \alert{transfer knowledge} between DNNs by determining initial weights
+	\item \alert{learn} a DNN which can \alert{train} another DNNs
+	\item \alert{learn} a policy \alert{to optimize} a black-box function
+	\item \alert{learn} policies to either \alert{replace} algorithm components\\ or to \alert{control} hyperparameters
 \end{itemize}
+
 \end{frame}
 %-----------------------------------------------------------------------
 
@@ -1346,7 +1345,13 @@ After this lecture, you are able to \ldots
 \begin{frame}[c]{Literature [These are links]}
 
 \begin{itemize}
-	\item \lit{\href{}{}}	
+	\item \lit{\href{https://arxiv.org/abs/1811.11597}{Automated Algorithm Selection: Survey and Perspectives}}	
+	\item \lit{\href{https://arxiv.org/abs/1703.03400}{MAML: Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks}}	
+	\item \lit{\href{https://ml.informatik.uni-freiburg.de/papers/15-NIPS-auto-sklearn-preprint.pdf}{Efficient and Robust Automated Machine Learning}}	
+	\item \lit{\href{https://arxiv.org/abs/1606.04474}{Learning to learn by gradient descent by gradient descent}}	
+	\item \lit{\href{https://arxiv.org/abs/1611.03824}{Learning to Learn without Gradient Descent by Gradient Descent}}	
+	\item \lit{\href{https://arxiv.org/abs/1606.01885}{Learning to Optimize}}	
+	\item \lit{\href{https://arxiv.org/abs/1904.02642}{Meta-Learning Acquisition Functions for Bayesian Optimization}}	
 \end{itemize}
 
 \end{frame}
