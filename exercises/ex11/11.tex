@@ -1,0 +1,151 @@
+\documentclass{exam}
+\usepackage{amsmath, amsfonts}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[super]{nth}
+\usepackage{booktabs}
+
+\DeclareMathOperator*{\argmin}{argmin}
+
+\usepackage[hyperfootnotes=false]{hyperref}
+
+\usepackage[usenames,dvipsnames]{color}
+\newcommand{\note}[1]{
+	\noindent~\\
+	\vspace{0.25cm}
+	\fcolorbox{Red}{Orange}{\parbox{0.99\textwidth}{#1\\}}
+	%{\parbox{0.99\textwidth}{#1\\}}
+	\vspace{0.25cm}
+}
+
+
+\input{../macros.tex}
+%\renewcommand{\hide}[1]{#1}
+
+\qformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+\bonusqformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+
+\pagestyle{headandfoot}
+
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+\newcommand{\duedate}{19.07.19 (10:00)}
+\newcommand{\due}{{\bf This assignment is due on \duedate.} }
+\firstpageheader
+{Due: \duedate \\ Points: 11}
+{{\bf\lecture}\\ \assignment{11}}
+{\lectors\\ \semester}
+
+\runningheader
+{Due: \duedate}
+{\assignment{6}}
+{\semester}
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+
+\firstpagefooter
+{}
+{\thepage}
+{}
+
+\runningfooter
+{}
+{\thepage}
+{}
+
+\headrule
+\pointsinrightmargin
+\bracketedpoints
+\marginpointname{pt.}
+
+
+
+
+\newcommand{\parents}{p}
+\newcommand{\negation}[1]{\overline{#1}}
+%\newcommand{\tuple}[1]{\langle #1 \rangle}
+\newcommand{\tuple}[1]{\left<#1\right>}
+\newcommand{\dom}[1]{dom(#1)}              % domain
+
+\newcommand{\false}{false}
+\newcommand{\true}{true}
+\newcommand{\TRUE}{{\mbox{\scriptsize \em TRUE}}}
+\newcommand{\FALSE}{{\mbox{\scriptsize \em FALSE}}}
+
+\newcommand{\bSigma}{\bm{\Sigma}}
+\newcommand{\bmu}{\bm{\mu}}
+\newcommand{\bx}{\bm{x}}
+\newcommand{\by}{\bm{y}}
+\newcommand{\bX}{\bm{X}}
+\newcommand{\bI}{\bm{I}}
+\newcommand{\bw}{\bm{w}}
+\newcommand{\ba}{\bm{a}}
+\newcommand{\bb}{\bm{b}}
+\newcommand{\bk}{\bm{k}}  
+\newcommand{\inv}{^{-1}}
+
+\newcommand{\norm}{{\mathcal{N}}}
+
+\newcommand\transpose{^{\textrm{\tiny{\sf{T}}}}}
+
+\begin{document}
+	\gccs
+	After you now know how to use algorithm configuration,
+	your next task is to configure the SAT solver \textit{SATenstein} to optimize its performance using SMAC.
+	
+	\bigskip
+	
+	The scenario consists of the following directories
+	\begin{itemize}
+		\item \texttt{SATenstein}: a directory with the binary of \textit{SATenstein} and a basic framework for an algorithm wrapper that uses \texttt{genericWrapper4AC}\footnote{\url{https://github.com/mlindauer/GenericWrapper4AC}} (to install the wrapper, clone the repo and run \texttt{python setup.py install})
+		\item \texttt{indu}: a directory with industrial instances from various SAT competitions. All instances are satisfiable!
+	\end{itemize}
+	
+	\begin{questions}
+		
+		\titledquestion{Configuration of \textit{SATenstein}}[11]
+		
+		Given the above mentioned files, your task is to optimize the performance of \textit{SATenstein} on the provided instances with \textit{SMACv3}\footnote{\url{https://github.com/automl/SMAC3}}. You will have to clone the SMAC repository to use its command line interface\footnote{\url{https://automl.github.io/SMAC3/stable/quickstart.html\#command-line}}. You can however choose to use SMAC as a python package instead\footnote{\url{https://github.com/automl/ParameterImportance/blob/master/notebooks/interface_example.ipynb} (see lines 2-6)}.
+		To use either method of running SMAC, please work through the following steps:
+		
+		\begin{itemize}
+			\item Split the instances in a training (\texttt{training.txt}) and test set (\texttt{test.txt}) -- write a bash or Python script to do so and upload it into your \texttt{src} folder. The instances should be split evenly into training and test sets. The given instances are \textbf{heterogeneous} and consist of instances from two domains. You have to be mindful how you split the instances. The instance names indicate if they are from the same domain.
+			\item Complete the Python script \texttt{wrapper.py}; the call to \textit{SATenstein} should look like:\\
+			\texttt{\small satenstein/ubcsat -param1 value1 $\ldots$ -paramN valueN -seed <int> -inst <instance> -target 0 -r satcomp -cutoff <max search steps> -timeout <max running time>}\\
+			e.g. \texttt{\small satenstein/ubcsat -alg satenstein -adaptive 0 -inst indu/factor-3023-3607.cnf -target 0 -seed 0 -r satcomp -cutoff -1 -timeout 5}\\
+			\textit{The cutoff parameter is used to limit the number of search steps whereas the timeout parameter limits the runtime!} So you have to set cutoff to -1 for unlimited search steps.\\
+			\\
+			Verify the functionality of the completed wrapper with the following call (in the scenario folder):\\
+			\texttt{\small python satenstein/wrapper.py indu/factor-3023-3607.cnf 0 5 0 1 -adaptive 1}\\
+			This calls the wrapper to run SATenstein on instance \texttt{indu/factor-3023-3607.cnf}, with 0 as \texttt{instance specifics}, a  \texttt{cutoff} of 5 seconds and a  \texttt{runlength} of 0 (which should be ignored by your wrapper and instead set to -1),  \texttt{seed} 1 and the parameter \texttt{adaptive} set to 1.\\
+			\\ The final printed line will look something like this:\\
+			\texttt{\small Result for ParamILS: <Status>, <runningtime>, <runlenght>, <quality>, <seed>}
+			\\
+			All the paramters for the call to the wrapper will be automatically set by SMAC during optimization, so your wrapper only needs to construct the cmdline call to SATenstein.
+			
+			\item Complete the scenario file (\texttt{scenario.txt}) that defines the following characteristics of the configuration scenario
+			\begin{itemize}
+				\item use your generated training and test files (\texttt{train.txt} and \texttt{test.txt})
+				\item the algorithm is non-deterministic
+				\item optimize runtime
+				\item the overall objective is the mean10 (PAR10) score
+				\item the cutoff time time will be $5$ seconds
+				\item the configuration budget will be $900$ seconds
+			\end{itemize}
+			\item Run \textit{SMAC} with the above defined scenario, report the hardware you used and the performance of the configured \textit{SATenstein} on the test instances.
+			\item Validate the default configuration of \textit{SATenstein} on the test instances -- you can use SMACs validation script and the script provided in \texttt{src/read\_validation\_data.py}. This will print some details about all validated configurations.
+			Report the performance of the default configuration as well as the incumbent.
+			\item Upload all files you created, i.e. training and test files, SMAC output as well as the validated runhistory.
+		\end{itemize}
+
+		\titledquestion{Feedback}[Bonus: 0.5]
+		For each question in this assignment, state:
+		\begin{itemize}
+			\item How long you worked on it.
+			\item What you learned.
+			\item Anything you would improve in this question if you were teaching the course.
+		\end{itemize}
+	\end{questions}
+	
+	\noindent
+	\due Submit your solution for the tasks by uploading a PDF to your groups BitBucket repository. The PDF has to include the name of the submitter(s).
+\end{document}

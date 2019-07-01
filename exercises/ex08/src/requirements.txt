@@ -1,0 +1,4 @@
+pytorch>=1.0
+numpy
+scipy
+torchvision
