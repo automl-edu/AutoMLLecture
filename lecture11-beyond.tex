@@ -154,55 +154,6 @@ The goal is to find \alert{$\conf^* \in \argmin_{\conf \in \pcs} c(\conf)$}.
 
 \end{frame}
 %-----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Cutoff Time $\kappa$}
-
-
-Why is it important to impose a cutoff time?
-\hands
-
-\pause
-
-\begin{itemize}
-\item Some configurations might be very poor; e.g., never solve an instance
-\pause
-%worst-case runtime to solve an NP-hard problem
-\item Without it, algorithm configuration even becomes undecidable:
-\end{itemize}
-
-\begin{block}{Theorem}
-Algorithm configuration with $\kappa = \infty$ is undecidable.
-\end{block}
-
-\pause
-
-
-\begin{block}{Proof by reduction of halting problem to algorithm configuration}
-\begin{itemize}
-\item Define cost of my\_algo with one Boolean parameter:
-\vspace*{-0.4cm}
-\begin{eqnarray}
-\nonumber{}  m(\conf= \langle true \rangle,\inst )&=&
-\begin{cases}
-1, & \text{if $A$ halts on $\pi$}\\
-0, & \text{otherwise}.
-\end{cases}\\
-\nonumber{}  m(\conf=\langle false \rangle, \pi) &=& 0.5.
-\end{eqnarray}
-\pause
-\vspace*{-0.6cm}
-\item Then, solving AC for my\_algo and $\inst$ solves the halting problem for $A$:
-\begin{itemize}
-\item $\conf^* = \langle false \rangle$ implies that $A$ halts on $\pi$ 
-\item $\conf^* = \langle true \rangle$ implies that $A$ does not halt on $\pi$ 
-\end{itemize}
-\end{itemize}
-\end{block}
-
-\end{frame}
-%-----------------------------------------------------------------------
-
-
 
 %----------------------------------------------------------------------
 \begin{frame}[c]{Distribution of Instances}
@@ -255,139 +206,81 @@ $\leadsto$ combination of algorithm configuration and selection
 %-----------------------------------------------------------------------
 
 
-\section{ParamILS: iterated local search in parameter space}
+\section{SMAC: BO for Algorithm Configuration}
 
+%-----------------------------------------------------------------------
+\begin{frame}[c]{State-of-the-art Algorithm Configuration}
 
-%-------------------------------------------------------------
-\begin{frame}[c,fragile]{A Simple Manual Approach for Configuration}
+SMAC: Sequential Model-based Algorithm Configuration =
 
-\NoCaptionOfAlgo
+\begin{itemize}
+	\item + Bayesian Optimization (instead of local search)
+	\item + aggressive racing
+	\item + adaptive capping (for optimizing runtime)
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{SMAC: Overview}
+%\\\litw{Hutter et al. 2011}}
+
 \LinesNotNumbered
 \begin{algorithm}[H]
-Start with some configuration $\conf$\;
-\onslide<4->
-\Repeat{no more improvement possible (or ``good enough'')}{
-\onslide<2->
-Modify a single parameter\;
-\onslide<3->
-\If{results on benchmark set improve}
-{
-keep new configuration\;
-}
-\onslide<4->
-}
-\caption{\textbf{Algorithm 1: Manual Greedy Algorithm Configuration}}
+	\Input{%
+		instance set $\insts$,
+		Algorithm $\algo$ with configuration space $\confs$,
+		Initial configuration $\conf_0$,
+		performance metric $c$,
+		Configuration budget $b$
+	}
+	\Output{best incumbent configuration $\hat{\conf}$}
+	\BlankLine
+	run history H $\leftarrow$ initial design based on $\conf_0$; \tcp*{H = $(\conf, \inst, c(\inst,\conf))_i$}
+	\While{$b$ remains} {
+		\pause
+		$\epm \leftarrow$ train empirical performance model based on run history H;\\
+		\pause
+		$\confs_{challengers} \leftarrow$ select configurations based on $\epm$;\\
+		\pause
+		$\hat{\conf}$, H $\leftarrow$ intensify($\confs_{challengers}$, $\hat{\conf}$); \tcp*{racing and capping}
+	}
+	\pause
+	\Return{$\hat{\conf}$}
+	\caption{SMAC}
 \end{algorithm}
 
-\pause
-\smallskip
-
-$\leadsto$ also called "greedy first improvement"
-
 \end{frame}
-%-------------------------------------------------------------
-
-
-
-
-%-------------------------------------------------------------
-\begin{frame}[c,fragile]{The \paramils{} Framework}
-
-\vspace*{-0.3cm}ParamILS = Iterated Local Search in parameter configuration space
-\bigskip
-
-\onslide<2->
-\NoCaptionOfAlgo
-\LinesNotNumbered
-\begin{algorithm}[H]
-Choose initial parameter configuration $\conf$\\
-Perform \cemph{teal}{subsidiary local search} on $\theta$\\
-\onslide<6->
-\While{time budget left}{
-\onslide<3->
-$\conf_{lm} \leftarrow \conf$ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~// last local optimum\;
-\onslide<4->
-Perform \cemph{orange}{perturbation} on $\theta$\;
-Perform \cemph{teal}{subsidiary local search} on $\theta$\;
-
-Based on \cemph{green!60!black!100}{acceptance criterion},
-keep $\conf$ or revert to $\conf:=\conf_{lm}$
-\onslide<5->
-
-With probability $p_{restart}$ randomly pick new $\theta$ 
-\onslide<6->
-}
-\caption{\textbf{Algorithm 2: ParamILS}}
-\end{algorithm}
-\onslide<7->
-
-\bigskip
-$\leadsto$ Performs \alert{biased random walk over local optima}
-
-\end{frame}
-%-------------------------------------------------------------
-
-
-
-%-------------------------------------------------------------
-\begin{frame}[c,fragile]{The \paramils{} Framework}
-
-\paramils{} is an algorithm framework made up of building blocks:
-
-\begin{itemize}
-\item In practice, \paramils{} implements these as follows:
-\begin{itemize}
-\item \cemph{teal}{Subsidiary local search}: greedy first improvement
-\item \cemph{orange}{Perturbation}: 3 random moves in 1-exchange neighbourhood
-\item \cemph{green!60!black!100}{Acceptance criterion}: always improve better configuration
-\item Note: these choices are not necessarily optimal \ldots
-\end{itemize}
-
-\pause
-\bigskip
-
-\item \paramils{} performs a sequence of \emph{pairwise} comparisons
-\begin{itemize}
-\item \alert{is $\conf'$ better than current $\conf$}?
-\item 2 instantiations that answer this question based on different runs of $\conf$ and $\conf'$: \alert{BasicILS} and \alert{FocusedILS}
-\end{itemize}   
-\end{itemize}
-
-
-\end{frame}
-%-------------------------------------------------------------
-
-
+%-----------------------------------------------------------------
 
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{BasicILS(N)}
-%: one instantiation of ``is $\conf'$ better than $\conf$?''
+\begin{frame}[c]{Comparisons on $N$ instances}
 
 \begin{itemize}
-\item \alert{BasicILS(N)} uses a pretty basic comparison: \textit{better$_N(\conf', \conf)$}:
-\begin{itemize}
-\item Compare $\conf'$ and $\conf$ based on $N$ instances 
-\pause
-\item How does this relate to cross-validation? \hands
-\end{itemize}  
-
-\bigskip
-\pause
-\item Problem: How to set $N$? Problems of large $N$? Small $N$? \hands
-\pause
-\begin{itemize}
-\item Problem of large $N$: evaluations are slow
-\item Problem of small $N$: overfitting to a small set of instances
-\item[$\leadsto$] Tradeoff: Choose $N$ of moderate size 
-\end{itemize}
-
+	\item \alert{Basic(N)} uses a pretty basic comparison: \textit{better$_N(\conf', \conf)$}:
+	\begin{itemize}
+		\item Compare $\conf'$ and $\conf$ based on $N$ instances 
+		\pause
+		\item How does this relate to cross-validation? \hands
+	\end{itemize}  
+	
+	\bigskip
+	\pause
+	\item Problem: How to set $N$? Problems of large $N$? Small $N$? \hands
+	\pause
+	\begin{itemize}
+		\item Problem of large $N$: evaluations are slow
+		\item Problem of small $N$: overfitting to a small set of instances
+		\item[$\leadsto$] Tradeoff: Choose $N$ of moderate size 
+	\end{itemize}
+	
 \end{itemize}
 \end{frame}
 %-----------------------------------------------------------------------
 
 
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{BasicILS(N)}
+\begin{frame}[c]{Comparisons on $N$ instances}
 
 
 Question: \alert{Which} $N$ instances should we use? \hands
@@ -417,7 +310,7 @@ If we sampled different instances for each configuration:
 
 
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{BasicILS(N)}
+\begin{frame}[c]{Comparisons on $N$ instances}
 
 Question: For randomized algorithms, how should we set the seeds? \hands
 \begin{enumerate}
@@ -430,22 +323,25 @@ Answer: just like for instances, fix them to compare apples to apples
 
 \bigskip
 \pause
-In summary, for each run of BasicILS(N): \\pick $N$ (instance, seed) pairs and use them for evaluating each $\conf$.\\
+In summary, for each run of Basic(N): \\pick $N$ (instance, seed) pairs and use them for evaluating each $\conf$.\\
 \pause
-(Different BasicILS runs can use different instances and seeds.)
+(Different Basic(N) runs can use different instances and seeds.)
 
 \end{frame}
 %-----------------------------------------------------------------------
 
 
 %-----------------------------------------------------------------------
-\begin{frame}[fragile]{The concept of overtuning}
+\begin{frame}[c]{The concept of overtuning}
 
 Very related to overfitting in machine learning 
 \begin{itemize}
 \item Performance improves on the training set
 \item Performance does not improve on the test set, and may even degrade
 \end{itemize}	
+
+\pause
+\medskip
 
 More pronounced for more heterogeneous benchmark sets 
 \begin{itemize}
@@ -478,7 +374,7 @@ More pronounced for more heterogeneous benchmark sets
 %-----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
-\begin{frame}[fragile]{BasicILS(N) Test Results with Various N}
+\begin{frame}[fragile]{Basic(N) Test Results with Various N}
 
 \begin{itemize}
 \item Example: minimizing SLS solver runlengths for a single SAT instance
@@ -515,22 +411,10 @@ Correct Answer: 1
 \end{frame}
 %-----------------------------------------------------------------------
 
-%-----------------------------------------------------------------------
-\begin{frame}[fragile]{Overtuning is Stronger For Smaller Training Sets}
-
-\begin{center}
-\includegraphics[scale=0.15]{images/basicils100_training_and_test.png}
-\includegraphics[scale=0.15]{images/basicils1_training_and_test.png}
-\end{center}
-
-\end{frame}
-%-----------------------------------------------------------------------
-
-
 
 
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{FocusedILS}
+\begin{frame}[c,fragile]{Aggressive Racing (aka FocusedILS)}
 
 Intuition: get the best of both worlds
 \begin{itemize}
@@ -545,6 +429,7 @@ Intuition: get the best of both worlds
 \end{itemize}
 
 \pause
+\medskip
 
 \begin{block}{Definition: $N(\conf)$ and $c_N(\conf)$}
 \alert{$N(\conf)$} denotes the number of runs executed for $\conf$ so far.\\
@@ -561,7 +446,7 @@ In the beginning: $N(\conf)=0$ for every configuration $\conf$
 
 
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{FocusedILS}
+\begin{frame}[c,fragile]{Aggressive Racing}
 
 
 \begin{block}{Definition: domination}
@@ -575,17 +460,17 @@ I.e.: we have at least as many runs for $\conf_1$ and its cost is at least as lo
 
 \pause
 
-\begin{block}{\textit{better$_{Foc}$($\conf', \conf$)} in a nutshell}
+\begin{block}{\textit{better($\conf', \conf^*$)} in a nutshell}
 \begin{itemize}
-\item In \paramils{}: $\conf$ is always the current configuration to beat
+\item $\conf^*$ is the current configuration to beat (incumbent)
 \pause
 \item Perform runs of $\conf'$ until either
 \begin{itemize}
-\item $\conf$ dominates $\conf'$ $\leadsto$ reject $\conf'$, or
-\item $\conf'$ dominates $\conf$ $\leadsto$ change current configuration $(\conf \leftarrow \conf')$
+\item $\conf^*$ dominates $\conf'$ $\leadsto$ reject $\conf'$, or
+\item $\conf'$ dominates $\conf^*$ $\leadsto$ change current configuration $(\conf^* \leftarrow \conf')$
 \end{itemize}
 \pause	
-\item Over time: perform extra runs of $\conf$ to gain more confidence in it
+\item Over time: perform extra runs of $\conf^*$ to gain more confidence in it
 \end{itemize}
 \end{block}
 
@@ -595,19 +480,19 @@ I.e.: we have at least as many runs for $\conf_1$ and its cost is at least as lo
 
 
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Toy Example for FocusedILS}
+\begin{frame}[c,fragile]{Toy Example}
 
 
 \begin{itemize}
-\item Let $\conf$ be the current configuration in the ILS (evaluated on $\pi_1, \pi_2, \pi_3$)
-\item We'll look at neighbours $\conf'$ and $\conf''$
+\item Let $\conf^*$ be the incumbent  (evaluated on $\pi_1, \pi_2, \pi_3$)
+\item We'll look at challengers $\conf'$ and $\conf''$
 \end{itemize}
 
 \begin{center}
 \begin{tabular}{l ccc}
 & $\inst_1$ & $\inst_2$ & $\inst_3$ \\
 \hline
-$\conf$ 	& 3 		& 2			& 10	\onslide<2->\\
+$\conf^*$ 	& 3 		& 2			& 10	\onslide<2->\\
 \hline
 $\conf'$		& \onslide<3->{2}			& \onslide<4->{10} 		& \\
 & 			& \onslide<5->{$\to$ reject, since $\hat{c}_2(\conf')=6 > \hat{c}_2(\conf)=2.5$} & \\
@@ -618,8 +503,8 @@ $\conf'$		& \onslide<3->{2}			& \onslide<4->{10} 		& \\
 
 \onslide<9->
 \begin{itemize}
-\item Move to neighbour $\conf''$ in the ILS: $\conf \leftarrow \conf''$
-\item Perform an additional run for new $\conf$ to increase confidence over time
+\item new incumbent: $\conf^* \leftarrow \conf''$
+\item Perform an additional run for new $\conf^*$ to increase confidence over time
 \end{itemize}
 
 
@@ -628,9 +513,9 @@ $\conf'$		& \onslide<3->{2}			& \onslide<4->{10} 		& \\
 
 
 %-----------------------------------------------------------------------
-\begin{frame}[fragile]{FocusedILS achieves the best of both worlds}
+\begin{frame}[fragile]{Racing achieves the best of both worlds}
 
-Fast progress and no overtuning
+Aggressive racing (aka FocusedILS): Fast progress and no overtuning
 
 \begin{center}
 Test performance\\
@@ -641,28 +526,6 @@ Test performance\\
 \end{frame}
 %-----------------------------------------------------------------------
 
-
-
-%-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Different Types of Overtuning}
-
-One can overtune to various specifics of the training setup
-\begin{itemize}
-\item Overtuning to the specific instances used in the training set 
-\item Overtuning to the specific seeds used in the training set
-\pause
-\item Overtuning to the (small) runtime cutoff used during training 
-\item Overtuning to a particular machine type
-\pause
-\item Overtuning to the type of instances in the training set
-\begin{itemize}
-\item These should just be drawn according to the distribution of interest
-\item But in practice, the distribution might change over time 
-\end{itemize}	 
-\end{itemize}	
-
-\end{frame}
-%-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
 \begin{frame}[c,fragile]{Adaptive capping}
 
@@ -674,20 +537,15 @@ One can overtune to various specifics of the training setup
 \end{itemize}
 \pause    
 
-\item E.g., $\conf$ needed $1$ sec to solve $\inst_1$
+\item E.g., $\conf^*$ needed $1$ sec to solve $\inst_1$
 \begin{itemize}
 \item Do we need to run $\conf'$ for $300$ sec?
-\item Terminate evaluation of $\conf'$ once guaranteed to be worse than $\conf$
+\item Terminate evaluation of $\conf'$ once guaranteed to be worse than $\conf^*$
 \end{itemize}
 \pause
 \bigskip    
-\item[$\leadsto$] To compare against $\conf$ based on $N$ runs,\\we can terminate evaluation of $\conf'$ after time $\sum_{i=1}^N m(\conf,\inst_i)$
+\item[$\leadsto$] To compare against $\conf^*$ based on $N$ runs,\\we can terminate evaluation of $\conf'$ after time $\sum_{i=1}^N m(\conf^*,\inst_i)$
 \end{itemize}
-
-\pause
-\begin{theorem}
-Adaptive capping does not change the trajectory of \paramils{}, it only makes it faster. 
-\end{theorem}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -700,7 +558,7 @@ runtime cutoff $\kappa = 300$, comparison based on 3 instances (using $\hat{c}_3
 \begin{tabular}{l ccc}
 & $\inst_1$ & $\inst_2$ & $\inst_3$ \\
 \hline
-$\conf$ 	& 4 		& 2			& 1	\onslide<2->\\
+$\conf^*$ 	& 4 		& 2			& 1	\onslide<2->\\
 \hline
 \multicolumn{3}{l}{\emph{Without adaptive capping}}\\
 $\conf'$		& \onslide<3->{3}			& \onslide<4->{300} 		& \onslide<5->{50}\\
@@ -714,27 +572,15 @@ $\conf'$\onslide<8->			& \onslide<8->{3}		& \onslide<9->{300} 		& \onslide<10->\
 \end{tabular}
 \end{center}
 
-%\onslide<10->
-%$\kappa=4$ seconds: (4+2+1)-3
+\medskip
+\onslide<11-> 
+{Note: To combine adaptive capping with BO, we need to impute the censored observations caused by adaptive capping.}
 
-\end{frame}
-%-----------------------------------------------------------------------
-
-%-----------------------------------------------------------------------
-\begin{frame}[c]{State-of-the-art Algorithm Configuration}
-
-SMAC: Sequential Model-based Algorithm Configuration =
-
-\begin{itemize}
-	\item + Bayesian Optimization (instead of local search)
-	\item + aggressive racing
-	\item + adaptive capping
-\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{SMAC: Putting it all Together}
+\begin{frame}[c]{SMAC: Overview}
 %\\\litw{Hutter et al. 2011}}
 
 \LinesNotNumbered
@@ -750,20 +596,18 @@ SMAC: Sequential Model-based Algorithm Configuration =
 	\BlankLine
 	run history H $\leftarrow$ initial design based on $\conf_0$; \tcp*{H = $(\conf, \inst, c(\inst,\conf))_i$}
 	\While{$b$ remains} {
-		\pause
 		$\epm \leftarrow$ train empirical performance model based on run history H;\\
-		\pause
-		$\confs_{challengers} \leftarrow$ select configurations based on $\epm$;\\
-		\pause
-		$\hat{\conf}$, H $\leftarrow$ intensify($\confs_{challengers}$, $\hat{\conf}$); \tcp*{racing and capping}
+		$\confs_{challengers} \leftarrow$ select configurations based on $\epm$; \tcp*{BO} \\
+		$\hat{\conf}$, H $\leftarrow$ intensify($\confs_{challengers}$, $\hat{\conf}$); \tcp*{racing and capping}\\
 	}
-	\pause
 	\Return{$\hat{\conf}$}
 	\caption{SMAC}
 \end{algorithm}
 
 \end{frame}
 %-----------------------------------------------------------------
+
+
 \section{Algorithm Control}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
