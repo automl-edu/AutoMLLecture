@@ -34,15 +34,15 @@ Beyond AutoML: Algorithm Configuration and Control
 %----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals}
 
-After these two lectures, you will be able to \ldots
+After this lecture, you will be able to \ldots
 
 \begin{itemize}
-	\item 
+	\item define the \alert{algorithm configuration problem}
+	\item discuss \alert{differences} between HPO and algorithm configuration
+	\item explain the \alert{components of SMAC} to combine Bayesian Optimization across instances
+	\item define and give examples for the \alert{algorithm control problem}
+	\item list some \alert{further topics} related AutoML and algorithm configuration
 \end{itemize}
-
-\pause
-\medskip
-\alert{Warning:} I gave my best to \alert{unify the notation} of different papers here. Please keep that in mind if you read the original papers which use different notations.
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -198,9 +198,18 @@ Like in machine learning
 \end{itemize}
 \pause
 \medskip
-\item Some instance sets are \alert{heterogeneous},\\i.e., no single configuration performs well on all instances\\ 
-$\leadsto$ combination of algorithm configuration and selection
+\item \alert{Generalization across instances}
+\begin{itemize}
+	\item apply algorithm configuration to \alert{homogeneous} instance sets
+	\item Instance sets can also be \alert{heterogeneous},\\i.e., no single configuration performs well on all instances\\ 
+	\item[$\leadsto$] combination of algorithm configuration and selection
 \end{itemize}
+
+\end{itemize}
+
+\pause
+\medskip
+$\leadsto$ Hyperparameter optimization is a subproblem of algorithm configuration
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -597,8 +606,8 @@ $\conf'$\onslide<8->			& \onslide<8->{3}		& \onslide<9->{300} 		& \onslide<10->\
 	run history H $\leftarrow$ initial design based on $\conf_0$; \tcp*{H = $(\conf, \inst, c(\inst,\conf))_i$}
 	\While{$b$ remains} {
 		$\epm \leftarrow$ train empirical performance model based on run history H;\\
-		$\confs_{challengers} \leftarrow$ select configurations based on $\epm$; \tcp*{BO} \\
-		$\hat{\conf}$, H $\leftarrow$ intensify($\confs_{challengers}$, $\hat{\conf}$); \tcp*{racing and capping}\\
+		$\confs_{challengers} \leftarrow$ select configurations based on $\epm$; \tcp*{BO with EI} 
+		$\hat{\conf}$, H $\leftarrow$ intensify($\confs_{challengers}$, $\hat{\conf}$); \tcp*{racing and capping}
 	}
 	\Return{$\hat{\conf}$}
 	\caption{SMAC}
@@ -606,7 +615,7 @@ $\conf'$\onslide<8->			& \onslide<8->{3}		& \onslide<9->{300} 		& \onslide<10->\
 
 \end{frame}
 %-----------------------------------------------------------------
-
+\section{Teaching Evaluation}
 
 \section{Algorithm Control}
 %-----------------------------------------------------------------------
@@ -707,8 +716,95 @@ $\conf'$\onslide<8->			& \onslide<8->{3}		& \onslide<9->{300} 		& \onslide<10->\
 
 \bigskip
 
-Following the same arguments as for algorithm configuration\\
-we want to learn a \alert{robust performance across instances $\inst \in \insts$}
+Following the same arguments as for algorithm configuration,\\
+we want to learn a \alert{robust policy across instances $\inst \in \insts$}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Control across Instances \litw{Biedenkapp et al. 2019}}
+
+\begin{itemize}
+	\item instances can be modeled as context of markov decision process ($\leadsto$ contextual MDP)
+	\medskip
+	\pause
+	\item \alert{homogeneous} instances
+	\begin{itemize}
+		\item instances are similar to each other and a good policy would perform well on all instances
+		\item instances provides some noise in the policy optimization  
+		\item[$\leadsto$] more robust policies which generalize better to new instances
+	\end{itemize}
+	\medskip
+	\pause
+	\item \alert{heterogeneous} instances
+	\begin{itemize}
+		\item instances have different characteristics s.t. the policy has to be adapted to the instance at hand
+		\item[$\leadsto$] we might have to characterize the instances by using instance features (aka meta features)
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+\section{Other Related Topics}
+%----------------------------------------------------------------------
+\begin{frame}[c]{Performance Predictions}
+
+\begin{itemize}
+	\item \alert{Observation}: We collect a lot of data of the performance of an algorithm given its hyperparameter configuration and an instance
+	\smallskip
+	\pause
+	\item \alert{Question}: Can we accurately predict the performance on new configurations and instances?
+	\smallskip
+	\pause
+	\item \alert{Idea I (RF)}: For complex spaces (with continuous and categorical hyperparameter), we can use random forests \lit{Hutter et al. '14} 
+	\smallskip
+	\pause
+	\item \alert{Idea II (DNN)}: If we have randomized algorithms and we are interested in the algorithm's performance distribution, DNNs perform better \lit{Eggensperger et al. '18}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Hyperparameter Importance}
+
+\begin{itemize}
+	\item \alert{Observation}: Often only a few hyperparameters are important to improve the performance of an algorithm
+	\smallskip
+	\pause
+	\item \alert{Question}: How can we identify these important hyperparameters?
+	\smallskip
+	\pause
+	\item \alert{Idea I (fANOVA)}: How much of the performance variance is explained by single hyperparameter marginalized across all other settings
+	\smallskip
+	\pause
+	\item \alert{Idea II (Ablation)}: If we compare two configurations (e.g., default and incumbent), we flip with a greedy strategy the hyperparameters step by step such that we can order them
+	\smallskip
+	\pause
+	\item  \alert{Idea III (Local Importance)} If we have an optimized configuration, how much would the performance change if we only change one hyperparameter of it.
+\end{itemize}
+
+
+$\leadsto$ CAVE for analyzing AutoML experiments: \url{https://github.com/automl/CAVE}
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Benchmark Libraries}
+
+\begin{itemize}
+	\item \alert{Observation}: Results in papers are often not comparable because authors use different benchmarks
+	\smallskip
+	\pause
+	\item \alert{Question}: Can we design standardized benchmarks libraries?
+	\smallskip
+	\pause
+	\item \alert{Idea I (HPOlib)}: Benchmark library with different HPO benchmarks
+	\smallskip
+	\pause
+	\item \alert{Idea II (NASBench 101)}: Table look benchmark for neural architecture search
+	\smallskip
+	\pause
+	\item  \alert{Idea III (AClib)} Benchmarks and cheap-to-run surrogate benchmarks for algorithm configuration
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -716,21 +812,28 @@ we want to learn a \alert{robust performance across instances $\inst \in \insts$
 %-----------------------------------------------------------------
 \begin{frame}[c]{Learning Goals}
 
-After these lectures, you are able to \ldots
+After this lecture, you are able to \ldots
 
 \begin{itemize}
-	\item 
+	\item define the \alert{algorithm configuration problem}
+	\item discuss \alert{differences} between HPO and algorithm configuration
+	\item explain the \alert{components of SMAC} to combine Bayesian Optimization across instances
+	\item define and give examples for the \alert{algorithm control problem}
+	\item list some \alert{further topics} related AutoML and algorithm configuration
 \end{itemize}
 
 \end{frame}
+%-----------------
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
 \begin{frame}[c]{Literature [These are links]}
 
 \begin{itemize}
-	\item \lit{\href{https://arxiv.org/abs/1811.11597}{Automated Algorithm Selection: Survey and Perspectives}}	
-	
+	\item SMAC  \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Sequential Model-Based Optimization for General Algorithm Configuration}}	
+	\item \lit{\href{https://arxiv.org/abs/1705.06058}{Pitfalls and Best Practices in Algorithm Configuration}}	
+	\item \lit{\href{https://ml.informatik.uni-freiburg.de/papers/19-DSO_White-Box-Benchmarks.pdf}{Towards White-box Benchmarks for Algorithm Control}}	
+	\item \lit{\href{https://ml.informatik.uni-freiburg.de/papers/18-LION12-CAVE.pdf}{CAVE: Configuration Assessment, Visualization and Evaluation}}				
 \end{itemize}
 
 \end{frame}
