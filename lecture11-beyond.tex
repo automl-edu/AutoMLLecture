@@ -114,10 +114,10 @@ There is one recent tutorials on algorithm configuration:
 \begin{block}{Definition}
 	Given a parameterized algorithm $\algo$ with possible parameter settings $\confs$, \pause 
 	a set of training problem instances $\insts$, \pause 
-	and a cost metric $m: \confs \times \insts \rightarrow \perf$, \pause 
+	and a cost metric $c: \confs \times \insts \rightarrow \perf$, \pause 
 	the algorithm configuration problem is 
 	to \alert{find a parameter configuration $\conf^* \in \confs$ 
-		that minimizes $m$ across the instances in $\insts$}.
+		that minimizes $c$ across the instances in $\insts$}.
 \end{block}
 
 \end{frame}
@@ -129,7 +129,7 @@ There is one recent tutorials on algorithm configuration:
 
 \begin{block}{Definition}
 An instance of the algorithm configuration problem
-is a 5-tuple $(\algo, \pcs, \instD, \cutoff, m)$ where:
+is a 5-tuple $(\algo, \pcs, \instD, \cutoff, c)$ where:
 \begin{itemize}
 	\item $\algo$ is a parameterized algorithm;
 	\item $\pcs$ is the parameter configuration space of $\algo$;
@@ -137,7 +137,7 @@ is a 5-tuple $(\algo, \pcs, \instD, \cutoff, m)$ where:
 	\pause
 	\item $\cutoff < \infty$ is a \alert{cutoff time}, after which each run of $\algo$ will be terminated if still running
 	\pause
-	\item $m: \confs \times \insts \rightarrow \mathds{R}$ is a function that
+	\item $c: \confs \times \insts \rightarrow \mathds{R}$ is a function that
 	measures the observed cost of running $\algo(\conf)$ on an instance $\inst \in
 	\insts$ with cutoff time $\cutoff$ 
 	%  \item $s$ is a statistical population parameter\\ (e.g., expectation, median,  or variance)
@@ -146,8 +146,8 @@ is a 5-tuple $(\algo, \pcs, \instD, \cutoff, m)$ where:
 The cost of a candidate solution $\conf\in\confs$ is
 %\begin{equation}
 %\hat{\conf} \in \argmin_{\conf \in \pcs}
-\alert{$c(\conf) = \mathds{E}_{\inst \sim \instD} (m(\conf,\inst))$}.\\
-The goal is to find \alert{$\conf^* \in \argmin_{\conf \in \pcs} c(\conf)$}.
+\alert{$f(\conf) = \mathds{E}_{\inst \sim \instD} (c(\conf,\inst))$}.\\
+The goal is to find \alert{$\conf^* \in \argmin_{\conf \in \pcs} f(\conf)$}.
 %\end{equation}
 
 \end{block}
@@ -355,7 +355,7 @@ Very related to overfitting in machine learning
 More pronounced for more heterogeneous benchmark sets 
 \begin{itemize}
 \item But it even happens for very homogeneous sets
-\item Indeed, one can even overfit on a single instace, to the \alert{seeds} used for training 
+\item Indeed, one can even overfit on a single instance, to the \alert{seeds} used for training 
 \end{itemize}	
 
 \end{frame}
@@ -423,7 +423,7 @@ Correct Answer: 1
 
 
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Aggressive Racing (aka FocusedILS)}
+\begin{frame}[c,fragile]{Aggressive Racing (inspired by FocusedILS)}
 
 Intuition: get the best of both worlds
 \begin{itemize}
@@ -504,7 +504,7 @@ I.e.: we have at least as many runs for $\conf_1$ and its cost is at least as lo
 $\conf^*$ 	& 3 		& 2			& 10	\onslide<2->\\
 \hline
 $\conf'$		& \onslide<3->{2}			& \onslide<4->{10} 		& \\
-& 			& \onslide<5->{$\to$ reject, since $\hat{c}_2(\conf')=6 > \hat{c}_2(\conf)=2.5$} & \\
+& 			& \onslide<5->{$\to$ reject, since $\hat{c}_2(\conf')=6 > \hat{c}_2(\conf^*)=2.5$} & \\
 \hline
 \onslide<6->{$\conf''$}		& \onslide<6->{3}			& \onslide<7->{1} 		& \onslide<8->{5}\\
 \end{tabular}
@@ -553,7 +553,7 @@ Test performance\\
 \end{itemize}
 \pause
 \bigskip    
-\item[$\leadsto$] To compare against $\conf^*$ based on $N$ runs,\\we can terminate evaluation of $\conf'$ after time $\sum_{i=1}^N m(\conf^*,\inst_i)$
+\item[$\leadsto$] To compare against $\conf^*$ based on $N$ runs,\\we can terminate evaluation of $\conf'$ after time $\sum_{i=1}^N c(\conf^*,\inst_i)$
 \end{itemize}
 
 \end{frame}
@@ -561,28 +561,27 @@ Test performance\\
 %-----------------------------------------------------------------------
 \begin{frame}[c,fragile]{Toy-Example: Adaptive capping}
 
-runtime cutoff $\kappa = 300$, comparison based on 3 instances (using $\hat{c}_3$)
+runtime cutoff $\kappa = 300$, comparison based on 2 instances (using $\hat{c}_3$)
 
 \begin{center}
-\begin{tabular}{l ccc}
-& $\inst_1$ & $\inst_2$ & $\inst_3$ \\
+\begin{tabular}{l cc}
+& $\inst_1$ & $\inst_2$ \\
 \hline
-$\conf^*$ 	& 4 		& 2			& 1	\onslide<2->\\
+$\conf^*$ 	& 4 		& 2		\onslide<2->\\
 \hline
 \multicolumn{3}{l}{\emph{Without adaptive capping}}\\
-$\conf'$		& \onslide<3->{3}			& \onslide<4->{300} 		& \onslide<5->{50}\\
-& 			&  & \onslide<6->{$\to$ reject $\conf'$ (\alert{cost: 353})}\onslide<7->\\
+$\conf'$		& \onslide<3->{3}			& \onslide<4->{300} 		\\
+& 			&  \onslide<5->{$\to$ reject $\conf'$ (\alert{cost: 303})}\onslide<6->\\
 \hline
-\multicolumn{3}{l}{\onslide<7->{\emph{With adaptive capping}}}\\
-%\onslide<5->{$\kappa$}			& \onslide<6->{$4-0=4$}	& \onslide<8->{$6-3=3$} 	& \onslide<10->{$7-5=2$}\\
-$\conf'$\onslide<8->			& \onslide<8->{3}		& \onslide<9->{300} 		& \onslide<10->\\
-& 						& \multicolumn{2}{l}{\onslide<10->$\to$ \alert{cut off} after $\kappa=4$ seconds, reject $\conf'$ (\alert{cost: 7})} \\
+\multicolumn{3}{l}{\onslide<6->{\emph{With adaptive capping}}}\\
+$\conf'$\onslide<7->			& \onslide<7->{3}		& \onslide<8->{300} 	\\
+& 					 \multicolumn{2}{l}{\onslide<9->$\to$ \alert{cut off} after $\kappa=4$ seconds, reject $\conf'$ (\alert{cost: 7})} \\
 \hline
 \end{tabular}
 \end{center}
 
 \medskip
-\onslide<11-> 
+\onslide<10-> 
 {Note: To combine adaptive capping with BO, we need to impute the censored observations caused by adaptive capping.}
 
 
@@ -725,7 +724,7 @@ we want to learn a \alert{robust policy across instances $\inst \in \insts$}
 \begin{frame}[c]{Algorithm Control across Instances \litw{Biedenkapp et al. 2019}}
 
 \begin{itemize}
-	\item instances can be modeled as context of markov decision process ($\leadsto$ contextual MDP)
+	\item instances can be modeled as context of Markov decision process ($\leadsto$ contextual MDP)
 	\medskip
 	\pause
 	\item \alert{homogeneous} instances
@@ -774,16 +773,16 @@ we want to learn a \alert{robust policy across instances $\inst \in \insts$}
 	\item \alert{Question}: How can we identify these important hyperparameters?
 	\smallskip
 	\pause
-	\item \alert{Idea I (fANOVA)}: How much of the performance variance is explained by single hyperparameter marginalized across all other settings
+	\item  \alert{Idea I (Local Importance)} If we have an optimized configuration, how much would the performance change if we only change one hyperparameter of it.
+	\smallskip
+	\pause
+	\item \alert{Idea II (fANOVA)}: How much of the performance variance is explained by single hyperparameter marginalized across all other settings
 	\smallskip
 	\pause
 	\item \alert{Idea II (Ablation)}: If we compare two configurations (e.g., default and incumbent), we flip with a greedy strategy the hyperparameters step by step such that we can order them
-	\smallskip
-	\pause
-	\item  \alert{Idea III (Local Importance)} If we have an optimized configuration, how much would the performance change if we only change one hyperparameter of it.
 \end{itemize}
 
-
+\pause
 $\leadsto$ CAVE for analyzing AutoML experiments: \url{https://github.com/automl/CAVE}
 \end{frame}
 %----------------------------------------------------------------------
@@ -797,13 +796,13 @@ $\leadsto$ CAVE for analyzing AutoML experiments: \url{https://github.com/automl
 	\item \alert{Question}: Can we design standardized benchmarks libraries?
 	\smallskip
 	\pause
-	\item \alert{Idea I (HPOlib)}: Benchmark library with different HPO benchmarks
+	\item \alert{Benchmark I (HPOlib)}: Benchmark library with different HPO benchmarks
 	\smallskip
 	\pause
-	\item \alert{Idea II (NASBench 101)}: Table look benchmark for neural architecture search
+	\item \alert{Benchmark II (NASBench 101)}: Tabular benchmark for neural architecture search
 	\smallskip
 	\pause
-	\item  \alert{Idea III (AClib)} Benchmarks and cheap-to-run surrogate benchmarks for algorithm configuration
+	\item  \alert{Benchmark III (AClib)} Benchmarks and cheap-to-run surrogate benchmarks for algorithm configuration
 \end{itemize}
 
 \end{frame}
