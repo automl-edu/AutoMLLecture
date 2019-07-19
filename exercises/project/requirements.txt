@@ -1,0 +1,18 @@
+requests
+argparse
+numpy
+scipy
+sklearn
+nose
+tqdm
+matplotlib
+seaborn
+pandas
+liac-arff
+ConfigSpace
+smac
+https://download.pytorch.org/whl/cpu/torch-1.0.0-cp36-cp36m-linux_x86_64.whl
+torchvision
+torchsummary
+
+# add your requirements below this line
