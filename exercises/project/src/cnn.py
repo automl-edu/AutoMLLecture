@@ -12,13 +12,13 @@ class torchModel(nn.Module):
     def __init__(self, config, input_shape=(1, 28, 28), num_classes=10):
         super(torchModel, self).__init__()
         layers = []
-        in_channels = input_shape[0]
-        out_channels = config['init_channels']
         n_layers = config['n_layers']
-        n_conv_layers = config['n_conv_layers']
-        kernel_size = config['kernel_size']
+        n_conv_layers = 1
+        kernel_size = 2
+        in_channels = input_shape[0]
+        out_channels = 4
 
-        for i in range(config['n_conv_layers']):
+        for i in range(n_conv_layers):
             c = nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size,
                           stride=2, padding=1
                          )
@@ -34,7 +34,7 @@ class torchModel(nn.Module):
         self.fc_layers = nn.ModuleList()
         n_in = self._get_conv_output(input_shape)
         n_out = 256
-        for i in range(config['n_layers']):
+        for i in range(n_layers):
             fc = nn.Linear(int(n_in), int(n_out))
             self.fc_layers += [fc]
             n_in = n_out

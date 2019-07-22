@@ -78,7 +78,7 @@ def main(model_config,
     summary(model, (train_dataset.channels,
                     train_dataset.img_rows,
                     train_dataset.img_cols),
-            device='cuda')
+            device='cuda' if torch.cuda.is_available() else 'cpu')
 
     # Train the model
     for epoch in range(num_epochs):
@@ -110,7 +110,7 @@ if __name__ == '__main__':
                  'adad': torch.optim.Adadelta,
                  'sgd': torch.optim.SGD}
 
-    cmdline_parser = argparse.ArgumentParser('ML4AAD final project')
+    cmdline_parser = argparse.ArgumentParser('AutoML SS19 final project')
 
     cmdline_parser.add_argument('-e', '--epochs',
                                 default=10,
@@ -157,9 +157,6 @@ if __name__ == '__main__':
     # architecture parametrization
     architecture = {
             'n_layers': 1,
-            'n_conv_layers': 1,
-            'init_channels': 4,
-            'kernel_size': 2
         }
 
     main(
