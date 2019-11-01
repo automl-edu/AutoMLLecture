@@ -1,0 +1,76 @@
+\pdfminorversion=4 % for acroread
+\documentclass[t,xcolor={usenames,dvipsnames}]{beamer}
+%\documentclass[t,handout,xcolor={usenames,dvipsnames}]{beamer}
+\usepackage{beamerstyle}
+\usepackage{dsfont}
+\usepackage{bm}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
+%\usepackage[boxed,vlined]{algorithm2e}
+\usepackage{hyperref}
+\usepackage{booktabs}
+
+\usepackage{amsmath,amssymb}
+\usepackage{listings}
+\lstset{frame=lines,framesep=3pt,numbers=left,numberblanklines=false,basicstyle=\ttfamily\small}
+
+\usepackage{subfig}
+\usepackage{multicol}
+%\usepackage{appendixnumberbeamer}
+%
+
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usetikzlibrary{trees} 
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{positioning,shapes,shadows,arrows,calc,mindmap}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{intersections}
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+\tikzstyle{activity}=[rectangle, draw=black, rounded corners, text centered, text width=8em]
+\tikzstyle{data}=[rectangle, draw=black, text centered, text width=8em]
+\tikzstyle{myarrow}=[->, thick, draw=black]
+
+% Define the layers to draw the diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+
+\usetheme{Madrid}
+%\useinnertheme{rectangles}
+\usecolortheme{whale}
+\setbeamercolor{alerted text}{fg=blue}
+\useoutertheme{infolines}
+\setbeamertemplate{navigation symbols}{\vspace{-5pt}} % to lower the logo
+\setbeamercovered{invisible}
+
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+
+\pgfdeclareimage[height=1.2cm]{automl}{images/logos/automl.png}
+\pgfdeclareimage[height=1.2cm]{freiburg}{images/logos/freiburg}
+
+\logo{\pgfuseimage{freiburg}}
+

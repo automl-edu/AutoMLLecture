@@ -1,6 +1,0 @@
-argparse
-numpy
-matplotlib
-sklearn
-
-# add your requirements below this line
