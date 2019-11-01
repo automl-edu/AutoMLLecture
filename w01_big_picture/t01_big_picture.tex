@@ -1,0 +1,316 @@
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Big Picture]{AutoML: Automated Machine Learning}
+\subtitle{The Big Picture}
+\author{Marius Lindauer}
+\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/luh_logo.png}}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+%\begin{frame}[c]{In a Nutshell}
+
+%\includegraphics[width=0.99\textwidth]{images/automl_comic}
+
+%\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Machine Learning}
+
+\centering
+\textit{``Machine learning is the science of getting computers to act\\
+ without being explicitly programmed.''}
+
+\hfill by Andrew Ng
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Machine Learning requires many design decisions}
+
+\includegraphics[width=1.0\textwidth]{images/sklearn-cheat}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Machine Learning Workflow}
+
+\centering
+\input{tikz/ml-workflow}
+
+\pause
+ 
+\bigskip
+\bigskip
+\only<5->{$\leadsto$ Users indirectly teach machines how to learn.}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Machine Learning does not scale up}
+
+\begin{itemize}
+  \item Basics in machine learning are not hard to grasp
+  \smallskip
+  \pause
+  \item Achieving state-of-the-art performance is quite hard
+  \smallskip
+  \pause
+  \item Design decisions are often not intuitive and\\ require a lot of expertise
+  \begin{itemize}
+    \item making these design decisions is a tedious and error-prone task
+  \end{itemize}
+  \pause
+  \smallskip
+  \item Many experts are employed in ML these days
+  \smallskip
+  \pause
+  \item Nevertheless, developing new ML-applications takes time
+  \smallskip
+  \item The job market for ML experts is nearly empty
+\end{itemize}
+
+\pause
+\bigskip
+
+Zoubin Ghahramani said that he often heard that:\\
+\hfill \textit{``I'd like to use machine learning, but I can't invest much time.''}
+
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{AutoML Tools Demo}
+
+Auto-Sklearn:
+
+\url{https://colab.research.google.com/drive/11UcQQ_dymL5spF8o56qgSRZpMC1GKag9}
+
+\bigskip
+Auto-PyTorch:
+
+\url{https://colab.research.google.com/drive/14G5wvbqBkJ-SQJOdJsE_G8swq0JaFk6_}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Design Decisions in Machine Learning}
+
+What could be design decisions for applying ML to a new dataset?
+
+\pause
+
+\begin{itemize}
+  \item Choice of machine learning algorithm
+  \begin{itemize}
+    \item SVM, random forest, deep neural network?
+  \end{itemize}
+  \pause
+  \item Hyperparameters of machine learning algorithms
+  \begin{itemize}
+    \item SVM: C, gamma, kernel, \ldots?
+  \end{itemize}
+  \pause
+  \item Architecture of a neural network
+  \begin{itemize}
+    \item $\#$layers, $\#$neurons, activation function, \ldots 
+  \end{itemize}
+  \pause
+  \item Data preprocessing
+  \begin{itemize}
+  	\item data cleanup, missing data imputation, feature selection, \ldots  
+  \end{itemize}
+  \pause
+  \item anomaly detection
+  \item allocation of computational resources
+  \item \ldots
+\end{itemize}
+
+\medskip
+$\leadsto$ To achieve state-of-the-art performance,\\ all these design decisions have to be made for each new dataset.
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{A simple Example with $k$-NN}
+
+\centering
+\includegraphics[width=0.6\textwidth]{images/kNN-jasmine}
+
+\begin{itemize}
+  \item $k$-nearest neighbors is one of the simplest ML algorithms
+  \item Size of neighbourhood ($k$) is very important for its performance
+  \item The performance function depending on $k$ is quite complex\\ (not at all convex)
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Goal of AutoML}
+
+\begin{block}{AutoML}
+The goal of AutoML is to automate all parts of machine learning\\ (as needed)
+to \emph{support} users efficiently building their ML-applications.
+\end{block}
+
+\bigskip
+\pause
+
+\begin{block}{Informal Definition: AutoML System}
+Given
+\begin{itemize}
+  \item a dataset
+  \item a task (e.g., regression or classification)
+  \item a performance metric (e.g., accuracy or RMSE)
+\end{itemize}
+an AutoML system automatically determines the approach 
+that performs best for this particular application.
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{AutoML in Research}
+
+AutoML enables:
+
+\begin{enumerate}
+  \item more efficient research
+  \begin{itemize}
+    \item AutoML has shown on subproblems to outperform human experts
+  \end{itemize}
+  \pause
+  \smallskip
+  \item more systematic research
+  \begin{itemize}
+    \item humans tend to be unsystematic which leads to errors
+  \end{itemize}
+  \smallskip
+  \pause
+  \item more reproducible research
+  \begin{itemize}
+    \item human's unsystematic approaches cannot be reproduced,\\ but AutoML is systematic
+  \end{itemize}
+  \pause
+  \item broader use of ML also in other disciplines
+  \begin{itemize}
+    \item ML should not be limited to computer scientists;
+    \item the most amazing applications of ML are often done\\ by either interdisciplinary teams or even non-computer scientists
+  \end{itemize}
+\end{enumerate}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Challenges in AutoML}
+
+\begin{enumerate}
+  \item Each dataset potentially have different optimal ML-designs
+  \begin{itemize}
+    \item[$\leadsto$] Design decisions have to be made for each dataset again
+  \end{itemize}
+  \smallskip
+  \pause
+  \item Training of a single ML model can be quite expensive\\
+  		(e.g., hours, days or weeks)
+  \begin{itemize}
+    \item[$\leadsto$] often, we cannot try many design decisions
+  \end{itemize}
+  \smallskip
+  \pause
+  \item the mathematical relation between design decisions\\ and performance is (often) unknown
+  \begin{itemize}
+    \item[$\leadsto$] gradient-based optimization is not directly possible
+  \end{itemize}
+  \smallskip
+  \pause
+  \item optimization in highly complex spaces
+  \begin{itemize}
+    \item incl. categorical choices, continuous parameters,\\ conditional dependencies
+  \end{itemize}
+  
+\end{enumerate}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Risks of AutoML}
+
+What could be risks of AutoML?
+
+\begin{enumerate}
+  \item Users apply AutoML without understanding anything.
+  \begin{itemize}
+    \item Users might wonder why (Auto-)ML does not perform well\\ after they passed in poor data. 
+  \end{itemize}
+  \pause
+  \item Users over-trust AutoML too much.
+  \begin{itemize}
+    \item humans might not use human reasoning skills and\\ do not second guess machine decisions
+  \end{itemize}
+  \pause
+  \item We enable non-ML experts to use ML\\ without knowing the risks and consequences of ML.
+  \begin{itemize}
+  	\item E.g., bias in data and trained models
+  \end{itemize}
+  \pause
+  \item Could result in deployment of \ldots
+  \begin{itemize}
+    \item inaccurate ML models due to lack of understanding of statistical concepts, e.g., sampling bias, overfitting, concept drift, \ldots
+    \item biased and unfair models due to lack of understanding ethical practices and use of features such as gender and race for predicting outcomes
+  \end{itemize}
+\end{enumerate}
+
+See \lit{\href{https://arxiv.org/abs/1902.06804}{Bond et al. 2019}}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Snippet of Auto-AI Hierarchy}
+
+\centering
+\includegraphics[width=0.7\textwidth]{images/autoai}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Goals of the Lecture}
+
+You will be able to \ldots
+\begin{enumerate}
+  \item use AutoML tools
+  \smallskip
+  \item develop AutoML tools
+  \smallskip
+  \item have a good overview over the state-of-the-art in AutoML
+  \smallskip
+  \item do research on AutoML yourself
+  \begin{itemize}
+    \item perfect opportunity to do a master project or thesis with us afterwards
+  \end{itemize}
+\end{enumerate}
+
+\end{frame}
+%-----------------------------------------------------------------------	
+\end{document}
