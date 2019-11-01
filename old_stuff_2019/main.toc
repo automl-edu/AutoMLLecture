@@ -1,0 +1,6 @@
+\babel@toc {english}{}
+\beamer@sectionintoc {1}{Meta-Learning}{6}{0}{1}
+\beamer@sectionintoc {2}{Algorithm Selection}{30}{0}{2}
+\beamer@sectionintoc {3}{AutoML Warmstarting}{61}{0}{3}
+\beamer@sectionintoc {4}{Few Shot Learning}{87}{0}{4}
+\beamer@sectionintoc {5}{Learning to Learn/Optimize}{102}{0}{5}

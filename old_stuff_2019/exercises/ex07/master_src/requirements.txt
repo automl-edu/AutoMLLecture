@@ -1,0 +1,9 @@
+argparse
+numpy
+matplotlib
+sklearn
+pytorch>=1.0
+torchvision
+graphviz
+
+# add your requirements below this line

@@ -1,0 +1,132 @@
+\documentclass{exam}
+\usepackage{amsmath, amsfonts}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[super]{nth}
+\usepackage{booktabs}
+
+\DeclareMathOperator*{\argmin}{argmin}
+
+\usepackage[hyperfootnotes=false]{hyperref}
+
+\usepackage[usenames,dvipsnames]{color}
+\newcommand{\note}[1]{
+	\noindent~\\
+	\vspace{0.25cm}
+	\fcolorbox{Red}{Orange}{\parbox{0.99\textwidth}{#1\\}}
+	%{\parbox{0.99\textwidth}{#1\\}}
+	\vspace{0.25cm}
+}
+
+
+\input{../macros.tex}
+%\renewcommand{\hide}[1]{#1}
+
+\qformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+\bonusqformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+
+\pagestyle{headandfoot}
+
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+\newcommand{\duedate}{05.07.19 (10:00)}
+\newcommand{\due}{{\bf This assignment is due on \duedate.} }
+\firstpageheader
+{Due: \duedate \\ Points: 8}
+{{\bf\lecture}\\ \assignment{8}}
+{\lectors\\ \semester}
+
+\runningheader
+{Due: \duedate}
+{\assignment{8}}
+{\semester}
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+
+\firstpagefooter
+{}
+{\thepage}
+{}
+
+\runningfooter
+{}
+{\thepage}
+{}
+
+\headrule
+\pointsinrightmargin
+\bracketedpoints
+\marginpointname{pt.}
+
+
+
+
+\newcommand{\parents}{p}
+\newcommand{\negation}[1]{\overline{#1}}
+%\newcommand{\tuple}[1]{\langle #1 \rangle}
+\newcommand{\tuple}[1]{\left<#1\right>}
+\newcommand{\dom}[1]{dom(#1)}              % domain
+
+\newcommand{\false}{false}
+\newcommand{\true}{true}
+\newcommand{\TRUE}{{\mbox{\scriptsize \em TRUE}}}
+\newcommand{\FALSE}{{\mbox{\scriptsize \em FALSE}}}
+
+\newcommand{\bSigma}{\bm{\Sigma}}
+\newcommand{\bmu}{\bm{\mu}}
+\newcommand{\bx}{\bm{x}}
+\newcommand{\by}{\bm{y}}
+\newcommand{\bX}{\bm{X}}
+\newcommand{\bI}{\bm{I}}
+\newcommand{\bw}{\bm{w}}
+\newcommand{\ba}{\bm{a}}
+\newcommand{\bb}{\bm{b}}
+\newcommand{\bk}{\bm{k}}  
+\newcommand{\inv}{^{-1}}
+
+\newcommand{\norm}{{\mathcal{N}}}
+
+\newcommand\transpose{^{\textrm{\tiny{\sf{T}}}}}
+
+\begin{document}
+        \gccs
+	In this exercise you will learn how to run your NAS optimization algorithms on \href{https://github.com/google-research/nasbench}{NAS-Bench-101}. To avoid that you waste too much time training the sampled architectures, we will not optimize the actual benchmark but instead use a tabular benchmark. Refer to \href{https://arxiv.org/abs/1902.09635}{"NAS-Bench-101: Towards Reproducible Neural Architecture Search"} for more details about the search space and encoding. 
+	
+	In NAS-Bench-101 every CNN architecture in the cell search space was trained and evaluated 4 independent times. This was done for 4 different budgets (training epochs), however here we will only use the results for the highest budget (108 epochs).
+The results are compiled into a database, such that we can simply look up the performance of a hyperparameter configuration instead of training it from scratch.
+
+
+	\begin{questions}
+		\titledquestion{Getting started with NAS-Bench-101}[1]
+		$\texttt{NASBench\_example.py}$ shows how we can load the benchmark together with the configuration space. Before running this script make sure you have installed all the dependencies (including tensorflow, pytorch, nasbench, etc.) as shown in $\texttt{setup.sh}$. To execute the setup run $\texttt{bash setup.sh}$.
+		Each hyperparameter configuration is encoded as a $\texttt{Configuration}$ object and we can easily convert it to a $\texttt{numpy}$ array or a $\texttt{dictionary}$. Note that, if we convert it to a numpy array, all values are normalized to be in $[0, 1]$.
+
+		If we evaluate a hyperparameter configuration, we get the validation error and the time it had taken to train this configuration. When we generated this benchmark, we evaluated each hyperparameter configuration 4 times, and, for every table lookup, we pick one of these 4 trials uniformly at random. This simulates the typical noise that comes with hyperparameter optimization problems.
+		
+		Here you will just have to run $\texttt{python NASBench\_example.py > logs/log.txt}$ and push the resulting $\texttt{log.txt}$ to your Bitbucket repository.
+		
+		\titledquestion{Blackbox optimization on NAS-Bench-101}[7]
+		In this exercise you will have to run the command $\texttt{python main.py}$ which will execute Random Search (RS), Regularized Evolution (RE) and Non-regularized Evolution (non-RE) on NAS-Bench-101. But before running this command you will have to fill the missing code in $\texttt{optimizers.py}$.
+		\begin{parts}
+		\part[3] 
+		In the $\texttt{NASOptimizer}$ base class you will have to implement two methods which return a sampled configuration (architecture in this case) from the configuration space, and that query the validation + runtime of a specific configuration and update the incumbent trajectory.
+
+		\part[4] 
+		Afterwards, you will have to implement (non-)RE based on the pseudocode presented in Slide 24, Lecture 7. RE keeps a population of architectures and each time it does an update, it discards the oldest architecture configuration present in the current population. On the other hand, non-RE discards the worst architecture. Everything else is the same as RE.
+		\end{parts}
+		
+		Now you are ready to run $\texttt{python main.py}$. It runs by default RS, RE and non-RE by default 20 independent times for 100 function evaluations ($\texttt{n\_iters}$). You may change their values if you want. After the optimization is finished, a plot $\texttt{logs/plot.png}$ will be generated. You will have to push this plot together with $\texttt{optimizers.py}$ in your Bitbucket repository.
+		
+		\textbf{NOTE:} $\texttt{main.py}$ should run on a CPU machine in less than a minute (with the default arguments).
+
+		\titledquestion{Feedback}[Bonus: 0.5]
+		For each question in this assignment, state:
+		\begin{itemize}
+			\item How long you worked on it.
+			\item What you learned.
+			\item Anything you would improve in this question if you were teaching the course.
+		\end{itemize}
+	\end{questions}
+	
+	\noindent
+	\due Submit your solution for the tasks by uploading a PDF to your groups BitBucket repository. The PDF has to include the name of the submitter(s).
+\end{document}
