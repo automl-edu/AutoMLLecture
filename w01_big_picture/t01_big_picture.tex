@@ -6,7 +6,7 @@
 \title[AutoML: Big Picture]{AutoML: Automated Machine Learning}
 \subtitle{The Big Picture}
 \author{Marius Lindauer}
-\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/luh_logo.png}}
+\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/automl_hannover.png}}
 \date{}
 
 
@@ -84,9 +84,11 @@
   \item Many experts are employed in ML these days
   \smallskip
   \pause
-  \item Nevertheless, developing new ML-applications takes time
   \smallskip
-  \item The job market for ML experts is nearly empty
+  \item The job market for ML-experts is nearly empty
+  \smallskip
+  \pause
+  \item Even with experts, developing new ML-applications takes time
 \end{itemize}
 
 \pause
@@ -100,60 +102,33 @@ Zoubin Ghahramani said that he often heard that:\\
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{AutoML Tools Demo}
+%\begin{frame}[c]{AutoML Tools Demo}
 
-Auto-Sklearn:
+%Auto-Sklearn:
 
-\url{https://colab.research.google.com/drive/11UcQQ_dymL5spF8o56qgSRZpMC1GKag9}
+%\url{https://colab.research.google.com/drive/11UcQQ_dymL5spF8o56qgSRZpMC1GKag9}
 
-\bigskip
-Auto-PyTorch:
+%\bigskip
+%Auto-PyTorch:
 
-\url{https://colab.research.google.com/drive/14G5wvbqBkJ-SQJOdJsE_G8swq0JaFk6_}
+%\url{https://colab.research.google.com/drive/14G5wvbqBkJ-SQJOdJsE_G8swq0JaFk6_}
 
+
+%\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Why does ML development take a lot of time?}
+
+\centering
+\includegraphics[width=1.0\textwidth]{images/MLPipeline.jpg}
+
+\bigskip\bigskip\bigskip\bigskip
+$\leadsto$ To achieve state-of-the-art performance,\\ this manuel tuning has to be done for each new dataset again.
 
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Design Decisions in Machine Learning}
-
-What could be design decisions for applying ML to a new dataset?
-
-\pause
-
-\begin{itemize}
-  \item Choice of machine learning algorithm
-  \begin{itemize}
-    \item SVM, random forest, deep neural network?
-  \end{itemize}
-  \pause
-  \item Hyperparameters of machine learning algorithms
-  \begin{itemize}
-    \item SVM: C, gamma, kernel, \ldots?
-  \end{itemize}
-  \pause
-  \item Architecture of a neural network
-  \begin{itemize}
-    \item $\#$layers, $\#$neurons, activation function, \ldots 
-  \end{itemize}
-  \pause
-  \item Data preprocessing
-  \begin{itemize}
-  	\item data cleanup, missing data imputation, feature selection, \ldots  
-  \end{itemize}
-  \pause
-  \item anomaly detection
-  \item allocation of computational resources
-  \item \ldots
-\end{itemize}
-
-\medskip
-$\leadsto$ To achieve state-of-the-art performance,\\ all these design decisions have to be made for each new dataset.
-
-\end{frame}
-%-----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{A simple Example with $k$-NN}
+\begin{frame}[c]{A Simple Example with $k$-NN}
 
 \centering
 \includegraphics[width=0.6\textwidth]{images/kNN-jasmine}
@@ -161,6 +136,7 @@ $\leadsto$ To achieve state-of-the-art performance,\\ all these design decisions
 \begin{itemize}
   \item $k$-nearest neighbors is one of the simplest ML algorithms
   \item Size of neighbourhood ($k$) is very important for its performance
+  \pause
   \item The performance function depending on $k$ is quite complex\\ (not at all convex)
 \end{itemize}
 
@@ -187,6 +163,24 @@ Given
 an AutoML system automatically determines the approach 
 that performs best for this particular application.
 \end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{ML vs AutoML}
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{images/AutoMLPipeline.jpg}
+\end{center}
+
+\bigskip
+With AutoML, we ...
+\begin{itemize}
+	\item support ML users
+	\item improve the efficiency of developping new ML applications
+	\item reduce the required ML-expertise 
+	\item might achieve better performance than developers (w/o AutoML)
+\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -294,23 +288,4 @@ See \lit{\href{https://arxiv.org/abs/1902.06804}{Bond et al. 2019}}
 
 \end{frame}
 %-----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Goals of the Lecture}
-
-You will be able to \ldots
-\begin{enumerate}
-  \item use AutoML tools
-  \smallskip
-  \item develop AutoML tools
-  \smallskip
-  \item have a good overview over the state-of-the-art in AutoML
-  \smallskip
-  \item do research on AutoML yourself
-  \begin{itemize}
-    \item perfect opportunity to do a master project or thesis with us afterwards
-  \end{itemize}
-\end{enumerate}
-
-\end{frame}
-%-----------------------------------------------------------------------	
 \end{document}
