@@ -5,8 +5,8 @@
 
 \title[AutoML: Overview]{AutoML: Automated Machine Learning}
 \subtitle{Overview for this Week}
-\author{???}
-\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/placeholder}}
+\author{Marius Lindauer}
+\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/automl_hannover.png}}
 \date{}
 
 
@@ -26,6 +26,38 @@
 	
 
 %----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Black vs. Grey vs. White Box}
+
+\begin{itemize}
+	\item Often we treat AutoML as a black box problem
+	\begin{itemize}
+		\item Black box: We choose the input to the black box and observe only the outcome
+		\pause
+		\item E.g., classical hyperparameter optimizer:\\ Input: Hyperparameter configuration $\to$ Output: Accuracy
+	\end{itemize}
+   \pause
+   \item We discussed how to extend AutoML to a more grey box approach:
+   \begin{itemize}
+     	\item Grey Box: We still choose the input, but we can observe more than the outcome, e.g, intermediate results
+     	\pause
+     	\item We might can control the "box" a bit,  e.g., early termination
+     	\pause
+        \item E.g., learning curve predictions, multi-fidelity optimization, \ldots
+        \pause
+        \item[$\leadsto$] often more efficient than black-box approaches (if done right)
+   \end{itemize}
+   \pause
+   \item Ultimately, we would like to have full control over ML-algorithms
+   \begin{itemize}
+     	\item White-box: We can observe and control all details of an algorithm run
+     	\pause
+   \end{itemize}
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{TODO}
 
