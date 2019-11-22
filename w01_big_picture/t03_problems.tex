@@ -71,7 +71,7 @@ Remarks:
 \begin{itemize}
 	\item Over the years, many ML-algorithms were proposed
 	\pause
-	\item Most of these still have reason for existence
+	\item Most of these still have a reason for existence
 	\pause
 	\item Examples for classification:
 	\begin{itemize}
@@ -106,7 +106,7 @@ Remarks:
 		\item $\dataset_{opt}$ be a training set which is split into $\dataset_{train}$ and $\dataset_{valid}$ 
 		\item $\loss(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the loss of $\algo_\conf$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
 	\end{itemize}
-	we want to find the best combination of algorithm $\algo \in \mathbf{A}$ and its hyperparameter configuration $\conf \in \pcs$ minimizing:
+	we want to find \alert{the best combination of algorithm $\algo \in \mathbf{A}$ and its hyperparameter configuration $\conf \in \pcs$} minimizing:
 	\begin{equation}
 	(\algo^*, \conf^*) \in \argmin_{\algo \in \algos, \conf \in \pcs} \loss(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber
 	\end{equation}
@@ -141,9 +141,13 @@ Remarks:
 	
 \end{columns}
 
+\pause
 \begin{itemize}
 	\item Already on a single dataset such as ImageNet,\\ it is not obvious which architeture to choose
+	\pause
 	\item For other datasets, you might need different architectures\\ to achieve top-performance
+	
+	\pause
 	\begin{itemize}
 		\item For similar datasets, you might use scaled versions of known architectures (e.g., CIFAR10 and Imagenet)
 	\end{itemize}
@@ -171,6 +175,8 @@ Remarks:
 \smallskip
 Remark:
 \begin{itemize}
+	\item very similar to the HPO definition
+	\pause
 	\item In practice, you want jointly optimize HPO and NAS~\lit{\href{https://ml.informatik.uni-freiburg.de/papers/18-AUTOML-EfficientNAS.pdf}{Zela et al. 2018}}
 \end{itemize}
 
@@ -181,17 +187,22 @@ Remark:
 
 \begin{itemize}
 	\item For solving the HPO, CASH and NAS problem, we use some kind of optimization approach to \alert{search} for a solution
+	\pause
 	\item A different view is: Can we \alert{predict} an algorithm/ hyperparameter configuration/ neural architecture?
 \end{itemize}
 
+\pause
 \begin{block}{Definition}
 	Let 
 	\begin{itemize}
 		\item $p(\dataset)$ be a probability \alert{distribution} over meta datasets $\dataset \in \mdata$,
+		\pause
 		\item $\algo \in \portfolio$ be a portfolio of algorithms, and
+		\pause
 		\item $\loss: \portfolio \times \mdata \rightarrow \perf$ be a loss metric   
 	\end{itemize}
 	
+	\pause
 	the \emph{per-instance algorithm selection problem} is to obtain a mapping 
 	$s: \dataset \mapsto \algo$ 
 	that optimizes 
@@ -205,23 +216,23 @@ Remark:
 
 \begin{itemize}
 	\item So far, we assume that an algorithm runs with some given settings
-	\item However, settings, such as the learning rate, have to adapted over time
+	\item However, settings, such as learning rate, have to be adapted over time
 \end{itemize}
 
 \begin{block}{Definition}
 	Let 
 	\begin{itemize}
-		\item $\pcs$ be hyperparameters of an algorithm $\algo$,
+		\item $\pcs$ be a hyperparameter configuration of an algorithm $\algo$,
 		\pause
-		\item $p(\dataset)$ be probability distribution over meta datasets $\dataset \in \mdata$,
+		\item $p(\dataset)$ be a probability distribution over meta datasets $\dataset \in \mdata$,
 		\pause
-		\item $\state_t$ be state description of $\algo$ solving $\inst$ at time point $t$,
+		\item $\state_t$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
 		\pause
 		\item $\loss: \policies \times \mdata \to \perf$ be a loss metric assessing the cost of a control policy $\pi \in \Pi$ on dataset $\dataset \in \mdata$
 	\end{itemize}
 	
-	the \emph{algorithm control problem} is to obtain a control policy $\policy^* : \states \times \insts \to \pcs$ by optimizing its cost 
-	or across a distribution of instances:
+	\pause
+	the \emph{algorithm control problem} is to obtain a control policy $\policy^* : \state_t \times \dataset \mapsto \conf$ by optimizing its loss across a distribution of datasets:
 	\begin{equation}
 	\pi^* \in \argmin_{\policy \in \policies} \int_{\mdata} p(\dataset) c(\policy, \dataset) \diff \dataset \nonumber
 	\end{equation}
@@ -230,5 +241,17 @@ Remark:
 \end{frame}
 %-----------------------------------------------------------------------	
 %-----------------------------------------------------------------------	
+%----------------------------------------------------------------------
+\begin{frame}[c]{Overview}
 
+\begin{description}
+	\item[HPO] Search for the best hyperparameter configuration of a ML algorithm
+	\item[CASH] Search for the best combination of algorithm and hyperparameter configuration
+	\item[NAS] Search for the architecture of neural network
+	\item[Algorithm Selection] Predict the best algorithm (and its hyperparameter configuration)
+	\item[Algorithm Control] Predict the best hyperparameter configuration for algorithm state at a given time point 
+\end{description}
+
+\end{frame}
+%-----------------------------------------------------------------------	
 \end{document}
