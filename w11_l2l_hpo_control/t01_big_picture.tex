@@ -30,14 +30,15 @@
 \begin{frame}[c]{Black vs. Grey vs. White Box}
 
 \begin{itemize}
-	\item Often we treat AutoML as a black box problem
+	\item Often we treat AutoML as a \alert{black-box problem}
 	\begin{itemize}
-		\item Black box: We choose the input to the black box and observe only the outcome
+		\item Black box: We choose input to the black box and observe outcome
 		\pause
 		\item E.g., classical hyperparameter optimizer:\\ Input: Hyperparameter configuration $\to$ Output: Accuracy
 	\end{itemize}
    \pause
-   \item We discussed how to extend AutoML to a more grey box approach:
+   \smallskip
+   \item We discussed how to extend AutoML to a more \alert{grey-box approach}:	
    \begin{itemize}
      	\item Grey Box: We still choose the input, but we can observe more than the outcome, e.g, intermediate results
      	\pause
@@ -48,21 +49,87 @@
         \item[$\leadsto$] often more efficient than black-box approaches (if done right)
    \end{itemize}
    \pause
-   \item Ultimately, we would like to have full control over ML-algorithms
+   \smallskip
+   \item Ultimately, we would like to treat AutoML as a \alert{white-box problem}
    \begin{itemize}
      	\item White-box: We can observe and control all details of an algorithm run
-     	\pause
    \end{itemize}
+	\pause
+	\medskip
+   \item[$\leadsto$] Goal: \alert{Replace algorithm components by learned policies}
 \end{itemize}
 
 
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{TODO}
+\begin{frame}[c]{Iterative Optimization Heuristics}
 
-TODO
+\begin{block}{IOHs}
+	Iterative Optimization Heuristics {IOH} propose a set of solution candidates in each iteration
+	based on previous evaluations.
+\end{block}
 
+\pause
+\smallskip
+Important Observations:
+\begin{itemize}
+	\item Many ML algorithms are  \alert{iterative} in nature, in particular for big data, e.g.:
+	\begin{itemize}
+		\item SGD (for linear models or for deep neural networks)
+		\item Tree-based algorithms
+	\end{itemize}
+	\pause
+	\smallskip
+	\item Often we have only a \alert{single solution candidate}\newline (e.g., weights of neural network)
+	\begin{itemize}
+		\item If we use a evoluationary strategy as in neural evoluation,\newline we have a population of solution candidates
+	\end{itemize}
+	\pause
+	\smallskip
+	\item Hopefully, the \alert{quality} of solution candiates \alert{improves} in each iteration
+	\begin{itemize}
+		\item Update of the weights of a neural network
+	\end{itemize}
+	\pause
+	\smallskip
+	\item Main component is the \alert{heuristic for proposal mechanism} of new solution candidates
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning IOHs}
+	
+\begin{block}{Learning to Learn: L2L}
+	The goal of L2L is to learn a \alert{proposal mechanism} from data.
+\end{block}
+
+
+\bigskip
+\pause
+
+\begin{block}{Algorithm Control}
+	The goal of algorithm control is to learn a policy from data that adapts the \alert{hyperparameter settings} of an heuristic.
+\end{block}
+
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Main Idea \& Challenges}
+
+\begin{enumerate}
+	\item \alert{Training data}: Run algorithm over and over again
+	\pause
+	\smallskip
+	\item \alert{Learn} algorithm component from offline training data
+	\pause
+	\smallskip
+	\item Apply to many new problems (a.k.a. instances, tasks, datasets) and assess the \alert{generalization} performance 
+\end{enumerate}
+	
+	
 \end{frame}
 %-----------------------------------------------------------------------
 
