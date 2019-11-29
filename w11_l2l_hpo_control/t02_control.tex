@@ -1,0 +1,202 @@
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
+\subtitle{Learning to Control}
+\author{Marius Lindauer}
+\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/automl_hannover.png}}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Dynamic Heuristics}
+	
+	\begin{itemize}
+		\item Many heuristics in algorithms are dynamic and adaptive
+		\begin{enumerate}
+			\item the algorithm's behavior changes over time
+			\item the algorithm's behavior changes based on internal statistics
+		\end{enumerate}
+		\medskip
+		\item These heuristics might control other hyperparameters of the algorithms
+		\pause
+		\smallskip
+		\item Example: learning rate schedules for training DNNs
+		\begin{enumerate}
+			\item exponential decaying learning rate: based on number of iterations, learning rate decreases
+			\pause
+			\item Reduce learning rate on plateaus: if the learning stagnates for some time, the learning rate is decreased by a factor
+		\end{enumerate}
+		\pause
+		\smallskip
+		\item other examples: restart probability of search, mutation rate of evolutionary algorithms, \ldots  
+		
+	\end{itemize}
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Parametrization of Learning Rate Schedules}
+	
+	\begin{itemize}
+		\item How can we parameterize learning rate schedules?
+		\begin{enumerate}
+			\item exponential decaying learning rate:
+			\begin{itemize}
+				\item initial learning rate
+				\item minimal learning rate
+				\item multiplicative factor
+			\end{itemize}
+			\pause
+			\item Reduce learning rate on plateaus:
+			\begin{itemize}
+				\item patience (in number of epochs)
+				\item patience threshold
+				\item decreasing factor
+				\item cool-down break (in number of epochs)
+			\end{itemize}
+		\end{enumerate}
+		\pause
+		\medskip
+		\item[$\leadsto$] Many parameters only to control a single hyperparameter
+		\pause   
+		\item Still not guaranteed that optimal setting of e.g. learning rate schedules will lead to optimal learning rate behavior
+		\begin{itemize}
+			\item Learning rate schedules are only heuristics
+		\end{itemize}
+	\end{itemize}
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Control~\lit{Biedenkapp et al. 2019}}
+
+\begin{itemize}
+	\item So far, we assumed that an algorithm runs with static settings
+	\item However, settings, such as learning rate, have to be adapted over time
+\end{itemize}
+
+\begin{block}{Definition}
+	Let 
+	\begin{itemize}
+		\item $\pcs$ be a hyperparameter configuration of an algorithm $\algo$,
+		\pause
+		\item $p(\dataset)$ be a probability distribution over meta datasets $\dataset \in \mdata$,
+		\pause
+		\item $\state_t$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
+		\pause
+		\item $\loss: \policies \times \mdata \to \perf$ be a loss metric assessing the cost of a control policy $\pi \in \Pi$ on dataset $\dataset \in \mdata$
+	\end{itemize}
+	
+	\pause
+	the \emph{algorithm control problem} is to obtain a control policy $\policy^* : \state_t \times \dataset \mapsto \conf$ by optimizing its loss across a distribution of datasets:
+	\begin{equation}
+	\pi^* \in \argmin_{\policy \in \policies} \int_{\mdata} p(\dataset) c(\policy, \dataset) \diff \dataset \nonumber
+	\end{equation}
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------	
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Control as Contextual MDP \litw{Biedenkapp et al. 2019}}
+
+
+\begin{description}
+	\item[State $s_t$] are described by statistics gathered in the algorithm run
+	\pause
+	\item[Action $a_t$] change hyperparameters according to some control policy $\pi$
+	\pause
+	\item[Transition] run the algorithm from state $s_t$ to $s_{t+1}$ for a "short" moment by using the hyperparameters defined by $a_t$
+	\pause
+	\item[Reward $r_t$] Return your current solution quality (or an approximation)
+	\pause
+	\item[Context $\dataset$] A given dataset (or task)
+\end{description}
+
+\bigskip
+	
+\input{tikz/control.tex}
+	
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Solving Algorithm Control}
+
+Solve unknown MDP by using reinforcement learning (RL):
+
+\begin{equation}
+\mathcal{V}_i^\policy(s_t) =  \mathbb{E} \left[\sum_{k=0}^\infty\gamma^k r_{t+k+1}(\inst)| s_t=s \right]\nonumber
+\end{equation}
+\pause
+
+\begin{equation}
+ = \mathbb{E} \left[ r_{t+1}(\inst)+\gamma\mathcal{V}_i^\policy(s_{t+1})| s_{t+1} \sim \mathcal{T}_i(s_t, \pi(s_t)) \right] \nonumber
+\end{equation}
+\pause
+\begin{equation}
+\policy^* \in
+\argmax_{\pi \in \Pi}
+\int_{\mdata} p(\dataset) \int_{\mathcal{S}_0} \Pr(s_0) \cdot \mathcal{V}^\policy_\dataset(s_0) \diff s_0 \diff \dataset \nonumber
+\end{equation}
+
+\bigskip
+$\leadsto$ equivalent to algorithm control definition
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Control across Datasets \lit{Biedenkapp et al. 2019}}
+	
+	\begin{itemize}
+		\item Challenge: Evaluating a policies on all datasets is often not feasible
+		\item Curriculum learning \lit{Bengio et al. 2009} showed that we should have a curriculum of tasks we tackle
+		\item Self-paced learning \lit{Kumar et al. 2010} tries to automatically find such as a curriculum
+		\begin{itemize}
+			\item Focus on "easy" tasks where the agent can improve most:
+		\end{itemize}
+	\end{itemize}
+	
+\begin{equation} 
+\label{spl_loss}
+\max_{\weights,\vec{v}}\mathcal{R}(\weights, \vec{v}, K) = \sum^{|\insts|}_{i=1} v_i\mathcal{R}_i(\weights) - \frac{1}{K} \sum^{|\insts|}_{i=1} v_i \nonumber
+\end{equation}
+
+with $\weights$ being the agent's policy parameters and $v$ being a masking vector.
+
+\pause
+\medskip
+
+Self-paced learning for algorithm control:
+\begin{equation}
+v_i = \left\{
+\begin{array}{ll}
+1, &  \mathrm{if}\quad\mathcal{R}(\weights, \vec{v}_{-i}, K) < \mathcal{R}(\weights, \vec{v}_{+i}, K)\\
+0, & \mathrm{otherwise}
+\end{array}
+\right.\nonumber
+\end{equation}
+\end{frame}
+%----------------------------------------------------------------------
+
+\end{document}
