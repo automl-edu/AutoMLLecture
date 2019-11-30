@@ -1,0 +1,162 @@
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
+\subtitle{Learning to Control Learning Rates}
+\author{Marius Lindauer}
+\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/automl_hannover.png}}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+	
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{}
+
+\huge
+\centering
+Learning Step Size Controllers for Robust Neural Network Training\\
+by Daniel et al. AAAI'16
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Step Size Controllers \lit{Daniel et al'16}}
+
+\begin{itemize}
+\item \alert{Idea:} Learn the hyperparameters of the weight update 
+\end{itemize}
+
+\begin{equation}
+\weights_{t+1} = \weights_t - \alpha_t \nabla f(\weights_t) \nonumber
+\end{equation}
+
+\begin{itemize}
+\pause
+\item For SGD, this would be for example the learning rate $\alpha$
+\pause
+\item \alert{Note (i)}: $\alpha$ have to be adapted in the course of the training
+\begin{itemize}
+\item similar to learning rate schedules (e.g., cosine annealing)
+\end{itemize}
+\pause
+\item \alert{Note(ii)}: later we denote the learnt hyperparameters as $\lambda$
+\medskip
+\pause
+\item \alert{Idea:} Use reinforcement learning to learn a policy $\policy: \stateRL \mapsto \actionRL$ to control the learning rate (or other adaptive hyperparameters)
+\end{itemize}
+
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Recap: Reinforcement Learning for Algorithm Control}
+
+\input{tikz/control.tex}
+
+\bigskip
+To apply that, we need to define:
+\begin{enumerate}
+	\item State description
+	\item Action space
+	\item Reward function
+\end{enumerate}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{RL for Step Size Controllers: State \lit{Daniel et al'16}}
+
+\textbf{Predictive change in function value:}
+
+$$s_1 = \log \left( \text{Var}(\Delta \tilde{f}_i ) \right)$$
+$$\Delta \tilde{f}_i = \tilde{f}(x_i; \theta + \delta \theta) - f(x_i; \theta)$$
+
+where $\tilde{f}(x_i; \theta + \delta \theta)$ is done by a first order Taylor expansion
+
+\pause
+\textbf{Disagreement of function values:}
+$$ s_2 = \log \left(\text{Var}(f(x_i; \theta)) \right)$$
+
+\pause
+
+\textbf{Discounted Average} (smoothing noise from mini-batches):
+$$\hat{s}_i \leftarrow \gamma \hat{s_i} + (1 - \gamma) s_i$$
+
+\pause
+
+\textbf{Uncertainty Estimate} (noise level):
+$$s_{K+i} \leftarrow \gamma s_{K+i} + (1-\gamma) (s_i - \hat{s}_i)^2$$
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{RL for Step Size Controllers: Learning \lit{Daniel et al'16}}
+
+Reward (average loss improvement over time):
+
+$$r = \frac{1}{T-1} \sum_{t=2}^T \left(\log(\loss_{t-1}) - \log(\loss_t)\right)$$
+
+\pause
+
+Optimal Policy:
+
+$$\pi^*(\lambda \mid s) \in \argmax_{\pi} \int \int p(s) \pi(\lambda\mid s)r(\lambda,s) \texttt{d}s \texttt{d}\lambda $$
+
+\pause
+
+The policy $\pi$ is learnt as a controller $\lambda = g(s, \phi)$; leading to
+
+$$\pi^*(\phi) \in \argmax_{\pi} \int \int p(s) \pi(\phi)r(g(s;\phi),s) \texttt{d}s \texttt{d}\lambda $$
+
+\pause
+
+\begin{itemize}
+\item can be learnt for example via Relative Entropy Policy Search (REPS) \lit{Peter et al. 2010}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{RL for Step Size Controllers: Training \lit{Daniel et al'16}}
+
+\begin{itemize}
+\item Goal: obtain robust policies,\\ i.e., good performance for many different DNN architectures
+\begin{itemize}
+\item[$\leadsto$] Sample architectures e.g., with different numbers of filters and layers
+\item[$\leadsto$] (Sub-)Sample dataset
+\item[$\leadsto$] Sample number of optimization steps
+\end{itemize}
+\end{itemize}
+
+\pause 
+\medskip
+\centering
+\includegraphics[width=0.6\textwidth]{images/l2stepsizecontroler_mnist_training.png}
+
+"Ours" refers to the approach by \lit{Daniel et al'16} and $\eta$ is the learning rate
+
+\end{frame}
+%----------------------------------------------------------------------
+
+\end{document}
