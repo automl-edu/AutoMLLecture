@@ -159,18 +159,18 @@ where $\weights$ are the parameters of a neural network,\\ and $\mu$ and $sigma$
 \begin{frame}[c]{RL to train Neural AF \lit{Volpp et al.'19}}
 
 \begin{description}
-\item[Policy $\pi_\weights$:] Neural acquisition function $\alpha_\weights$
+\item[Policy $\policy_\weights$:] Neural acquisition function $\alpha_\weights$
 \pause
-\item[Episode:] run of $\pi$ on $f\in \mathcal{F}'$
+\item[Episode:] run of $\policy$ on $f\in \mathcal{F}'$
 \begin{itemize}
 \item $\mathcal{F}$ is a set of functions we can sample functions from
 \end{itemize}
 \pause
-\item[State $s_t$:] $\mu_t$ and $\sigma_t$ on a set of points $\xi_t$
+\item[State $\stateRL_t$:] $\mu_t$ and $\sigma_t$ on a set of points $\xi_t$
 \pause
-\item[Action $a_t$:] Sampled point $x_t$
+\item[Action $\actionRL_t$:] Sampled point $x_t$
 \pause
-\item[Reward $r_t$:] negative simple regret: $r_t = f(x^*) - f(\hat{x})$
+\item[Reward $\rewardRL_t$:] negative simple regret: $r_t = f(x^*) - f(\hat{x})$
 \begin{itemize}
 \item assumes that we can estimate the optimal $x^*$ for \emph{training} functions
 \end{itemize}
@@ -196,7 +196,7 @@ $$\pi_\alpha(\cdot \mid s_t) = \text{Mult}\left[\alpha_\weights(\xi_1), \ldots, 
 \item sample $\xi_{\text{global}}$ using a coarse Sobol grid
 \item sample $\xi_{\text{local}}$ using local optimization starting from the best samples in $\xi_{\text{global}}$
 \end{enumerate}
-\item[$\leadsto$] $\xi_t = \xi_{\text{global}} \cup \xi_{\text{lokal}}$ 
+\item[$\leadsto$] $\xi_t = \xi_{\text{global}} \cup \xi_{\text{local}}$ 
 \end{itemize}
 
 \end{frame}
