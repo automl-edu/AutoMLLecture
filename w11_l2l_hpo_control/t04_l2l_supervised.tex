@@ -1,0 +1,243 @@
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
+\subtitle{Learning to Learn: Supervised}
+\author{Marius Lindauer}
+\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/automl_hannover.png}}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn}
+
+\begin{block}{Idea}
+\begin{itemize}
+	\item Learn algorithms directly, e.g., how to search in the weight space
+	\item First idea: learn weight updates of a neural network
+\end{itemize}
+\end{block}
+
+\pause
+
+\begin{block}{Learning to learn by gradient descent by gradient descent\newline \lit{Andrychowicz et al'16}}
+Weight updates (note: \alert{$\weights$ denote DNN weights!}):
+\begin{equation}
+\weights_{t+1} = \weights_t - \alpha_t \nabla f(\weights_t) \nonumber
+\end{equation}
+\pause
+Even more general:
+\begin{equation}
+\weights_{t+1} = \weights_t + g_t(\nabla f(\weights_t), \metaweights) \nonumber
+\end{equation}
+where $g$ is the optimizer and $\metaweights$ are the parameters of the optimizer $g$.\\
+\pause
+$\leadsto$ \alert{Goal: Optimize $f$ wrt $\weights$ by learning $g$ (resp. $\metaweights$)}
+\end{block}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn: Objective \lit{Andrychowicz et al'16}}
+
+\vspace{-0.5cm}
+\begin{equation}
+\loss(\metaweights) = \mathbb{E}\left[ f(\weights^*(f,\metaweights)) \right]\nonumber
+\end{equation}
+
+where $\loss$ is a loss function and $\weights^*(f,\metaweights)$ are the optimized weights $\weights^*$ by using the optimizer parameterized with $\metaweights$ on function $f$.
+
+\pause
+
+%\vspace{-0.5cm}
+\begin{equation}
+\loss(\metaweights) = \mathbb{E}\left[\sum_{t=1}^T w_t f(\weights_t)\right]\nonumber
+\end{equation}
+
+\pause
+where $w_t$ are arbitrary weights associated with each time step
+and 
+
+\pause
+\vspace{-0.5cm}
+\begin{eqnarray}
+\weights_{t+1} = \weights_t + g_t\nonumber\\
+\begin{pmatrix}g_t\\h_{t+1}\end{pmatrix} = m(\nabla_\weights f(\weights_t), h_t, \metaweights)\nonumber
+\end{eqnarray}
+
+\pause
+$\leadsto$ Goal: Learn $m$ via $\metaweights$ by using gradient descent by optimizing $\loss$ \\
+\pause
+$\leadsto$ ``Learning to learn gradient descent by gradient descent''
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn: LSTM approach \lit{Andrychowicz et al'16}}
+
+\begin{description}
+\item[Optimizee] Target network to be trained
+\item[Optimizer] LSTM with hidden state $h_t$ that predicts weight updates $g_t$
+\end{description}
+
+\medskip
+
+\includegraphics[width=1\textwidth]{images/learning_to_learn_lstm}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn: Coordinatewise LSTM optimizer \lit{Andrychowicz et al'16}}
+
+\centering
+\includegraphics[width=.7\textwidth]{images/l2l_shared_lstm.png}
+
+\begin{itemize}
+\item One LSTM for each coordinate (i.e., weight)
+\item All LSTMs have shared parameters $\metaweights$
+\item Each coordinate has its own separate hidden state
+\pause
+\item[$\leadsto$] We can train the LSTM on $k$ weights and apply it larger DNNs\\ with $k'$ weights, where $k \leq k'$
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn with LSTM: Results \lit{Andrychowicz et al'16}}
+
+\centering
+\includegraphics[width=0.7\textwidth]{images/l2l_mnist_base}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn with LSTM: Results \lit{Andrychowicz et al'16}}
+
+Changing the original architecture of the DNN:
+\smallskip
+
+\centering
+\includegraphics[width=0.9\textwidth]{images/l2l_mnist_okchange}
+
+$\leadsto$ learnt optimizer is robust against some architectural changes
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Learn with LSTM: Results\newline \lit{Andrychowicz et al'16}}
+
+Changing the activation function to ReLU:
+\smallskip
+
+\centering
+\includegraphics[width=0.6\textwidth]{images/l2l_mnist_relu}
+
+$\leadsto$ fails on other activation functions
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Black-box Optimization~\lit{Chen et al'17}}
+
+\begin{block}{Black Box Optimization Setting}
+
+\begin{equation}
+x^* \in \argmin_{x \in \mathcal{X}} f(x) \nonumber
+\end{equation}
+	
+\begin{enumerate}
+\item Given the current state of knowledge $h_t$ propose a query point $x_t$
+\item Observe the response $y_t$
+\item Update any internal statistics to produce $h_{t+1}$
+\end{enumerate}
+\end{block}
+
+\pause
+
+\begin{block}{Learning Black Box Optimization}
+Essentially, same idea as before:
+\begin{eqnarray}
+h_t, x_t = \text{RNN}_\metaweights(h_{t-1}, x_{t-1}, y_{t-1}) \nonumber \\
+y_t \sim p(y|x_t)\nonumber
+\end{eqnarray}
+
+\begin{itemize}
+\item Using recurrent neural network (RNN) to predict next $x_t$.
+\item $h_t$ is the internal hidden state 
+\end{itemize}
+
+\end{block}
+
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Black-box Optimization: Loss Functions\newline \lit{Chen et al'17}}
+
+\begin{itemize}
+\item Sum loss: Provides more information than final loss
+\end{itemize}
+\begin{equation}
+\loss_{\text{sum}}(\metaweights) = \mathbb{E}_{f,y_{1:T-1}}\left[\sum_{t=1}^T f(x_t)\right]\nonumber
+\end{equation}
+
+\pause
+
+\begin{itemize}
+\item EI loss: Try to learn behavior of Bayesian optimizer based on expected improvement (EI)
+\begin{itemize}
+\item requires model (e.g., GP)
+\end{itemize}
+\end{itemize}
+\begin{equation}
+\loss_{\text{EI}}(\metaweights) = - \mathbb{E}_{f,y_{1:T-1}}\left[\sum_{t=1}^T \text{EI}(x_t | y_{1:t-1})\right]\nonumber
+\end{equation}
+
+\pause
+
+\begin{itemize}
+\item Observed Improvement Loss:
+\end{itemize}
+
+\begin{equation}
+\loss_{\text{OI}}(\metaweights) = \mathbb{E}_{f,y_{1:T-1}}\left[\sum_{t=1}^T \min \left\{f(x_t) - \min_{i<t}(f(x_i)),0 \right\}  \right]\nonumber
+\end{equation}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Black-box Optimization: Results\newline \lit{Chen et al'17}}
+
+\centering
+\includegraphics[width=0.6\textwidth]{images/l2bo_hartmann3}
+
+\begin{itemize}
+\item Hartmann3 is an artifical function with 3 dimensions
+\pause
+\item[$\leadsto$] $\loss_{\text{OI}}$ and $\loss_{\text{EI}}$ perform best
+\item[$\leadsto$] $\loss_{\text{OI}}$ easier to compute than $\loss_{\text{EI}}$\\ because we need a predictive model to compute EI 
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+
+
+\end{document}

@@ -1,0 +1,233 @@
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
+\subtitle{Learning to Learn via Reinforcement Learning}
+\author{Marius Lindauer}
+\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/automl_hannover.png}}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning\newline \lit{Li and Malik'17}}
+
+\centering
+\includegraphics[width=0.6\textwidth]{images/l2o_comic}
+
+\tiny
+Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with-rl/}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning\newline \lit{Li and Malik'17}}
+
+\begin{block}{Reinforcement Learning for Learning to Optimize}
+\begin{description}
+\item[State] current location, objective values and gradients evaluated at the current and past locations
+\pause
+\item[Action] Step update $\Delta x$
+\pause
+\item[Transition] $x_t \leftarrow x_{t-1} + \Delta x$
+\pause
+\item[Cost/Reward] Objective value at the current location
+\begin{itemize}
+\item Since the RL agent will optimize the cumulative cost, this is equivalent to $\loss_{\text{sum}}$ \lit{Chen et al'17} ($\gamma=0$)
+\item encourages the policy to reach the minimum of the objective function as quickly as possible
+\end{itemize}
+\pause
+\item[Policy] DNN predicting $\mu_d$ of Gaussian (with constant variance $\sigma^2$)\\ for dimension $d$; sample $\Delta x_d \sim \mathcal{N}(\mu_d, \sigma^2)$
+\pause
+\item[Training Set] randomly generated objective functions
+\end{description}
+\end{block}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning\newline Results \lit{Li and Malik'17}}
+
+\centering
+\includegraphics[width=0.5\textwidth]{images/l2o_dnn}
+
+\begin{itemize}
+\item 2-layer DNN with ReLUs
+\item Training datasets for training RL agent:\\ four multivariate Gaussians and sampling 25 points from each
+\begin{itemize}
+\item[$\leadsto$] hard toy problem
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c, fragile]{Learning Acquisition Functions \lit{Volpp et al.'19}}
+
+\begin{itemize}
+\item Instead of learning everything, it might be sufficient to \alert{learn hand-design heuristics}
+\pause
+\item In Bayesian Optimization (BO), the most critical hand-design heuristic is the acquisition function
+\begin{itemize}
+\item trade-off between exploitation and exploration
+\item Depending on the problem at hand, you might need a different acquisition function
+\pause
+\item Choices:
+\begin{itemize}
+\item probability of improvement (PI)
+\item expected improvement (EI)
+\item upper confidence bounds (UCB)
+\item entropy search (ES) -- quite expensive!
+\item knowledge gradient (KG)
+\item ...
+\end{itemize} 
+\end{itemize}
+\pause
+\item \alert{Idea:} Learn a \emph{neural acquisition function} from data
+\end{itemize}
+
+$\leadsto$ Replace acquisition function 
+
+\end{frame}
+%----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Bayesian Optimization: Algorithm}
+
+\begin{algorithm}[H]
+\Input{Search Space $\mathcal{X}$,
+black box function $f$, 
+\alert{acquisition function $\alpha$,}
+maximal number of function evaluations $m$
+}
+\BlankLine
+$\mathcal{D}_0$ $\leftarrow$ initial\_design($\mathcal{X}$); \\
+\For{n = $1, 2, \ldots m - |D_0|$}{
+$\surro: \conf \mapsto y$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
+select $x_{n}$ by optimizing $x_{n} \in \argmax_{x \in \mathcal{X}} \alert{\alpha(x; \mathcal{D}_{n-1}, \surro)}$;\\
+Query $y_{n} := f(x_{n})$;\\
+Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}$;
+}
+\Return{Best $x$ according to $D_m$ or $\surro$}
+\caption{Bayesian Optimization (BO)}
+\end{algorithm}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Neural Acquisition Function \lit{Volpp et al.'19}}
+
+Although the \alert{acquisition function $\alpha$} depends on the history $\mathcal{D}_{n-1}$ and the predictive model $\surro$, $\alpha$ mainly makes use of the \alert{predictive mean $\mu$ and variance $\sigma^2$}.
+
+\pause
+\bigskip
+
+Neural acquisition function (AF):
+
+\begin{eqnarray}
+\alpha_\weights(x) = \alpha_\weights(\mu_t(x), \sigma_t(x)) \nonumber
+\end{eqnarray}
+
+where $\weights$ are the parameters of a neural network,\\ and $\mu$ and $sigma$ are its inputs.
+
+\pause 
+\begin{itemize}
+\item Since the input is not $x$, it allows to learn scalable acquisition function
+\item No calibration of hyperparameter necessary, once the neural AF is learnt
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{RL to train Neural AF \lit{Volpp et al.'19}}
+
+\begin{description}
+\item[Policy $\pi_\weights$:] Neural acquisition function $\alpha_\weights$
+\pause
+\item[Episode:] run of $\pi$ on $f\in \mathcal{F}'$
+\begin{itemize}
+\item $\mathcal{F}$ is a set of functions we can sample functions from
+\end{itemize}
+\pause
+\item[State $s_t$:] $\mu_t$ and $\sigma_t$ on a set of points $\xi_t$
+\pause
+\item[Action $a_t$:] Sampled point $x_t$
+\pause
+\item[Reward $r_t$:] negative simple regret: $r_t = f(x^*) - f(\hat{x})$
+\begin{itemize}
+\item assumes that we can estimate the optimal $x^*$ for \emph{training} functions
+\end{itemize}
+\pause
+\item[Transition probability]: Noisy evaluation of $f$ and the predictive model update
+\end{description}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{State \lit{Volpp et al.'19}}
+
+\begin{itemize}
+\item The state is described by a discrete set of points $\xi_t = \{\xi_n\}^N_{n=1}$
+\pause
+\item We feed these points through the predictive model and the neural AF to obtain $\alpha_\weights(\xi_i) = \alpha_\weights(\mu_t(\xi_i), \sigma_t(\xi_i)) $
+\pause
+\item $\alpha_\weights(\xi_i)$ are interpreted as the logits of multinomial distribution, s.t.
+$$\pi_\alpha(\cdot \mid s_t) = \text{Mult}\left[\alpha_\weights(\xi_1), \ldots, \alpha_\weights(\xi_N) \right] $$
+\pause
+\item Due to curse of dimensionality, we need a two step approach for~$\xi_t$
+\begin{enumerate}
+\item sample $\xi_{\text{global}}$ using a coarse Sobol grid
+\item sample $\xi_{\text{local}}$ using local optimization starting from the best samples in $\xi_{\text{global}}$
+\end{enumerate}
+\item[$\leadsto$] $\xi_t = \xi_{\text{global}} \cup \xi_{\text{lokal}}$ 
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Learning Acquisition Functions\newline Results \lit{Volpp et al.'19}}
+
+\centering
+\includegraphics[width=1.0\textwidth]{images/l2acq.png}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Results on Artificial Functions \lit{Volpp et al.'19}}
+
+\includegraphics[width=1.0\textwidth]{images/l2acq_results.png}
+
+\medskip
+
+\begin{itemize}
+\item Approach by \lit{Volpp et al. '19} called MetaBO
+\item MetaBO performs better than other acquisition functions\\ (EI, GP-UBC, PI) and other baselines (Random, TAF)
+\end{itemize}
+
+\pause
+
+\alert{Assumption}: You have a family of functions at hand\\ that resembles your target functions.
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+\end{document}

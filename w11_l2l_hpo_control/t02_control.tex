@@ -101,15 +101,15 @@
 		\pause
 		\item $p(\dataset)$ be a probability distribution over meta datasets $\dataset \in \mdata$,
 		\pause
-		\item $\state_t$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
+		\item $\stateRL_t$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
 		\pause
 		\item $\loss: \policies \times \mdata \to \perf$ be a loss metric assessing the cost of a control policy $\pi \in \Pi$ on dataset $\dataset \in \mdata$
 	\end{itemize}
 	
 	\pause
-	the \emph{algorithm control problem} is to obtain a control policy $\policy^* : \state_t \times \dataset \mapsto \conf$ by optimizing its loss across a distribution of datasets:
+	the \emph{algorithm control problem} is to obtain a control policy $\policy^* : \stateRL_t \times \dataset \mapsto \conf$ by optimizing its loss across a distribution of datasets:
 	\begin{equation}
-	\pi^* \in \argmin_{\policy \in \policies} \int_{\mdata} p(\dataset) c(\policy, \dataset) \diff \dataset \nonumber
+	\policy^* \in \argmin_{\policy \in \policies} \int_{\mdata} p(\dataset) \loss(\policy, \dataset) \diff \dataset \nonumber
 	\end{equation}
 \end{block}
 
@@ -117,17 +117,17 @@
 %-----------------------------------------------------------------------	
 
 %----------------------------------------------------------------------
-\begin{frame}[c]{Algorithm Control as Contextual MDP \litw{Biedenkapp et al. 2019}}
+\begin{frame}[c]{Algorithm Control as Contextual MDP \lit{Biedenkapp et al. 2019}}
 
 
 \begin{description}
-	\item[State $s_t$] are described by statistics gathered in the algorithm run
+	\item[State $\stateRL_t$] are described by statistics gathered in the algorithm run
 	\pause
-	\item[Action $a_t$] change hyperparameters according to some control policy $\pi$
+	\item[Action $\actionRL_t$] change hyperparameters according to some control policy $\pi$
 	\pause
 	\item[Transition] run the algorithm from state $s_t$ to $s_{t+1}$ for a "short" moment by using the hyperparameters defined by $a_t$
 	\pause
-	\item[Reward $r_t$] Return your current solution quality (or an approximation)
+	\item[Reward $\rewardRL_t$] Return your current solution quality (or an approximation)
 	\pause
 	\item[Context $\dataset$] A given dataset (or task)
 \end{description}
@@ -145,18 +145,18 @@
 Solve unknown MDP by using reinforcement learning (RL):
 
 \begin{equation}
-\mathcal{V}_i^\policy(s_t) =  \mathbb{E} \left[\sum_{k=0}^\infty\gamma^k r_{t+k+1}(\inst)| s_t=s \right]\nonumber
+\mathcal{V}_i^\policy(s_t) =  \mathbb{E} \left[\sum_{k=0}^\infty\gamma^k \rewardRL_{t+k+1}(\inst)| \stateRL_t=\stateRL \right]\nonumber
 \end{equation}
 \pause
 
 \begin{equation}
- = \mathbb{E} \left[ r_{t+1}(\inst)+\gamma\mathcal{V}_i^\policy(s_{t+1})| s_{t+1} \sim \mathcal{T}_i(s_t, \pi(s_t)) \right] \nonumber
+ = \mathbb{E} \left[ \rewardRL_{t+1}(\inst)+\gamma\mathcal{V}_i^\policy(\stateRL_{t+1})| \stateRL_{t+1} \sim \mathcal{T}_i(\stateRL_t, \policy(\stateRL_t)) \right] \nonumber
 \end{equation}
 \pause
 \begin{equation}
 \policy^* \in
-\argmax_{\pi \in \Pi}
-\int_{\mdata} p(\dataset) \int_{\mathcal{S}_0} \Pr(s_0) \cdot \mathcal{V}^\policy_\dataset(s_0) \diff s_0 \diff \dataset \nonumber
+\argmax_{\policy \in \policies}
+\int_{\mdata} p(\dataset) \int_{\statesRL_0} \Pr(\stateRL_0) \cdot \mathcal{V}^\policy_\dataset(\stateRL_0) \diff \stateRL_0 \diff \dataset \nonumber
 \end{equation}
 
 \bigskip
@@ -179,7 +179,7 @@ $\leadsto$ equivalent to algorithm control definition
 	
 \begin{equation} 
 \label{spl_loss}
-\max_{\weights,\vec{v}}\mathcal{R}(\weights, \vec{v}, K) = \sum^{|\insts|}_{i=1} v_i\mathcal{R}_i(\weights) - \frac{1}{K} \sum^{|\insts|}_{i=1} v_i \nonumber
+\max_{\weights,\vec{v}}\mathcal{R}(\weights, \vec{v}, K) = \sum^{|\mdata|}_{i=1} v_i\mathcal{R}_i(\weights) - \frac{1}{K} \sum^{|\mdata|}_{i=1} v_i \nonumber
 \end{equation}
 
 with $\weights$ being the agent's policy parameters and $v$ being a masking vector.
