@@ -1,0 +1,59 @@
+\tikzset{reset preactions/.code={\def\tikz@preactions{}}}
+\makeatother
+\tikzstyle{activity}=[rectangle, draw=black, rounded corners, text centered, text width=6em, fill=white, drop shadow]
+\tikzstyle{data}=[rectangle, draw=black, text centered, fill=black!10, text width=8em, drop shadow]
+\tikzstyle{myarrow}=[->, thick]
+\begin{tikzpicture}[node distance=8em]
+	
+	
+	\node (TA) [data, text width=10em] {Algorithm $\algo$ with Config. Space $\pcs$};
+	\node (Insts) [data, text width=10em, below of=TA, node distance=4em] {Instance set $\insts$\\ (with Features $\feat(\inst)$)};
+	\node (P) [data, text width=10em, below of=Insts, node distance=4em] {Cost metric\\ $c: \pcs \times \insts \to \perf$};
+	
+	\node (AC3) [activity, text width=6em, right of=Insts, node distance=10em, yshift=0.6em, xshift=0.6em, reset preactions] {Configuration\\ (e.g., SMAC)};
+	\node (AC2) [activity, text width=6em, right of=Insts, node distance=10em, yshift=0.3em, xshift=0.3em, reset preactions] {Configuration\\ (e.g., SMAC)};
+	\node (AC) [activity, text width=6em, right of=Insts, node distance=10em, yshift=0em, reset preactions] {Configuration\\ (e.g., SMAC)};
+	
+	\node (Traj) [data, text width=7.6em, right of=AC, node distance=10em, yshift=4em] {Trajectories\\ $\langle \hat{\conf}_i, t_i\rangle_i$};
+	\node (Runhistory) [data, text width=7.6em, right of=AC, node distance=10em] {Runhistories\\ $\{ \conf_j, \inst_j, c(\conf_j, \inst_j)\}_j^N$};
+	\node (EPM) [data, text width=7.6em, right of=AC, node distance=10em, yshift=-4em] {EPM\\$\surro: \pcs \times \insts \to \perf$};
+	
+	\node (Perf) [activity, text width=7em, right of=Traj, node distance=10.5em] {Performance Analysis};
+	\node (Feature) [activity, text width=7em, right of=Runhistory, node distance=10.5em] {Feature Analysis};
+	\node (PIMP) [activity, text width=7em, right of=EPM, node distance=10.5em] {Parameter Importance};
+	\node (Beh) [activity, text width=7em, right of=EPM, node distance=10.5em, yshift=-4em] {Configurator Behavior};
+	
+	
+	\draw[myarrow] ($(AC.west)+(-0.3,0)$) -- (AC);
+	
+	\draw[myarrow] ($(AC.east)+(0.2,0)$) -- ($(Runhistory.west)+(-0.33,0)$);
+	\draw[myarrow, dashed] (Runhistory) -- (EPM) node [right, yshift=1.85em] {Train};
+	
+	\draw[myarrow] ($(Runhistory.east)+(0.35,0)$) -- ($(Feature.west)+(-0.11,0)$);
+	
+%	\draw[myarrow] (Inst3) -- (Conf3);
+%	\draw[myarrow] ($(Conf2)+(0,-0.8)$) -- (Conf3) node[right, yshift=3.7em] {$\hist^1 \cup \hist^2$};
+	
+	
+	\begin{pgfonlayer}{background}
+
+    	\path (TA -| TA.west)+(-0.1,0.8) node (resUL) {};
+    	\path (P.east |- P.south)+(0.1,-0.5) node(resBR) {};
+    	\path [rounded corners, dashed, draw=black!50] (resUL) rectangle (resBR);
+		\path (P.east |- P.south)+(-1.6,-0.35) node [text=black!80] {Configurator's Input};
+
+		\path (Perf -| Perf.west)+(-0.1,0.8) node (resUL2) {};
+    	\path (Beh.east |- Beh.south)+(0.1,-0.5) node(resBR2) {};
+    	\path [rounded corners, dashed, draw=black!50] (resUL2) rectangle (resBR2);
+		\path (Beh.east |- Beh.south)+(-0.425,-0.35) node [text=black!80] {CAVE};
+
+		\path (Traj -| Traj.west)+(-0.33,0.8) node (resUL3) {};
+    	\path (EPM.east |- EPM.south)+(0.33,-1.0) node(resBR3) {};
+    	\path [rounded corners, dashed, draw=black!50] (resUL3) rectangle (resBR3);
+		\path (EPM.east |- EPM.south)+(-1.5,-0.45) node [text=black!80] {Configurator's Output };
+		\path (EPM.east |- EPM.south)+(-.85,-0.85) node [text=black!80] {CAVE's Input};
+		
+
+    \end{pgfonlayer}
+	
+\end{tikzpicture}

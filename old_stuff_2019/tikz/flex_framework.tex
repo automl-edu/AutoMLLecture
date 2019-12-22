@@ -1,0 +1,94 @@
+\begin{tikzpicture}[node distance=0.6cm, thick]
+	%PreProcessing
+	\node (Instance) [data] {Training\\ Instances};
+	\node (Solvers) [data, right=of Instance] {Algorithm Portfolio};
+	\node (Runtimes) [activity, below=of Solvers, text width = 9em, yshift=-1.6em] {Assess\\ Performance};
+	\node (Features) [activity, below=of Instance, text width = 9em, yshift=-1.3em] {Compute Features};
+	\node (claspre) [data, left=of Features] {Feature Generator};
+	
+	
+	\draw[myarrow] (Instance) -- (Runtimes.north west);
+	\draw[myarrow] (Instance) -- (Features.north);
+	\draw[myarrow] (Solvers) -- (Runtimes.north);
+	\draw[myarrow] (claspre) -- (Features);
+	
+	% Training Model
+	\node (FeatPre) [activity, below=of Features, text width = 9em, yshift=-2.65em] {Feature\\ Preprocessing};
+	\node (TimePre) [activity, below=of Runtimes, text width = 9em, yshift=-1.3em] {Performance Preprocessing};
+	\node (Training) [activity, below=of TimePre, text width = 10em, yshift=-0.4em] {Train Selection Model};
+	\draw[myarrow] (Runtimes) -- (TimePre);
+	\draw[myarrow] (Features) -- (FeatPre);
+	\draw[myarrow] (TimePre) -- (Training);
+	\draw[myarrow] (FeatPre) |- (Training);
+	
+	%CV
+	\node (CVML) [activity, right=of TimePre, text width = 11em, xshift=1em] {Performance Estimation};
+	\node (Aspeed) [activity, below=of CVML, text width = 9em, yshift=-0.5em] {Algorithm Schedule\\ by \aspeed};
+
+	\draw[myarrow, bend left=20] (Runtimes) |- ++(8.00,0.0) |- (Aspeed);
+	\draw[myarrow] (CVML) -- (Aspeed);
+	\draw[myarrow, dashed, shorten <=0.42cm] (TimePre) -- node [above] {} (CVML);
+	
+    \draw[myarrow, dashed] (Aspeed) -- node [above, pos=0.5, font=\footnotesize] {Feedback} (Training);
+	
+	\node (RunSBS) [activity, below=of Aspeed, text width=10em, yshift=-3.0em] {Optimize and Run\\ Pre-Solving Schedule};
+	\node (Run) [activity, right=of RunSBS, xshift=0.5cm] {Run Selected Algorithm};
+	
+	
+	\draw[myarrow] (Aspeed) -- (RunSBS);
+	\draw[myarrow] (RunSBS) -- node [above] {failed} (Run);
+	
+	% Run new Instance
+	\node (Predict) [activity, left=of RunSBS, xshift=0.0em] {Select Algorithm};
+	\node (TestFeatures) [activity, left=of Predict] {Compute Features};
+	\node (TestInstance) [data, left=of TestFeatures] {(New) Instance};
+	%\node (Backup) [activity, below=of TestFeatures] {Run Backup Algorithm};
+	
+	\draw[myarrow] (Training.south) -- ($(Predict.north)+(-0.76,0.0)$);
+	\draw[myarrow] (TestInstance) -- (TestFeatures);
+	\draw[myarrow] (TestFeatures) -- (Predict.west);
+	\draw[myarrow] (Predict) -- (RunSBS.west);
+	%\draw[myarrow] (TestFeatures) -- node [left] {failed} (Backup);		
+	\draw[myarrow] (claspre.south) -- ($(TestInstance.north)+(-1.0,0.55)$) -| (TestFeatures.north);	
+	
+    \begin{pgfonlayer}{background}
+    
+        % Ressources
+    	%\path (Instance -| Instance.west)+(-0.25,0.55) node (resUL) {};
+    	%\path (Solvers.east |- Solvers.south)+(0.75,-0.5) node(resBR) {};
+    	%\path [rounded corners, draw=black!60, dashed] (resUL) rectangle (resBR);
+		%\path (Solvers.east |- Solvers.south)+(-0.2,-0.3) node [text=black!60] {Resources};
+    
+        % Data Collection
+    	\path (Instance -| Instance.west)+(-0.35,0.65) node (dataUL) {};
+    	\path (Runtimes.east |- Runtimes.south)+(1.05,-0.5) node(dataBR) {};
+    	\path [rounded corners, draw=blue!80, dashed] (dataUL) rectangle (dataBR);
+		\path (Runtimes.east |- Runtimes.south)+(-0.35,-0.3) node [text=black] {\alert{ASlib Scenarios}};
+    	
+    	% Prediction
+    	\path (TimePre -| FeatPre.west)+(-0.25,0.65) node (trainUL) {};
+    	\path (Training.east |- Aspeed.south)+(0.25,-0.5) node(trainBR) {};
+    	\path [rounded corners, draw=black!60, dashed] (trainUL) rectangle (trainBR);
+    	\path (Training.east |- Aspeed.south)+(-0.75,-0.3) node [text=black!60] {Selection};
+    	
+    	% Aspeed Training
+    	\path (CVML -| CVML.west)+(-0.25,0.65) node (trainUL) {};
+    	\path (CVML.east |- Aspeed.south)+(0.25,-0.5) node(trainBR) {};
+    	\path [rounded corners, draw=black!60, dashed] (trainUL) rectangle (trainBR);
+    	\path (Aspeed.east |- Aspeed.south)+(-0.4,-0.3) node [text=black!60] {Scheduling};
+    	
+    	% Training
+    	\path (CVML -| FeatPre.west)+(-0.5,0.85) node (trainUL) {};
+    	\path (CVML.east |- Aspeed.south)+(1.0,-1.1) node(trainBR) {};
+    	\path [rounded corners, draw=black!60, dashed] (trainUL) rectangle (trainBR);
+    	\path (Aspeed.east |- Aspeed.south)+(0.55,-0.9) node [text=black!60] {Training};
+    	
+    	%Test
+    	\path (TestFeatures.west)+(-0.2,0.65) node (testUL) {};
+    	\path (Run.east |- Run.south)+(0.2,-0.5) node(testBR) {};
+    	\path [rounded corners, draw=black!60, dashed] (testUL) rectangle (testBR);
+    	\path (Run.east |- Run.south)+(-0.6,-0.3) node [text=black!60] {Solving};
+    	
+    \end{pgfonlayer}
+    
+\end{tikzpicture}

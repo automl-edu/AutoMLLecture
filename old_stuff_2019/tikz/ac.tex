@@ -1,0 +1,36 @@
+\tikzstyle{activity}=[rectangle, draw=black, rounded corners, text centered, text width=8em, fill=white, drop shadow]
+\tikzstyle{wideactivity}=[rectangle, draw=black, rounded corners, text centered, text width=10em, fill=white, drop shadow]
+\tikzstyle{data}=[rectangle, draw=black, text centered, fill=black!10, text width=8em, drop shadow]
+\tikzstyle{myarrow}=[->, thick]
+\begin{tikzpicture}[node distance=5cm,thick]
+	%PreProcessing
+	%\node (Algo) [data] {Algorithm $A$};
+	\node (Data) [data] {Instances $\insts$};
+	\node (CS) [data, right of=Data, xshift=-0.5cm] {Algorithm $\algo$ and\\ its Configuration\\ Space $\pcs$};
+	\node (Select) [activity, below of=Data, node distance=2.0cm] {Select $\conf \in \pcs$\\ and $\inst \in \insts$};
+	\node (Run) [wideactivity, right of=Select, xshift=-0.5cm] {Run $\algo(\conf)$ on $\inst$ to measure $c(\inst,\conf)$};
+	%\node (Return) [activity, right of=Run, text width=9em] {Return Performance\\ of $A(c)$ on $I'$}; 
+	%\node (Data) [data, left of=Select] {Instances $I$};	
+	\node (Result) [activity, right of=Run, node distance=4.6cm] {Returns Best\\ Configuration $\hat{\conf}$}; 
+	
+	\draw[myarrow] (Data) -- ($(Select)+(-0.0,+0.8)$);
+	\draw[myarrow] (CS) -- ($(Run)+(-0.0,+0.8)$);
+	%\draw[myarrow] (Data) -- ($(Select)+(-2.1,+0.0)$);
+	
+	%\draw[thick, dashed] (Algo) -- (CS);
+	\draw[myarrow] ($(Run.east)+(0.25,0)$) -- (Result);
+	\draw[myarrow] (Select) -- (Run);
+	%\draw[myarrow] (Run) -- (Return);
+	\draw[myarrow] (Run.south) |- ++(0.0,-0.8)  node[above, xshift=-2.2cm] {Return Cost} -| (Select.south);
+	
+	\begin{pgfonlayer}{background}
+    
+        % Configuration Process
+    	\path (Select -| Select.west)+(-0.25,0.85) node (resUL) {};
+    	\path (Run.east |- Run.south)+(0.25,-1.3) node(resBR) {};
+    	\path [rounded corners, draw=black!60, dashed] (resUL) rectangle (resBR);
+		\path (Run.east |- Run.south)+(-1.5,-1.1) node [text=black!60] {Configuration Task};
+    	
+    \end{pgfonlayer}
+	
+\end{tikzpicture}

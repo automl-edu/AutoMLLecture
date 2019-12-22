@@ -1,0 +1,347 @@
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Overview]{AutoML: Automated Machine Learning}
+\subtitle{Racing for Algorithm Configuration}
+%TODO: change authors!
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+%-----------------------------------------------------------------------
+\begin{frame}[c]{State-of-the-art Algorithm Configuration}
+
+SMAC: Sequential Model-based Algorithm Configuration \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011}}
+
+\begin{itemize}
+	\item Bayesian Optimization +
+	\item aggressive racing +
+	\item adaptive capping (for optimizing runtime)
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{SMAC: Overview \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011}}}
+%\\\litw{Hutter et al. 2011}}
+
+\LinesNotNumbered
+\begin{algorithm}[H]
+\Input{%
+	instance set $\insts$,
+	Algorithm $\algo$ with configuration space $\confs$,
+	Initial configuration $\conf_0$,
+	performance metric $c$,
+	Configuration budget $b$
+}
+\Output{best incumbent configuration $\hat{\conf}$}
+\BlankLine
+run history H $\leftarrow$ initial design based on $\conf_0$; \tcp*{H = $(\conf, \inst, c(\inst,\conf))_i$}
+\While{$b$ remains} {
+	\pause
+	$\epm \leftarrow$ train empirical performance model based on run history H;\\
+	\pause
+	$\confs_{challengers} \leftarrow$ select configurations based on $\epm$;\\
+	\pause
+	$\hat{\conf}$, H $\leftarrow$ intensify($\confs_{challengers}$, $\hat{\conf}$); \tcp*{racing and capping}
+}
+\pause
+\Return{$\hat{\conf}$}
+\caption{SMAC}
+\end{algorithm}
+
+\end{frame}
+%-----------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Comparisons on $N$ instances \lit{\href{https://ml.informatik.uni-freiburg.de/papers/09-JAIR-ParamILS.pdf}{Hutter et al. 2009}}}
+
+\begin{itemize}
+\item \alert{Basic(N)} uses a pretty basic comparison: \textit{better$_N(\conf', \conf)$}:
+\begin{itemize}
+\item Compare $\conf'$ and $\conf$ based on $N$ instances 
+\pause
+\item How does this relate to cross-validation? 
+\end{itemize}  
+
+\bigskip
+\pause
+\item Problem: How to set $N$? Problems of large $N$? Small $N$? 
+\pause
+\begin{itemize}
+\item Problem of large $N$: evaluations are slow
+\item Problem of small $N$: overfitting to a small set of instances
+\item[$\leadsto$] Tradeoff: Choose $N$ of moderate size 
+\end{itemize}
+
+\end{itemize}
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Comparisons on $N$ instances \lit{\href{https://ml.informatik.uni-freiburg.de/papers/09-JAIR-ParamILS.pdf}{Hutter et al. 2009}}}
+
+
+Question: \alert{Which} $N$ instances should we use? 
+\begin{enumerate}
+\item $N$ different instances for each configuration
+\item The same set of $N$ instances for the entire run
+\end{enumerate}
+
+\bigskip
+\pause
+Answer: the same $N$ instances, so that we compare apples with apples
+\begin{itemize}
+\item[] (but: using the same instances can also yield overtuning) 
+\end{itemize}
+\bigskip
+
+\pause
+If we sampled different instances for each configuration:
+\begin{itemize}
+\item Some configurations would randomly get easier instances
+\item Those configurations would look better than they really are
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Comparisons on $N$ instances \lit{\href{https://ml.informatik.uni-freiburg.de/papers/09-JAIR-ParamILS.pdf}{Hutter et al. 2009}}}
+
+Question: For randomized algorithms, how should we set the seeds? 
+\begin{enumerate}
+\item Sample a new seed for each algorithm run
+\item Fix the seeds together with the instances
+\end{enumerate}
+\bigskip
+\pause
+Answer: just like for instances, fix them to compare apples to apples
+
+\bigskip
+\pause
+In summary, for each run of Basic(N): \\pick $N$ (instance, seed) pairs and use them for evaluating each $\conf$.\\
+\pause
+(Different Basic(N) runs can use different instances and seeds.)
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c]{The concept of overtuning}
+
+Very related to overfitting in machine learning 
+\begin{itemize}
+\item Performance improves on the training set
+\item Performance does not improve on the test set, and may even degrade
+\end{itemize}	
+
+\pause
+\medskip
+
+More pronounced for more heterogeneous benchmark sets 
+\begin{itemize}
+\item But it even happens for very homogeneous sets
+\item Indeed, one can even overfit on a single instance, to the \alert{seeds} used for training 
+\end{itemize}	
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}[fragile]{Overtuning Visualized}
+
+\begin{itemize}
+\item Example: minimizing SLS solver runlengths for a single SAT instance
+\item \alert{Training cost}, e.g., with N=100:\\average runlengths across 100 runs with different seeds
+\item \alert{Test cost} of $\hat{\conf}$ here based on 1000 new seeds 
+\end{itemize}	
+
+\pause
+
+
+\begin{center}
+\only<2>{\includegraphics[scale=0.13]{images/basicils100_training.png}}
+\only<3>{\includegraphics[scale=0.13]{images/basicils100_training_and_test.png}}
+\end{center}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}[fragile]{Basic(N) Test Results with Various N}
+
+\begin{itemize}
+\item Example: minimizing SLS solver runlengths for a single SAT instance
+\item \alert{Training cost}, e.g., with N=?:\\average runlengths across N runs with different seeds
+\item \alert{Test cost} of $\hat{\conf}$ here based on 1000 new seeds 
+\end{itemize}	
+
+\pause
+
+\begin{multicols}{2}
+\begin{center}
+\includegraphics[scale=0.2]{images/basicils_unlabled.png}
+\end{center}
+\columnbreak{}
+\pause
+Which of these results corresponds to $N=1$, $N=10$, and $N=100$?\\
+
+
+\pause
+\medskip
+
+\begin{enumerate}
+\item N=1: blue, N=10: red,\\ N=100 dashed black
+\item N=1: dashed black,\\ N=10: red, N=100 blue
+\end{enumerate}
+
+\pause
+Correct Answer: 1
+
+
+\end{multicols}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Aggressive Racing (inspired by FocusedILS) \lit{\href{https://ml.informatik.uni-freiburg.de/papers/09-JAIR-ParamILS.pdf}{Hutter et al. 2009}}}
+
+Intuition: get the best of both worlds
+\begin{itemize}
+\item Perform more runs for good configurations
+\begin{itemize}
+\item[-] to avoid overtuning
+\end{itemize}
+\item Quickly reject poor configurations
+\begin{itemize}
+\item[-] to make progress more quickly
+\end{itemize}
+\end{itemize}
+
+\pause
+\medskip
+
+\begin{block}{Definition: $N(\conf)$ and $c_N(\conf)$}
+\alert{$N(\conf)$} denotes the number of runs executed for $\conf$ so far.\\
+\alert{$\hat{c}_N(\conf)$} denotes the cost estimate of $\conf$ based on $N$ runs.
+\end{block}
+
+\pause
+In the beginning: $N(\conf)=0$ for every configuration $\conf$
+
+\end{frame}
+
+%-----------------------------------------------------------------------
+
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Aggressive Racing (inspired by FocusedILS) \lit{\href{https://ml.informatik.uni-freiburg.de/papers/09-JAIR-ParamILS.pdf}{Hutter et al. 2009}}}
+
+
+\begin{block}{Definition: domination}
+\alert{$\conf_1$ dominates $\conf_2$} if 
+\begin{itemize}
+\item $N(\conf_1) \ge N(\conf_2)$ and 
+\item $\hat{c}_{N(\conf_2)}(\conf_1) \le \hat{c}_{N(\conf_2)}(\conf_2)$.
+\end{itemize}
+I.e.: we have at least as many runs for $\conf_1$ and its cost is at least as low.
+\end{block}
+
+\pause
+
+\begin{block}{\textit{better($\conf', \conf^*$)} in a nutshell}
+\begin{itemize}
+\item $\conf^*$ is the current configuration to beat (incumbent)
+\pause
+\item Perform runs of $\conf'$ until either
+\begin{itemize}
+\item $\conf^*$ dominates $\conf'$ $\leadsto$ reject $\conf'$, or
+\item $\conf'$ dominates $\conf^*$ $\leadsto$ change current configuration $(\conf^* \leftarrow \conf')$
+\end{itemize}
+\pause	
+\item Over time: perform extra runs of $\conf^*$ to gain more confidence in it
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+%-----------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Toy Example}
+
+
+\begin{itemize}
+\item Let $\conf^*$ be the incumbent  (evaluated on $\pi_1, \pi_2, \pi_3$)
+\item We'll look at challengers $\conf'$ and $\conf''$
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{l ccc}
+& $\inst_1$ & $\inst_2$ & $\inst_3$ \\
+\hline
+$\conf^*$ 	& 3 		& 2			& 10	\onslide<2->\\
+\hline
+$\conf'$		& \onslide<3->{2}			& \onslide<4->{10} 		& \\
+& 			& \onslide<5->{$\to$ reject, since $\hat{c}_2(\conf')=6 > \hat{c}_2(\conf^*)=2.5$} & \\
+\hline
+\onslide<6->{$\conf''$}		& \onslide<6->{3}			& \onslide<7->{1} 		& \onslide<8->{5}\\
+\end{tabular}
+\end{center}
+
+\onslide<9->
+\begin{itemize}
+\item new incumbent: $\conf^* \leftarrow \conf''$
+\item Perform an additional run for new $\conf^*$ to increase confidence over time
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[fragile]{Racing achieves the best of both worlds}
+
+Aggressive racing (aka FocusedILS): Fast progress and no overtuning
+
+\begin{center}
+Test performance\\
+\only<1>{\includegraphics[scale=0.25]{images/basicils.png}}
+\only<2>{\includegraphics[scale=0.25]{images/focusedils.png}}
+\end{center}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+\end{document}

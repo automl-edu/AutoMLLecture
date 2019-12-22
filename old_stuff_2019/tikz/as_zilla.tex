@@ -1,0 +1,22 @@
+\tikzstyle{activity}=[rectangle, draw=black, rounded corners, text centered, text width=8em, fill=white, drop shadow]
+\tikzstyle{data}=[rectangle, draw=black, text centered, fill=black!10, text width=8em, drop shadow]
+\tikzstyle{myarrow}=[->, thick]
+\begin{tikzpicture}[align=center,node distance=3.7cm, thick]
+	%PreProcessing
+	\node (Instance) [data] {Instance $\inst$};
+	\node (PreSolving) [activity, right of=Instance] {Run Pre-Solving Schedule};
+	\node (Features) [activity, right of=PreSolving] {Compute\\ Features $\feat(\inst)$};
+	\node (Backup) [activity, below of=Features, yshift=2.0cm] {Backup solver};
+	\node (Select) [activity, right of=Features] {Select Algorithm\\ $\feat(\inst) \mapsto \hat{a}$};
+	\node (Solve) [activity, right of=Select] {Run $\hat{a}$ on $\inst$};
+	\node (Portfolio) [data, above of=Select, yshift=-2.0cm] {Algorithm Portfolio $\portfolio$};
+
+	\draw[myarrow] (Instance) -- (PreSolving);
+	\draw[myarrow] (PreSolving) -- (Features);
+	\draw[myarrow] (Features) -- (Select);
+	\draw[myarrow] (Features) -- (Backup);
+	\draw[myarrow] (Select) -- (Solve);
+	\draw[myarrow] (Portfolio) -- (Select);
+	%\draw[myarrow] (Portfolio) -- (PreSolving);
+
+\end{tikzpicture}

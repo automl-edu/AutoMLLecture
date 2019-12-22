@@ -4,7 +4,7 @@
 
 
 \title[AutoML: Overview]{AutoML: Automated Machine Learning}
-\subtitle{Overview for this Week}
+\subtitle{Overview: Algorithm Configuration -- Beyond AutoML}
 %TODO: change authors!
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
 \institute{}
@@ -27,10 +27,161 @@
 	
 
 %----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{TODO}
+\begin{frame}[c]{Generalization of HPO}
 
-TODO
+\begin{itemize}
+	\item hyperparameter optimization (HPO) is not limited to ML
+	\pause
+	\item in fact, you can optimize the performance of any algorithm by means of HPO if
+	\begin{enumerate}
+		\pause
+		\item the algorithm at hand has parameters that influence its performance
+		\pause
+		\item you care about the empirical performance of an algorithm
+	\end{enumerate}
+	\pause
+	\smallskip
+	\item a limitation of HPO is that we assume that we care only about a single task\\ (i.e., dataset or input to the algorithm)
+	\smallskip
+	\pause
+	\item[$\leadsto$] \alert{Can we find an algorithm's configuration that performs well and robustly across a set of tasks?}
+	\begin{itemize}
+		\pause
+		\item An hyperparameter configuration for a set of datasets
+		\pause
+		\item A parameter configuration of a SAT solver for a set of SAT instances
+		\pause
+		\item A parameter configuration of a AI planning solver for a set of planning problems
+		\item \ldots
+	\end{itemize}
+	\pause
+	\item[$\leadsto$] \alert{Algorithm configuration}
+\end{itemize}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Configuration Visualized}
+
+\centering
+\scalebox{0.5}{
+\includegraphics{images/Configuration-Process.pdf}
+}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Configuration -- in More Detail}
+
+\bigskip
+
+\centering
+\scalebox{0.75}{
+\input{tikz/ac}
+}
+
+\bigskip
+
+\begin{block}{Definition}
+Given a parameterized algorithm $\algo$ with possible (hyper-)parameter settings $\confs$, \pause 
+a set of training problem instances $\insts$, \pause 
+and a cost metric $c: \confs \times \insts \rightarrow \perf$, \pause 
+the algorithm configuration problem is 
+to \alert{find a parameter configuration $\conf^* \in \confs$ 
+that minimizes $c$ across the instances in $\insts$}.
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Algorithm Configuration -- Full Formal Definition}
+
+\begin{block}{Definition}
+An instance of the algorithm configuration problem
+is a 5-tuple $(\algo, \pcs, \instD, \cutoff, c)$ where:
+\begin{itemize}
+\item $\algo$ is a parameterized algorithm;
+\item $\pcs$ is the (hyper-)parameter configuration space of $\algo$;
+\item $\instD$ is a \alert{distribution over problem instances} with domain $\insts$;
+\pause
+\item $\cutoff < \infty$ is a \alert{cutoff time}, after which each run of $\algo$ will be terminated if still running
+\pause
+\item $c: \confs \times \insts \rightarrow \mathds{R}$ is a function that
+measures the observed cost of running $\algo(\conf)$ on an instance $\inst \in
+\insts$ with cutoff time $\cutoff$ 
+%  \item $s$ is a statistical population parameter\\ (e.g., expectation, median,  or variance)
+\end{itemize}
+\pause
+The cost of a candidate solution $\conf\in\confs$ is
+%\begin{equation}
+%\hat{\conf} \in \argmin_{\conf \in \pcs}
+\alert{$f(\conf) = \mathds{E}_{\inst \sim \instD} (c(\conf,\inst))$}.\\
+The goal is to find \alert{$\conf^* \in \argmin_{\conf \in \pcs} f(\conf)$}.
+%\end{equation}
+
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Distribution of Instances}
+
+We usually have a finite number of instances from a given application
+\begin{itemize}
+\item We want to do well on that type of instances
+\item Future instances of this type should be solved well 
+\end{itemize}
+
+\pause
+\bigskip
+
+Like in machine learning
+\begin{itemize}
+\item We split the instances into a \alert{training set} and a \alert{test set}
+\item We configure algorithms on the training instances
+\item We only use the test instances afterwards
+\begin{itemize}
+\item[$\to$] unbiased estimate of generalization performance for unseen instances
+\end{itemize}  
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Challenges of Algorithm Configuration}
+
+\begin{itemize}
+\item \alert{Structured high-dimensional parameter space}
+\begin{itemize}
+\item categorical vs. continuous parameters
+\item conditionals between parameters
+\end{itemize}
+\pause
+\medskip
+\item \alert{Stochastic optimization}
+\begin{itemize}
+\item Randomized algorithms: optimization across various seeds
+\item Distribution of benchmark instances (often wide range of hardness)
+\item Subsumes so-called \emph{multi-armed bandit problem}
+\end{itemize}
+\pause
+\medskip
+\item \alert{Generalization across instances}
+\begin{itemize}
+\item apply algorithm configuration to \alert{homogeneous} instance sets
+\item Instance sets can also be \alert{heterogeneous},\\i.e., no single configuration performs well on all instances\\ 
+\item[$\leadsto$] combination of algorithm configuration and selection
+\end{itemize}
+
+\end{itemize}
+
+\pause
+\medskip
+$\leadsto$ Hyperparameter optimization is a subproblem of algorithm configuration\newline \lit{\href{https://arxiv.org/abs/1705.06058}{Eggensperger et al. 2019}}
 
 \end{frame}
 %-----------------------------------------------------------------------

@@ -1,0 +1,19 @@
+\tikzstyle{myarrow}=[->, ultra thick]
+\begin{tikzpicture}[transform shape,line width=0.2pt]
+\tikzstyle{level 1 concept}+=[sibling angle=120, level distance=125]
+\path[mindmap,concept color=black!100,text=white]
+    node[concept] {ML4AAD}
+    [clockwise from=30]
+    child[concept color=green!50!black] { node[concept] (sel) {Algorithm\\ Selection}}  
+    child[concept color=orange!60!black] {node[concept] (sch) {Algorithm\\ Schedule}}
+    child[concept color=red!60!black] { node[concept] (con) {Algorithm\\ Configuration}};
+    
+\path
+     ($(sel.west)+(0.15,+0.65)$) edge [myarrow, bend left=20,text width=3.8cm, font=\small] node[above, yshift=.1cm] {Selection of Configurators} ($(con.east)+(-0.10,+0.55)$)
+     ($(con.east)+(-0.15,+0.65)$) edge [myarrow, bend left=40,text width=4cm, font=\small] node[above] {Configuration of Selectors} ($(sel.west)+(0.15,+0.75)$)
+     (sel.south) edge [myarrow, bend left=50] node[right,text width=2cm, font=\small,xshift=.05cm] {Selection of Schedules} ($(sch.east)+(0,-0.1)$)
+     (sch.east) edge [myarrow, bend left=25] node[right,text width=2cm, font=\small,xshift=.05cm] {Schedules of Selectors} ($(sel.south)+(-0.05,-0.05)$)
+     (sch.west) edge [myarrow, bend left=50] node[left,text width=2.4cm, font=\small, xshift=.3cm] {Schedules of Configurators} ($(con.south)+(0,-0.1)$)
+     (con.south) edge [myarrow, bend left=25] node[left,text width=2cm, font=\small, yshift=-.2cm, xshift=.11cm] {Configuration \hspace*{.15cm}of Schedules} ($(sch.west)+(-0.08,0.05)$);
+
+\end{tikzpicture}

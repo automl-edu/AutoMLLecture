@@ -1,0 +1,42 @@
+
+\begin{tikzpicture}[node distance=5cm, thick]
+	%PreProcessing
+	%\node (Algo) [data] {Algorithm $A$};
+	\node (Data) [data] {Instances $\insts$};
+	\node (CS) [data, right of=Data, xshift=-0.5cm] {Algorithm $\algo$ and\\ its Configuration\\ Space $\confs$};
+	\node (Select) [activity, below of=Data, node distance=2.0cm] {Select $\conf \in \confs$\\ and $\inst \in \insts$};
+	\node (Run) [activity, right of=Select, xshift=-0.5cm] {\only<2-3>{Assess\\ $\algo(\conf)$ on $\inst$}%
+															\only<4-5>{Assess $\algo(\conf||\conf_1)$ on $\inst$}
+															\only<6-6>{Assess $\algo(\conf||\conf_1||\conf_2)$ on $\inst$}};
+	%\node (Return) [activity, right of=Run, text width=9em] {Return Performance\\ of $A(c)$ on $I'$}; 
+	%\node (Data) [data, left of=Select] {Instances $I$};	
+	\node (Result) [data, right of=Run, node distance=5.5cm] { $\portfolio = $\only<2-2>{$\{\}$}%
+																\only<3-4>{$\{\conf_1\}$}%
+																\only<5->{$\{\conf_1,\conf_2\}$}%
+																}; 
+	
+	\draw[myarrow] (Data) -- ($(Select)+(-0.0,+0.8)$);
+	\draw[myarrow] (CS) -- ($(Run)+(-0.0,+0.8)$);
+	%\draw[myarrow] (Data) -- ($(Select)+(-2.1,+0.0)$);
+	
+	%\draw[thick, dashed] (Algo) -- (CS);
+	\only<3-3>{\draw[myarrow] ($(Run.east)+(0.25,.1)$) to [bend angle=60, bend left] node[above] {\footnotesize $\conf_1$} ($(Result.west)+(0.0,.1)$);}
+	\only<5-5>{\draw[myarrow] ($(Run.east)+(0.25,.1)$) to [bend angle=60, bend left] node[above] {\footnotesize $\conf_2$} ($(Result.west)+(0.0,.1)$);}
+	\only<2-2>{\draw[myarrow] ($(Result.west)+(0.0,-.1)$) to [bend angle=60, bend left] node[below] {\footnotesize $\{\}$} ($(Run.east)+(0.25,-.1)$);}
+	\only<4-4>{\draw[myarrow] ($(Result.west)+(0.0,-.1)$) to [bend angle=60, bend left] node[below] {\footnotesize $\{\conf_1\}$} ($(Run.east)+(0.25,-.1)$);}
+	\only<6-6>{\draw[myarrow] ($(Result.west)+(0.0,-.1)$) to [bend angle=60, bend left] node[below] {\footnotesize $\{\conf_1,\conf_2\}$} ($(Run.east)+(0.25,-.1)$);}
+	\draw[myarrow] (Select) -- (Run);
+	%\draw[myarrow] (Run) -- (Return);
+	\draw[myarrow] (Run.south) |- ++(0.0,-0.8)  node[above, xshift=-2.2cm] {Return $\min\left\{c(\theta), c(\portfolio) \right\}$} -| (Select.south);
+	
+	\begin{pgfonlayer}{background}
+    
+        % Configuration Process
+    	\path (Select -| Select.west)+(-0.25,0.85) node (resUL) {};
+    	\path (Run.east |- Run.south)+(0.25,-1.3) node(resBR) {};
+    	\path [rounded corners, draw=black!20, dashed] (resUL) rectangle (resBR);
+		\path (Run.east |- Run.south)+(-1.5,-1.1) node [text=black!60] {Configuration Task};
+    	
+    \end{pgfonlayer}
+	
+\end{tikzpicture}
