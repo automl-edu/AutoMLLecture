@@ -5,8 +5,8 @@
 
 \title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
 \subtitle{Learning to Control}
-\author{Marius Lindauer}
-\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/automl_hannover.png}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
 \date{}
 
 
@@ -30,12 +30,13 @@
 \begin{frame}[c]{Dynamic Heuristics}
 	
 	\begin{itemize}
-		\item Many heuristics in algorithms are dynamic and adaptive
+		\item Many iterative heuristics in algorithms are dynamic and adaptive
 		\begin{enumerate}
 			\item the algorithm's behavior changes over time
 			\item the algorithm's behavior changes based on internal statistics
 		\end{enumerate}
 		\medskip
+		\pause
 		\item These heuristics might control other hyperparameters of the algorithms
 		\pause
 		\smallskip
@@ -134,6 +135,7 @@
 
 \bigskip
 	
+\centering
 \input{tikz/control.tex}
 	
 	
@@ -160,6 +162,7 @@ Solve unknown MDP by using reinforcement learning (RL):
 \end{equation}
 
 \bigskip
+\pause
 $\leadsto$ equivalent to algorithm control definition
 
 
@@ -168,30 +171,33 @@ $\leadsto$ equivalent to algorithm control definition
 %----------------------------------------------------------------------
 \begin{frame}[c]{Algorithm Control across Datasets \lit{Biedenkapp et al. 2019}}
 	
+\begin{itemize}
+	\item Challenge: Evaluating a policies on all datasets is often not feasible
+	\pause
+	\item Curriculum learning \lit{Bengio et al. 2009} showed that we should have a curriculum of tasks we tackle
+	\pause
+	\item Self-paced learning \lit{Kumar et al. 2010} tries to automatically find such as a curriculum
 	\begin{itemize}
-		\item Challenge: Evaluating a policies on all datasets is often not feasible
-		\item Curriculum learning \lit{Bengio et al. 2009} showed that we should have a curriculum of tasks we tackle
-		\item Self-paced learning \lit{Kumar et al. 2010} tries to automatically find such as a curriculum
-		\begin{itemize}
-			\item Focus on "easy" tasks where the agent can improve most:
-		\end{itemize}
+		\item Focus on "easy" tasks where the agent can improve most:
 	\end{itemize}
+\end{itemize}
 	
+\pause
 \begin{equation} 
 \label{spl_loss}
-\max_{\weights,\vec{v}}\mathcal{R}(\weights, \vec{v}, K) = \sum^{|\mdata|}_{i=1} v_i\mathcal{R}_i(\weights) - \frac{1}{K} \sum^{|\mdata|}_{i=1} v_i \nonumber
+\max_{\weights,\vec{v}}\mathcal{R}(\weights, \vec{v}, K) = \sum^{|\mdata|}_{i=1} \vec{v}_i\mathcal{R}_i(\weights) - \frac{1}{K} \sum^{|\mdata|}_{i=1} \vec{v}_i \nonumber
 \end{equation}
 
-with $\weights$ being the agent's policy parameters and $v$ being a masking vector.
+with $\weights$ being the agent's policy parameters and $\vec{v}$ being a masking vector.
 
 \pause
 \medskip
 
-Self-paced learning for algorithm control:
+Iterative greedy optimization of $\vec{v}$:
 \begin{equation}
-v_i = \left\{
+\vec{v}_i = \left\{
 \begin{array}{ll}
-1, &  \mathrm{if}\quad\mathcal{R}(\weights, \vec{v}_{-i}, K) < \mathcal{R}(\weights, \vec{v}_{+i}, K)\\
+1, &  \mathrm{if}\quad\mathcal{R}(\weights, \vec{v}_{i}:=0, K) < \mathcal{R}(\weights, \vec{v}_{i}:=1, K)\\
 0, & \mathrm{otherwise}
 \end{array}
 \right.\nonumber

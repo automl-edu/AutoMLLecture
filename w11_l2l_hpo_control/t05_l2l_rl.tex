@@ -5,8 +5,8 @@
 
 \title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
 \subtitle{Learning to Learn via Reinforcement Learning}
-\author{Marius Lindauer}
-\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/automl_hannover.png}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
 \date{}
 
 
@@ -27,10 +27,10 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning\newline \lit{Li and Malik'17}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \lit{Li and Malik'17}}
 
 \centering
-\includegraphics[width=0.6\textwidth]{images/l2o_comic}
+\includegraphics[width=0.4\textwidth]{images/l2o_comic}
 
 \tiny
 Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with-rl/}
@@ -38,7 +38,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning\newline \lit{Li and Malik'17}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \lit{Li and Malik'17}}
 
 \begin{block}{Reinforcement Learning for Learning to Optimize}
 \begin{description}
@@ -63,10 +63,10 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning\newline Results \lit{Li and Malik'17}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning Results \lit{Li and Malik'17}}
 
 \centering
-\includegraphics[width=0.5\textwidth]{images/l2o_dnn}
+\includegraphics[width=0.4\textwidth]{images/l2o_dnn}
 
 \begin{itemize}
 \item 2-layer DNN with ReLUs
@@ -205,7 +205,7 @@ $$\pi_\alpha(\cdot \mid s_t) = \text{Mult}\left[\alpha_\weights(\xi_1), \ldots, 
 \begin{frame}[c,fragile]{Learning Acquisition Functions\newline Results \lit{Volpp et al.'19}}
 
 \centering
-\includegraphics[width=1.0\textwidth]{images/l2acq.png}
+\includegraphics[width=0.8\textwidth]{images/l2acq.png}
 
 
 \end{frame}
@@ -213,7 +213,8 @@ $$\pi_\alpha(\cdot \mid s_t) = \text{Mult}\left[\alpha_\weights(\xi_1), \ldots, 
 %-----------------------------------------------------------------------
 \begin{frame}[c]{Results on Artificial Functions \lit{Volpp et al.'19}}
 
-\includegraphics[width=1.0\textwidth]{images/l2acq_results.png}
+\centering
+\includegraphics[width=0.8\textwidth]{images/l2acq_results.png}
 
 \medskip
 
@@ -223,8 +224,10 @@ $$\pi_\alpha(\cdot \mid s_t) = \text{Mult}\left[\alpha_\weights(\xi_1), \ldots, 
 \end{itemize}
 
 \pause
+\begin{flushleft}
+\alert{Assumption}: You have a family of functions at hand that resembles your target function.	
+\end{flushleft}
 
-\alert{Assumption}: You have a family of functions at hand\\ that resembles your target functions.
 
 \end{frame}
 %-----------------------------------------------------------------------

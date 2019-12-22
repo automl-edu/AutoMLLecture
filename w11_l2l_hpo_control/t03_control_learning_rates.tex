@@ -5,8 +5,8 @@
 
 \title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
 \subtitle{Learning to Control Learning Rates}
-\author{Marius Lindauer}
-\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/automl_hannover.png}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
 \date{}
 
 
@@ -25,17 +25,6 @@
 	\maketitle
 	
 	
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{}
-
-\huge
-\centering
-Learning Step Size Controllers for Robust Neural Network Training\\
-by Daniel et al. AAAI'16
-
-
-\end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}[c]{Learning Step Size Controllers \lit{Daniel et al'16}}
@@ -70,6 +59,7 @@ by Daniel et al. AAAI'16
 %----------------------------------------------------------------------
 \begin{frame}[c]{Recap: Reinforcement Learning for Algorithm Control}
 
+\centering
 \input{tikz/control.tex}
 
 \bigskip
@@ -152,7 +142,7 @@ $$\pi^*(\phi) \in \argmax_{\pi} \int \int p(s) \pi(\phi)r(g(s;\phi),s) \texttt{d
 \pause 
 \medskip
 \centering
-\includegraphics[width=0.6\textwidth]{images/l2stepsizecontroler_mnist_training.png}
+\includegraphics[width=0.55\textwidth]{images/l2stepsizecontroler_mnist_training.png}
 
 "Ours" refers to the approach by \lit{Daniel et al'16} and $\eta$ is the learning rate
 

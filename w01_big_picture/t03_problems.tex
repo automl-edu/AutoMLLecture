@@ -4,8 +4,8 @@
 
 
 \title[AutoML: Problem]{AutoML: Overview of Problems}
-\author{Marius Lindauer}
-\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/luh_logo.png}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
 \date{}
 
 
@@ -28,7 +28,8 @@
 %----------------------------------------------------------------------
 \begin{frame}[c]{Hyperparameters of an SVM}
 
-\includegraphics[width=1.0\textwidth]{images/sklearn_svm_doc.png}
+\centering
+\includegraphics[width=0.7\textwidth]{images/sklearn_svm_doc.png}
 
 \end{frame}
 %-----------------------------------------------------------------------	
@@ -136,7 +137,7 @@ Remarks:
 	\column{0.5\textwidth}
 	
 	\centering
-	\includegraphics[width=1.0\textwidth]{images/overview_achitecture_perf.PNG}
+	\includegraphics[width=0.7\textwidth]{images/overview_achitecture_perf.PNG}\newline
 	on Imagenet~\lit{\href{https://arxiv.org/pdf/1605.07678.pdf}{Canzian et al. 2017}}
 	
 \end{columns}
@@ -188,7 +189,7 @@ Remark:
 \begin{itemize}
 	\item For solving the HPO, CASH and NAS problem, we use some kind of optimization approach to \alert{search} for a solution
 	\pause
-	\item A different view is: Can we \alert{predict} an algorithm/ hyperparameter configuration/ neural architecture?
+	\item A different view is: Can we learn from data and thus \alert{predict}\\ an algorithm/ hyperparameter configuration/ neural architecture?
 \end{itemize}
 
 \pause
@@ -226,13 +227,13 @@ Remark:
 		\pause
 		\item $p(\dataset)$ be a probability distribution over meta datasets $\dataset \in \mdata$,
 		\pause
-		\item $\state_t$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
+		\item $\stateRL_t$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
 		\pause
-		\item $\loss: \policies \times \mdata \to \perf$ be a loss metric assessing the cost of a control policy $\pi \in \Pi$ on dataset $\dataset \in \mdata$
+		\item $\loss: \policies \times \mdata \to \perf$ be a loss metric assessing the \alert{cost of a control policy $\pi \in \Pi$} on dataset $\dataset \in \mdata$
 	\end{itemize}
 	
 	\pause
-	the \emph{algorithm control problem} is to obtain a control policy $\policy^* : \state_t \times \dataset \mapsto \conf$ by optimizing its loss across a distribution of datasets:
+	the \emph{algorithm control problem} is to obtain a control policy $\policy^* : \stateRL_t \times \dataset \mapsto \conf$ by optimizing its loss across a distribution of datasets:
 	\begin{equation}
 	\pi^* \in \argmin_{\policy \in \policies} \int_{\mdata} p(\dataset) c(\policy, \dataset) \diff \dataset \nonumber
 	\end{equation}
@@ -248,8 +249,8 @@ Remark:
 	\item[HPO] Search for the best hyperparameter configuration of a ML algorithm
 	\item[CASH] Search for the best combination of algorithm and hyperparameter configuration
 	\item[NAS] Search for the architecture of neural network
-	\item[Algorithm Selection] Predict the best algorithm (and its hyperparameter configuration)
-	\item[Algorithm Control] Predict the best hyperparameter configuration for algorithm state at a given time point 
+	\item[Selection] Predict the best algorithm (and its hyperparameter configuration)
+	\item[Control] Predict the best hyperparameter configuration for algorithm state at a given time point 
 \end{description}
 
 \end{frame}

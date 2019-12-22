@@ -5,8 +5,8 @@
 
 \title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
 \subtitle{Learning to Learn: Supervised}
-\author{Marius Lindauer}
-\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/automl_hannover.png}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
 \date{}
 
 
@@ -99,7 +99,8 @@ $\leadsto$ ``Learning to learn gradient descent by gradient descent''
 
 \medskip
 
-\includegraphics[width=1\textwidth]{images/learning_to_learn_lstm}
+\centering
+\includegraphics[width=0.8\textwidth]{images/learning_to_learn_lstm}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -107,7 +108,7 @@ $\leadsto$ ``Learning to learn gradient descent by gradient descent''
 \begin{frame}[c]{Learning to Learn: Coordinatewise LSTM optimizer \lit{Andrychowicz et al'16}}
 
 \centering
-\includegraphics[width=.7\textwidth]{images/l2l_shared_lstm.png}
+\includegraphics[width=.5\textwidth]{images/l2l_shared_lstm.png}
 
 \begin{itemize}
 \item One LSTM for each coordinate (i.e., weight)
@@ -123,7 +124,7 @@ $\leadsto$ ``Learning to learn gradient descent by gradient descent''
 \begin{frame}[c]{Learning to Learn with LSTM: Results \lit{Andrychowicz et al'16}}
 
 \centering
-\includegraphics[width=0.7\textwidth]{images/l2l_mnist_base}
+\includegraphics[width=0.5\textwidth]{images/l2l_mnist_base}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -134,7 +135,7 @@ Changing the original architecture of the DNN:
 \smallskip
 
 \centering
-\includegraphics[width=0.9\textwidth]{images/l2l_mnist_okchange}
+\includegraphics[width=0.7\textwidth]{images/l2l_mnist_okchange}
 
 $\leadsto$ learnt optimizer is robust against some architectural changes
 
@@ -147,7 +148,7 @@ Changing the activation function to ReLU:
 \smallskip
 
 \centering
-\includegraphics[width=0.6\textwidth]{images/l2l_mnist_relu}
+\includegraphics[width=0.4\textwidth]{images/l2l_mnist_relu}
 
 $\leadsto$ fails on other activation functions
 
@@ -169,20 +170,25 @@ x^* \in \argmin_{x \in \mathcal{X}} f(x) \nonumber
 \end{enumerate}
 \end{block}
 
-\pause
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Black-box Optimization~\lit{Chen et al'17}}
+
 
 \begin{block}{Learning Black Box Optimization}
-Essentially, same idea as before:
-\begin{eqnarray}
-h_t, x_t = \text{RNN}_\metaweights(h_{t-1}, x_{t-1}, y_{t-1}) \nonumber \\
-y_t \sim p(y|x_t)\nonumber
-\end{eqnarray}
-
-\begin{itemize}
-\item Using recurrent neural network (RNN) to predict next $x_t$.
-\item $h_t$ is the internal hidden state 
-\end{itemize}
-
+	Essentially, a similar idea as before:
+	\begin{eqnarray}
+	h_t, x_t = \text{RNN}_\metaweights(h_{t-1}, x_{t-1}, y_{t-1}) \nonumber \\
+	y_t \sim p(y|x_t)\nonumber
+	\end{eqnarray}
+	
+	\begin{itemize}
+		\item Using recurrent neural network (RNN) to predict next $x_t$.
+		\item $h_t$ is the internal hidden state 
+	\end{itemize}
+	
 \end{block}
 
 
@@ -227,7 +233,7 @@ y_t \sim p(y|x_t)\nonumber
 \begin{frame}[c]{Learning Black-box Optimization: Results\newline \lit{Chen et al'17}}
 
 \centering
-\includegraphics[width=0.6\textwidth]{images/l2bo_hartmann3}
+\includegraphics[width=0.4\textwidth]{images/l2bo_hartmann3}
 
 \begin{itemize}
 \item Hartmann3 is an artifical function with 3 dimensions

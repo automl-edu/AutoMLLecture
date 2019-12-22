@@ -5,8 +5,8 @@
 
 \title[AutoML: Big Picture]{AutoML: Automated Machine Learning}
 \subtitle{The Big Picture}
-\author{Marius Lindauer}
-\institute{\vspace*{2em}\includegraphics[width=10em]{../latex_main/images/automl_hannover.png}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
 \date{}
 
 
@@ -47,7 +47,8 @@
 %----------------------------------------------------------------------
 \begin{frame}[c]{Machine Learning requires many design decisions}
 
-\includegraphics[width=1.0\textwidth]{images/sklearn-cheat}
+\centering
+\includegraphics[width=0.8\textwidth]{images/sklearn-cheat}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -131,7 +132,7 @@ $\leadsto$ To achieve state-of-the-art performance,\\ this manuel tuning has to 
 \begin{frame}[c]{A Simple Example with $k$-NN}
 
 \centering
-\includegraphics[width=0.6\textwidth]{images/kNN-jasmine}
+\includegraphics[width=0.5\textwidth]{images/kNN-jasmine}
 
 \begin{itemize}
   \item $k$-nearest neighbors is one of the simplest ML algorithms
@@ -170,7 +171,7 @@ that performs best for this particular application.
 \begin{frame}[c]{ML vs AutoML}
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{images/AutoMLPipeline.jpg}
+\includegraphics[width=0.7\textwidth]{images/AutoMLPipeline.jpg}
 \end{center}
 
 \bigskip
@@ -220,26 +221,26 @@ AutoML enables:
 \begin{frame}[c]{Challenges in AutoML}
 
 \begin{enumerate}
-  \item Each dataset potentially have different optimal ML-designs
+  \item Each dataset potentially have \alert{different optimal ML-designs}
   \begin{itemize}
     \item[$\leadsto$] Design decisions have to be made for each dataset again
   \end{itemize}
   \smallskip
   \pause
-  \item Training of a single ML model can be quite expensive\\
+  \item Training of a single ML model can be quite \alert{expensive}\\
   		(e.g., hours, days or weeks)
   \begin{itemize}
     \item[$\leadsto$] often, we cannot try many design decisions
   \end{itemize}
   \smallskip
   \pause
-  \item the mathematical relation between design decisions\\ and performance is (often) unknown
+  \item the \alert{mathematical relation} between design decisions\\ and performance is (often) \alert{unknown}
   \begin{itemize}
     \item[$\leadsto$] gradient-based optimization is not directly possible
   \end{itemize}
   \smallskip
   \pause
-  \item optimization in highly complex spaces
+  \item optimization in \alert{highly complex spaces}
   \begin{itemize}
     \item incl. categorical choices, continuous parameters,\\ conditional dependencies
   \end{itemize}
@@ -254,17 +255,17 @@ AutoML enables:
 What could be risks of AutoML?
 
 \begin{enumerate}
-  \item Users apply AutoML without understanding anything.
+  \item Users apply AutoML \alert{without understanding} anything.
   \begin{itemize}
     \item Users might wonder why (Auto-)ML does not perform well\\ after they passed in poor data. 
   \end{itemize}
   \pause
-  \item Users over-trust AutoML too much.
+  \item Users \alert{over-trust} AutoML too much.
   \begin{itemize}
     \item humans might not use human reasoning skills and\\ do not second guess machine decisions
   \end{itemize}
   \pause
-  \item We enable non-ML experts to use ML\\ without knowing the risks and consequences of ML.
+  \item We enable non-ML experts to use ML\\ \alert{without knowing the risks and consequences} of ML.
   \begin{itemize}
   	\item E.g., bias in data and trained models
   \end{itemize}
@@ -284,7 +285,7 @@ See \lit{\href{https://arxiv.org/abs/1902.06804}{Bond et al. 2019}}
 \begin{frame}[c]{Snippet of Auto-AI Hierarchy}
 
 \centering
-\includegraphics[width=0.7\textwidth]{images/autoai}
+\includegraphics[width=0.5\textwidth]{images/autoai}
 
 \end{frame}
 %-----------------------------------------------------------------------
