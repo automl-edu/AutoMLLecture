@@ -7,7 +7,7 @@
   * Theresa Eimer
 * Ludwig Maximilian University of Munich:
   * Bernd Bischl
-  * Janek Thomas
+  * Janek Thomas (Fraunhofer)
 * University of Freiburg, Germany:
   * Frank Hutter
   * André Biedenkapp
@@ -15,4 +15,5 @@
   * Matthias Feurer
 * University of Wyoming:
   * Lars Kotthoff
-* TBC?
+* University of Eindhoven
+  * Joaquin Vanschoren
