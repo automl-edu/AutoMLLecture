@@ -1,0 +1,94 @@
+\documentclass{exam}
+\usepackage{amsmath, amsfonts}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[super]{nth}
+
+\DeclareMathOperator*{\argmin}{argmin}
+
+\usepackage[hyperfootnotes=false]{hyperref}
+
+\usepackage[usenames,dvipsnames]{color}
+\newcommand{\note}[1]{
+	\noindent~\\
+	\vspace{0.25cm}
+	\fcolorbox{Red}{Orange}{\parbox{0.99\textwidth}{#1\\}}
+	%{\parbox{0.99\textwidth}{#1\\}}
+	\vspace{0.25cm}
+}
+
+
+\input{macros}
+%\renewcommand{\hide}[1]{#1}
+
+\qformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+\bonusqformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+
+\pagestyle{headandfoot}
+
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+\newcommand{\duedate}{21.10.18 (14:00)}
+\newcommand{\due}{{\bf This assignment is due on \duedate.} }
+\firstpageheader
+{Due: \duedate \\ Points: 1}
+{{\bf\lecture}\\ \assignment{1}}
+{\lectors\\ \semester}
+
+\runningheader
+{Due: \duedate}
+{\assignment{1}}
+{\semester}
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+
+\firstpagefooter
+{}
+{\thepage}
+{}
+
+\runningfooter
+{}
+{\thepage}
+{}
+
+\headrule
+\pointsinrightmargin
+\bracketedpoints
+\marginpointname{pt.}
+
+
+\begin{document}
+    \paragraph{Organizational Matters: }
+    Exercises are to be handed in \emph{teams of $2$} students. You and your team-partner should send a mail containing both names and email addresses to \texttt{biedenka@cs.uni-freiburg.de}. We'll use these mail addresses to invite you to a BitBucket\footnote{bitbucket.org} repository where you can upload all your solutions. To work with bitbucket you can use git. If you've never worked with git before we suggest you take a look at this simple guide \url{http://rogerdudler.github.io/git-guide/}. You should have sent the mail before the \textbf{21st}.\\\vspace*{-5pt}\hspace*{-2pt}
+\rule{\textwidth}{.5pt}\\
+\\
+\noindent
+The automated algorithm design methods you will learn about in this course help you improve the empirical performance of algorithms. The goal of this first exercise is to get you thinking about possible applications of these methods, such as \emph{algorithm configuration}, to algorithms you know from previous experience.\vspace*{5pt}
+
+\begin{questions}
+	\titledquestion{Algorithms with tunable parameters}[$0.5$]
+		Identify $2$ algorithms that have tunable parameters. Describe each algorithm briefly (without code!) and explain its parameters; this includes:
+		\begin{itemize}
+		  \item Why does the parameter influence the performance of the algorithm? 
+		  \item What could be a good range of possible values of the parameter (e.g., $[0,1]$, $[1,1024]$ or $\{yes,no\}$)? Briefly explain your choices.
+		\end{itemize}
+		
+	\titledquestion{Manual Optimization}[$0.5$]
+		If you would have to optimize the parameters of your algorithm, how would you proceed? Describe your approach briefly (maybe use pseudo-code) and analyze the effort you would need to apply this approach to one of your algorithms from Task 1. 
+		
+		For example, you have an algorithm with three tunable parameters and each of them has four possible values. So, there are $4^3$ possible combinations of parameter values. Let us assume that each algorithm run needs 
+		%at most 
+		$10$ CPU seconds and you have $50$ problem instances. 
+		If we were to assess the performance of all possible parameter combinations on all instances, we would need 
+		$4^3 \cdot 10 \cdot 50 = 32000$ CPU seconds to determine the best possible configuration. 
+		\emph{Your approach has to be faster than this brute force method; it is OK if you can not guarantee to always yield the perfect solution.}
+	
+\end{questions}
+
+\noindent
+\due Submit your solution for the tasks by uploading a PDF to your groups BitBucket repository. The PDF has to include the name of the submitter(s). Teams of at most $2$ students are allowed.
+% \note{
+%    \textbf{TODO description for BitBucket or whatever we end up using!}\\
+%    ILIAS\footnote{ \url{https://ilias.uni-freiburg.de/goto.php?target=crs_465155&client_id=unifreiburg}.} course page. The PDF has to include the name of the submitter(s). Teams of at most $2$ students are allowed. Everyone has to submit his/her solution.  %Your scripts should be commented to be readable for the tutors. Executing them should produce the requested plots either as files.
+%}
+
+\end{document}

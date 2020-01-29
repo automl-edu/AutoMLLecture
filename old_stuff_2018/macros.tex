@@ -1,0 +1,191 @@
+\newcommand{\comment}[1]{
+	\noindent
+	%\vspace{0.25cm}
+	{\color{red}{\textbf{TODO:} #1}}
+	%\vspace{0.25cm}
+}
+\renewcommand{\comment}[1]{}
+\newcommand{\hide}[1]{}
+\newcommand{\cemph}[2]{\emph{\textcolor{#1}{#2}}}
+
+
+% algorithm macros
+
+% \newcommand{\myparagraph}[1]{
+% 	\vspace{0.2cm}
+% 	\noindent
+% 	\textbf{#1}.
+% }
+
+%Holgers Notation
+% \newcommand{\insts}[0]{I}
+% \newcommand{\inst}[0]{i}
+% \newcommand{\pcs}[0]{\vec{C}}
+% \newcommand{\conf}[0]{\vec{c}}
+
+%Franks Notation
+\newcommand{\norm}{{\mathcal{N}}}
+\newcommand{\cutoff}[0]{\kappa}
+\newcommand{\instD}[0]{\mathcal{D}}
+\newcommand{\insts}[0]{\Pi}
+\newcommand{\inst}[0]{\pi}
+\newcommand{\pcs}[0]{\mathbf{\Theta}}
+\newcommand{\bx}[0]{\conf}
+\newcommand{\conf}[0]{\mathbf{\theta}}
+\newcommand{\confs}[0]{\pcs}
+\newcommand{\vlambda}[0]{\bm{\lambda}}
+\newcommand{\vLambda}[0]{\bm{\Lambda}}
+
+% \renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\hist}[0]{\mathcal{H}}
+\newcommand{\algo}[0]{\mathcal{A}}
+\newcommand{\feats}[0]{\mathcal{F}}
+\newcommand{\feat}[0]{\vec{f}}
+\newcommand{\cluster}[0]{\vec{h}}
+\newcommand{\clusters}[0]{\vec{H}}
+\newcommand{\perf}[0]{\mathbb{R}}
+%\newcommand{\surro}[0]{\mathcal{S}}
+\newcommand{\surro}[0]{\hat{c}}
+\newcommand{\epm}[0]{\surro}
+\newcommand{\portfolio}[0]{\mathcal{P}}
+\newcommand{\schedule}[0]{\mathcal{S}}
+\newcommand{\policies}[0]{\Omega}
+\newcommand{\policy}[0]{\omega}
+\newcommand{\state}[0]{s}
+\newcommand{\states}[0]{\mathcal{S}}
+
+\RestyleAlgo{algoruled}
+\DontPrintSemicolon
+\LinesNumbered
+\SetAlgoVlined
+\SetFuncSty{textsc}
+
+\SetKwInOut{Input}{Input}
+\SetKwInOut{Output}{Output}
+\SetKw{Return}{return}
+
+%\newcommand{\changed}[1]{{\color{red}#1}}
+
+%\newcommand{\citeN}[1]{\citeauthor{#1}~(\citeyear{#1})}
+
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\newcommand{\aqme}{\textit{AQME}}
+\newcommand{\aslib}{\textit{ASlib}}
+\newcommand{\llama}{\textit{LLAMA}}
+\newcommand{\satzilla}{\textit{SATzilla}}
+\newcommand{\satzillaY}[1]{\textit{SATzilla'{#1}}}
+\newcommand{\snnap}{\textit{SNNAP}}
+\newcommand{\claspfolioTwo}{\textit{claspfolio~2}}
+\newcommand{\flexfolio}{\textit{FlexFolio}}
+\newcommand{\claspfolioOne}{\textit{claspfolio~1}}
+\newcommand{\isac}{\textit{ISAC}}
+\newcommand{\eisac}{\textit{EISAC}}
+\newcommand{\sss}{\textit{3S}}
+\newcommand{\sunny}{\textit{Sunny}}
+\newcommand{\ssspar}{\textit{3Spar}}
+\newcommand{\cshc}{\textit{CSHC}}  
+\newcommand{\cshcpar}{\textit{CSHCpar}}  
+\newcommand{\measp}{\textit{ME-ASP}} 
+\newcommand{\aspeed}{\textit{aspeed}}
+\newcommand{\autofolio}{\textit{AutoFolio}}
+\newcommand{\cedalion}{\textit{Cedalion}}
+\newcommand{\fanova}{\textit{fANOVA}}
+\newcommand{\sbs}{\textit{SB}}
+\newcommand{\oracle}{\textit{VBS}}
+
+% like approaches
+\newcommand{\claspfoliolike}[1]{\texttt{claspfolio-#1-like}}
+\newcommand{\satzillalike}[1]{\texttt{SATzilla'#1-like}}
+\newcommand{\isaclike}{\texttt{ISAC-like}}
+\newcommand{\ssslike}{\texttt{3S-like}}
+\newcommand{\measplike}{\texttt{ME-ASP-like}}
+
+\newcommand{\aspCoseal}{\textit{ASP-POTASSCO}}
+\newcommand{\cspCoseal}{\textit{CSP-2010}}
+\newcommand{\maxsatCoseal}{\textit{MAXSAT12-PMS}}
+\newcommand{\premarCoseal}{\textit{PRE\-MARSHALLING}}
+\newcommand{\qbfCoseal}{\textit{QBF-2011}}
+\newcommand{\satallTwelveCoseal}{\textit{SAT12-ALL}}
+\newcommand{\sathandTwelveCoseal}{\textit{SAT12-HAND}}
+\newcommand{\satinduTwelveCoseal}{\textit{SAT12-INDU}}
+\newcommand{\satrandTwelveCoseal}{\textit{SAT12-RAND}}
+\newcommand{\sathandElevenCoseal}{\textit{SAT11-HAND}}
+\newcommand{\satinduElevenCoseal}{\textit{SAT11-INDU}}
+\newcommand{\satrandElevenCoseal}{\textit{SAT11-RAND}}
+\newcommand{\proteusCoseal}{\textit{PROTEUS-2014}}
+
+\newcommand{\irace}{\textit{I/F-race}}
+\newcommand{\gga}{\textit{GGA}}
+\newcommand{\smac}{\textit{SMAC}}
+\newcommand{\paramils}{\textit{ParamILS}}
+\newcommand{\spearmint}{\textit{Spearmint}}
+\newcommand{\tpe}{\textit{TPE}}
+
+\newcommand{\gringo}{\textit{gringo}}
+\newcommand{\clasp}{\textit{clasp}}
+\newcommand{\lingeling}{\textit{lingeling}}
+
+\newcommand{\hydra}{\textit{Hydra}}
+
+\newcommand{\plingeling}{\textit{Plingeling}}
+\newcommand{\ccasat}{\textit{CCASat}}
+
+\usepackage{pifont}
+\newcommand{\itarrow}{\mbox{\Pisymbol{pzd}{229}}}
+\newcommand{\ithook}{\mbox{\Pisymbol{pzd}{52}}}
+\newcommand{\itcross}{\mbox{\Pisymbol{pzd}{56}}}
+\newcommand{\ithand}{\mbox{\raisebox{-1pt}{\Pisymbol{pzd}{43}}}}
+
+%\DeclareMathOperator*{\argmax}{arg\,max}
+
+\newcommand{\ie}{{\it{}i.e.\/}}
+\newcommand{\eg}{{\it{}e.g.\/}}
+\newcommand{\cf}{{\it{}cf.\/}}
+\newcommand{\wrt}{\mbox{w.r.t.}}
+\newcommand{\vs}{{\it{}vs\/}}
+\newcommand{\vsp}{{\it{}vs\/}}
+\newcommand{\etc}{{\copyedit{etc.}}}
+\newcommand{\etal}{{\it{}et al.\/}}
+
+\newcommand{\pscProc}{{\bf procedure}}
+\newcommand{\pscBegin}{{\bf begin}}
+\newcommand{\pscEnd}{{\bf end}}
+\newcommand{\pscEndIf}{{\bf endif}}
+\newcommand{\pscFor}{{\bf for}}
+\newcommand{\pscEach}{{\bf each}}
+\newcommand{\pscThen}{{\bf then}}
+\newcommand{\pscElse}{{\bf else}}
+\newcommand{\pscWhile}{{\bf while}}
+\newcommand{\pscIf}{{\bf if}}
+\newcommand{\pscRepeat}{{\bf repeat}}
+\newcommand{\pscUntil}{{\bf until}}
+\newcommand{\pscWithProb}{{\bf with probability}}
+\newcommand{\pscOtherwise}{{\bf otherwise}}
+\newcommand{\pscDo}{{\bf do}}
+\newcommand{\pscTo}{{\bf to}}
+\newcommand{\pscOr}{{\bf or}}
+\newcommand{\pscAnd}{{\bf and}}
+\newcommand{\pscNot}{{\bf not}}
+\newcommand{\pscFalse}{{\bf false}}
+\newcommand{\pscEachElOf}{{\bf each element of}}
+\newcommand{\pscReturn}{{\bf return}}
+
+\newcommand{\param}[1]{{\sl{}#1}}
+\newcommand{\var}[1]{{\it{}#1}}
+\newcommand{\cond}[1]{{\sf{}#1}}
+%\newcommand{\state}[1]{{\sf{}#1}}
+\newcommand{\func}[1]{{\sl{}#1}}
+\newcommand{\set}[1]{{\Bbb #1}}
+%\newcommand{\inst}[1]{{\tt{}#1}}
+\newcommand{\myurl}[1]{{\small\sf #1}}
+
+\newcommand{\Nats}{{\Bbb N}}
+\newcommand{\Reals}{{\Bbb R}}
+\newcommand{\extset}[2]{\{#1 \; | \; #2\}}
+
+\newcommand{\vbar}{$\,\;|$\hspace*{-1em}\raisebox{-0.3mm}{$\,\;\;|$}}
+\newcommand{\vendbar}{\raisebox{+0.4mm}{$\,\;|$}}
+\newcommand{\vend}{$\,\:\lfloor$}

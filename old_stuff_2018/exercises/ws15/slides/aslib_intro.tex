@@ -1,0 +1,400 @@
+\pdfminorversion=4 % for acroread
+\documentclass[t]{beamer}
+%\documentclass[t,handout]{beamer}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+
+\usepackage{amsmath,amssymb}
+\usepackage{listings}
+\lstset{frame=lines,framesep=3pt,numbers=left,numberblanklines=false,basicstyle=\ttfamily\small}
+
+\usepackage{subfig}
+\usepackage{multicol}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{tikz}
+\usetikzlibrary{trees} 
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{positioning,shapes,shadows,arrows,calc,mindmap}
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+\tikzstyle{activity}=[rectangle, draw=white, rounded corners, text centered, text width=8em]
+\tikzstyle{data}=[rectangle, draw=white, text centered, text width=8em]
+\tikzstyle{myarrow}=[->, thick, draw=white]
+
+% Define the layers to draw the diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+
+\usepackage{listings}
+\lstset{numbers=left,
+  showstringspaces=false,
+  frame={tb},
+  captionpos=b,
+  lineskip=0pt,
+  basicstyle=\ttfamily,
+  extendedchars=true,
+  stepnumber=1,
+  numberstyle=\small,
+  xleftmargin=1em,
+  breaklines
+}
+
+\input{macros} 
+
+\usetheme{Madrid}
+\useinnertheme{rectangles}
+\usecolortheme{whale}
+\setbeamercolor{alerted text}{fg=blue}
+\useoutertheme{infolines}
+\setbeamertemplate{navigation symbols}{\vspace{-5pt}} % to lower the logo
+\setbeamercovered{invisible}
+
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+
+\newcommand{\lit}[1]{{\footnotesize\color{black!70}[#1]}}
+\newcommand{\litw}[1]{{\footnotesize\color{black!20}[#1]}}
+
+\pgfdeclareimage[height=1.2cm]{coseallogo}{images/logos/coseal}
+\pgfdeclareimage[height=1.2cm]{mlaad}{images/logos/ml4aad.png}
+\pgfdeclareimage[height=1.2cm]{freiburg}{images/logos/freiburg}
+
+\logo{\pgfuseimage{freiburg}}
+
+\title[MLOAD]{Machine Learning and Optimization\\ for Algorithm Design}
+\subtitle{ASlib}
+\author{Marius Lindauer}
+\institute{University of Freiburg}
+\date{}
+%\date{LION 2015, Lille, France}
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+
+\begin{document}
+
+% ----------------------------------------------------------------------
+{
+\setbeamertemplate{footline}{} % remove footer on first slide
+	\frame[c]{
+	\titlepage
+	\begin{center}
+	\vspace{-1.5cm}
+	%\includegraphics[height=5em]{images/logos/freiburg}\quad\quad
+	%\includegraphics[height=5em]{logo/coseal}\quad
+	\includegraphics[height=5em]{images/logos/ml4aad.png}
+	\end{center}
+	}
+}
+\author{Lindauer}
+\institute{}
+%\logo{\pgfuseimage{mlaad}}
+\logo{}
+
+\begin{frame}[c]{How to assess the performance of algorithm selectors?}
+
+Issues with old AS papers:
+
+\begin{enumerate}
+  \item Tedious and time-consuming task to collect data for more than $2-3$ scenarios -- only few experimental results
+	\pause
+  \medskip
+  \item Everyone uses other scenarios -- not comparable results
+  \item Runtimes are measured on different hardware -- not comparable results
+  \pause
+  \medskip
+  \item Scenarios are not always publicly available -- not repeatable results
+  \pause
+  \medskip
+  \item Beginners (and even experts) make mistakes -- e.g., don't consider feature costs -- invalid results
+\end{enumerate}
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{How to assess the performance of algorithm selectors?}
+
+\begin{block}{Fair Comparison}
+Algorithm selectors get the same input:
+\begin{itemize}
+  \item algorithm portfolio $\portfolio$
+  \item training instances $\insts$
+  \item instance features $\feats$
+\end{itemize}
+\end{block}
+
+\begin{block}{ASlib (Algorithm Selection Library, \url{www.aslib.net})}
+ASlib provides:
+\begin{itemize}
+  \item performance of each algorithm on each instance
+  \item instance features of each instance
+  \item cost to compute instance features
+\end{itemize}
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{ASlib $v.1.0$ Scenarios}
+
+\centering
+
+\small
+\begin{tabular}{l ccccccc}
+\hline
+\hline
+Scenario 				& $|I|$ &		$|A|$ 		& $\# f$  	& $\varnothing t_f$ & Ref.\\
+\hline
+\aspCoseal 	 			& $1294$			& $11$ 	 		& $138$ 	 & $1.3$ 	& \lit{Hoos et al. 2014} \\
+\pause
+\cspCoseal  	 		& $2024$			& $2$ 	 		& $17$  	& $n/a$ 		& \lit{Gent et al. 2010}	 \\
+\maxsatCoseal 			& $876$				& $6$ 	 		& $37$  	& $0.1$	& \lit{Ansotegui et a. 2014} \\
+\premarCoseal 			& $527$ 			& $4$ 			& $16$		 & $n/a$ & \lit{Tierney et al. 2014}\\
+\proteusCoseal			& $4021$			& $22$			& $198$		 & $6.4$  & \lit{Hurley et al. 2014}\\
+\qbfCoseal 	 			& $1368$			& $5$ 	 		& $46$  	 & $n/a$ 	& \lit{Kotthoff et al. 2012}\\
+\sathandElevenCoseal 	& $296$ 	 		& $15$ 	 		& $115$  	 & $41.2$ 	& \lit{Xu et al. 2012}\\
+\alert{\satinduElevenCoseal} 	& $300$				& $18$ 	 		& $115$  	 & $135.3$ 	& \lit{Xu et al. 2012} \\
+\alert{\satrandElevenCoseal} 	& $600$ 			& $9$ 	 		& $115$  	 & $22.0$	& \lit{Xu et al. 2012} \\
+\satallTwelveCoseal		& $1614$			& $31$ 	 		& $115$		 & $40.5$  & \lit{Xu et al. 2012} \\
+\sathandTwelveCoseal 	& $767$				& $31$ 	 		& $115$  	 & $39.0$  & \lit{Xu et al. 2012} \\
+\satinduTwelveCoseal  	& $1167$			& $31$ 	 		& $115$  	 & $80.9$  & \lit{Xu et al. 2012} \\
+\satrandTwelveCoseal  	& $1362$			& $31$ 	 		& $115$ 	 & $9.0$ & \lit{Xu et al. 2012} \\
+\hline
+\hline
+\end{tabular} 
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{ASlib Scenarios}
+
+\centering
+\begin{tabular}{c c}
+\hline
+\hline
+Scenario & Data Collection Time (CPU Days)\\
+\hline
+\aspCoseal & $25$\\
+\pause
+\premarCoseal  & $28$\\
+\cspCoseal & $52$\\
+\maxsatCoseal & $56$\\
+\pause
+\satinduElevenCoseal & $128$\\
+\satrandElevenCoseal & $158$\\
+\qbfCoseal & $163$\\
+\sathandElevenCoseal & $168$\\
+\pause
+\sathandTwelveCoseal & $234$\\
+\satinduTwelveCoseal & $284$\\
+\pause
+\satallTwelveCoseal & $415$\\
+\satrandTwelveCoseal & $447$\\
+\proteusCoseal & $596$\\
+\hline
+\hline
+\end{tabular}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{ASlib Files}
+
+\begin{description}
+	\item[algorithm\_runs.arff:] performance measurements with possible repetitions and completion status of the algorithm runs
+	\item[feature\_values.arff:] feature vectors for all instances
+	\item[cv.arff:] splits of the instance set into training and test sets
+\end{description}
+
+(and some more\ldots)
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{algorithm\_runs.arff}
+
+\small
+\begin{verbatim}
+@RELATION ALGORITHM_RUNS_2013-SAT-Competition
+
+@ATTRIBUTE instance_id STRING
+@ATTRIBUTE repetition NUMERIC
+@ATTRIBUTE algorithm STRING
+@ATTRIBUTE runtime NUMERIC
+@ATTRIBUTE runstatus {ok, timeout, crash, other}
+
+@DATA
+inst1.cnf, 1, lingeling, 5.0, ok
+inst1.cnf, 1, clasp, 5.8, ok
+inst1.cnf, 1, sparrow, 900, timeout
+inst2.cnf, 1, lingeling, 588.1, ok
+inst2.cnf, 1, clasp, 900,timeout
+inst2.cnf, 1, sparrow, 501, ok
+\end{verbatim}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Reading: algorithm\_runs.arff}
+
+\scriptsize
+
+use \texttt{liac-arff} to read files.
+
+\begin{verbatim}
+>>> import arff
+>>> data = arff.load(open("algorithm_runs.arff"))
+>>> import json
+>>> print(json.dumps(data))
+{
+  "attributes": [
+    [ "instance_id", "STRING"], 
+    [ "repetition", "NUMERIC"], 
+    [ "algorithm", "STRING"], 
+    [ "runtime", "NUMERIC"], 
+    [ "runstatus", 
+      ["ok","timeout","crash","other"]]
+  ], 
+  "relation": "ALGORITHM_RUNS_2013-SAT-Competition", 
+  "description": "", 
+  "data": [
+    [ "inst1.cnf", 1.0, "lingeling", 5.0, "ok" ], 
+    ...
+    ]
+}
+\end{verbatim}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{feature\_values.arff}
+
+\small
+\begin{verbatim}
+@RELATION FEATURE_VALUES_2013-SAT-Competition
+
+@ATTRIBUTE instance_id STRING
+@ATTRIBUTE repetition NUMERIC
+@ATTRIBUTE number_of_variables NUMERIC
+@ATTRIBUTE number_of_clauses NUMERIC
+@ATTRIBUTE first_local_min_steps NUMERIC
+
+@DATA
+inst1.cnf,1,101,24,33
+inst2.cnf,1,303,105,12
+inst3.cnf,1,1002,337,?
+\end{verbatim}
+
+Missing values are encoded as '?'
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Reading: feature\_values.arff}
+
+\scriptsize
+\begin{verbatim}
+>>> data = arff.load(open("feature_values.arff"))
+>>> print(json.dumps(data))
+{
+  "attributes": [
+    [ "instance_id", "STRING"], 
+    [ "repetition", "NUMERIC"], 
+    [ "number_of_variables", "NUMERIC"], 
+    [ "number_of_clauses", "NUMERIC"], 
+    [ "first_local_min_steps", "NUMERIC"]
+  ], 
+  "relation": "FEATURE_VALUES_2013-SAT-Competition", 
+  "description": "", 
+  "data": [
+    [ "inst1.cnf", 1.0, 101.0, 24.0, 33.0], 
+    [ "inst2.cnf", 1.0, 303.0, 105.0, 12.0], 
+    [ "inst3.cnf", 1.0, 1002.0, 337.0, null]
+  ]
+}
+
+\end{verbatim}
+
+Missing values are encoded as 'None'.
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c, fragile]{cv.arff}
+
+2-fold cross validation:
+
+\small
+\begin{verbatim}
+@RELATION CV_2013-SAT-Competition
+
+@ATTRIBUTE instance_id STRING
+@ATTRIBUTE repetition NUMERIC
+@ATTRIBUTE fold NUMERIC
+
+@DATA
+inst1.cnf, 1, 1
+inst2.cnf, 1, 1
+inst3.cnf, 1, 2
+inst4.cnf, 1, 2
+\end{verbatim}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Reading: cv.arff}
+
+\scriptsize
+\begin{verbatim}
+>>> data = arff.load(open("cv.arff"))
+>>> print(json.dumps(data))
+{
+  "attributes": [
+    [ "instance_id", "STRING"], 
+    [ "repetition", "NUMERIC"], 
+    [ "fold", "NUMERIC"]
+  ], 
+  "relation": "CV_2013-SAT-Competition", 
+  "description": "", 
+  "data": [
+    [ "inst1.cnf", 1.0, 1.0], 
+    [ "inst2.cnf", 1.0, 1.0], 
+    [ "inst3.cnf", 1.0, 2.0], 
+    [ "inst4.cnf", 1.0, 2.0]
+  ]
+}
+
+
+\end{verbatim}
+
+\end{frame}
+\end{document}

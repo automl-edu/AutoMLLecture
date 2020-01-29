@@ -1,0 +1,107 @@
+\documentclass{exam}
+\usepackage{amsmath,amssymb,amsthm,mathrsfs,amsfonts,dsfont}
+\usepackage{verbatim}
+\usepackage{graphicx}
+
+
+\usepackage[hyperfootnotes=false]{hyperref}
+
+\usepackage[usenames,dvipsnames]{color}
+\newcommand{\note}[1]{
+	\noindent~\\
+	\vspace{0.25cm}
+	\fcolorbox{Red}{Orange}{\parbox{0.99\textwidth}{#1\\}}
+	%{\parbox{0.99\textwidth}{#1\\}}
+	\vspace{0.25cm}
+}
+%\renewcommand{\note}[1]{}
+\newcommand{\hide}[1]{#1}
+\renewcommand{\hide}[1]{}
+
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\DeclareMathOperator*{\argmin}{argmin}
+
+\qformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+\bonusqformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+
+\pagestyle{headandfoot}
+\firstpageheader{Due: 29.02.2016 (23:59 GMT)}{ {\bf MLOAD} \\ Final Project}{M. Lindauer \& F. Hutter\\ WS 2015/16}
+\runningheader{Due: 29.02.2016 (23:59 GMT)}{Final Project}{WS 2015/16}
+\runningfooter{}{}{}
+\headrule
+\pointsinrightmargin
+\bracketedpoints
+\marginpointname{pt.}
+
+
+\begin{document}
+
+This final project is necessary for the oral exam. 
+The purpose of this project is that you get hands-on experience on (nearly) all topics of the course 
+and you can present and explain the results of your work. 
+To this end, please submit your code, plots ([$\to$ PDF]), tables ([$\to$ PDF]) etc. to our ILIAS webpage.
+In the first $15$ minutes of the exam, you will have the chance to explain your approach and the results.
+Please do not prepare any presentation slides -- it will be a relaxed and interactive conversation!
+  
+\begin{questions}
+
+\titledquestion{Performance Optimization of \textit{SAPS}}[-]
+
+\emph{Your final task is to optimize the performance of the SAT solver SAPS on the provided instances.}
+How you optimize the performance of \textit{SAPS} is up to you. 
+You could use algorithm configuration and/or algorithm selection.\footnote{Since we provide an already implemented SAT solver, hyper-heuristics are not straightforward to apply.} 
+In the end, you should convince us that you indeed optimized the performance of SAPS.
+To this end, you should think about the following tasks:
+
+\begin{itemize}
+  \item Measure the default performance of \textit{SAPS};
+  \item Plot the performance (CDF and boxplots of the RTD);
+  \item Guess whether it is a heterogeneous or an homogeneous instance set;
+  \item Apply algorithm configuration to determine a well-performing configuration;
+  \item Determine the importance of \textit{SAPS}'s parameters;
+  \item Optimize an algorithm schedule of configurations of \textit{SAPS};
+  \item Apply algorithm selection to select well-performing configurations of \textit{SAPS};
+  \item Plot the performance of the optimized \textit{SAPS} vs the default \textit{SAPS} (e.g., scatter plot); 
+  \item Report the performance (PAR1, PAR10, number of timeouts).
+\end{itemize}
+
+Please note that you do not necessarily have to apply all these methods -- pick the ones that you think are most appropriate.
+
+We provide the following files and binaries:
+
+\begin{itemize}
+  \item An instance set consisting of quasigroup completion problems (QCP) and graph colouring problems (SWGCP) -- please note that the instance files have a size of nearly $15$GB.
+  \item A file listing all test instances -- to compare your solutions against the ones of your colleagues, you can upload your performance\footnote{\url{https://docs.google.com/spreadsheets/d/1gyKBLlhrHd_uLRzLO9uWXWkj_ot38OdbsZVvWhHYYVg/}} 
+  \item The binary of \textit{SAPS} (call: \texttt{ubcsat -alg saps}) with parameters \texttt{alpha}, \texttt{rho}, \texttt{ps}, \texttt{wp}
+  \item A binary to generate instance features for a SAT formula (binary: \texttt{features}) -- We recommend to use the option \texttt{-base} to get a cheap set of features
+\end{itemize}
+
+%\note{ML: unfortunately, the parameters of SAPS are not documented in the help.}
+ 
+Furthermore, you can of course use all scripts and tools you already know from the exercises; however, you are not limited to them.
+
+You should respect the following constraints:
+
+\begin{itemize}
+  \item The performance has to be measured in terms of search steps (as a CPU-independent cost metric).\footnote{If you apply algorithm configuration, you have to return the number of search steps as solution cost/quality (reps. $10$ times the maximal number o search steps for timeouts.}
+  \item \textit{SAPS} should not run longer than $100\ 000$ search steps on each instance.
+  \item Use the option \texttt{-r satcomp} to get the already known output format of the SAT competition.
+\end{itemize}
+
+\end{questions}
+
+\noindent
+{\bf This assignment is due on 29.02.2016 (23:59 GMT).} Submit your solution for the tasks by uploading an archive (tar.gz) to our ILIAS\footnote{ \url{https://ilias.uni-freiburg.de/goto.php?target=crs_465155&client_id=unifreiburg}.} course page. The archive has to include the name of the submitter. \textbf{Teams are not allowed. 
+However, we encourage you to discuss your approaches in our ILIAS forum and to ask questions there if you have any -- code distribution is not allowed.}
+
+\bigskip
+\paragraph{General constraints for code submissions}
+
+\begin{itemize}
+  %\item The program can be called as stated on the exercise sheet.
+  %\item The program exactly returns the required output (neither less nor more) -- please use a \texttt{--verbose} option to increase the verbosity level for debugging.
+  \item Your scripts should be commented to be readable for the tutors. All functions and classes are documented with a docstring. 
+  \item Provide a README ($\to$ how to install requirements and run your program(s)) and (if necessary) an installation script if your program requires any other packages.
+\end{itemize}
+
+\end{document}
