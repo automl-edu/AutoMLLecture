@@ -24,7 +24,7 @@ def plot_sample_gp(num_samples=10, data=None, y=None, X_domain=None, gp=None, rn
     y_samples = gp.sample_y(X_domain[:, np.newaxis], num_samples, random_state=rnd_state)
     plots = a0.plot(X_domain, y_samples, lw=1, label=label)
     a0.scatter(data[:, 0], y, c='k', marker='X', s=100, zorder=9)
-    a0.legend([plots[0]], label)
+    a0.legend(plots[:1], label)
     a0.set_ylabel("f(x)")
     a0.set_xlabel("x")
     a0.set_xlim(0, 1)
