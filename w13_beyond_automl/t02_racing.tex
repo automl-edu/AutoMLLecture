@@ -160,7 +160,7 @@ Very related to overfitting in machine learning
 \pause
 \medskip
 
-More pronounced for more heterogeneous benchmark sets 
+More pronounced for heterogeneous benchmark sets 
 \begin{itemize}
 \item But it even happens for very homogeneous sets
 \item Indeed, one can even overfit on a single instance, to the \alert{seeds} used for training 
@@ -173,17 +173,17 @@ More pronounced for more heterogeneous benchmark sets
 \begin{frame}[fragile]{Overtuning Visualized}
 
 \begin{itemize}
-\item Example: minimizing SLS solver runlengths for a single SAT instance
-\item \alert{Training cost}, e.g., with N=100:\\average runlengths across 100 runs with different seeds
-\item \alert{Test cost} of $\hat{\conf}$ here based on 1000 new seeds 
+	\item Example: minimizing SLS solver runlengths for a single SAT instance
+	\item \alert{Training cost}, e.g., with N=100:\\average runlengths across 100 runs with different seeds
+	\item \alert{Test cost} of $\hat{\conf}$ here based on 1000 new seeds 
 \end{itemize}	
 
 \pause
 
 
 \begin{center}
-\only<2>{\includegraphics[scale=0.13]{images/basicils100_training.png}}
-\only<3>{\includegraphics[scale=0.13]{images/basicils100_training_and_test.png}}
+	\only<2>{\includegraphics[scale=0.13]{images/basicils100_training.png}}
+	\only<3>{\includegraphics[scale=0.13]{images/basicils100_training_and_test.png}}
 \end{center}
 
 
@@ -203,7 +203,7 @@ More pronounced for more heterogeneous benchmark sets
 
 \begin{multicols}{2}
 \begin{center}
-\includegraphics[scale=0.2]{images/basicils_unlabled.png}
+	\includegraphics[scale=0.2]{images/basicils_unlabled.png}
 \end{center}
 \columnbreak{}
 \pause
@@ -214,8 +214,8 @@ Which of these results corresponds to $N=1$, $N=10$, and $N=100$?\\
 \medskip
 
 \begin{enumerate}
-\item N=1: blue, N=10: red,\\ N=100 dashed black
-\item N=1: dashed black,\\ N=10: red, N=100 blue
+	\item N=1: blue, N=10: red,\\ N=100 dashed black
+	\item N=1: dashed black,\\ N=10: red, N=100 blue
 \end{enumerate}
 
 \pause
@@ -233,16 +233,17 @@ Correct Answer: 1
 %-----------------------------------------------------------------------
 \begin{frame}[c,fragile]{Aggressive Racing (inspired by FocusedILS) \lit{\href{https://ml.informatik.uni-freiburg.de/papers/09-JAIR-ParamILS.pdf}{Hutter et al. 2009}}}
 
-Intuition: get the best of both worlds
+{Intuition: get the best of both worlds}
+
 \begin{itemize}
-\item Perform more runs for good configurations
-\begin{itemize}
-\item[-] to avoid overtuning
-\end{itemize}
-\item Quickly reject poor configurations
-\begin{itemize}
-\item[-] to make progress more quickly
-\end{itemize}
+	\item Perform more runs for good configurations
+	\begin{itemize}
+		\item[-] to avoid overtuning
+	\end{itemize}
+	\item Quickly reject poor configurations
+	\begin{itemize}
+		\item[-] to make progress more quickly
+	\end{itemize}
 \end{itemize}
 
 \pause
@@ -332,7 +333,7 @@ $\conf'$		& \onslide<3->{2}			& \onslide<4->{10} 		& \\
 %-----------------------------------------------------------------------
 \begin{frame}[fragile]{Racing achieves the best of both worlds}
 
-Aggressive racing (aka FocusedILS): Fast progress and no overtuning
+{Aggressive racing (aka FocusedILS): Fast progress and no overtuning}
 
 \begin{center}
 Test performance\\

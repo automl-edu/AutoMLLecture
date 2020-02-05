@@ -1,0 +1,425 @@
+\pdfminorversion=4 % for acroread
+%\documentclass[t]{beamer}
+\documentclass[t,handout]{beamer}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+
+\usepackage{amsmath,amssymb}
+\usepackage{listings}
+\lstset{frame=lines,framesep=3pt,numbers=left,numberblanklines=false,basicstyle=\ttfamily\small}
+
+\usepackage{subfig}
+\usepackage{multicol}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{tikz}
+\usetikzlibrary{trees} 
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{positioning,shapes,shadows,arrows,calc,mindmap}
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+\tikzstyle{activity}=[rectangle, draw=white, rounded corners, text centered, text width=8em]
+\tikzstyle{data}=[rectangle, draw=white, text centered, text width=8em]
+\tikzstyle{myarrow}=[->, thick, draw=white]
+
+% Define the layers to draw the diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+
+\usepackage{listings}
+\lstset{numbers=left,
+  showstringspaces=false,
+  frame={tb},
+  captionpos=b,
+  lineskip=0pt,
+  basicstyle=\ttfamily,
+  extendedchars=true,
+  stepnumber=1,
+  numberstyle=\small,
+  xleftmargin=1em,
+  breaklines
+}
+
+ 
+
+\usetheme{Madrid}
+\useinnertheme{rectangles}
+\usecolortheme{whale}
+\setbeamercolor{alerted text}{fg=blue}
+\useoutertheme{infolines}
+\setbeamertemplate{navigation symbols}{\vspace{-5pt}} % to lower the logo
+\setbeamercovered{invisible}
+
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+
+\newcommand{\lit}[1]{{\footnotesize\color{black!70}[#1]}}
+\newcommand{\litw}[1]{{\footnotesize\color{black!20}[#1]}}
+
+\pgfdeclareimage[height=1.2cm]{coseallogo}{images/logos/coseal}
+\pgfdeclareimage[height=1.2cm]{mlaad}{images/logos/ml4aad.png}
+\pgfdeclareimage[height=1.2cm]{freiburg}{images/logos/freiburg}
+
+\logo{\pgfuseimage{freiburg}}
+
+\title[MLOAD]{Machine Learning and Optimization\\ for Algorithm Design}
+\subtitle{Python}
+\author{Marius Lindauer}
+\institute{University of Freiburg}
+\date{}
+%\date{LION 2015, Lille, France}
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+
+\begin{document}
+
+% ----------------------------------------------------------------------
+{
+\setbeamertemplate{footline}{} % remove footer on first slide
+	\frame[c]{
+	\titlepage
+	\begin{center}
+	\vspace{-1.5cm}
+	%\includegraphics[height=5em]{images/logos/freiburg}\quad\quad
+	%\includegraphics[height=5em]{logo/coseal}\quad
+	\includegraphics[height=5em]{images/logos/ml4aad.png}
+	\end{center}
+	}
+}
+\author{Lindauer}
+\institute{}
+%\logo{\pgfuseimage{mlaad}}
+\logo{}
+
+\begin{frame}{Why Python?}
+
+\begin{enumerate}
+  \item Python is easy!
+  \begin{itemize}
+   	\item to learn
+   	\item to read
+   	\item to write 
+  \end{itemize}
+  \pause
+  \medskip
+  \item Interfaces to other languages
+  \begin{itemize}
+    \item C
+    \item C\#
+    \item .NET
+    \item ObjectiveC
+  \end{itemize}
+  \pause
+  \medskip
+  \item Available Libraries
+  \begin{itemize}
+    \item sklearn
+    \item matplotlib
+    \item \ldots tons of more libraries (later more)
+  \end{itemize}
+  \pause
+  \medskip
+  \item Python is efficient! 
+  \item[$\to$] today, some tips and tricks for efficient Python code
+\end{enumerate}
+
+\end{frame}
+%----------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------
+\begin{frame}[c]{Warning}
+
+{\large
+\centering
+Some of the presented tipps depend on the used Python version.
+}
+
+\bigskip
+\pause
+Sources:
+\begin{itemize}
+  \item \url{https://wiki.python.org/moin/PythonSpeed/PerformanceTips}
+\end{itemize}
+
+\bigskip
+Runtimes measured with Python 3.4 and \texttt{timeit}
+on Intel Core i5-4690 CPU @ 3.50GHz
+
+\end{frame}
+%----------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------
+\begin{frame}[c,fragile]{String Concatenation}
+
+Avoid:
+\begin{verbatim}
+    list = range(100)
+    s = ""
+    for substring in list:
+        s += str(substring)
+\end{verbatim}
+
+$16.78$ sec 
+
+\medskip
+\pause
+Better:
+\begin{verbatim}
+    list = range(100)
+    s = "".join([str(x) for x in list])    
+\end{verbatim}
+
+$13.83$ sec
+
+\medskip
+\pause
+More general:
+\begin{verbatim}
+    slist = [some_function(el) for el in somelist]
+    s = "".join(slist)
+\end{verbatim}
+
+\end{frame}
+%----------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------
+\begin{frame}[c,fragile]{String Concatenation (cont'd)}
+
+Bad:
+\begin{verbatim}
+s = a + "-" + b + "/" + c
+\end{verbatim}
+
+\medskip
+\pause
+
+better:
+\begin{verbatim}
+s = "%s-%s/%s" %(a,b,c)
+\end{verbatim}
+
+\end{frame}
+%----------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------
+\begin{frame}[c,fragile]{Loops}
+
+Bad:
+\begin{verbatim}
+    list = []
+    for n in range(100):
+        list.append(str(n))
+\end{verbatim}
+
+$15.89$ sec
+
+\medskip
+\pause
+Use \texttt{map} (to use compiled C code)
+\begin{verbatim}
+    list = map(str, range(100))
+\end{verbatim}
+
+$0.31$ sec
+
+\medskip
+
+other useful built-ins for loops: \texttt{reduce} and \texttt{filter}
+
+\end{frame}
+%----------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------
+\begin{frame}[c,fragile]{Loops on dictionaries}
+
+Bad:
+\begin{verbatim}
+    list = []
+    for key, value in dict_.items():
+        pass
+\end{verbatim}
+
+\medskip
+\pause
+
+Better to use an iterator (as long as you don't modify the dictionary):
+\begin{verbatim}
+    list = []
+    for key, value in dict.iteritems():
+        pass
+\end{verbatim}
+
+\end{frame}
+%----------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------
+\begin{frame}[c,fragile]{range vs. xrange}
+
+Bad:
+\begin{verbatim}
+    for i in range(1,100000):
+        pass 
+\end{verbatim}
+
+$1.29$ sec \only<2->{(Python 2.7)}
+
+\medskip
+\pause
+
+Better:
+\begin{verbatim}
+    for i in xrange(1,100000):
+        pass 
+\end{verbatim}
+
+$0.78$ sec (Python 2.7)
+
+\medskip
+
+\texttt{range()} returns a whole list ($\to$ very memory consuming)\\
+\texttt{xrange()} returns an iterator (only one element at a time)
+
+\medskip
+
+Does not apply to Python 3.X -- \texttt{range()} and \texttt{item()} return iterators
+
+\end{frame}
+%----------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------
+\begin{frame}[c,fragile]{Generators}
+
+\begin{verbatim}
+    def get_numbers():
+        for x in xrange(1000000):
+            yield x
+    
+    sum_ = 0
+    for x in get_numbers():
+        sum_ += x
+\end{verbatim}
+
+Use generators to return one object at a time.
+ 
+
+\end{frame}
+%----------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------
+
+\begin{frame}[c,fragile]{Avoid dots}
+
+\begin{verbatim}
+list = []
+for word in oldlist:
+    list.append(str.upper(word))
+\end{verbatim}
+
+\texttt{list.append} and \texttt{str.upper} have to be reevaluated in each iteration
+
+\pause
+\medskip
+
+\begin{verbatim}
+list = []
+upper = str.upper
+append = list.append
+for word in oldlist:
+    append(upper(word))
+\end{verbatim}
+
+Use with caution since the code gets less maintainable.
+
+
+\end{frame}
+%----------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------
+\begin{frame}[c,fragile]{Local variables}
+
+\begin{verbatim}
+def func():
+    upper = str.upper
+    newlist = []
+    append = newlist.append
+    for word in oldlist:
+        append(upper(word))
+    return newlist
+\end{verbatim}
+
+The memory access to local variables is more efficient than to global variables.
+
+\smallskip
+However, function calls also cost time.
+
+\smallskip
+Remark: in most cases, using global variables is bad style. 
+
+\end{frame}
+% %----------------------------------------------------------------------------------
+% %----------------------------------------------------------------------------------
+\begin{frame}[c,fragile]{Packages}
+
+\begin{itemize}
+  \item \texttt{multiprocessing}: package to parallelize your loops (i.e., parallel map)
+  \item \texttt{argparse}: command line parser
+  \item \texttt{logging}: for a uniform output
+  \item \texttt{subprocess.Popen}: to run other processes
+  \item \texttt{numpy}: matrices and linear algebra
+  \item \texttt{scipy}: optimization, integration, special functions, signal and image processing, and more
+  \item \texttt{sklearn}: as machine learning package for python
+  \item \texttt{matplotlib}: plots
+\end{itemize}
+
+\pause
+
+\medskip
+
+more at \url{https://wiki.python.org/moin/UsefulModules}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------
+\begin{frame}[c,fragile]{Style}
+
+General Remarks:
+
+\begin{itemize}
+  \item format your code according to PEP8\\ \url{https://www.python.org/dev/peps/pep-0008/}
+  \item write readable code (\texttt{x}, \texttt{xx} and \texttt{xxx} are not good variable names)
+  \item use docstrings to document your code\\ \url{https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt}
+  \item Use type checking only if it is really necessary (inefficient!)
+  \item Use unit-tests to test your code
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------------------
+% %----------------------------------------------------------------------------------
+% \begin{frame}[c,fragile]{t}
+% 
+% \end{frame}
+% %----------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------
+
+\end{document}

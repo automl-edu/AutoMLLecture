@@ -4,7 +4,7 @@
 
 
 \title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
-\subtitle{Learning to Control}
+\subtitle{Dynamic Configuration}
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
 \institute{}
 \date{}
@@ -27,7 +27,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Dynamic Heuristics}
+\begin{frame}[c]{Iterative Optimization Heuristics}
 	
 	\begin{itemize}
 		\item Many iterative heuristics in algorithms are dynamic and adaptive
@@ -88,7 +88,7 @@
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Algorithm Control~\lit{Biedenkapp et al. 2019}}
+\begin{frame}[c]{Dynamic Algorithm Configuration}
 
 \begin{itemize}
 	\item So far, we assumed that an algorithm runs with static settings
@@ -118,7 +118,7 @@
 %-----------------------------------------------------------------------	
 
 %----------------------------------------------------------------------
-\begin{frame}[c]{Algorithm Control as Contextual MDP \lit{Biedenkapp et al. 2019}}
+\begin{frame}[c]{Dynamic Algorithm Configuration as Contextual MDP \lit{Biedenkapp et al. 2019}}
 
 
 \begin{description}
@@ -142,7 +142,7 @@
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Solving Algorithm Control}
+\begin{frame}[c]{Solving Dynamic Algorithm Configuration}
 
 Solve unknown MDP by using reinforcement learning (RL):
 
@@ -163,13 +163,13 @@ Solve unknown MDP by using reinforcement learning (RL):
 
 \bigskip
 \pause
-$\leadsto$ equivalent to algorithm control definition
+$\leadsto$ equivalent to Dynamic Algorithm Configuration definition
 
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Algorithm Control across Datasets \lit{Biedenkapp et al. 2019}}
+\begin{frame}[c]{Dynamic Algorithm Configuration across Datasets \lit{Biedenkapp et al. 2019}}
 	
 \begin{itemize}
 	\item Challenge: Evaluating a policies on all datasets is often not feasible
@@ -185,7 +185,7 @@ $\leadsto$ equivalent to algorithm control definition
 \pause
 \begin{equation} 
 \label{spl_loss}
-\max_{\weights,\vec{v}}\mathcal{R}(\weights, \vec{v}, K) = \sum^{|\mdata|}_{i=1} \vec{v}_i\mathcal{R}_i(\weights) - \frac{1}{K} \sum^{|\mdata|}_{i=1} \vec{v}_i \nonumber
+\max_{\policy,\vec{v}}\mathcal{R}(\policy, \vec{v}, K) = \sum^{|\mdata|}_{i=1} \vec{v}_i\mathcal{R}_i(\policy) - \frac{1}{K} \sum^{|\mdata|}_{i=1} \vec{v}_i \nonumber
 \end{equation}
 
 with $\weights$ being the agent's policy parameters and $\vec{v}$ being a masking vector.
@@ -197,7 +197,7 @@ Iterative greedy optimization of $\vec{v}$:
 \begin{equation}
 \vec{v}_i = \left\{
 \begin{array}{ll}
-1, &  \mathrm{if}\quad\mathcal{R}(\weights, \vec{v}_{i}:=0, K) < \mathcal{R}(\weights, \vec{v}_{i}:=1, K)\\
+1, &  \mathrm{if}\quad\mathcal{R}(\policy, \vec{v}_{i}:=0, K) < \mathcal{R}(\policy, \vec{v}_{i}:=1, K)\\
 0, & \mathrm{otherwise}
 \end{array}
 \right.\nonumber

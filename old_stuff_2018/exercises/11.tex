@@ -1,0 +1,106 @@
+\documentclass{exam}
+\usepackage{amsmath, amsfonts}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[super]{nth}
+
+\DeclareMathOperator*{\argmin}{argmin}
+
+\usepackage[hyperfootnotes=false]{hyperref}
+
+\usepackage[usenames,dvipsnames]{color}
+\newcommand{\note}[1]{
+	\noindent~\\
+	\vspace{0.25cm}
+	\fcolorbox{Red}{Orange}{\parbox{0.99\textwidth}{#1\\}}
+	%{\parbox{0.99\textwidth}{#1\\}}
+	\vspace{0.25cm}
+}
+
+
+\input{macros}
+%\renewcommand{\hide}[1]{#1}
+
+\qformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+\bonusqformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+
+\pagestyle{headandfoot}
+
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+\newcommand{\duedate}{20.01.19 (14:00)}
+\newcommand{\due}{{\bf This assignment is due on \duedate.} }
+\firstpageheader
+{Due: \duedate \\ Points: 29}
+{{\bf\lecture}\\ \assignment{11}}
+{\lectors\\ \semester}
+
+\runningheader
+{Due: \duedate}
+{\assignment{11}}
+{\semester}
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+
+\firstpagefooter
+{}
+{\thepage}
+{}
+
+\runningfooter
+{}
+{\thepage}
+{}
+
+\headrule
+\pointsinrightmargin
+\bracketedpoints
+\marginpointname{pt.}
+
+
+\begin{document}
+	\gccs
+	\noindent This exercise sheet requires three additional packages to be installed:
+	\begin{itemize}
+		\item \texttt{tensorflow}\footnote{\url{https://www.tensorflow.org/install/pip}}\hspace*{2cm}(requires python $3.4$, $3.5$ or $3.6$)
+		\item \texttt{ray[rllib]}\footnote{\url{https://ray.readthedocs.io/en/latest/rllib.html}}
+		\item \texttt{sympy}\footnote{\url{https://docs.sympy.org/latest/install.html\#run-sympy}}\hspace*{3cm}(requires python $3.4$, $3.5$ or $3.6$)
+	\end{itemize}
+	They are all installable via pip.\\
+	\begin{questions}
+		\titledquestion{Algorithm Control State Description}[28]
+		Your task for this exercise sheet is to implement 4 different states descriptions that capture the internals of gradient descent.
+		We provide you with a fully working RL environment and training loop (using rays RLLib) to control the learning rate of gradient descent for minimization of 1D and 2D functions.
+		The environment comes with a very simple state description (see line 72 of \texttt{env.py}) that consists of differences in function value and input value(s).
+		
+		When calling \texttt{python env.py -m PPO -s zero} you will run 50 training iterations of a PPO agent on the provided state description. If you additionally use the flag \texttt{-a 100},
+		the environment will automatically create gifs of the agents behavior every 100 rollouts. In the same folder you called the script you will find an output folder that contains files that
+		show the progress of training and all created gifs. Additionally in the call directory a gif with the same name as the associated output folder is created that shows the latest giffed progress.
+		
+		There is fairly little coding involved in this exercise sheet. You only have to add your state descriptions below line 72 and adjust the dimensionality of the observation space in lines 173 to 175.
+		\newpage\noindent
+		For each state description you should
+		\begin{parts} 
+			\part[$4\times1$] code it,
+			\part[$4\times2$] describe what information it contains as succinctly as possible,
+			\part[$4\times2$] explain why you think it is a good state description for gradient descent,
+			\part[$4\times1$] train a PPO agent for either the 1D case or the 2D case,
+			\part[$4\times1$] evaluate the final policy on the training set\footnote{Note that we only have one snapshot of the final training performance in one gif.}.
+							  Report if the final policy seems reasonable to you when looking through the generated gifs. State if the policy behaves
+							  as expected. (Clearly state which results you are describing by stating the result folder name).
+		\end{parts}
+	
+		Upload all your result folders as well as the PDF to the repository.
+		\titledquestion{Algorithm Control vs. Learning to ...}[1]
+		In your own words, describe what the difference is between learning to ... and algorithm control. Give example use cases.
+		
+		\titledquestion{Feedback}[Bonus: 1]
+		For each question in this assignment, state:
+		\begin{itemize}
+			\item How long you worked on it.
+			\item What you learned.
+			\item Anything you would improve in this question if you were teaching the course.
+		\end{itemize}
+	\end{questions}
+
+\noindent
+\due Submit your solution for the tasks by uploading a PDF to your groups BitBucket repository. The PDF has to include the name of the submitter(s). Teams of at most $2$ students are allowed.
+\end{document}

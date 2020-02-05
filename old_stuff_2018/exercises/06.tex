@@ -1,0 +1,85 @@
+\documentclass{exam}
+\usepackage{amsmath, amsfonts}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage[super]{nth}
+
+\DeclareMathOperator*{\argmin}{argmin}
+
+\usepackage[hyperfootnotes=false]{hyperref}
+
+\usepackage[usenames,dvipsnames]{color}
+\newcommand{\note}[1]{
+	\noindent~\\
+	\vspace{0.25cm}
+	\fcolorbox{Red}{Orange}{\parbox{0.99\textwidth}{#1\\}}
+	%{\parbox{0.99\textwidth}{#1\\}}
+	\vspace{0.25cm}
+}
+
+
+\input{macros}
+%\renewcommand{\hide}[1]{#1}
+
+\qformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+\bonusqformat{\thequestion. \textbf{\thequestiontitle}\hfill[\thepoints]}
+
+\pagestyle{headandfoot}
+
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+\newcommand{\duedate}{25.11.18 (14:00)}
+\newcommand{\due}{{\bf This assignment is due on \duedate.} }
+\firstpageheader
+{Due: \duedate \\ Points: 11}
+{{\bf\lecture}\\ \assignment{6}}
+{\lectors\\ \semester}
+
+\runningheader
+{Due: \duedate}
+{\assignment{6}}
+{\semester}
+%%%%%% MODIFY FOR EACH SHEET!!!! %%%%%%
+
+\firstpagefooter
+{}
+{\thepage}
+{}
+
+\runningfooter
+{}
+{\thepage}
+{}
+
+\headrule
+\pointsinrightmargin
+\bracketedpoints
+\marginpointname{pt.}
+
+
+\begin{document}
+	\gccs
+	Now that you've learned about hyperparameter optimization techniques such as Bayesian optimization you are tasked to implement this loop yourself.
+	\begin{questions}
+		\titledquestion{Bayesian Optimization for HPO}[11]
+		We provide you with a very basic example of how to implement the BO loop, an acquisition function and how to optimize the acquisition function to select the next query point.
+		\begin{parts} 
+		\part[6] Implement two acquisition functions as presented in the lecture. (Make use of \texttt{sci-py} as much as possible).\\
+		You will have to be careful when implementing the acquisition function as the given optimizer in the example searches for the smallest acquisition value and not the largest.
+		\part[2] Generate plots that demonstrate the functionality of the BO loop and of the implemented acquisition functions. (e.g. Best-so-far queried function value over time, the acquisition functions at different time steps) Make sure to add all plots to the PDF and briefly discuss what you can learn from these plots.
+		\part[1] Implement Grid Search.
+		\part[1] Implement Random Search.
+		\part[1] Compare BO (using one of your implemented acquisition functions) against Random Search and Grid Search for at most 100 function evaluations.
+	\end{parts}
+		
+		\titledquestion{Feedback}[Bonus: 1]
+		For each question in this assignment, state:
+		\begin{itemize}
+			\item How long you worked on it.
+			\item What you learned.
+			\item Anything you would improve in this question if you were teaching the course.
+		\end{itemize}
+	\end{questions}
+	
+	\noindent
+	\due Submit your solution for the tasks by uploading a PDF to your groups BitBucket repository. The PDF has to include the name of the submitter(s). Teams of at most $2$ students are allowed.
+\end{document}

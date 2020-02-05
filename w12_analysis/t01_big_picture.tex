@@ -1,10 +1,11 @@
+% !TeX spellcheck = en_US
 
 \input{../latex_main/main.tex}
 
 
 
 \title[AutoML: Overview]{AutoML: Automated Machine Learning}
-\subtitle{Overview for this Week}
+\subtitle{Overview: Automated Empirical Analysis}
 %TODO: change authors!
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
 \institute{}
@@ -28,11 +29,111 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{TODO}
+\begin{frame}[c]{Idea}
 
-TODO
+
+\begin{itemize}
+	\item Big challenge of ML: Interpretability
+	\begin{itemize}
+		\item In some applications, it is required to "understand" a prediction 
+		\item Users have less trust in systems, they can't understand
+	\end{itemize}
+
+	\bigskip
+	\pause
+	\item AutoML is even worse?
+	\begin{itemize}
+		\item AutoML  is a black-box that automates the design  of another blackbox (ML)
+		\item Also ML-developers to have an understanding of the design of their ML pipelines
+	\end{itemize}
+
+	\bigskip
+	\item Automated empirical analysis helps to
+	\begin{itemize}
+		\item understand the finally returned ML system
+		\item understand the AutoML process
+	\end{itemize}
+
+\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
 
+%----------------------------------------------------------------------
+\begin{frame}[c]{Approach}
+
+
+\begin{itemize}
+	\item \alert{Insights:}
+	\begin{itemize}
+		\item AutoML is yet another optimization problem
+		\item (Most) AutoML approach are iterative in nature 
+    \end{itemize}
+	\item[$\leadsto$] AutoML generates a lot of empirical data 
+\end{itemize}
+
+\begin{center}
+\scalebox{0.9}{
+	\input{tikz/automl_analysis_overview.tex}
+}
+\end{center}
+
+$\leadsto$ Let's use this data to learn something about our problem
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Basic Examples}
+
+\begin{itemize}
+	\item Visualize final $\conf^*$
+	\begin{itemize}
+		\item ML pipeline with its components
+		\item Neural architecture
+	\end{itemize}
+	\medskip
+	\pause
+	\item Compare what changed between $\defconf$ and $\incumbent$
+	\medskip
+	\pause		
+	\item Show $\conf^*$ on different budgets (if you used a multi-fideltiy approach)
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Cost Over Time}
+
+\begin{columns}
+
+\column{0.4\textwidth}
+\begin{center}
+	\includegraphics[width=1.0\textwidth]{images/bokeh_plot.png}\\
+	Source: \lit{\href{https://arxiv.org/abs/1908.06756}{Lindauer et al. 2019}}
+\end{center}
+
+\column{0.6\textwidth}
+
+\begin{itemize}
+	\item Study how your AutoML tool improves\\ cost (or loss) over time
+	\pause
+	\item Allows to identify whether 
+	\begin{itemize}
+		\item you need less time next time or 
+		\pause
+		\item the AutoML system is still improving; so you should give him more time
+	\end{itemize}
+	\pause
+	\item \alert{Notes}: 
+	\begin{itemize}
+		\item Plot on log-scale to see details in the beginning
+		\item  If you done several runs, plot distribution\\ (e.g., median and $25/75\%$-quartiles)
+	\end{itemize}
+\end{itemize}
+	
+\end{columns}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
 \end{document}

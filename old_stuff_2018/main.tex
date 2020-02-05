@@ -1,0 +1,144 @@
+\pdfminorversion=4 % for acroread
+\documentclass[t,xcolor={usenames,dvipsnames}]{beamer}
+%\documentclass[t,handout,xcolor={usenames,dvipsnames}]{beamer}
+\usepackage{beamerstyle}
+\usepackage{dsfont}
+\usepackage{bm}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[boxed,vlined]{algorithm2e}
+\usepackage{hyperref}
+\usepackage{booktabs}
+
+\usepackage{amsmath,amssymb}
+\usepackage{listings}
+\lstset{frame=lines,framesep=3pt,numbers=left,numberblanklines=false,basicstyle=\ttfamily\small}
+
+\usepackage{subfig}
+\usepackage{multicol}
+%\usepackage{appendixnumberbeamer}
+%
+\newcommand{\votepurple}[1]{\textcolor{Purple}{$\bigstar$}}
+\newcommand{\voteyellow}[1]{\textcolor{Goldenrod}{$\bigstar$}}
+\newcommand{\voteblue}[1]{\textcolor{RoyalBlue}{$\bigstar$}}
+\newcommand{\votepink}[1]{\textcolor{Pink}{$\bigstar$}}
+
+\newcommand{\refstyle}[1]{{\small{\textcolor{gray}{#1}}}}
+\newcommand{\hands}[0]{\includegraphics[height=1.5em]{images/hands}}
+
+\newcommand\transpose{{\textrm{\tiny{\sf{T}}}}}
+
+\usepackage{tikz}
+\usetikzlibrary{trees} 
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{positioning,shapes,shadows,arrows,calc,mindmap}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{intersections}
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+\tikzstyle{activity}=[rectangle, draw=black, rounded corners, text centered, text width=8em]
+\tikzstyle{data}=[rectangle, draw=black, text centered, text width=8em]
+\tikzstyle{myarrow}=[->, thick, draw=black]
+
+% Define the layers to draw the diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+\newcommand{\myit}[1]{\begin{itemize}#1\end{itemize}}
+\newcommand{\cplex}[0]{CPLEX}
+\newcommand{\lpsolve}[0]{lpsolve}
+\newcommand{\gurobi}[0]{Gurobi}
+
+
+%\usepackage{listings}
+%\lstset{numbers=left,
+%  showstringspaces=false,
+%  frame={tb},
+%  captionpos=b,
+%  lineskip=0pt,
+%  basicstyle=\ttfamily,
+%%  extendedchars=true,
+%  stepnumber=1,
+%  numberstyle=\small,
+%  xleftmargin=1em,
+%  breaklines
+%}
+
+ 
+
+\usetheme{Madrid}
+%\useinnertheme{rectangles}
+\usecolortheme{whale}
+\setbeamercolor{alerted text}{fg=blue}
+\useoutertheme{infolines}
+\setbeamertemplate{navigation symbols}{\vspace{-5pt}} % to lower the logo
+\setbeamercovered{invisible}
+
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+
+\newcommand{\lit}[1]{{\footnotesize\color{black!70}[#1]}}
+\newcommand{\litw}[1]{{\footnotesize\color{black!20}[#1]}}
+
+\pgfdeclareimage[height=1.2cm]{coseallogo}{images/logos/coseal}
+\pgfdeclareimage[height=1.2cm]{mlaad}{images/logos/ml4aad.png}
+\pgfdeclareimage[height=1.2cm]{freiburg}{images/logos/freiburg}
+
+\logo{\pgfuseimage{freiburg}}
+
+\title[ML4AAD]{Machine Learning for Automated Algorithm Design}
+\subtitle{(ML4AAD)}
+\author{M. Lindauer \and A. Biedenkapp}
+\institute{University of Freiburg\\[5em]
+\includegraphics[width=10em]{images/ml4aad}}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\input{macros}
+\usepackage{mathtools}
+
+\begin{document}
+
+\maketitle
+
+\newcommand{\mypause}[0]{\pause}
+\renewcommand{\mypause}[0]{}
+
+%\input{lecture1-introduction}
+%\input{lecture2-portfolios}
+%\input{lecture4-design_decisions}
+%\input{lecture5-evaluation}
+%\input{lecture6-bo+hpo}
+%\input{lecture7-automl-nas}
+\input{lecture12-control}
+
+
+\end{document}
