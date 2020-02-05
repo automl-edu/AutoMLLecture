@@ -20,6 +20,8 @@ gp.fit(data, y)
 plt.scatter(data[:, 0], y, c='k', marker='X', s=100, zorder=9)
 plt.xlim(0, 1)
 plt.ylim(-6, 6)
+plt.xlabel("x")
+plt.ylabel("f(x)")
 plt.savefig("plot_datapoints.pdf", format='pdf')
 plt.show()
 
@@ -36,6 +38,5 @@ for i, num_sample in enumerate(samples):
 
 # Plot GP posterior
 plot_posterior_and_density(data=data, y=y, X_=X_, y_mean=y_mean, y_cov=y_cov, gp=gp, rnd_state=seed)
-
 
 
