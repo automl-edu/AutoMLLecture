@@ -33,16 +33,15 @@
 
 \begin{center}
 \scalebox{0.9}{
+	\let\oldpause=\pause \def\pause{} 
 	\input{tikz/automl_analysis_overview.tex}
+	\let\pause=\oldpause
 }
 \end{center}
-
-\onslide<4->{
 
 \begin{itemize}
 	\item[$\leadsto$] focus on how the AutoML optimizer samples from the design space $\pcs$ 
 \end{itemize}
-}
 
 \end{frame}
 %-----------------------------------------------------------------------

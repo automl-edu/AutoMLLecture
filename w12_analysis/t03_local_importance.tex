@@ -33,16 +33,15 @@
 
 \begin{center}
 \scalebox{0.9}{
+    \let\oldpause=\pause \def\pause{} 
 	\input{tikz/automl_analysis_overview.tex}
+	\let\pause=\oldpause
 }
 \end{center}
-
-\onslide<4->{
 
 \begin{itemize}
 	\item[$\leadsto$] focus on why is the eventually returned configuration a good choice
 \end{itemize}
-}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -66,10 +65,12 @@
 			\item How would the performance change\\
 			if we change hyperparameter $\conf_i$?
 		\end{itemize}
+        \pause 
 		\item Problem: Running full study is often too expensive
 		\begin{itemize}
 			\item Each run of an ML-system is potential expensive
 		\end{itemize}
+		\pause
 		\item \alert{Key Ideas:}
 		\begin{itemize}
 			\item Re-use probabilistic models as trained in BO
@@ -109,6 +110,7 @@ LPI( i  \mid \conf ) &=& \frac{VAR(i) }{ \sum_{j}  VAR(j)}
 		\item As given in the documentation 
 		\item Or as always used in the last time
 	\end{enumerate}
+    \pause
 	\item \alert{Key Idea}: Going from the default to the automatically optimized configuration,\\
 	 which choices where important?
 \end{itemize}
@@ -118,15 +120,16 @@ LPI( i  \mid \conf ) &=& \frac{VAR(i) }{ \sum_{j}  VAR(j)}
 \conf_{\text{end}} &=& [0.98, 2.42, 1, 42]  \nonumber
 \end{eqnarray}
 
+\pause
 \begin{itemize}
-	\item Cheap approach: Assess $\conf_2$ with each hyperparameter value from $\conf_1$
+	\item Cheap approach: Assess $\conf_{\text{end}}$ with each hyperparameter value from $\conf_{\text{start}}$
 	\pause
-	\item Expensive approach: Try all mixtures of $\conf_1$ and $\conf_2$
+	\item Expensive approach: Try all mixtures of $\conf_{\text{end}}$ and $\conf_{\text{start}}$
 	\begin{itemize}
 		\item  Only feasible for small spaces and fairly cheap ML systems
 	\end{itemize}
 	\pause
-	\item Trade-off: Find a way from $\conf_1$ to $\conf_2$ in a greedy fashion \lit{\href{https://link.springer.com/article/10.1007\%2Fs10732-014-9275-9}{Fawcett and Hoos 2016}}
+	\item Trade-off: Find a way from $\conf_{\text{start}}$ to $\conf_{\text{end}}$ in a greedy fashion \lit{\href{https://link.springer.com/article/10.1007\%2Fs10732-014-9275-9}{Fawcett and Hoos 2016}}
 \end{itemize}
 
 \end{frame}
@@ -244,11 +247,14 @@ Ablation Path:
 	\BlankLine
 	$\conf \leftarrow  \conf_{\text{start}}$; \\
 	$P \leftarrow [] $ ;\\ 
+	\pause
 	\ForEach{$i \in \{1 \ldots |\pcs|\}$}{
+		\pause
 		\ForEach{$\delta \in \Delta(\conf, \conf_{\text{end}})$}{
 			$\conf'_\delta$ $\leftarrow$ apply $\delta$ to $\conf$;\\
 			evaluate $\loss(\conf'_\delta)$;
 		}
+	  \pause
 		Determine most important change $\delta^* \in \argmin_{\delta \in \Delta(\conf, \conf_t)} \loss(\conf_\delta)$;\\
 		$\conf$ $\leftarrow$ apply $\delta^*$ to $\conf$;\\
 		P.append($\delta^*$);

@@ -1,0 +1,201 @@
+% !TeX spellcheck = en_US
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Overview]{AutoML: Automated Machine Learning}
+\subtitle{Global Hyperparameter Importance}
+%TODO: change authors!
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Idea}
+
+\begin{center}
+\scalebox{0.9}{
+	 \let\oldpause=\pause \def\pause{} 
+	\input{tikz/automl_analysis_overview.tex}
+	\let\pause=\oldpause
+}
+\end{center}
+
+
+\begin{itemize}
+	\item[$\leadsto$] focus on which hyperparameters are important across the entire search space
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Importance Analysis of Surrogate Model}
+
+\begin{itemize}
+	\item \alert{Key Idea}: Surrogate models ($\pcs \to \perf$) learn from observations how to predict the performance of a \alert{hyperparameter configuration} $\conf \in \pcs$
+	\pause
+	\item[$\leadsto$] These models can be used to figure out which hyperparameter was important
+	\medskip
+	\pause
+	\item For example:
+	\begin{itemize}
+		\item Use forward selection~\lit{\href{https://ml.informatik.uni-freiburg.de/papers/13-LION-FeatureAndParameterImportance.pdf}{Hutter et al. 2013}}
+        \item Use automatic feature relevance determination of the model\\
+         (e.g., of a surrogate model based on random forest)
+	\end{itemize}
+	\medskip
+	\pause
+	\item Advantages:
+	\begin{itemize}
+		\item Very cheap to do, since we only have to query the surrogate model several times
+	\end{itemize}
+	\smallskip
+	\pause
+	\item Potential drawback:
+	\begin{itemize}
+		\item The surrogate model might overfit to different subsets of the hyperparameters\\
+		(if we don't provide sufficient data)
+	\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Global Importance Analysis}
+
+\begin{itemize}
+	\item \alert{Key idea}: What is the importance of a hyperparameter\\
+	 by marginalizing over all other hyperparameter effects?
+	 \pause
+	\item \alert{Key Insight}: We can use a surrogate model to compute these effects
+\end{itemize}
+
+
+\pause
+\begin{block}{\fanova{}~\lit{Sobobl 1993}}
+	Write performance predictions as a sum of components:
+	\begin{eqnarray}
+	\hat{y}(\conf_1,\ldots,\conf_n) =& \hat{f}_0 + \sum_{i=1}^{n} \hat{f}_i(\conf_i) + \sum_{i \neq j} \hat{f}_{ij}(\conf_i,\conf_j) + \ldots \nonumber \\
+	\hat{y}(\conf_1,\ldots,\conf_n) =& \text{average response} + \text{main effects} +\nonumber\\ &\text{2-D interaction effects} + \text{higher order effects} \nonumber
+	\end{eqnarray}
+\end{block}
+
+\pause
+
+\begin{block}{Variance Decomposition}
+	\begin{equation}
+	\mathrm{V} = \frac{1}{||\confs||} \int_{\conf_1} \ldots \int_{\conf_n} [(\hat{y}(\conf)- \hat{f}_0)^2] d\conf_1 \ldots d\conf_n\nonumber
+	\end{equation}
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{fANOVA Analysis}
+
+\begin{itemize}
+	\item The fANOVA and variance decomposition can be done efficiently in linear time\\
+	 if the surrogate model is a random forest~\lit{\href{https://ml.informatik.uni-freiburg.de/papers/14-ICML-HyperparameterAssessment.pdf}{Hutter et al. 2014}}
+	\pause
+\end{itemize}
+
+\begin{columns}
+	
+	\column{0.5\textwidth}
+	\begin{center}
+	\includegraphics[width=0.8\textwidth]{images/learning_rate_fanova.png}\\
+	Source: \lit{\href{https://arxiv.org/abs/1908.06756}{Lindauer et al. 2019}}
+	%TODO: Is this effectively the same as a marginal dependency plot?
+	\end{center}
+	
+	\column{0.5\textwidth}
+	
+	\begin{itemize}
+		\item predicted cost is marginalized over all other hyperparameter effects
+		\item \alert{Warning}: The optimum on these curves does not have to be the global optimum across all hyperparameters
+	\end{itemize}
+\end{columns}
+
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{fANOVA Analysis}
+
+\begin{itemize}
+	\item 	How much of the variance can be explained by a hyperparameter\\
+	 (or combinations of hyperparamaters) marginalized over all other parameters?
+\end{itemize}
+
+\begin{table}
+	\caption{Exemplary analysis of PPO on cartpole}
+	\begin{tabular}{lc}
+		\toprule
+		Hyperparameter & Explained Variance \\
+		\midrule
+		Discount rate & 19.3 \%\\
+		Batch size & 15.7 \% \\
+		Learning rate & 3.7 \% \\
+		Likelihood ration clipping & 3.4\% \\
+		... \\
+		\midrule
+		\pause
+		discount rate \& batch size & 10.4\% \\
+		discount rate \& likelihood ration clipping & 4.4\% \\
+		... \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+	
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Remarks on fANOVA}
+
+\begin{itemize}
+	\item Given compute higher-order interaction effects
+	\begin{itemize}
+		\item Often too expensive for more than 2 or 3 dimensions
+	\end{itemize}
+	\medskip
+	\pause
+	\item Implicit assumption: the surrogate model models the space fairly well
+	\medskip
+	\pause
+	\item Global analysis and local analysis of hyperparameter importance does not always agree \lit{\href{https://www.tnt.uni-hannover.de/papers/data/1410/18-LION12-CAVE.pdf}{Biedenkapp et al. 2018}}
+	\smallskip
+	\pause
+	\item[$\leadsto$] You should run both to get a good understanding of\\
+	 why an AutoML tool chose  a configuration
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------
+\end{document}
