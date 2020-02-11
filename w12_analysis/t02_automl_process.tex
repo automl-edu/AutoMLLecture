@@ -5,7 +5,7 @@
 
 
 \title[AutoML: Overview]{AutoML: Automated Machine Learning}
-\subtitle{Anaylsing the AutoML Optimization Process}
+\subtitle{Studying the AutoML Optimization Process}
 %TODO: change authors!
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
 \institute{}
@@ -29,7 +29,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Idea}
+\begin{frame}[c,fragile]{Idea}
 
 \begin{center}
 \scalebox{0.9}{
@@ -37,13 +37,15 @@
 }
 \end{center}
 
+\onslide<4->{
+
 \begin{itemize}
 	\item[$\leadsto$] focus on how the AutoML optimizer samples from the design space $\pcs$ 
 \end{itemize}
+}
 
 \end{frame}
 %-----------------------------------------------------------------------
-
 %----------------------------------------------------------------------
 \begin{frame}[c]{Parallel Coordinate Plot \lit{\href{https://research.google/pubs/pub46180/}{Golovin et al 2017}}}
 
@@ -55,13 +57,107 @@
 
 \begin{itemize}
 	\item Each coordinate is one hyperparameter; 
-	\item except the most left one: cost / loss
+	\item Except the most left one: cost or loss
 \end{itemize}
 
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Analyzing the Sampling Behavior}
 
+
+\begin{columns}
+	
+	\column{0.4\textwidth}
+	\begin{center}
+		% Created by Katha as part of the BOBO Paper
+		\includegraphics[width=1.0\textwidth]{images/gpmcmc_branin_def_vs_inc.png}\\
+		Source: \lit{\href{https://arxiv.org/pdf/1908.06674.pdf}{Lindauer et al. 2019}}
+	\end{center}
+	
+	\column{0.6\textwidth}
+	
+	\begin{itemize}
+		\item Plotting a 1D or 2D function
+		\item Background shows the ground truth (real function values)
+		\item Dots are sampled points in the search space\\
+		
+		\item Typical approach in Bayesian Optimization community
+	\end{itemize}
+	
+\end{columns}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Analyzing the Sampling Behavior in $N$-D}
+
+
+\begin{columns}
+	
+	\column{0.4\textwidth}
+	\begin{center}
+		% TODO: get a better example and show it over time
+		\includegraphics[width=1.0\textwidth]{images/configurator_footprint0.png}\\
+		Source: \lit{\href{https://arxiv.org/abs/1908.06756}{Lindauer et al. 2019}}
+	\end{center}
+	
+	\column{0.6\textwidth}
+	
+	\begin{itemize}
+		\item Same idea as before\\
+		 but we have to project $N$-D into $2$-D
+		\begin{enumerate}
+			\item Use an MDS to project down to $2$-D
+			\item Each dot is single hyperparameter configuration
+			\item Red squares are intermediate incumbents
+			\item The background is colored wrt a performance-estimate (e.g., reusing model fitted during BO) 
+			\item Extension: Animation by showing\\ how points get added over time
+		\end{enumerate}
+	\end{itemize}
+	
+\end{columns}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Multi-Fidelity Checks}
+
+\begin{columns}
+	
+	\column{0.4\textwidth}
+	\begin{center}
+		% TODO: get a better example and show it over time
+		\includegraphics[width=1.0\textwidth]{images/budget_scatter.png}\\
+		Source: \lit{\href{https://arxiv.org/abs/1908.06756}{Lindauer et al. 2019}}
+	\end{center}
+	
+	\column{0.6\textwidth}
+	
+	\begin{itemize}
+		\item Challenge of multi-fidelity approaches:
+		\begin{itemize}
+			\item How to choose the fidelities (a.k.a. budgets)
+		\end{itemize}
+		\item Important Property:
+		\begin{itemize}
+			\item Decisions on small budgets should be\\
+			 reasonable for higher budgets
+		\end{itemize}
+		\item Analysis:
+		\begin{enumerate}
+			\item Scatter plot of performance on\\
+			 Budget X vs. Budget Y
+			\item Each dot is sampled hyperparameter configuration
+			\item Compute rank correlation (here: 0.69)
+		\end{enumerate}
+	\end{itemize}
+	
+\end{columns}
 
 
 \end{frame}
 %-----------------------------------------------------------------------
+
 %-----------------------------------------------------------------------
 \end{document}
