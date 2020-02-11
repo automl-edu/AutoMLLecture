@@ -1,0 +1,288 @@
+% !TeX spellcheck = en_US
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Overview]{AutoML: Automated Machine Learning}
+\subtitle{Incumbent Analysis and Local Hyperparameter Importance}
+%TODO: change authors!
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Idea}
+
+\begin{center}
+\scalebox{0.9}{
+	\input{tikz/automl_analysis_overview.tex}
+}
+\end{center}
+
+\onslide<4->{
+
+\begin{itemize}
+	\item[$\leadsto$] focus on why is the eventually returned configuration a good choice
+\end{itemize}
+}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Local Importance \lit{\href{https://www.tnt.uni-hannover.de/papers/data/1410/18-LION12-CAVE.pdf}{Biedenkapp et al. 2018}}}
+
+\begin{columns}
+	
+	\column{0.4\textwidth}
+	\begin{center}
+		% Created by Katha as part of the BOBO Paper
+		\includegraphics[width=1.0\textwidth]{images/learning_rate_lpi.png}\\
+		Source: \lit{\href{https://arxiv.org/pdf/1908.06674.pdf}{Lindauer et al. 2019}}
+	\end{center}
+	
+	\column{0.6\textwidth}
+	
+	\begin{itemize}
+		\item Typical question of users:
+		\begin{itemize}
+			\item How would the performance change\\
+			if we change hyperparameter $\conf_i$?
+		\end{itemize}
+		\item Problem: Running full study is often too expensive
+		\begin{itemize}
+			\item Each run of an ML-system is potential expensive
+		\end{itemize}
+		\item \alert{Key Ideas:}
+		\begin{itemize}
+			\item Re-use probabilistic models as trained in BO
+			\item Plot performance change around $\incumbent$\\
+			 along each dimension
+		\end{itemize} 
+	\end{itemize}
+	
+\end{columns}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Quantifying Local Importance \lit{\href{https://www.tnt.uni-hannover.de/papers/data/1410/18-LION12-CAVE.pdf}{Biedenkapp et al. 2018}}}
+
+\begin{eqnarray}
+VAR(i)  &=& \sum_{v \in \pcs^{(i)}} (\mathbb{E}_{v \sim \pcs^{(i)}}[\loss(\conf) ] - \loss(\conf[ \conf^{(i)} := v]))^2\\
+\pause
+LPI( i  \mid \conf ) &=& \frac{VAR(i) }{ \sum_{j}  VAR(j)}
+\end{eqnarray}
+
+\bigskip
+\pause
+
+\begin{itemize}
+	\item[$\leadsto$] While fixing all other hyperparameters to the incumbent value,\\ the hyperparameter with the highest variance  is the most important one
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Ablation Study for Importance}
+
+\begin{itemize}
+	\item Users often start from some kind of default configuration
+	\begin{enumerate}
+		\item As given in the documentation 
+		\item Or as always used in the last time
+	\end{enumerate}
+	\item \alert{Key Idea}: Going from the default to the automatically optimized configuration,\\
+	 which choices where important?
+\end{itemize}
+
+\begin{eqnarray}
+\conf_{\text{start}} &=& [1, 1, 0, 100]  \nonumber\\
+\conf_{\text{end}} &=& [0.98, 2.42, 1, 42]  \nonumber
+\end{eqnarray}
+
+\begin{itemize}
+	\item Cheap approach: Assess $\conf_2$ with each hyperparameter value from $\conf_1$
+	\pause
+	\item Expensive approach: Try all mixtures of $\conf_1$ and $\conf_2$
+	\begin{itemize}
+		\item  Only feasible for small spaces and fairly cheap ML systems
+	\end{itemize}
+	\pause
+	\item Trade-off: Find a way from $\conf_1$ to $\conf_2$ in a greedy fashion \lit{\href{https://link.springer.com/article/10.1007\%2Fs10732-014-9275-9}{Fawcett and Hoos 2016}}
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Greedy Ablation Study}
+
+Given:
+\begin{eqnarray}
+\begin{array}{lll}
+\conf_{\text{start}} &= [1, 1, 0, 100] & \loss_{\text{start}} = 20\% \nonumber\\
+\conf_{\text{end}} &= [0.98, 2.42, 1, 42]  & \loss_{\text{end}} = 4\% \nonumber
+\end{array}
+\end{eqnarray}
+
+\pause
+1st Iteration:
+\begin{eqnarray}
+\begin{array}{lll}
+\conf_1& = [\alert{0.98}, 1, 0, 100] & \loss_1 = 19\% \nonumber\\
+\pause
+\conf_2 &= [1, \alert{2.42}, 0, 100] & \loss_2 = 20\% \nonumber\\
+\pause
+\conf_3 &= [1, 1, \alert{1}, 100] & \loss_3 = 7\% \nonumber\\
+\pause
+\conf_4 &= [1, 1, 0, \alert{42}] & \loss_4 = 16\% \nonumber\\
+\end{array}
+\end{eqnarray}
+
+\pause
+$\leadsto$ 1st step: $\conf_2$ -- flipping hyperparameter 3
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Greedy Ablation Study}
+
+Given:
+\begin{eqnarray}
+\begin{array}{lll}
+\conf_{\text{start}} &= [1, 1, 0, 100] & \loss_{\text{start}} = 20\% \nonumber\\
+\conf_{s1} &= [1, 1, \alert{1}, 100]  & \loss = 7\% \nonumber\\
+\conf_{\text{end}} &= [0.98, 2.42, 1, 42]  & \loss_{\text{end}} = 4\% \nonumber
+\end{array}
+\end{eqnarray}
+
+2nd Iteration:
+\begin{eqnarray}
+\begin{array}{ll}
+\conf_1 = [\alert{0.98}, 1, 1, 100] & \loss_1 = 6\% \nonumber\\
+\pause
+\conf_2 = [1, \alert{2.42}, 1, 100] & \loss_2 = 7\% \nonumber\\
+\pause
+\conf_3 = [1, 1, 1, \alert{42}] & \loss_3 = 5\% \nonumber\\
+\end{array}
+\end{eqnarray}
+
+$\leadsto$ 2nd step: $\conf_3$ -- flipping hyperparameter 4
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Greedy Ablation Study}
+
+Given:
+\begin{eqnarray}
+\begin{array}{lll}
+\conf_{\text{start}} &= [1, 1, 0, 100] & \loss_{\text{start}} = 20\% \nonumber\\
+\conf_{s1} &= [1, 1, \alert{1}, 100]  & \loss = 7\% \nonumber\\
+\conf_{s2} &= [1, 1, 1, \alert{42}]  & \loss = 5\% \nonumber\\
+\conf_{\text{end}} &= [0.98, 2.42, 1, 42]  & \loss_{\text{end}} = 4\% \nonumber
+\end{array}
+\end{eqnarray}
+
+3rd Iteration:
+\begin{eqnarray}
+\begin{array}{ll}
+\conf_1 = [\alert{0.98}, 1, 1, 100] & \loss_1 = 4\% \nonumber\\
+\conf_2 = [1, \alert{2.42}, 1, 100] & \loss_2 = 5\% \nonumber\\
+\end{array}
+\end{eqnarray}
+
+$\leadsto$ 2nd step: $\conf_3$ -- flipping hyperparameter 1
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Greedy Ablation Study}
+
+Ablation Path:
+\begin{eqnarray}
+\begin{array}{ll}
+\conf_{\text{start}} = [1, 1, 0, 100] & \loss_{\text{start}} = 20\% \nonumber\\
+\conf_{s1} = [1, 1, \alert{1}, 100]  & \loss = 7\% \nonumber\\
+\conf_{s1} = [1, 1, 1, \alert{42}]  & \loss = 5\% \nonumber\\
+\conf_{s3} = [\alert{0.98}, 1, 1, 42] & \loss = 4\% \nonumber\\
+\conf_{s4} = [0.98, \alert{2.42}, 1, 42] & \loss = 4\% \nonumber\\
+\conf_{\text{end}} = [0.98, 2.42, 1, 42]  & \loss_{\text{end}} = 4\% \nonumber
+\end{array}
+\end{eqnarray}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Greedy Ablation Pseudo Code}
+
+\LinesNotNumbered
+\begin{algorithm}[H]
+	\Input{%
+		Algorithm $\algo$ with configuration space $\confs$,
+		start configuration $\conf_{\text{start}}$,\\
+		end configuration $\conf_{\text{end}}$, metric $\loss$
+	}
+	\BlankLine
+	$\conf \leftarrow  \conf_{\text{start}}$; \\
+	$P \leftarrow [] $ ;\\ 
+	\ForEach{$i \in \{1 \ldots |\pcs|\}$}{
+		\ForEach{$\delta \in \Delta(\conf, \conf_{\text{end}})$}{
+			$\conf'_\delta$ $\leftarrow$ apply $\delta$ to $\conf$;\\
+			evaluate $\loss(\conf'_\delta)$;
+		}
+		Determine most important change $\delta^* \in \argmin_{\delta \in \Delta(\conf, \conf_t)} \loss(\conf_\delta)$;\\
+		$\conf$ $\leftarrow$ apply $\delta^*$ to $\conf$;\\
+		P.append($\delta^*$);
+	}
+	\pause
+	\Return{Ablation path $P$}
+	\caption{Greedy Ablation}
+	\end{algorithm}
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Remarks on Ablation}
+
+\begin{itemize}
+	\item Even this greedy ablation requires $\mathcal{O}(n^2)$ steps 
+	\pause
+	\item[$\leadsto$] We can also speedup that up by using surrogate models\\
+	\lit{\href{https://www.tnt.uni-hannover.de/papers/data/1396/17-AAAI-Surrogate-Ablation.pdf}{Biedenkapp et al. 2017}}
+	\medskip
+	\pause
+	\item Common observations:
+	\begin{enumerate}
+		\item Some hyperparameters might not matter ($\conf^{(2)}$ in the example)
+		\pause
+		\item Often only a few of the hyperparameters have an big impact
+		\pause
+		\item You have plateaus in your ablation path because of interaction effects
+	\end{enumerate}
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------
+\end{document}
