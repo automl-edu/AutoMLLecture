@@ -47,22 +47,6 @@
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Parallel Coordinate Plot \lit{\href{https://research.google/pubs/pub46180/}{Golovin et al 2017}}}
-
-\centering
-\includegraphics[width=0.9\textwidth]{images/parallel_coordinates_linear_cost_log_sampling_100}
-\begin{flushright}
-	Source:  \lit{\href{https://arxiv.org/abs/1908.06756}{Lindauer et al. 2019}}
-\end{flushright}
-
-\begin{itemize}
-	\item Each coordinate is one hyperparameter; 
-	\item Except the most left one: cost or loss
-\end{itemize}
-
-\end{frame}
-%-----------------------------------------------------------------------
-%----------------------------------------------------------------------
 \begin{frame}[c]{Analyzing the Sampling Behavior}
 
 
@@ -78,13 +62,19 @@
 	\column{0.6\textwidth}
 	
 	\begin{itemize}
-		\item Plotting a 1D or 2D function
-		\item Background shows the ground truth (real function values)
-		\item Dots are sampled points in the search space\\
-		
+		\item Plot of a 1D or 2D function
+		\pause
+		\item Background shows the ground truth\\
+		 (real function values)
+		\pause
+		\item Dots are sampled points in the search space
+		\pause
 		\item Typical approach in Bayesian Optimization community
+		\pause
+		\medskip
+		\item[$\leadsto$] Impossible for higher dimensional problems?
 	\end{itemize}
-	
+
 \end{columns}
 
 \end{frame}
@@ -107,16 +97,37 @@
 	\begin{itemize}
 		\item Same idea as before\\
 		 but we have to project $N$-D into $2$-D
+		 \pause
 		\begin{enumerate}
 			\item Use an MDS to project down to $2$-D
+					 \pause
 			\item Each dot is single hyperparameter configuration
+					 \pause
 			\item Red squares are intermediate incumbents
+					 \pause
 			\item The background is colored wrt a performance-estimate (e.g., reusing model fitted during BO) 
+					 \pause
 			\item Extension: Animation by showing\\ how points get added over time
 		\end{enumerate}
 	\end{itemize}
 	
 \end{columns}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Parallel Coordinate Plot \lit{\href{https://research.google/pubs/pub46180/}{Golovin et al 2017}}}
+
+\centering
+\includegraphics[width=0.9\textwidth]{images/parallel_coordinates_linear_cost_log_sampling_100}
+\begin{flushright}
+	Source:  \lit{\href{https://arxiv.org/abs/1908.06756}{Lindauer et al. 2019}}
+\end{flushright}
+
+\begin{itemize}
+	\item Each coordinate is one hyperparameter; 
+	\item Except the most left one: cost or loss
+\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -139,11 +150,13 @@
 		\begin{itemize}
 			\item How to choose the fidelities (a.k.a. budgets)
 		\end{itemize}
+		 \pause
 		\item Important Property:
 		\begin{itemize}
 			\item Decisions on small budgets should be\\
 			 reasonable for higher budgets
 		\end{itemize}
+			 \pause
 		\item Analysis:
 		\begin{enumerate}
 			\item Scatter plot of performance on\\
