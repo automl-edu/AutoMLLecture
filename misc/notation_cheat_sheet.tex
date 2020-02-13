@@ -1,0 +1,72 @@
+\documentclass[]{report}
+\usepackage{dsfont}
+\usepackage{bm}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
+\usepackage{booktabs}
+\usepackage{mathtools}
+
+\usepackage{amsmath,amssymb}
+
+
+\input{../latex_main/macros.tex}
+
+% Title Page
+\title{AutoML Lecture: Notation Cheat Sheet}
+\author{}
+\date{}
+
+
+\begin{document}
+\maketitle
+
+\begin{table}
+	\begin{tabular}{ll}
+		\toprule
+		Symbol & Meaning \\
+		\midrule
+		$\param$ & Hyperparameter \\
+		$\conf$ & Hyperparameter configuration\\
+		$\defconf$ & Default hyperparameter configuration\\
+		$\finconf$ & finally returned hyperparameter configuration\\
+		$\pcs$ &  Space of possible hyperparameter configurations (incl. different architectures of an NN)\\
+		$\algo$ & Algorithm \\
+		$\algos$ & Distribution or set of algorithms\\
+		$\dataset$ & Dataset\\
+		$\datasets$ & Space of datasets\\
+		$\loss$ & (empirical) loss\\
+		\midrule 
+		$\func$ & Target function\\
+		$\surro$ & (Probabilistic) surrogate model \\
+		$\hist$ & Observation history (e.g., in BO)\\
+		$\feat$ & Vector of (meta-) features\\
+		$\feats$ & Space of (meta-)features \\
+		$\cluster$ & Cluster \\
+		$\clusters$ & Space of clusters\\
+		$\portfolio$ & Portfolio (i.e., discrete set) of algorithms or hyperparameter configurations\\
+		$\schedule$ & Schedule of algorithms or hyperparameter configurations\\
+		\midrule 
+		$\weights$ & Weights (a.k.a. parameters) of ML model (e.g., DNN)\\
+		$\metaweights$ & Weights of meta-model\\
+    	$\mdata$ & Meta-dataset\\
+		\midrule 
+		$\policy$ & Reinforcement learning policy\\
+		$\policies$ & Space of policies\\
+		$\actionRL$ & action in RL-setting\\
+		$\stateRL$ & state in RL-setting\\
+		$\statesRL$ & Space of states\\
+		$\rewardRL$ & Reward in RL-setting\\
+		$\rewardfuncRL$ & Random variable or function of reward\\
+		\midrule
+		$\cutoff$ & Cutoff (often runtime) of an algorithm run\\
+		$\inst$ & a single instances (a.k.a. problem, dataset, task)\\
+		$\insts$ & Distribution over instances (a.k.a. problems, datasets, tasks)\\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+
+\end{document}          
