@@ -1,0 +1,60 @@
+\documentclass[]{report}
+\usepackage{dsfont}
+\usepackage{bm}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
+\usepackage{booktabs}
+\usepackage{mathtools}
+
+\usepackage{amsmath,amssymb}
+
+
+\input{./macros_bo.tex}
+
+% Title Page
+\title{AutoML Lecture: Notation Cheat Sheet (extended for BO)}
+\author{}
+\date{}
+
+
+\begin{document}
+\maketitle
+
+\begin{table}
+	\begin{tabular}{ll}
+		\toprule
+		Symbol & Meaning \\
+		\midrule
+        $\gp$ & Gaussian process \\
+        $\objF$ & Family of Target Functions \\
+        $\bocount$ & BO loop counter \\
+        $\bobudget$ & BO loop counter max, the counter runs from 1 to this value \\
+        $\boparamspace$ & BO parameter space \\
+        $\boparam$ & BO parameter \\
+        $\boincumb$ & current incumbent at iteration t\\
+        $\boobs$ & BO loop observation \\
+        $\boobsspace$ & BO loop observation space \\
+        $\bonextsample$ & BO loop next sample (selected for evaluation at each iteration of the BO loop) \\
+        $\bonextobs$ & BO loop next observation \\
+        $\acq$ & Acquisition Function, no args \\
+        $\pdf$ & Standard Normal PDF \\
+        $\cdf$ & Standard Normal CDF \\
+        $\mean$ & Mean \\
+        $\stddev$ & Standard Deviation \\
+        $\variance$ & Variance \\
+        $\noise$ & Noise \\
+        $\realnum$ & Real numbers set \\
+        $\instances$ & Instances \\
+        $\expectation$ & Expected value \\
+        $\kernel$ & kernel \\
+        $\constraintf$ & Constraint function \\
+        $\normaldist$ & Normal distribution \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+
+\end{document}          
