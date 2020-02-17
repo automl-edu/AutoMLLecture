@@ -36,35 +36,104 @@
 \newcommand{\pcs}[0]{\mathbf{\Lambda}}
 \newcommand{\bx}[0]{\conf}
 \newcommand{\conf}[0]{\mathbf{\lambda}}
+\newcommand{\confI}[1]{\mathbf{\lambda}^{(#1)}}
 \newcommand{\defconf}[0]{\mathbf{\lambda}_{\text{def}}}
-\newcommand{\finconf}[0]{\mathbf{\lambda}^*}
+\newcommand{\finconf}[0]{\hat{\mathbf{\lambda}}}
 \newcommand{\incumbent}[0]{\finconf}
+\newcommand{\optconf}[0]{\mathbf{\lambda}^*}
 \newcommand{\confs}[0]{\pcs}
 %\newcommand{\vlambda}[0]{\bm{\lambda}}
 %\newcommand{\vLambda}[0]{\bm{\Lambda}}
 \newcommand{\dataset}[0]{\mathcal{D}}
 \newcommand{\datasets}[0]{\mathbf{D}}
 \newcommand{\loss}[0]{\mathcal{L}}
+\newcommand{\cost}[0]{c}
+
+% Gaussian Process
+\newcommand{\gp}{\mathcal{G}}
+% Real Objective Function - do not use
+%\newcommand{\objf}{f}
+% Family of Objective Functions
+\newcommand{\objF}{F}
+% BO loop counter
+\newcommand{\bocount}{t}
+% BO loop counter max, the counter runs from 1 to this value
+\newcommand{\bobudget}{T}
+% BO parameter space
+\newcommand{\boparamspace}{\mathcal{X}}
+% BO parameter
+\newcommand{\boparam}{x}
+% BO current incumbent
+\newcommand{\boincumb}{\boparam^+_\bocount}
+% BO loop observation
+\newcommand{\boobs}{y}
+% BO loop observation space
+\newcommand{\boobsspace}{\mathcal{Y}}
+% BO loop next sample (selected for evaluation at each iteration of the BO loop)
+\newcommand{\bonextsample}{\boparam_\bocount}
+% BO loop next observation 
+\newcommand{\bonextobs}{\boobs_\bocount}
+% Surrogate Function, no args -- do not use
+% \renewcommand{\surro}{\hat{f}}
+% Acquisition Function, no args
+\newcommand{\acq}{u}
+% Dataset - do not use
+%\renewcommand{\dataset}{\mathcal{D}}
+% Standard Normal PDF
+\newcommand{\pdf}{\phi}
+% Standard Normal CDF
+\newcommand{\cdf}{\Phi}
+% Mean
+\newcommand{\mean}{\mu}
+% Standard Deviation
+\newcommand{\stddev}{\sigma}
+% Variance
+\newcommand{\variance}{\sigma^2}
+% Noise
+\newcommand{\noise}{\nu}
+%Real numbers set
+\newcommand{\realnum}{\mathbb{R}}
+%Configuration space - do not use
+%\newcommand{\configspace}{\Theta}
+%Instances - do not use
+%\newcommand{\instances}{\mathcal{I}}
+%Expected value
+\newcommand{\expectation}{\mathbb{E}}
+%Kernel
+\newcommand{\kernel}{\kappa}
+%Constraint function
+\newcommand{\constraintf}{c}
+%Normal distribution
+\newcommand{\normaldist}{\mathcal{N}}
 
 % \renewcommand{\vec}[1]{\mathbf{#1}}
-\newcommand{\hist}[0]{\mathcal{H}}
+\newcommand{\hist}[0]{\dataset_{\text{HPO}}}
 \newcommand{\param}[0]{p}
 \newcommand{\algo}[0]{\mathcal{A}}
 \newcommand{\algos}[0]{\mathbf{A}}
 %\newcommand{\nn}[0]{N}
-\newcommand{\feats}[0]{\mathcal{F}}
-\newcommand{\feat}[0]{\vec{f}}
-\newcommand{\cluster}[0]{\vec{h}}
-\newcommand{\clusters}[0]{\vec{H}}
+\newcommand{\feats}[0]{\mathcal{X}_{\text{meta}}}
+\newcommand{\feat}[0]{\x_{\text{meta}}}
+%\newcommand{\cluster}[0]{\vec{h}}
+%\newcommand{\clusters}[0]{\vec{H}}
 \newcommand{\perf}[0]{\mathbb{R}}
 %\newcommand{\surro}[0]{\mathcal{S}}
-\newcommand{\surro}[0]{\hat{f}}
+\newcommand{\surro}[0]{\hat{\cost}}
 \newcommand{\func}[0]{f}
 \newcommand{\epm}[0]{\surro}
 \newcommand{\portfolio}[0]{\mathcal{P}}
 \newcommand{\schedule}[0]{\mathcal{S}}
-\newcommand{\mdata}[0]{\dataset_{\text{meta}}}
 
+% Machine Learning
+\newcommand{\mdata}[0]{\dataset_{\text{meta}}}
+\newcommand{\datasettrain}[0]{\dataset_{\text{train}}}
+\newcommand{\datasetval}[0]{\dataset_{\text{val}}}
+\newcommand{\datasettest}[0]{\dataset_{\text{test}}}
+\newcommand{\x}[0]{\mathbf{x}}
+\newcommand{\y}[0]{y}
+\newcommand{\xI}[1]{\mathbf{x}^{(#1)}}
+\newcommand{\yI}[1]{y^{(#1)}}
+	
 % Deep Learning
 \newcommand{\weights}[0]{\theta}
 \newcommand{\metaweights}[0]{\phi}
@@ -97,26 +166,26 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
 
-\newcommand{\aqme}{\textit{AQME}}
-\newcommand{\aslib}{\textit{ASlib}}
-\newcommand{\llama}{\textit{LLAMA}}
-\newcommand{\satzilla}{\textit{SATzilla}}
-\newcommand{\satzillaY}[1]{\textit{SATzilla'{#1}}}
-\newcommand{\snnap}{\textit{SNNAP}}
-\newcommand{\claspfolioTwo}{\textit{claspfolio~2}}
-\newcommand{\flexfolio}{\textit{FlexFolio}}
-\newcommand{\claspfolioOne}{\textit{claspfolio~1}}
-\newcommand{\isac}{\textit{ISAC}}
-\newcommand{\eisac}{\textit{EISAC}}
-\newcommand{\sss}{\textit{3S}}
-\newcommand{\sunny}{\textit{Sunny}}
-\newcommand{\ssspar}{\textit{3Spar}}
-\newcommand{\cshc}{\textit{CSHC}}  
-\newcommand{\cshcpar}{\textit{CSHCpar}}  
-\newcommand{\measp}{\textit{ME-ASP}} 
-\newcommand{\aspeed}{\textit{aspeed}}
-\newcommand{\autofolio}{\textit{AutoFolio}}
-\newcommand{\cedalion}{\textit{Cedalion}}
+%\newcommand{\aqme}{\textit{AQME}}
+%\newcommand{\aslib}{\textit{ASlib}}
+%\newcommand{\llama}{\textit{LLAMA}}
+%\newcommand{\satzilla}{\textit{SATzilla}}
+%\newcommand{\satzillaY}[1]{\textit{SATzilla'{#1}}}
+%\newcommand{\snnap}{\textit{SNNAP}}
+%\newcommand{\claspfolioTwo}{\textit{claspfolio~2}}
+%\newcommand{\flexfolio}{\textit{FlexFolio}}
+%\newcommand{\claspfolioOne}{\textit{claspfolio~1}}
+%\newcommand{\isac}{\textit{ISAC}}
+%\newcommand{\eisac}{\textit{EISAC}}
+%\newcommand{\sss}{\textit{3S}}
+%\newcommand{\sunny}{\textit{Sunny}}
+%\newcommand{\ssspar}{\textit{3Spar}}
+%\newcommand{\cshc}{\textit{CSHC}}  
+%\newcommand{\cshcpar}{\textit{CSHCpar}}  
+%\newcommand{\measp}{\textit{ME-ASP}} 
+%\newcommand{\aspeed}{\textit{aspeed}}
+%\newcommand{\autofolio}{\textit{AutoFolio}}
+%\newcommand{\cedalion}{\textit{Cedalion}}
 \newcommand{\fanova}{\textit{fANOVA}}
 \newcommand{\sbs}{\textit{SB}}
 \newcommand{\oracle}{\textit{VBS}}
@@ -128,20 +197,6 @@
 \newcommand{\ssslike}{\texttt{3S-like}}
 \newcommand{\measplike}{\texttt{ME-ASP-like}}
 
-\newcommand{\aspCoseal}{\textit{ASP-POTASSCO}}
-\newcommand{\cspCoseal}{\textit{CSP-2010}}
-\newcommand{\maxsatCoseal}{\textit{MAXSAT12-PMS}}
-\newcommand{\premarCoseal}{\textit{PRE\-MARSHALLING}}
-\newcommand{\qbfCoseal}{\textit{QBF-2011}}
-\newcommand{\satallTwelveCoseal}{\textit{SAT12-ALL}}
-\newcommand{\sathandTwelveCoseal}{\textit{SAT12-HAND}}
-\newcommand{\satinduTwelveCoseal}{\textit{SAT12-INDU}}
-\newcommand{\satrandTwelveCoseal}{\textit{SAT12-RAND}}
-\newcommand{\sathandElevenCoseal}{\textit{SAT11-HAND}}
-\newcommand{\satinduElevenCoseal}{\textit{SAT11-INDU}}
-\newcommand{\satrandElevenCoseal}{\textit{SAT11-RAND}}
-\newcommand{\proteusCoseal}{\textit{PROTEUS-2014}}
-
 \newcommand{\irace}{\textit{I/F-race}}
 \newcommand{\gga}{\textit{GGA}}
 \newcommand{\smac}{\textit{SMAC}}
@@ -149,14 +204,6 @@
 \newcommand{\spearmint}{\textit{Spearmint}}
 \newcommand{\tpe}{\textit{TPE}}
 
-\newcommand{\gringo}{\textit{gringo}}
-\newcommand{\clasp}{\textit{clasp}}
-\newcommand{\lingeling}{\textit{lingeling}}
-
-\newcommand{\hydra}{\textit{Hydra}}
-
-\newcommand{\plingeling}{\textit{Plingeling}}
-\newcommand{\ccasat}{\textit{CCASat}}
 
 \usepackage{pifont}
 \newcommand{\itarrow}{\mbox{\Pisymbol{pzd}{229}}}

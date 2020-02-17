@@ -28,31 +28,76 @@
 		\toprule
 		Symbol & Meaning \\
 		\midrule
-		$\param$ & Hyperparameter \\
+		\multicolumn{2}{c}{\textbf{Machine Learning}}\\
+     	$\dataset$ & Dataset\\
+     	$\datasettrain$ & Training dataset\\
+	   	$\datasetval$ & Validation dataset\\     	
+     	$\datasettest$ & Test dataset\\     	
+		$\datasets$ & Space of datasets\\
+     	$\x$ & Feature vector \\
+     	$y$ & Label \\
+     	$(\xI{i},\yI{i})$ & $i$-th observation\\
+		$\loss$ & (empirical) loss\\     	
+		\midrule
+		\multicolumn{2}{c}{\textbf{Hyperparameter Optimization}}\\
 		$\conf$ & Hyperparameter configuration\\
+		$\conf_i$ & Value of $i$-th hyperparameter \\
 		$\defconf$ & Default hyperparameter configuration\\
 		$\finconf$ & finally returned hyperparameter configuration\\
-		$\pcs$ &  Space of possible hyperparameter configurations (incl. different architectures of an NN)\\
-		$\algo$ & Algorithm \\
+		$\optconf$ & Optimal hyperparameter configuration\\
+		$\pcs$ &  Space of possible hyperparameter configurations\\
+		$\algo$ & Algorithm (e.g. SVM, RF, DNN) \\
 		$\algos$ & Distribution or set of algorithms\\
-		$\dataset$ & Dataset\\
-		$\datasets$ & Space of datasets\\
-		$\loss$ & (empirical) loss\\
+		$\cost(\conf)$ & Target cost function (e.g., empirical risk, validation loss, runtime)\\		
+		$\surro(\conf)$ & Surrogate (probabilistic) model of target function\\		
+		$\hist = \langle \confI{\bocount}, \cost(\confI{\bocount}) \rangle_{\bocount=1}^\bobudget$ &  All observations collected for BO / HPO\\
 		\midrule 
-		$\func$ & Target function\\
-		$\surro$ & (Probabilistic) surrogate model \\
-		$\hist$ & Observation history (e.g., in BO)\\
+		\multicolumn{2}{c}{\textbf{Gaussian Processes and Bayesian Optimization}}\\
+		 $\gp$ & Gaussian process \\
+%		$\objF$ & Family of Target Functions \\
+		$\bocount$ & BO loop counter \\
+		$\bobudget$ & BO loop counter max, the counter runs from 1 to this value \\
+%		ML: please use AutoML-specific notation --> \conf \in \pcs and so on
+%		$\boparamspace$ & BO parameter space \\
+%		$\boparam$ & BO parameter \\
+%		$\boincumb$ & current incumbent at iteration t\\
+%		$\boobs$ & BO loop observation \\ % please don't; I don't want to see a big bullshit storm over us
+%		$\boobsspace$ & BO loop observation space \\
+%		$\bonextsample$ & BO loop next sample (selected for evaluation at each iteration of the BO loop) \\
+%		$\bonextobs$ & BO loop next observation \\
+		$\acq$ & Acquisition Function, no args \\
+		$\pdf$ & Standard Normal PDF \\
+		$\cdf$ & Standard Normal CDF \\
+		$\mean$ & Mean \\
+		$\stddev$ & Standard Deviation \\
+		$\variance$ & Variance \\
+		$\noise$ & Noise \\
+		$\realnum$ & Real numbers set \\
+		$\expectation$ & Expected value \\
+		$\kernel$ & kernel \\
+		$\constraintf$ & Constraint function \\
+		$\normaldist$ & Normal distribution \\
+		\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}
+	\begin{tabular}{ll}
+		\toprule
+		Symbol & Meaning \\
+		\midrule
+		\multicolumn{2}{c}{\textbf{Algorithm Selection}}\\
 		$\feat$ & Vector of (meta-) features\\
 		$\feats$ & Space of (meta-)features \\
-		$\cluster$ & Cluster \\
-		$\clusters$ & Space of clusters\\
 		$\portfolio$ & Portfolio (i.e., discrete set) of algorithms or hyperparameter configurations\\
 		$\schedule$ & Schedule of algorithms or hyperparameter configurations\\
 		\midrule 
+		\multicolumn{2}{c}{\textbf{Meta-Learning}}\\
 		$\weights$ & Weights (a.k.a. parameters) of ML model (e.g., DNN)\\
 		$\metaweights$ & Weights of meta-model\\
     	$\mdata$ & Meta-dataset\\
 		\midrule 
+		\multicolumn{2}{c}{\textbf{Reinforcement Learning}}\\
 		$\policy$ & Reinforcement learning policy\\
 		$\policies$ & Space of policies\\
 		$\actionRL$ & action in RL-setting\\
@@ -61,6 +106,7 @@
 		$\rewardRL$ & Reward in RL-setting\\
 		$\rewardfuncRL$ & Random variable or function of reward\\
 		\midrule
+		\multicolumn{2}{c}{\textbf{Algorithm Configuration}}\\
 		$\cutoff$ & Cutoff (often runtime) of an algorithm run\\
 		$\inst$ & a single instances (a.k.a. problem, dataset, task)\\
 		$\insts$ & Distribution over instances (a.k.a. problems, datasets, tasks)\\
