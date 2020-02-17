@@ -1,0 +1,106 @@
+% !TeX spellcheck = en_US
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Learning to Configure]{AutoML: Automated Machine Learning}
+\subtitle{Population-based Training}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+	
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{On-the-fly Adaption}
+
+\begin{itemize}
+	\item Dynamic algorithm configuration assumes that we have access to a \alert{representative learning environment} in an \alert{offline learning phase}
+	\pause
+	\item What if we don't access to such an env or don't have to time for offline learning?
+	\pause
+	\bigskip
+	\item[$\leadsto$] Try to figure out best hyperparameter settings on the fly
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Massively parallelized Random Search}
+
+\begin{tikzpicture}[node distance=2.1cm]
+%PreProcessing
+
+\node (l1) [activity, text width=12cm] {$\confI{1}$};
+\node (l2) [activity, below of=l1, node distance=1cm, text width=12cm] {$\confI{2}$};
+\node (l3) [activity, below of=l2, node distance=1cm, text width=12cm] {$\confI{3}$};
+\node (l4) [activity, below of=l3, node distance=1cm, text width=12cm] {$\confI{4}$};
+
+\draw[myarrow] ($(l4.west)+(0.0, -1.0)$) -- ($(l4.east)+(0.0, -1.0)$) node[below] {t};
+
+\end{tikzpicture}
+
+\bigskip
+\begin{itemize}
+	\item Sample many hyperparameter configurations $\confI{i}$ and evaluate them all in parallel
+	\pause
+	\item Pure exploration on a large population of configurations
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Population-based Training \lit{TODO}}
+
+\begin{tikzpicture}[node distance=2.1cm]
+%PreProcessing
+
+\node (l1) [activity] {$\confI{1}$};
+\node (l2) [activity, below of=l1, node distance=1cm] {$\confI{2}$};
+\node (l3) [activity, below of=l2, node distance=1cm] {$\confI{3}$};
+\node (l4) [activity, below of=l3, node distance=1cm] {$\confI{4}$};
+
+\draw[myarrow] ($(l4.west)+(0.0, -1.0)$) -- ($(l4.east)+(10.0, -1.0)$) node[below] {t};
+
+\pause
+
+\node (l12) [activity, right of=l1, node distance=4cm] {$\confI{1}$};
+\node (l22) [activity, right of=l2, node distance=4cm]{$\confI{5} := \confI{3} + \epsilon_1$};
+\node (l32) [activity, right of=l3, node distance=4cm] {$\confI{3}$};
+\node (l42) [activity, right of=l4, node distance=4cm] {$\confI{4}$};
+
+\pause
+
+\node (l13) [activity, right of=l12, node distance=4cm] {$\confI{6} := \confI{5} + \epsilon_2$};
+\node (l23) [activity, right of=l22, node distance=4cm]{$\confI{5}$};
+\node (l33) [activity, right of=l32, node distance=4cm] {$\confI{3}$};
+\node (l43) [activity, right of=l42, node distance=4cm] {$\confI{7} := \confI{3} + \epsilon_3$};
+
+\end{tikzpicture}
+
+\begin{enumerate}
+	\item Train population of configurations
+	\item Drop poorly performing ones
+	\item Add new configurations by small mutations of existing ones
+\end{enumerate}
+
+\end{frame}
+%----------------------------------------------------------------------
+
+\end{document}
