@@ -1,10 +1,11 @@
+% !TeX spellcheck = en_US
 
 \input{../latex_main/main.tex}
 
 
 
 \title[AutoML: Problem]{AutoML: Overview of Problems}
-\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -24,7 +25,36 @@
 	\maketitle
 	
 
+%----------------------------------------------------------------------
+\begin{frame}[c]{Objectives of AutoML}
 
+Different metrics to measure the success of AutoML:
+
+\begin{itemize}
+	\item Accuracy on a validation dataset
+	\pause
+	\item AUC-ROC
+	\pause
+	\item precision \& recall
+	\item \ldots
+	\pause
+	\item Memory consumption
+	\item Inference time
+	\item \ldots
+\end{itemize}
+
+\pause
+\medskip
+
+\begin{itemize}
+	\item[$\leadsto$] AutoML optimizes an arbitrary cost function, denoted as $\cost$.
+	\pause
+	\item[$\leadsto$] $\cost(\cdot)$ can also return several cost metrics
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------	
 %----------------------------------------------------------------------
 \begin{frame}[c]{Hyperparameters of an SVM}
 
@@ -41,14 +71,14 @@
 	\begin{itemize}
 		\item $\conf$ be the hyperparameters of an ML algorithm $\algo$ with domain $\pcs$,
 		\pause
-		\item $\dataset_{opt}$ be a training set which is split into $\dataset_{train}$ and $\dataset_{valid}$ 
+		\item $\dataset_{opt}$ be a dataset which is split into $\datasettrain$ and $\datasetval$ 
 		\pause
-		\item $\loss(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the loss of $\algo_\conf$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
+		\item $\cost(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the cost of $\algo_\conf$ trained on $\datasettrain$ and evaluated on $\datasetval$.
 	\end{itemize}
 	\pause
-	The \emph{hyper-parameter optimization (HPO)} problem is to find a hyper-parameter configuration that minimizes this loss:
+	The \emph{hyper-parameter optimization (HPO)} problem is to find a hyper-parameter configuration that minimizes this cost:
 	\begin{equation}
-	\conf^* \in \argmin_{\conf \in \pcs} \loss(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber  
+	\optconf \in \argmin_{\conf \in \pcs} \cost(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber  
 	\end{equation}
 \end{block}
 
@@ -104,12 +134,12 @@ Remarks:
 	\begin{itemize}
 		\item \alert{$\algos = \{\algo_1, \algo_2, \ldots, \algo_k\}$ be a set of algorithms (a.k.a. portfolio)}
 		\item $\pcs$ be a set of hyperparameters of each machine learning algorithm $\algo_i$
-		\item $\dataset_{opt}$ be a training set which is split into $\dataset_{train}$ and $\dataset_{valid}$ 
-		\item $\loss(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the loss of $\algo_\conf$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
+		\item $\dataset_{opt}$ be a dataset which is split into $\dataset_{train}$ and $\dataset_{valid}$ 
+		\item $\cost(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the cost of $\algo_\conf$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
 	\end{itemize}
 	we want to find \alert{the best combination of algorithm $\algo \in \mathbf{A}$ and its hyperparameter configuration $\conf \in \pcs$} minimizing:
 	\begin{equation}
-	(\algo^*, \conf^*) \in \argmin_{\algo \in \algos, \conf \in \pcs} \loss(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber
+	(\algo^*, \optconf) \in \argmin_{\algo \in \algos, \conf \in \pcs} \cost(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber
 	\end{equation}
 \end{block}
 
@@ -162,13 +192,13 @@ Remarks:
 \begin{block}{Definition}
 	Let 
 	\begin{itemize}
-		\item $\conf$ be \alert{an architecture for a deep neural network $\nn$} with domain $\pcs$,
-		\item $\dataset_{opt}$ be a training set which is split into $\dataset_{train}$ and $\dataset_{valid}$ 
-		\item $\loss(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the loss of $\nn_\conf$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
+		\item $\conf$ be \alert{an architecture for a deep neural network $N$} with domain $\pcs$,
+		\item $\dataset_{opt}$ be a dataset which is split into $\dataset_{train}$ and $\dataset_{valid}$ 
+		\item $\cost(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the cost of $N_\conf$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
 	\end{itemize}
-	The \emph{neural architecture search (NAS)} problem is to find an architecture that minimizes this loss:
+	The \emph{neural architecture search (NAS)} problem is to find an architecture that minimizes this cost:
 	\begin{equation}
-	\conf^* \in \argmin_{\conf \in \pcs} \loss(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber  
+	\conf^* \in \argmin_{\conf \in \pcs} \cost(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber  
 	\end{equation}
 \end{block}
 
@@ -189,53 +219,56 @@ Remark:
 \begin{itemize}
 	\item For solving the HPO, CASH and NAS problem, we use some kind of optimization approach to \alert{search} for a solution
 	\pause
-	\item A different view is: Can we learn from data and thus \alert{predict}\\ an algorithm/ hyperparameter configuration/ neural architecture?
+	\item A different view: Can we learn from data and thus \alert{predict}\\ an algorithm/ hyperparameter configuration/ neural architecture?
 \end{itemize}
 
 \pause
 \begin{block}{Definition}
 	Let 
 	\begin{itemize}
-		\item $p(\dataset)$ be a probability \alert{distribution} over meta datasets $\dataset \in \mdata$,
+		\item $p(\dataset)$ be a probability \alert{distribution} over datasets $\dataset \in \datasets$,
 		\pause
 		\item $\algo \in \portfolio$ be a portfolio of algorithms, and
 		\pause
-		\item $\loss: \portfolio \times \mdata \rightarrow \perf$ be a loss metric   
+		\item $\cost: \portfolio \times \datasets \rightarrow \perf$ be a cost metric   
 	\end{itemize}
 	
 	\pause
 	the \emph{per-instance algorithm selection problem} is to obtain a mapping 
 	$s: \dataset \mapsto \algo$ 
 	that optimizes 
-	$$\argmin_{s} \int_{\mdata} \loss(s(\dataset),\dataset) p(\dataset) \diff\dataset$$
+	$$\argmin_{s} \int_{\datasets} \cost(s(\dataset),\dataset) p(\dataset) \diff\dataset$$
 \end{block}
 
 \end{frame}
 %-----------------------------------------------------------------------	
 %----------------------------------------------------------------------
-\begin{frame}[c]{Algorithm Control}
+\begin{frame}[c]{Dynamic Algorithm Configuration}
 
 \begin{itemize}
 	\item So far, we assume that an algorithm runs with some given settings
-	\item However, settings, such as learning rate, have to be adapted over time
+	\pause
+	\item However, some settings, such as learning rate, have to be adapted over time
 \end{itemize}
+
+\pause
 
 \begin{block}{Definition}
 	Let 
 	\begin{itemize}
 		\item $\pcs$ be a hyperparameter configuration of an algorithm $\algo$,
 		\pause
-		\item $p(\dataset)$ be a probability distribution over meta datasets $\dataset \in \mdata$,
+		\item $p(\dataset)$ be a probability distribution over datasets $\dataset \in \datasets$,
 		\pause
 		\item $\stateRL_t$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
 		\pause
-		\item $\loss: \policies \times \mdata \to \perf$ be a loss metric assessing the \alert{cost of a control policy $\pi \in \Pi$} on dataset $\dataset \in \mdata$
+		\item $\cost: \policies \times \datasets \to \perf$ be a cost metric assessing the \alert{cost of a control policy $\pi \in \Pi$} on $\dataset \in \datasets$
 	\end{itemize}
 	
 	\pause
-	the \emph{algorithm control problem} is to obtain a control policy $\policy^* : \stateRL_t \times \dataset \mapsto \conf$ by optimizing its loss across a distribution of datasets:
+	the \emph{dynamic algorithm configuration problem} is to obtain a control policy $\policy^* : \stateRL_t \times \dataset \mapsto \conf$ by optimizing its cost across a distribution of datasets:
 	\begin{equation}
-	\pi^* \in \argmin_{\policy \in \policies} \int_{\mdata} p(\dataset) c(\policy, \dataset) \diff \dataset \nonumber
+	\pi^* \in \argmin_{\policy \in \policies} \int_{\datasets} p(\dataset) c(\policy, \dataset) \diff \dataset \nonumber
 	\end{equation}
 \end{block}
 
@@ -250,7 +283,7 @@ Remark:
 	\item[CASH] Search for the best combination of algorithm and hyperparameter configuration
 	\item[NAS] Search for the architecture of neural network
 	\item[Selection] Predict the best algorithm (and its hyperparameter configuration)
-	\item[Control] Predict the best hyperparameter configuration for algorithm state at a given time point 
+	\item[Dynamic] Predict the best hyperparameter configuration for an algorithm state\\ at a given time point 
 \end{description}
 
 \end{frame}

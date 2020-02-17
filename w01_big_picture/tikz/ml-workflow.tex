@@ -3,14 +3,14 @@
 \tikzstyle{data}=[rectangle, draw=black, text centered, fill=black!10, text width=8em, drop shadow]
 \tikzstyle{myarrow}=[->, thick]
 \begin{tikzpicture}[node distance=5cm,thick]
-	\node (Train) [data] {Data Set $D_{\text{train}}$};
-	\node (Fit) [activity, below of=Train, node distance=2cm] {Train ML-pipeline based on $D_{\text{train}}$};
+	\node (Train) [data] {Data Set $\datasettrain$};
+	\node (Fit) [activity, below of=Train, node distance=2cm] {Train ML-pipeline based on $\datasettrain$};
 	\draw[myarrow] (Train) -- (Fit);
 	
 	\pause
 	
-	\node (Test) [data, right of=Train] {Data Set $D_{\text{val}}$};
-	\node (Eva) [activity, below of=Test, node distance=2cm] {Evaluate model on $D_{\text{val}}$};
+	\node (Test) [data, right of=Train] {Data Set $\datasetval$};
+	\node (Eva) [activity, below of=Test, node distance=2cm] {Evaluate model on $\datasetval$};
 	\draw[myarrow] (Fit) -- (Eva);
 	\draw[myarrow] (Test) -- (Eva);
 	

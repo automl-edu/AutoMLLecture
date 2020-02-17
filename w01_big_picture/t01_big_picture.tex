@@ -5,7 +5,7 @@
 
 \title[AutoML: Big Picture]{AutoML: Automated Machine Learning}
 \subtitle{The Big Picture}
-\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -80,9 +80,9 @@
   \begin{itemize}
     \item making these design decisions is a tedious and error-prone task
   \end{itemize}
-  \pause
-  \smallskip
-  \item Many experts are employed in ML these days
+ % \pause
+  %\smallskip
+%  \item Many experts are employed in ML these days
   \smallskip
   \pause
   \smallskip
@@ -136,6 +136,7 @@ $\leadsto$ To achieve state-of-the-art performance,\\ this manuel tuning has to 
 
 \begin{itemize}
   \item $k$-nearest neighbors is one of the simplest ML algorithms
+  \pause
   \item Size of neighbourhood ($k$) is very important for its performance
   \pause
   \item The performance function depending on $k$ is quite complex\\ (not at all convex)
@@ -159,7 +160,7 @@ Given
 \begin{itemize}
   \item a dataset
   \item a task (e.g., regression or classification)
-  \item a performance metric (e.g., accuracy or RMSE)
+  \item a cost metric (e.g., accuracy or RMSE)
 \end{itemize}
 an AutoML system automatically determines the approach 
 that performs best for this particular application.
@@ -250,43 +251,11 @@ AutoML enables:
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Risks of AutoML}
+%\begin{frame}[c]{Snippet of Auto-AI Hierarchy}
 
-What could be risks of AutoML?
+%\centering
+%\includegraphics[width=0.5\textwidth]{images/autoai}
 
-\begin{enumerate}
-  \item Users apply AutoML \alert{without understanding} anything.
-  \begin{itemize}
-    \item Users might wonder why (Auto-)ML does not perform well\\ after they passed in poor data. 
-  \end{itemize}
-  \pause
-  \item Users \alert{over-trust} AutoML too much.
-  \begin{itemize}
-    \item humans might not use human reasoning skills and\\ do not second guess machine decisions
-  \end{itemize}
-  \pause
-  \item We enable non-ML experts to use ML\\ \alert{without knowing the risks and consequences} of ML.
-  \begin{itemize}
-  	\item E.g., bias in data and trained models
-  \end{itemize}
-  \pause
-  \item Could result in deployment of \ldots
-  \begin{itemize}
-    \item inaccurate ML models due to lack of understanding of statistical concepts, e.g., sampling bias, overfitting, concept drift, \ldots
-    \item biased and unfair models due to lack of understanding ethical practices and use of features such as gender and race for predicting outcomes
-  \end{itemize}
-\end{enumerate}
-
-See \lit{\href{https://arxiv.org/abs/1902.06804}{Bond et al. 2019}}
-
-\end{frame}
-%-----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Snippet of Auto-AI Hierarchy}
-
-\centering
-\includegraphics[width=0.5\textwidth]{images/autoai}
-
-\end{frame}
+%\end{frame}
 %-----------------------------------------------------------------------
 \end{document}

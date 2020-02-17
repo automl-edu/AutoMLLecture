@@ -1,0 +1,96 @@
+% !TeX spellcheck = en_US
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Problem]{AutoML: Overview of Problems}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Risks of AutoML}
+
+\begin{enumerate}
+	\item Users apply AutoML \alert{without understanding} anything.
+	\begin{itemize}
+		\item Users might wonder why (Auto-)ML does not perform well\\ after they passed in poor data. 
+	\end{itemize}
+\end{enumerate}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Risks of AutoML}
+
+\begin{enumerate}\setcounter{enumi}{1}
+	\item Users \alert{over-trust} AutoML too much.
+	\begin{itemize}
+		\item humans might not use human reasoning skills and\\ do not second guess machine decisions
+	\end{itemize}
+\end{enumerate}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Risks of AutoML}
+
+\begin{enumerate}\setcounter{enumi}{2}
+	\item We enable non-ML experts to use ML\\ \alert{without knowing the risks and consequences} of ML.
+	\begin{itemize}
+		\item E.g., bias in data and trained models
+	\end{itemize}
+\end{enumerate}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Risks of AutoML}
+
+\begin{enumerate}\setcounter{enumi}{3}
+	\item Could result in deployment of \ldots
+	\pause
+	\begin{itemize}
+		\item \alert{inaccurate models} due to lack of understanding of statistical concepts, e.g., sampling bias, overfitting, concept drift, \ldots
+		\pause
+		\medskip
+		\item \alert{biased and unfair models} due to lack of understanding ethical practices and use of features such as gender and race for predicting outcomes
+	\end{itemize}
+\end{enumerate}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Mitigating the Risks}
+
+\begin{enumerate}
+	\item Raise awareness of the risks
+	\pause
+	\bigskip
+	\item Build systems that automatically warn of these risks
+\end{enumerate}
+
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------	
+\end{document}
