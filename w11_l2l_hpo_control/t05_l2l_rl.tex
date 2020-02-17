@@ -5,7 +5,7 @@
 
 \title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
 \subtitle{Learning to Learn via Reinforcement Learning}
-\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -84,7 +84,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \begin{itemize}
 \item Instead of learning everything, it might be sufficient to \alert{learn hand-design heuristics}
 \pause
-\item In Bayesian Optimization (BO), the most critical hand-design heuristic is the acquisition function
+\item In Bayesian Optimization (BO), the most critical hand-design heuristic is\\ the acquisition function
 \begin{itemize}
 \item trade-off between exploitation and exploration
 \item Depending on the problem at hand, you might need a different acquisition function
@@ -117,9 +117,9 @@ black box function $f$,
 maximal number of function evaluations $m$
 }
 \BlankLine
-$\mathcal{D}_0$ $\leftarrow$ initial\_design($\mathcal{X}$); \\
-\For{n = $1, 2, \ldots m - |D_0|$}{
-$\surro: \conf \mapsto y$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
+$\mathcal{D}^{(0)}$ $\leftarrow$ initial\_design($\mathcal{X}$); \\
+\For{\bocount = $1, 2, \ldots \bobudget - |D_0|$}{
+$\surro: \conf \mapsto \cost(\conf)$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
 select $x_{n}$ by optimizing $x_{n} \in \argmax_{x \in \mathcal{X}} \alert{\alpha(x; \mathcal{D}_{n-1}, \surro)}$;\\
 Query $y_{n} := f(x_{n})$;\\
 Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}$;

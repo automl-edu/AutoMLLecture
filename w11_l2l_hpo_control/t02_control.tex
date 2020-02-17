@@ -3,9 +3,9 @@
 
 
 
-\title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
+\title[AutoML: Learning to Configure]{AutoML: Automated Machine Learning}
 \subtitle{Dynamic Configuration}
-\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -44,7 +44,7 @@
 		\begin{enumerate}
 			\item exponential decaying learning rate: based on number of iterations, learning rate decreases
 			\pause
-			\item Reduce learning rate on plateaus: if the learning stagnates for some time, the learning rate is decreased by a factor
+			\item Reduce learning rate on plateaus: if the learning stagnates for some time,\\ the learning rate is decreased by a factor
 		\end{enumerate}
 		\pause
 		\smallskip
@@ -77,7 +77,7 @@
 		\end{enumerate}
 		\pause
 		\medskip
-		\item[$\leadsto$] Many parameters only to control a single hyperparameter
+		\item[$\leadsto$] Many hyperparameters only to control a single hyperparameter
 		\pause   
 		\item Still not guaranteed that optimal setting of e.g. learning rate schedules will lead to optimal learning rate behavior
 		\begin{itemize}
@@ -100,17 +100,17 @@
 	\begin{itemize}
 		\item $\pcs$ be a hyperparameter configuration of an algorithm $\algo$,
 		\pause
-		\item $p(\dataset)$ be a probability distribution over meta datasets $\dataset \in \mdata$,
+		\item $p(\dataset)$ be a probability distribution over meta datasets $\dataset \in \datasets$,
 		\pause
 		\item $\stateRL_t$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
 		\pause
-		\item $\loss: \policies \times \mdata \to \perf$ be a loss metric assessing the cost of a control policy $\pi \in \Pi$ on dataset $\dataset \in \mdata$
+		\item $\cost: \policies \times \datasets \to \perf$ be a cost metric assessing the cost of a control policy $\pi \in \Pi$ on $\dataset \in \datasets$
 	\end{itemize}
 	
 	\pause
-	the \emph{algorithm control problem} is to obtain a control policy $\policy^* : \stateRL_t \times \dataset \mapsto \conf$ by optimizing its loss across a distribution of datasets:
+	the \emph{dynamic algorithm configuration problem} is to obtain a policy $\policy^* : \stateRL_t \times \dataset \mapsto \conf$ by optimizing its cost across a distribution of datasets:
 	\begin{equation}
-	\policy^* \in \argmin_{\policy \in \policies} \int_{\mdata} p(\dataset) \loss(\policy, \dataset) \diff \dataset \nonumber
+	\policy^* \in \argmin_{\policy \in \policies} \int_{\datasets} p(\dataset) \cost(\policy, \dataset) \diff \dataset \nonumber
 	\end{equation}
 \end{block}
 
@@ -185,7 +185,7 @@ $\leadsto$ equivalent to Dynamic Algorithm Configuration definition
 \pause
 \begin{equation} 
 \label{spl_loss}
-\max_{\policy,\vec{v}}\mathcal{R}(\policy, \vec{v}, K) = \sum^{|\mdata|}_{i=1} \vec{v}_i\mathcal{R}_i(\policy) - \frac{1}{K} \sum^{|\mdata|}_{i=1} \vec{v}_i \nonumber
+\max_{\policy,\vec{v}}\mathcal{C}(\policy, \vec{v}, K) = \sum^{|\mdata|}_{i=1} \vec{v}_i\mathcal{R}_i(\policy) - \frac{1}{K} \sum^{|\mdata|}_{i=1} \vec{v}_i \nonumber
 \end{equation}
 
 with $\weights$ being the agent's policy parameters and $\vec{v}$ being a masking vector.
@@ -197,7 +197,7 @@ Iterative greedy optimization of $\vec{v}$:
 \begin{equation}
 \vec{v}_i = \left\{
 \begin{array}{ll}
-1, &  \mathrm{if}\quad\mathcal{R}(\policy, \vec{v}_{i}:=0, K) < \mathcal{R}(\policy, \vec{v}_{i}:=1, K)\\
+1, &  \mathrm{if}\quad\mathcal{C}(\policy, \vec{v}_{i}:=0, K) \leq \mathcal{C}(\policy, \vec{v}_{i}:=1, K)\\
 0, & \mathrm{otherwise}
 \end{array}
 \right.\nonumber

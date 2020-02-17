@@ -2,7 +2,7 @@
         			%PreProcessing
         			
         			\node (Agent) [activity,
-    	minimum height=.75cm] {Controller $\policy$};
+    	minimum height=.75cm] {Policy $\policy$};
         			
         			\node (Algo) [activity, right of=Agent, xshift=3cm,
     	minimum height=.75cm] {Algorithm $A$};
@@ -20,13 +20,13 @@
         			% Top level
         			\path [rounded corners, draw=black!50, fill=white] (resUL) rectangle (resBR);
         			\path (resBR)+(-.9,0.175) node [text=black!75] {Dataset $\dataset$};
-        			\path (resUL.east |- resBR.north)+(+.9,0.075) node [text=black!75] {control of $\param_i$};
+        			\path (resUL.east |- resBR.north)+(+.9,0.075) node [text=black!75] {control of $\conf_i$};
         			
         			\end{pgfonlayer}
         			
         			%        \draw[myarrow] (feat.south) -- ($(feat.south |- Agent)+(0,1.125)$);
         			
-        			\draw[myarrow] (Agent.north) -- ($(Agent.north)+(0.0,+0.35)$) -- ($(Algo.north)+(0.0,+0.35)$) node [above,pos=0.5] { apply action $a_t$} node [below,pos=0.5] {set $\param_i=v$} -- (Algo.north);
+        			\draw[myarrow] (Agent.north) -- ($(Agent.north)+(0.0,+0.35)$) -- ($(Algo.north)+(0.0,+0.35)$) node [above,pos=0.5] { apply action $a_t$} node [below,pos=0.5] {set $\conf_i := v$} -- (Algo.north);
         			\draw[myarrow, dashed] ($(Algo.south)+(-0.25, 0)$) -- ($(Algo.south)+(-0.25, -0.35)$) -- ($(Agent.south)+(0.25, -0.35)$) node [above,pos=0.5] {state $s_{t+1}$} -- ($(Agent.south)+(0.25, 0)$);
         			\draw[myarrow] ($(Algo.south)+(0.25, 0)$) -- ($(Algo.south)+(0.25, -0.55)$) -- ($(Agent.south)+(-0.25, -0.55)$) node [below,pos=0.5] {reward $r_{t+1}$} -- ($(Agent.south)+(-0.25, 0)$);
         			

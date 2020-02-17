@@ -3,9 +3,9 @@
 
 
 
-\title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
+\title[AutoML: Learning to Configure]{AutoML: Automated Machine Learning}
 \subtitle{Learning to Control Learning Rates}
-\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -27,7 +27,7 @@
 	
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning Step Size Controllers \lit{Daniel et al'16}}
+\begin{frame}[c]{Learning Step Size Policies \lit{Daniel et al'16}}
 
 \begin{itemize}
 \item \alert{Idea:} Learn the hyperparameters of the weight update 
@@ -57,7 +57,7 @@
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Recap: Reinforcement Learning for Algorithm Control}
+\begin{frame}[c]{Recap: Reinforcement Learning for Dynamic Algorithm Configuration}
 
 \centering
 \input{tikz/control.tex}
@@ -74,7 +74,7 @@ To apply that, we need to define:
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Controllers: State \lit{Daniel et al'16}}
+\begin{frame}[c]{RL for Step Size Policies: State \lit{Daniel et al'16}}
 
 \textbf{Predictive change in function value:}
 
@@ -101,7 +101,7 @@ $$s_{K+i} \leftarrow \gamma s_{K+i} + (1-\gamma) (s_i - \hat{s}_i)^2$$
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Controllers: Learning \lit{Daniel et al'16}}
+\begin{frame}[c]{RL for Step Size Policies: Learning \lit{Daniel et al'16}}
 
 Reward (average loss improvement over time):
 
@@ -128,7 +128,7 @@ $$\pi^*(\phi) \in \argmax_{\pi} \int \int p(s) \pi(\phi)r(g(s;\phi),s) \texttt{d
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Controllers: Training \lit{Daniel et al'16}}
+\begin{frame}[c]{RL for Step Size Policies: Training \lit{Daniel et al'16}}
 
 \begin{itemize}
 \item Goal: obtain robust policies,\\ i.e., good performance for many different DNN architectures

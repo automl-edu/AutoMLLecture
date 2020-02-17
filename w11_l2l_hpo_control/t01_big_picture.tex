@@ -5,7 +5,7 @@
 
 \title[AutoML: Overview]{AutoML: Automated Machine Learning}
 \subtitle{Overview: Control \& Learning}
-\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -40,9 +40,9 @@
    \smallskip
    \item We discussed how to extend AutoML to a more \alert{grey-box approach}:	
    \begin{itemize}
-     	\item Grey Box: We still choose the input, but we can observe more than the outcome, e.g, intermediate results
+     	\item Grey Box: We still choose the input, but we can observe more than the outcome,\\ e.g, intermediate results
      	\pause
-     	\item We might can control the "box" a bit,  e.g., early termination
+     	\item We might can control the ``box'' a bit,  e.g., early termination
      	\pause
         \item E.g., learning curve predictions, multi-fidelity optimization, \ldots
         \pause
@@ -66,7 +66,7 @@
 \begin{frame}[c]{Iterative Optimization Heuristics}
 
 \begin{block}{IOHs}
-	Iterative Optimization Heuristics {IOH} propose a set of solution candidates in each iteration
+	Iterative Optimization Heuristics (IOHs) propose a set of solution candidates in each iteration
 	based on previous evaluations.
 \end{block}
 
@@ -109,8 +109,8 @@ Important Observations:
 \bigskip
 \pause
 
-\begin{block}{Algorithm Control}
-	The goal of algorithm control is to learn a policy from data that adapts the \alert{hyperparameter settings} of an heuristic.
+\begin{block}{Dynamic Algorithm Configuration: DAC}
+	The goal of DAC is to learn a policy from data\\ that adapts the \alert{hyperparameter settings} of an IOH.
 \end{block}
 
 	
