@@ -31,13 +31,19 @@
 		\multicolumn{2}{c}{\textbf{Machine Learning}}\\
      	$\dataset$ & Dataset\\
      	$\datasettrain$ & Training dataset\\
-	   	$\datasetval$ & Validation dataset\\     	
-     	$\datasettest$ & Test dataset\\     	
+	   	$\datasetval$ & Validation dataset\\
+     	$\datasettest$ & Test dataset\\
 		$\datasets$ & Space of datasets\\
      	$\x$ & Feature vector \\
      	$y$ & Label \\
      	$(\xI{i},\yI{i})$ & $i$-th observation\\
-		$\loss$ & (empirical) loss\\     	
+		$\loss$ & (empirical) loss\\
+		$\risk$ & risk\\
+		$\riske$ & empirical risk\\
+		$\fx$ & continuous prediction function \\
+		$\Hspace$ & hypothesis space where f is from \\
+		$\fh$ & estimated prediction function \\
+
 		\midrule
 		\multicolumn{2}{c}{\textbf{Hyperparameter Optimization}}\\
 		$\conf$ & Hyperparameter configuration\\
@@ -48,10 +54,10 @@
 		$\pcs$ &  Space of possible hyperparameter configurations\\
 		$\algo$ & Algorithm (e.g. SVM, RF, DNN) \\
 		$\algos$ & Distribution or set of algorithms\\
-		$\cost(\conf)$ & Target cost function (e.g., empirical risk, validation loss, runtime)\\		
-		$\surro(\conf)$ & Surrogate (probabilistic) model of target function\\		
+		$\cost(\conf)$ & Target cost function (e.g., empirical risk, validation loss, runtime)\\
+		$\surro(\conf)$ & Surrogate (probabilistic) model of target function\\
 		$\hist = \langle \confI{\bocount}, \cost(\confI{\bocount}) \rangle_{\bocount=1}^\bobudget$ &  All observations collected for BO / HPO\\
-		\midrule 
+		\midrule
 		\multicolumn{2}{c}{\textbf{Gaussian Processes and Bayesian Optimization}}\\
 		 $\gp$ & Gaussian process \\
 %		$\objF$ & Family of Target Functions \\
@@ -91,12 +97,12 @@
 		$\feats$ & Space of (meta-)features \\
 		$\portfolio$ & Portfolio (i.e., discrete set) of algorithms or hyperparameter configurations\\
 		$\schedule$ & Schedule of algorithms or hyperparameter configurations\\
-		\midrule 
+		\midrule
 		\multicolumn{2}{c}{\textbf{Meta-Learning}}\\
 		$\weights$ & Weights (a.k.a. parameters) of ML model (e.g., DNN)\\
 		$\metaweights$ & Weights of meta-model\\
     	$\mdata$ & Meta-dataset\\
-		\midrule 
+		\midrule
 		\multicolumn{2}{c}{\textbf{Reinforcement Learning}}\\
 		$\policy$ & Reinforcement learning policy\\
 		$\policies$ & Space of policies\\
@@ -115,4 +121,4 @@
 \end{table}
 
 
-\end{document}          
+\end{document}

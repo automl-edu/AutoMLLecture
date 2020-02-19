@@ -46,7 +46,9 @@
 %\newcommand{\vLambda}[0]{\bm{\Lambda}}
 \newcommand{\dataset}[0]{\mathcal{D}}
 \newcommand{\datasets}[0]{\mathbf{D}}
-\newcommand{\loss}[0]{\mathcal{L}}
+\newcommand{\loss}[0]{L\left(y, f(\mathbf{x})\right)}
+\newcommand{\risk}{\mathcal{R}}
+\newcommand{\riske}{\mathcal{R}_{\text{emp}}}
 \newcommand{\cost}[0]{c}
 
 % Gaussian Process
@@ -71,7 +73,7 @@
 \newcommand{\boobsspace}{\mathcal{Y}}
 % BO loop next sample (selected for evaluation at each iteration of the BO loop)
 \newcommand{\bonextsample}{\boparam_\bocount}
-% BO loop next observation 
+% BO loop next observation
 \newcommand{\bonextobs}{\boobs_\bocount}
 % Surrogate Function, no args -- do not use
 % \renewcommand{\surro}{\hat{f}}
@@ -133,7 +135,10 @@
 \newcommand{\y}[0]{y}
 \newcommand{\xI}[1]{\mathbf{x}^{(#1)}}
 \newcommand{\yI}[1]{y^{(#1)}}
-	
+\newcommand{\fx}{f(\mathbf{x})}  % f(x), continuous prediction function
+\newcommand{\Hspace}{\mathcal{H}} % hypothesis space where f is from
+\newcommand{\fh}{\hat{f}}       % f hat, estimated prediction function
+
 % Deep Learning
 \newcommand{\weights}[0]{\theta}
 \newcommand{\metaweights}[0]{\phi}
@@ -180,9 +185,9 @@
 %\newcommand{\sss}{\textit{3S}}
 %\newcommand{\sunny}{\textit{Sunny}}
 %\newcommand{\ssspar}{\textit{3Spar}}
-%\newcommand{\cshc}{\textit{CSHC}}  
-%\newcommand{\cshcpar}{\textit{CSHCpar}}  
-%\newcommand{\measp}{\textit{ME-ASP}} 
+%\newcommand{\cshc}{\textit{CSHC}}
+%\newcommand{\cshcpar}{\textit{CSHCpar}}
+%\newcommand{\measp}{\textit{ME-ASP}}
 %\newcommand{\aspeed}{\textit{aspeed}}
 %\newcommand{\autofolio}{\textit{AutoFolio}}
 %\newcommand{\cedalion}{\textit{Cedalion}}
