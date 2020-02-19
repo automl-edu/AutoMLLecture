@@ -66,39 +66,103 @@
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Population-based Training \lit{TODO}}
+\begin{frame}[c]{Population-based Training \lit{\href{https://arxiv.org/abs/1711.09846}{Jaderberg et al. 2017}}}
 
 \begin{tikzpicture}[node distance=2.1cm]
 %PreProcessing
 
-\node (l1) [activity] {$\confI{1}$};
-\node (l2) [activity, below of=l1, node distance=1cm] {$\confI{2}$};
-\node (l3) [activity, below of=l2, node distance=1cm] {$\confI{3}$};
-\node (l4) [activity, below of=l3, node distance=1cm] {$\confI{4}$};
+\node (l1) [activity, left color=red!100, right color=red!20] {$\confI{1}$};
+\node (l2) [activity, left color=red!100, right color=red!80, below of=l1, node distance=1cm] {$\confI{2}$};
+\node (l3) [activity, left color=red!100, right color=red!30, below of=l2, node distance=1cm] {$\confI{3}$};
+\node (l4) [activity, left color=red!100, right color=red!40, below of=l3, node distance=1cm] {$\confI{4}$};
 
 \draw[myarrow] ($(l4.west)+(0.0, -1.0)$) -- ($(l4.east)+(10.0, -1.0)$) node[below] {t};
 
 \pause
 
-\node (l12) [activity, right of=l1, node distance=4cm] {$\confI{1}$};
-\node (l22) [activity, right of=l2, node distance=4cm]{$\confI{5} := \confI{3} + \epsilon_1$};
-\node (l32) [activity, right of=l3, node distance=4cm] {$\confI{3}$};
-\node (l42) [activity, right of=l4, node distance=4cm] {$\confI{4}$};
+\node (l12) [activity, right of=l1, left color=red!20, right color=yellow!10, node distance=4cm] {$\confI{1}$};
+\node (l22X) [right of=l2, node distance=1.85cm]{X};
+\node (l22) [activity, left color=red!30, right color=yellow!80, right of=l2, node distance=4cm]{$\confI{5} := \confI{3} + \epsilon_1$};
+\node (l32) [activity, left color=red!30, right color=yellow!80, right of=l3, node distance=4cm] {$\confI{3}$};
+\node (l42) [activity, left color=red!40, right color=yellow!10, right of=l4, node distance=4cm] {$\confI{4}$};
+
+\draw[myarrow] (l1.east) -- (l12.west);
+\draw[myarrow] (l3.east) -- (l22.west);
+\draw[myarrow] (l3.east) -- (l32.west);
+\draw[myarrow] (l4.east) -- (l42.west);
 
 \pause
 
-\node (l13) [activity, right of=l12, node distance=4cm] {$\confI{6} := \confI{5} + \epsilon_2$};
-\node (l23) [activity, right of=l22, node distance=4cm]{$\confI{5}$};
-\node (l33) [activity, right of=l32, node distance=4cm] {$\confI{3}$};
-\node (l43) [activity, right of=l42, node distance=4cm] {$\confI{7} := \confI{3} + \epsilon_3$};
+\node (l13X) [right of=l12, node distance=1.85cm]{X};
+\node (l13) [activity, left color=yellow!80, right color=red!10, right of=l12, node distance=4cm] {$\confI{6} := \confI{5} + \epsilon_2$};
+\node (l23) [activity, left color=yellow!80, right color=green!80, right of=l22, node distance=4cm]{$\confI{5}$};
+\node (l33) [activity, left color=yellow!80, right color=green!50, right of=l32, node distance=4cm] {$\confI{3}$};
+\node (l43X) [right of=l42, node distance=1.85cm]{X};
+\node (l43) [activity, left color=yellow!80, right color=green!10, right of=l42, node distance=4cm] {$\confI{7} := \confI{3} + \epsilon_3$};
+
+\draw[myarrow] (l22.east) -- (l13.west);
+\draw[myarrow] (l22.east) -- (l23.west);
+\draw[myarrow] (l32.east) -- (l33.west);
+\draw[myarrow] (l32.east) -- (l43.west);
 
 \end{tikzpicture}
 
+\begin{itemize}
+	\item The color indicates the performance over time
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Population-based Training \lit{\href{https://arxiv.org/abs/1711.09846}{Jaderberg et al. 2017}, \href{https://arxiv.org/abs/2002.04225}{Liang et al. 2020}}}
+
+General workflow of PBT:
+
 \begin{enumerate}
-	\item Train population of configurations
-	\item Drop poorly performing ones
-	\item Add new configurations by small mutations of existing ones
+	\item Sample initial population
+	\begin{itemize}
+		\item Each population member is a combination of hyperparameter setting $\conf$ and (partially trained) model
+	\end{itemize}
+	\pause
+	\item Train population for a bit 
+	\pause
+	\item Tournament selection to drop poorly performing population members
+	\pause
+	\item Use mutation (and cross-over) to generate off-springs
+	\begin{itemize}
+		\item Changes the hyperparameter settings, but inherits the partially trained model
+	\end{itemize}
+	\pause
+	\item[$\leadsto$] New population consisting so-far best performing ones and new off-springs
+	\pause
+	\item Go to 2.
 \end{enumerate}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Properties of Population-based Training (PBT)}
+
+\begin{itemize}
+	\item PBT returns an already trained model (e.g., DNN or RL policy)
+	\bigskip
+	\pause
+	\item PBT uses evolutionary computing to determine well-performing hyperparameter settings
+	\bigskip
+	\pause
+	\item Since hyperparameter settings changes while training the models,\\ PBT relates to dynamic algorithm configuration
+	\bigskip
+	\pause
+	\item Since each population member (i.e., model) can be trained independently,\\ PBT can be efficiently parallelized
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Combining Population-based Training and Bayesian Optimization}
+
+TODO
 
 \end{frame}
 %----------------------------------------------------------------------
