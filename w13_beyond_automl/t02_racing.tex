@@ -343,6 +343,45 @@ Test performance\\
 
 \end{frame}
 %-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[fragile]{Overview of Racing}
+\LinesNotNumbered
+\begin{algorithm}[H]
+	\scriptsize
+	\Input{%
+		 candidate configurations $\confs_{new}$, cutoff $\cutoff_{max}$, previously evaluated runs $\hist$, budget $\bobudget$, incumbent $\incumbent$}
+		\Output{best found configuration $\incumbent$, list of all evaluated runs $\hist$}
+		\While{$\confs_{new}$ not empty}{
+			$\confI{\bocount} \xleftarrow{} $ getNext$(\confs_{new})$;\\
+			\pause
+			$\inst, s \xleftarrow{}$ instance and seed drawn uniformly at random;\\
+			$c$ $\xleftarrow{}$ EvaluateRun$(\incumbent, \inst, s, \cutoff_{max})$;\\
+			$\hist \xleftarrow{} \hist \cup (\incumbent, \inst, s, \cost)$;\\
+			\pause
+			\While{true}{
+				 $\insts^+, \mathbf{s}^+ \xleftarrow{} $getAlreadyEvaluatedOn$(\incumbent, \hist)$;\\
+				 $\insts^{(\bocount)}, \mathbf{s^{(\bocount)}} \xleftarrow{} $getAlreadyEvaluatedOn$(\confI{\bocount}, \hist)$;\\
+				$\instI{\bocount}, s^{(\bocount)} \xleftarrow{}$ drawn uniformly at random from $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$;\\
+				\pause
+%				$\mathbf{s_i} \xleftarrow{} \mathbf{s_i} \cup s_i$;\\
+%				$\cutoff_i \xleftarrow{}$ AdaptCutoff$(\cutoff_{max}, \langle(\conf_j, \cost_j)\rangle_{\conf_j = \conf^+})$;\\
+				$c_i \xleftarrow{}$ EvaluateRun$(\confI{\bocount}, \instI{\bocount},  s^{(\bocount)}, \cutoff^{(\bocount)})$;\\
+				$\mathcal{D} \xleftarrow{} \mathcal{D} \cup (\confI{\bocount}, \instI{\bocount},  s^{(\bocount)},  \cost^{(\bocount)})$;\\
+				\pause
+				\If{average cost of $\confI{\bocount} >$ average cost of $\incumbent$ across $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$}{break;}
+				\pause
+				\ElseIf{average cost of $\confI{\bocount} <$ average cost of $\incumbent$ and $\insts_+ =  \insts^{(\bocount)}$  and $|\mathbf{s}^{(\bocount)}| = |\mathbf{s}^+|$}{
+					$\incumbent \xleftarrow{} \confI{\bocount}$;
+					}
+			}
+		\pause
+		\If{time spent exceeds $\bobudget$ or $\confs_{new}$ is empty} {
+			\Return{$\incumbent, \hist$}
+		}
+		}
+\end{algorithm}
+\end{frame}
+%-----------------------------------------------------------------------
 
 
 \end{document}
