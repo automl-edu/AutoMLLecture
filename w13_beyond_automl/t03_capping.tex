@@ -6,7 +6,7 @@
 \title[AutoML: Overview]{AutoML: Automated Machine Learning}
 \subtitle{Capping of Runtimes}
 %TODO: change authors!
-\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -52,7 +52,7 @@
 %-----------------------------------------------------------------------
 \begin{frame}[c,fragile]{Toy-Example: Adaptive capping}
 
-runtime cutoff $\cutoff = 300$, comparison based on 2 instances
+{runtime cutoff $\cutoff = 300$, comparison based on 2 instances}
 
 \begin{center}
 \begin{tabular}{l cc}
@@ -76,6 +76,36 @@ runtime cutoff $\cutoff = 300$, comparison based on 2 instances
 {Note: To combine adaptive capping with BO, we need to impute the censored observations caused by adaptive capping. \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-NIPS-workshop-BO-with-censoring.pdf}{Hutter et al. 2011}}}
 
 
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[fragile]{Overview of Racing and Adaptive Capping}
+\LinesNotNumbered
+\begin{algorithm}[H]
+	\scriptsize
+	\Input{%
+		candidate configurations $\confs_{new}$, cutoff $\cutoff_{max}$, previously evaluated runs $\hist$, budget $\bobudget$, incumbent $\incumbent$}
+	\Output{best found configuration $\incumbent$, list of all evaluated runs $\hist$}
+	\While{$\confs_{new}$ not empty}{
+		$\confI{\bocount} \xleftarrow{} $ getNext$(\confs_{new})$;\\
+		$[\ldots$ add new run for incumbent $\ldots]$;\\
+		\While{true}{
+			$\insts^+, \mathbf{s}^+ \xleftarrow{} $getAlreadyEvaluatedOn$(\incumbent, \hist)$;\\
+			$\insts^{(\bocount)}, \mathbf{s^{(\bocount)}} \xleftarrow{} $getAlreadyEvaluatedOn$(\confI{\bocount}, \hist)$;\\
+			$\instI{\bocount}, s^{(\bocount)} \xleftarrow{}$ drawn uniformly at random from $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$;\\
+			\alert{$\cutoff^{(i)} \xleftarrow{}$ AdaptCutoff$(\cutoff_{max}, \langle(\confI{j}, \costI{j})\rangle_{\confI{j} = \conf^+}) \cdot \xi$;}\\
+			$c_i \xleftarrow{}$ EvaluateRun$(\confI{\bocount}, \instI{\bocount},  \alert{s^{(i)}}, \cutoff_{max})$;\\
+			$\mathcal{D} \xleftarrow{} \mathcal{D} \cup (\confI{\bocount}, \instI{\bocount},  s^{(\bocount)},  \cost^{(\bocount)})$;\\
+			\If{average cost of $\confI{\bocount} >$ average cost of $\incumbent$ across $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$}{break;}
+			\ElseIf{average cost of $\confI{\bocount} <$ average cost of $\incumbent$ and $\insts_+ =  \insts^{(\bocount)}$  and $|\mathbf{s}^{(\bocount)}| = |\mathbf{s}^+|$}{
+				$\incumbent \xleftarrow{} \confI{\bocount}$;
+			}
+		}
+		\If{time spent exceeds $\bobudget$ or $\confs_{new}$ is empty} {
+			\Return{$\incumbent, \hist$}
+		}
+	}
+\end{algorithm}
 \end{frame}
 %-----------------------------------------------------------------------
 
