@@ -31,7 +31,7 @@
 \begin{frame}[c]{On-the-fly Adaption}
 
 \begin{itemize}
-	\item Dynamic algorithm configuration assumes that we have access to a \alert{representative learning environment} in an \alert{offline learning phase}
+	\item Dynamic algorithm configuration assumes that we have access to\\ a \alert{representative learning environment} in an \alert{offline learning phase}
 	\pause
 	\item What if we don't access to such an env or don't have to time for offline learning?
 	\pause
@@ -61,6 +61,8 @@
 	\item Sample many hyperparameter configurations $\confI{i}$ and evaluate them all in parallel
 	\pause
 	\item Pure exploration on a large population of configurations
+	\pause
+	\item No dynamic adaptation
 \end{itemize}
 
 \end{frame}
@@ -130,10 +132,10 @@ General workflow of PBT:
 	\pause
 	\item Use mutation (and cross-over) to generate off-springs
 	\begin{itemize}
-		\item Changes the hyperparameter settings, but inherits the partially trained model
+		\item Change the hyperparameter settings, but inherits the partially trained model (+ pertubation)
 	\end{itemize}
 	\pause
-	\item[$\leadsto$] New population consisting so-far best performing ones and new off-springs
+	\item[$\leadsto$] New population consists of so-far best performing ones and new off-springs
 	\pause
 	\item Go to 2.
 \end{enumerate}
@@ -155,6 +157,9 @@ General workflow of PBT:
 	\bigskip
 	\pause
 	\item Since each population member (i.e., model) can be trained independently,\\ PBT can be efficiently parallelized
+	\begin{itemize}
+		\item[$\leadsto$] Drawback: requires substantial parallel compute resources
+	\end{itemize}
 \end{itemize}
 
 \end{frame}
@@ -162,7 +167,90 @@ General workflow of PBT:
 %----------------------------------------------------------------------
 \begin{frame}[c]{Combining Population-based Training and Bayesian Optimization}
 
-TODO
+\begin{itemize}
+	\item Bayesian Optimization (BO) is well known for its sample efficiency
+	\pause
+	\medskip
+	\item \alert{Idea:} Can we use BO to guide PBT? 
+	\pause
+	\medskip
+	\item[$\leadsto$] Less parallel compute resources are required(?)
+	\pause
+	\medskip
+	\item[$\leadsto$] Scales better to higher dimensional spaces(?)
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{PBT + BO: Outline}
+
+\begin{enumerate}
+	\item Sample initial population
+	\begin{itemize}
+		\item Each population member is a combination of hyperparameter setting $\conf$ and (partially trained) model
+	\end{itemize}
+	\item Train population for a bit 
+	\item Tournament selection to drop poorly performing population members
+	\item Use \alert{Bayesian optimization} to select new hyperparameter settings
+	\begin{itemize}
+		\item Change the hyperparameter settings, but inherits the partially trained model (+ pertubation)
+	\end{itemize}
+	\item[$\leadsto$] New population consists of so-far best performing ones and new off-springs
+	\item Go to 2.
+\end{enumerate}
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{PBT  + BO: Parallel Evaluation}
+
+\begin{itemize}
+	\item \alert{Challenge I}: PBT runs in parallel asynchronously
+	\pause
+	\medskip
+	\item[$\leadsto$] BO has to take into account that other hyperparameter settings are being evaluated already
+	\pause 
+	\medskip
+	\item Several ideas on how to parallelize BO
+	\begin{itemize}
+		\pause
+		\smallskip
+		\item Randomize the model training or optimization of the acquisition function
+		\pause
+		\smallskip
+		\item Thompson sampling to use only a single explanation of the data\newline (in proportion to its likelihood)
+		\pause
+		\smallskip
+		\item Hallucinate performance of other hyperparameter settings in optimistically, pessimistically or in expectation of the current surrogate model
+	\end{itemize}
+	
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{PBT  + BO: Parallel Evaluation \lit{\href{https://arxiv.org/abs/2002.02518}{Parker-Holder et al. 2020}}}
+
+\begin{itemize}
+	\item \alert{Challenge II}: The cost depends on the previous $\confI{1}, \confI{2}. \ldots, \confI{t-1}$
+	\pause
+	\medskip
+	\item BO-Surrogate model predicts the cost improvement over time:
+\end{itemize}
+
+\begin{equation}
+\cost_{\text{PBT}}^{(t)}(\conf)= \frac{\cost^{(t)}(\conf) - \cost^{(t-1)}(\conf)}{\Delta t}\nonumber
+\end{equation}
+
+where $\cost^{(t)}(\conf)$ is the cost for a given hyperparameter setting at time step $t$.
+
+\bigskip
+\pause
+\begin{itemize}
+	\item Remark: Also add $\cost^{(t-1)}$ as an input to the BO-surrogate model to\\ ease the task of predicting the improvement
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
