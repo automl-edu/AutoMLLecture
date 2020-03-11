@@ -1,0 +1,135 @@
+\section{Extensions}
+\subsection{Noisy BO}
+\begin{frame}{Extensions to BO}
+\begin{block}{Standard BO Problem:}
+\begin{itemize}
+    \item Sequential optimization
+    \pause
+    \item Noise-free evaluations
+    \item No constraints
+\end{itemize}
+\end{block}
+\begin{block}{\emph{Exotic} BO Problem:}
+\begin{itemize}
+    \item Parallel evaluations
+    \item Noisy evaluations
+    \item Optimization with constraints
+    \item Noisy constraints
+\end{itemize}
+\end{block}    
+\end{frame}
+
+\begin{frame}{Exotic BO Problem: Noisy Evaluations}
+    \begin{itemize}
+        \item Given noisy evaluations, GP regression proceeds similarly to the noiseless case.
+        \begin{itemize}
+            \item This is achieved by adding the noise variance terms in the diagonal of the covariance matrix of the GP.
+        \end{itemize}
+        \item Computing EI with observation noise is challenging.
+        \begin{itemize}
+            \item We no longer know the function value of the current best point $\cost^{*}$.
+        \end{itemize}
+        \item KG, ES, and PES apply directly in the setting with noise and retain one-step optimality properties.
+        \end{itemize}
+        \vspace{5mm}
+        \center $\boobs_i=\cost(\conf_i)+\varepsilon_i$ where $\varepsilon\sim\normaldist(0,\tau_{i}^2)$
+\end{frame}
+%-----------------------------------------------------------------------
+%\begin{frame}{Exotic BO Problem: Optimization with constraints}
+
+%\center $\min\limits_{\conf}\cost(\conf)$ subject to $\constraintf_j(\conf)\leq %0, j=1,\dots,J$
+%\pause
+
+
+%\begin{block}{Noiseless constraints}
+%\begin{itemize}
+%   \item EI generalizes naturally to the constrained setting when $\cost$ and %$\constraintf_{i}$ are noiseless.
+%   \pause
+%  \item PES has been extended to predictive entropy search with constraints(PESC)
+% \pause
+%    \item KG has not been extended to constrained problems.
+%    \pause
+%\end{itemize}
+%\end{block}
+%\begin{block}{Noisy constraints}
+%\begin{itemize}
+%    \item EI is no longer analytic and requires integration over the posterior.
+%    \pause
+%    \item PESC can handle noise in constraints naturally.
+%    \pause
+%    \begin{itemize}
+%        \item Requires difficult-to-implement approximations.
+%    \end{itemize}
+%\end{itemize}
+%\end{block}
+%\end{frame}
+%-------------------------------------------------------------------------
+\begin{frame}{Exotic BO Problem: Parallelization}
+\begin{block}{Parallelization}
+\begin{itemize}
+    \item EI can be used for batch or asynchronous optimization by maximizing EI integrated over pending outcomes.
+    \pause
+    \item EI also can handle noise in batch optimization by integrating over samples from the EI posterior.
+    \pause
+    \item KG, ES and PES can also be extended to allow parallel function evaluations.
+    \pause
+
+\end{itemize}
+\end{block}
+\begin{itemize}
+    \item Issue: BO underperforms on problems of high noise in the observations and constraints.
+    \item Solution: EI under greedy batch optimization with noisy observations and constraints (NoisyEI)
+\end{itemize}
+    
+
+\end{frame}
+%----------------------------------------------------------------------------
+\begin{frame}{Constrained Bayesian Optimization with Noisy Experiments}
+\begin{itemize}
+    \item GP priors for noisy function $\cost$:
+    \begin{equation*}
+        \cost^{n}|\dataset_{\cost} \sim \normaldist(\boldsymbol{\mean}_{\cost},\Sigma_{\cost})
+    \end{equation*}
+    \item Noisy Expected Improvement:
+    \begin{equation*}
+        \alpha_{NEI}(\conf|\dataset)=\int_{\cost^{n}}\alpha_{EIx}(\conf|\cost^{n})p(\cost^{n}|\dataset_{\cost})d\cost^{n}
+    \end{equation*}
+    \begin{itemize}
+        \item NEI does not have an analytic expression, but it can be efficiently approximated using quasi-Monte Carlo approximation.
+    \end{itemize}
+\end{itemize}
+    
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{Constrained Bayesian Optimization with Noisy Experiments-Summary}
+\begin{columns}[T] % align columns
+\begin{column}{.48\textwidth}
+    \begin{block}{Advantages}
+    \begin{itemize}
+    	\item Extending EI to scenarios of noisy, constrained problems.
+    	\pause
+    	\item 
+    	\pause
+    	\item ... 
+    \end{itemize}
+    \end{block}
+\pause
+\end{column}%
+
+\hfill%
+
+\begin{column}{.48\textwidth}
+
+    \begin{block}{Disadvantages}
+    \begin{itemize}
+    	\item NEI relies on a large number of GPs, thus doesn't scale to large evaluation budgets.
+    	\pause
+    	\item ...
+    \end{itemize}
+\end{block}
+
+\end{column}
+\end{columns}   
+\end{frame}
+

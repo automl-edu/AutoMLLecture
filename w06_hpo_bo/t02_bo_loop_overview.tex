@@ -1,0 +1,199 @@
+\section{Bayesian Optimization}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Bayesian Optimization: Conditional probability}
+
+\begin{block}{Conditional probability - definition}
+    Let $A$ and $B$ be two events with $P(B) \neq 0$. The conditional probability of $A$ given $B$ is defined to be:
+	\begin{equation}
+	    P(A \vert B) = \frac{P(A \cap B)}{P(B)}
+    \label{eq:cond_prob}  
+	\end{equation}
+\end{block}
+
+\pause
+
+\begin{block}{Conditional probability - example}
+   You toss a fair coin three times. Given that you have observed at least one heads, what is the probability that you observe at least two heads? 
+\end{block}
+
+\pause
+
+\begin{block}{Conditional probability - solution}
+	\begin{equation*}
+    \begin{aligned}
+        A_1 = S - \{TTT\}, \pause \textrm{ and } A_2 = \{HHT, HTH ,THH, HHH\} \\ \pause
+        P(A_2 \vert A_1) =  \pause \frac{P(A_2 \cap A_1)}{P(A_1)} =  \pause \frac{P(A_2)}{P(A_1)} =  \pause \frac{4}{7}
+    \end{aligned}
+    \end{equation*}
+\end{block}
+
+\note[item]{source: https://www.probabilitycourse.com/chapter1/1\_4\_5\_solved3.php}
+
+\note[item]{S - all possibilities}
+
+\note[item]{Let $A_1$ be the event that you observe at least one heads, and $A_2$ be the event that you observe at least two heads.}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Bayesian Optimization: Bayes rule}
+
+\begin{itemize}
+    \item Using the definition of conditional probability (Eq. \ref{eq:cond_prob}), one can rearrange the terms to show:
+        \begin{equation*}
+            P(A \cap B) = P(A \vert B) * P(B)
+        \end{equation*}
+    \item Similarly, it follows:
+        \begin{equation*}
+            P(B \cap A) = P(B \vert A) * P(A)
+        \end{equation*}
+        
+        \begin{block}{Bayes rule (theorem)}
+        Since $A \cap B = B \cap A$, one can rewrite both above relations as:
+        	\begin{equation}
+        	    P(A \vert B) = \frac{P(B \vert A) * P(A)}{P(B)}
+                \label{eq:bayes_rule}  
+        	\end{equation}
+        \end{block}
+
+\end{itemize}
+\end{frame}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Bayesian Optimization: Bayes rule - example}
+
+\begin{block}{Bayes rule - example}
+    You are planning a picnic today, but the morning is cloudy: \pause
+    \begin{itemize}
+        \item 50\% of all rainy days start off cloudy, \pause
+        \item cloudy mornings are common (about 40\% of days start cloudy), \pause
+        \item it is a dry month (only 3 of 30 days tend to be rainy, or 10\%). \pause
+    \end{itemize}
+    
+    \emph{What is the chance of rain during the day?}
+\end{block}
+
+ \pause
+
+\begin{block}{Bayes rule - solution}
+	\begin{equation*}
+	\begin{aligned}
+	    P(RainyDay \vert CloudyMorning) = \frac{P(CloudyMorning \vert RainyDay) * P(RainyDay)}{P(CloudyMorning)} \\  \pause
+	    P(RainyDay \vert CloudyMorning) = \frac{0.5 * 0.1}{0.4} = 0.125
+	\end{aligned}
+	\end{equation*}
+\end{block}
+
+\note[item]{source: https://www.mathsisfun.com/data/bayes-theorem.html}
+\note[item]{https://www.countbayesie.com/blog/2015/2/18/bayes-theorem-with-lego}
+        
+\end{frame}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Bayesian Optimization: Where does the name come from?}
+
+\begin{itemize}
+    \item Bayesian optimization uses Bayes' theorem in a form: 
+    	\begin{equation*}
+    	    P(A \vert B) \propto P(B \vert A) * P(A)
+    	\end{equation*} \pause
+    \item We refer to:
+        \begin{itemize}
+            \item $A$ as a model (or hypothesis, theory), \pause
+            \item $B$ as a data (or observations, evidence),\pause
+            \item $P(A \vert B)$ as a \emph{posterior} probability of a model given a data,\pause
+            \item $P(B \vert A)$ as a \emph{likelihood} of a data given a model, \pause
+            \item $P(A)$ as a \emph{prior} probability of a model, which represents our belief about the space of possible objective functions. \pause
+        \end{itemize}
+    \item In our application:
+        \begin{equation*}
+            P(\func \vert \dataset_{1:\bocount}) \propto P(\dataset_{1:\bocount} \vert \func) * P(\func)
+        \end{equation*} \pause
+        where $\dataset_{1:\bocount} = \left \{ \conf_{1:\bocount}, \func(\conf_{1:\bocount}) \right \}$.
+
+\end{itemize}
+
+        
+\end{frame}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Bayesian Optimization: Pseudocode}
+\begin{center}
+\begin{minipage}{0.75\textwidth}
+\begin{algorithm}[H]
+    \Input{Search Space $\pcs$, 
+    		black box function $\func$, 
+    		acquisition function $\acq$, \\
+    		maximal number of function evaluations $\bobudget$.
+    	}
+	\BlankLine
+	$\dataset_0$ $\leftarrow$ initial\_design($\pcs$); 
+	
+	\For{\bocount = $1, 2, \ldots \bobudget - |\dataset_0|$}{
+		%\While{$B$ not exhausted} {
+		$\surro$ $\leftarrow$ fit predictive model on $\dataset_{\bocount-1}$;
+		
+		select $\bonextsample$ by optimizing $\bonextsample \in \argmax_{\conf \in \pcs} \acq(\conf; \dataset_{\bocount-1}, \surro)$;
+		
+		Query $\bonextobs := \func(\bonextsample)$;
+		
+		Add observation to data $\dataset_{\bocount} := \dataset_{\bocount-1} \cup \{\langle \bonextsample, \bonextobs \rangle \}$;\\
+	}
+	\Return{Best $\conf$ according to $\dataset_\bocount$ or $\surro$}
+	\caption{BO loop}
+\end{algorithm}
+\end{minipage}
+\end{center}
+\note[item]{how to end lines?}
+\end{frame}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Bayesian Optimization: Summary}
+
+\begin{columns}[T] % align columns
+\begin{column}{.48\textwidth}
+
+\only<1-9>{
+    \begin{block}{Advantages}
+    \begin{itemize}
+      \item Sample efficient \pause
+      \item Native incorporation of priors \pause
+      \item Does not require local gradients nor Hessian approximations \pause
+      \item ...
+    \end{itemize}
+    \end{block}
+}
+\end{column}%
+
+\pause
+\hfill%
+
+\begin{column}{.48\textwidth}
+\only<4-9>{
+    \begin{block}{Disadvantages}
+    \begin{itemize}
+      \item Overhead because of model training in each iteration \pause
+      \item Inherently sequential algorithm \pause
+      \item Requires good choice of surrogate model \pause
+      \item Requires good choice of acquisition function \pause
+      \item Has hyperparameter on its own
+    \end{itemize}
+\end{block}
+}
+\end{column}
+\end{columns}
+
+
+\end{frame}
+%-----------------------------------------------------------------------

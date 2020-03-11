@@ -1,0 +1,51 @@
+%TODO change PATH for the github structure
+% \input{../latex_main/main} 
+\input{../latex_main/main.tex}
+
+% Bayesian Optimization SS 2020 macros
+\input{../latex_main/macros_bo.tex}
+
+% allowing to align images inside a figure
+\usepackage[export]{adjustbox}
+% setting notes visibility
+\usepackage{pgfpages}
+\setbeameroption{hide notes} % Only slides
+%\setbeameroption{show only notes} % Only notes
+%\setbeameroption{show notes on second screen=right} % Both
+
+%TODO: change titles
+\title[AutoML: Bayesian Optimization]{AutoML: Bayesian Optimization}
+\subtitle{Overview of the Bayesian optimization loop}
+%TODO: change authors!
+\author[Frank Hutter]{Frank Hutter}
+\institute{University of Freiburg}
+%TODO: change the date
+\date{??.??.??}
+
+
+\AtBeginSection[] % Do nothing for \section*
+{
+  \begin{frame}{Outline}
+    \bigskip
+    \vfill
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\begin{document}
+	
+	\maketitle
+	
+	%TODO: change PATH for the github structure
+    \input{w06_hpo_bo/t01_introduction.tex}
+    \input{w06_hpo_bo/t02_bo_loop_overview.tex}
+    \input{w06_hpo_bo/t03_acq_functions_1.tex}
+    \input{w06_hpo_bo/t03_acq_functions_2.tex}
+    \input{w06_hpo_bo/t04_surrogate_models.tex}
+    \input{w06_hpo_bo/t05_categorical_conditional.tex}
+    \input{w06_hpo_bo/t06_high_dim.tex}
+    \input{w06_hpo_bo/t07_noisy.tex}
+    \input{w06_hpo_bo/t08_bo_parallel.tex}
+    \input{w06_hpo_bo/t99_bibliography}
+
+\end{document}

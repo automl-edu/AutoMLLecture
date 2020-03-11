@@ -1,0 +1,128 @@
+%-----------------------------------------------------------------------
+\subsection{Advanced Acquisition Functions}
+\begin{frame}[c]{Advanced Acquisition Functions}
+\framesubtitle{Contents}
+\pause
+\begin{itemize}
+    \item Concept: One-step look-ahead.
+    \item Knowledge Gradient
+    \item Entropy Search
+    \item \emph{Maybe mention that we are now going to actually trust our surrogate to somewhat accurately model the underlying objective function (or that we are now risk-neutral) - thus relaxing one of the constraints mentioned in the very beginning of the section on Acquisition Functions.}
+\end{itemize}
+\end{frame}
+
+%-----------------------------------------------------------------------
+
+\begin{frame}[c]{Advanced Acquisition Functions}
+%\framesubtitle{Knowledge Gradient - Concept}
+\framesubtitle{One-Step Look Ahead}
+\pause
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \node<+> (img1) {\includegraphics[width=.7\linewidth, height=0.7\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img1, align=center]{Once more, assume such a surrogate function GP $\iter{\gp}(\cdot)$ at time-step $\bocount$.};
+    
+    \node<+> (img2) {\includegraphics[width=.7\linewidth, height=0.7\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img2, align=center]{\emph{If} we evaluate $\cost(\cdot)$ at a random configuration $\conf$, $\iter[\bocount+1]{\gp}(\cdot\given {\conf})$ \emph{might} look like this. \\ \emph{Show what GP might look like at time-step $\bocount+1$.}};
+    
+    \node<+> (img3) {\includegraphics[width=.7\linewidth, height=0.7\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img3, align=center]{Mean - $\iter[\bocount+1]{\mean} \given_{\conf}$, Variance - $\iter[\bocount+1]{\left(\variance\right)} \given_{\conf}$, Minimum of the mean function - $\iter[\bocount+1]{\left(\mean^*\right)} \given_{\conf}$. \\\emph{Point out that all these quantities are now conditionally dependent on our choice of $\conf$}};
+    
+    \node<+> (img4) {\includegraphics[width=.7\linewidth, height=0.6\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img4, align=center]{This distribution is purely hypothetical - as shown by the conditional - \\and is called a one-step look-ahead. \emph{Just a re-statement of the GP's conditional nature at $\bocount+1$}};
+  \end{tikzpicture}
+\end{figure}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+\begin{frame}[c]{Advanced Acquisition Functions - KG}
+%\framesubtitle{Knowledge Gradient - Concept}
+\framesubtitle{Knowledge Gradient - Concept}
+\pause
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \node<+> (img1) {\includegraphics[width=.7\linewidth, height=0.7\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img1, align=center]{Once more, assume such a surrogate function GP $\iter{\gp}(\cdot)$ at time-step $\bocount$.};
+    
+    \node<+> (img2) {\includegraphics[width=.7\linewidth, height=0.6\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img2, align=center]{Given that we are risk-neutral, the configuration corresponding to the minimum \\of the mean function, $\iter{\left(\mean^*\right)}$, is the best choice here.};
+    
+    \node<+> (img3) {\includegraphics[width=.7\linewidth, height=0.7\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img3, align=center]{We perform a one-step look-ahead to get $\iter[\bocount+1]{\gp}(\cdot\given {\conf})$.};
+    
+    \node<+> (img4) {\includegraphics[width=.7\linewidth, height=0.7\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img4, align=center]{The best risk-neutral choice is again given by the minimum \\of the new conditional mean function - $\iter[\bocount+1]{\left(\mean^*\right)} \given_{\conf}$.};
+    
+    \node<+> (img5) {\includegraphics[width=.7\linewidth, height=0.7\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img5, align=center]{The expected value of the improvement in cost - from $\iter{\left(\mean^*\right)}$ to $\iter[\bocount+1]{\left(\mean^*\right)}$ - is \\ Knowledge Gradient. \emph{Show side-by-side comparison of the two GPs}};
+  \end{tikzpicture}
+\end{figure}
+
+\end{frame}
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Advanced Acquisition Functions - KG}
+\framesubtitle{Knowledge Gradient - Choosing a candidate}
+\pause
+\begin{itemize}\abovedisplayskip=0.5em\belowdisplayskip=0.5em
+    \action<+->{\item Given a GP $\iter{\gp}$ fit on $\iter[\bocount-1]{\dataset}$, on the $\bocount\,$th iteration we have}
+    \action<+->{\[\iter{\left(\mean^*\right)} = \max_{\conf'\in\pcs}(\iter{\mean}(\conf'\given{\dataset_{\bocount-1}}))\]}
+    \action<+->{\item If we choose a candidate $\bonextsample=\conf$ to evaluate $\cost(\cdot)$ at,}
+    %\action<+->{\[\dataset_{\bocount}\given{\conf} = \{(\conf_1, \boobs_1),\dots,(\conf_{\bocount-1}, \boobs_{\bocount-1})\}\cup\{(\iter{\conf},\iter{\boobs})\given{\bonextsample=\conf}\}.\]}
+    \action<+->{\[\iter{\dataset}\given\conf = \iter[\bocount-1]{\dataset}\cup\{\langle\bonextsample,\,\bonextobs\rangle\given{\bonextsample=\conf}\}.\]}
+    \action<+->{\item Thus, if we hypothesize about the $\bocount+1\,$th iteration, we would get}
+    \action<+->{\[\iter[\bocount+1]{\left(\mean^*\right)} \given_{\conf} = \max_{\conf'\in\pcs}(\iter[\bocount+1]{\mean}(\conf'\given{\iter{\dataset},\bonextsample=\conf}))\]}
+\end{itemize}
+\comment{Source:https://arxiv.org/pdf/1807.02811.pdf}
+\end{frame}
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Advanced Acquisition Functions - KG}
+\framesubtitle{Knowledge Gradient - Choosing a candidate}
+\begin{itemize}\abovedisplayskip=1em\belowdisplayskip=0em
+    \action<+->{\item In a risk-neutral setting, $\iter{\left(\mean^*\right)}$ and $\iter[\bocount+1]{\left(\mean^*\right)}$ are the global optima for $\iter{\mean}$ and $\iter[\bocount+1]{\mean}\given_{\conf}$ respectively.}
+    \action<+->{\item Thus, the conditional improvement in the cost (adjusted for maximization) is \[\iter{\left(\mean^*\right)} - \left.\iter[\bocount+1]{\left(\mean^*\right)} \right|_{\bonextsample=\conf}\]}
+    \action<+->{\item We cannot directly compute this improvement, but we can compute its expected value, which we call Knowledge Gradient:}
+    \action<+->{\[\iter{KG}(\conf) = \E\left[ \iter{\left(\mean^*\right)} - \left. \iter[\bocount+1]{\left(\mean^*\right)} \right|_{\bonextsample=\conf} \right]\]}
+    \action<+->{\item Finally, \[\boxed{\bonextsample = \argmax_{\conf\in\pcs}(\iter{KG}(\conf))}\]}
+\end{itemize}
+\comment{Source:https://arxiv.org/pdf/1807.02811.pdf}
+\end{frame}
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Advanced Acquisition Functions - ES}
+\framesubtitle{Entropy Search - Concept}
+\pause
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \node<+> (img1) {\includegraphics[width=.7\linewidth, height=0.6\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img1, align=center]{We consider the global optimum's position to be a random variable $\conf^*$, \\with uniform prior probability. \emph{Show the probability distribution below the GP throughout ES}};
+    
+    \node<+> (img2) {\includegraphics[width=.7\linewidth, height=0.7\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img2, align=center]{The minimum of a sample from the GP $\iter{\gp}$ provides some evidence for where $\conf^*$ may lie. \\\emph{Visualization for demonstrative purposes only, not actual implementation.}};
+    
+    \node<+> (img3) {\includegraphics[width=.7\linewidth, height=0.7\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img3, align=center]{Each new sample provides more information about where the global minimum lies - \\i.e. has an assosciated \emph{information gain}.};
+    
+    \node<+> (img4) {\includegraphics[width=.7\linewidth, height=0.7\textheight, keepaspectratio=true]{latex_main/images/placeholder.png}};
+    \node<.> [below=0.01\belowcaptionskip of img4, align=center]{After $S$ such samples, we can narrow down the approximate location of the global minimum\\ i.e. reduce entropy of the search space.};
+  \end{tikzpicture}
+\end{figure}
+
+\end{frame}
+%----------------------------------------------------------------------
+\begin{frame}[c]{Advanced Acquisition Functions - ES}
+\framesubtitle{Entropy Search - Choosing a candidate}
+\begin{itemize}
+    \item Provide formulae for entropy search - pseudocode for the sampling-based version, formula for overall entropy search (integral of H) only
+    \item Mention existence of more complicated but efficient search procedure, mention differences.
+    \item Mention: Repeated Thompson Sampling is an approximation to sampling based entropy-search.
+    \item Provide link to paper.
+\end{itemize}
+\comment{Source:https://arxiv.org/pdf/1807.02811.pdf}
+\end{frame}
+%-----------------------------------------------------------------------

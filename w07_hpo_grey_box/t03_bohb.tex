@@ -1,0 +1,43 @@
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{}
+
+TODO
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{BOHB: Algorithm}
+
+\begin{algorithm}[H]
+    %\DontPrintSemicolon
+    \LinesNumbered
+    \SetAlgoLined
+    \setcounter{AlgoLine}{0}
+    \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+    \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+    \DeclarePairedDelimiter\abs{\lvert}{\rvert}
+    
+    \Input{observations D, fraction of random runs $\rho$, percentile $q$, number of samples $N_s$,
+     minimum number of points $N_{min}$ to build a model, and bandwidth factor $b_w$}
+    \Output{next configuration to evaluate}
+    \lIf{$rand()<\rho$}{\Return{random configuration}}
+    $b=\argmax \{D_b:\lvert D_b \rvert \geq N_{min}+2\}$
+    
+    \lIf{$b=\varnothing$}{\Return{random configuration}}
+    
+    fit KDEs according to Eqs. (2) and (3)
+    
+    Draw $N_s$ samples acoording to $l'(x)$
+    
+    \Return{sample with highest ratio $l(x)/g(x)$}
+    
+   
+ 
+        
+    
+    \caption{Pseudocode for sampling in BOHB}
+\end{algorithm}
+
+\end{frame}
+%-----------------------------------------------------------------------
