@@ -365,7 +365,7 @@ Test performance\\
 				\pause
 %				$\mathbf{s_i} \xleftarrow{} \mathbf{s_i} \cup s_i$;\\
 %				$\cutoff_i \xleftarrow{}$ AdaptCutoff$(\cutoff_{max}, \langle(\conf_j, \cost_j)\rangle_{\conf_j = \conf^+})$;\\
-				$c_i \xleftarrow{}$ EvaluateRun$(\confI{\bocount}, \instI{\bocount},  s^{(\bocount)}, \cutoff^{(\bocount)})$;\\
+				$c_i \xleftarrow{}$ EvaluateRun$(\confI{\bocount}, \instI{\bocount},  s^{(\bocount)}, \cutoff_{max})$;\\
 				$\mathcal{D} \xleftarrow{} \mathcal{D} \cup (\confI{\bocount}, \instI{\bocount},  s^{(\bocount)},  \cost^{(\bocount)})$;\\
 				\pause
 				\If{average cost of $\confI{\bocount} >$ average cost of $\incumbent$ across $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$}{break;}

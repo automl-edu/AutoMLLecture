@@ -27,7 +27,7 @@
 	
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning Step Size Policies \lit{Daniel et al'16}}
+\begin{frame}[c]{Learning Step Size Policies \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
 
 \begin{itemize}
 \item \alert{Idea:} Learn the hyperparameters of the weight update 
@@ -74,7 +74,7 @@ To apply that, we need to define:
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Policies: State \lit{Daniel et al'16}}
+\begin{frame}[c]{RL for Step Size Policies: State \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
 
 \textbf{Predictive change in function value:}
 
@@ -101,7 +101,7 @@ $$s_{K+i} \leftarrow \gamma s_{K+i} + (1-\gamma) (s_i - \hat{s}_i)^2$$
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Policies: Learning \lit{Daniel et al'16}}
+\begin{frame}[c]{RL for Step Size Policies: Learning \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
 
 Reward (average loss improvement over time):
 
@@ -122,13 +122,13 @@ $$\pi^*(\phi) \in \argmax_{\pi} \int \int p(s) \pi(\phi)r(g(s;\phi),s) \texttt{d
 \pause
 
 \begin{itemize}
-\item can be learnt for example via Relative Entropy Policy Search (REPS) \lit{Peter et al. 2010}
+\item can be learnt for example via Relative Entropy Policy Search (REPS) \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI10/paper/viewFile/1851/2264}{Peter et al. 2010}}
 \end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Policies: Training \lit{Daniel et al'16}}
+\begin{frame}[c]{RL for Step Size Policies: Training \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
 
 \begin{itemize}
 \item Goal: obtain robust policies,\\ i.e., good performance for many different DNN architectures
@@ -144,7 +144,7 @@ $$\pi^*(\phi) \in \argmax_{\pi} \int \int p(s) \pi(\phi)r(g(s;\phi),s) \texttt{d
 \centering
 \includegraphics[width=0.55\textwidth]{images/l2stepsizecontroler_mnist_training.png}
 
-"Ours" refers to the approach by \lit{Daniel et al'16} and $\eta$ is the learning rate
+"Ours" refers to the approach by \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}} and $\eta$ is the learning rate
 
 \end{frame}
 %----------------------------------------------------------------------

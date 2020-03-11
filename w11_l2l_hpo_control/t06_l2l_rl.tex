@@ -27,7 +27,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \lit{Li and Malik'17}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \lit{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
 
 \centering
 \includegraphics[width=0.4\textwidth]{images/l2o_comic}
@@ -38,7 +38,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \lit{Li and Malik'17}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \lit{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
 
 \begin{block}{Reinforcement Learning for Learning to Optimize}
 \begin{description}
@@ -63,7 +63,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning Results \lit{Li and Malik'17}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning Results \lit{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
 
 \centering
 \includegraphics[width=0.4\textwidth]{images/l2o_dnn}
@@ -79,7 +79,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c, fragile]{Learning Acquisition Functions \lit{Volpp et al.'19}}
+\begin{frame}[c, fragile]{Learning Acquisition Functions \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \begin{itemize}
 \item Instead of learning everything, it might be sufficient to \alert{learn hand-design heuristics}
@@ -132,7 +132,7 @@ Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Neural Acquisition Function \lit{Volpp et al.'19}}
+\begin{frame}[c]{Neural Acquisition Function  \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 Although the \alert{acquisition function $\alpha$} depends on the history $\mathcal{D}_{n-1}$ and the predictive model $\surro$, $\alpha$ mainly makes use of the \alert{predictive mean $\mu$ and variance $\sigma^2$}.
 
@@ -142,21 +142,21 @@ Although the \alert{acquisition function $\alpha$} depends on the history $\math
 Neural acquisition function (AF):
 
 \begin{eqnarray}
-\alpha_\weights(x) = \alpha_\weights(\mu_t(x), \sigma_t(x)) \nonumber
+\alpha_\weights(x) = \alpha_\weights(\mu_t(x), \sigma_t(x), x, t, T) \nonumber
 \end{eqnarray}
 
-where $\weights$ are the parameters of a neural network,\\ and $\mu$ and $sigma$ are its inputs.
+where $\weights$ are the parameters of a neural network, and $\mu$, $\sigma$, $x$, $t$, $T$ are its inputs.
 
-\pause 
-\begin{itemize}
-\item Since the input is not $x$, it allows to learn scalable acquisition function
-\item No calibration of hyperparameter necessary, once the neural AF is learnt
-\end{itemize}
+%\pause 
+%\begin{itemize}
+%\item Since the input is not $x$, it allows to learn scalable acquisition function
+%\item No calibration of hyperparameter necessary, once the neural AF is learnt
+%\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{RL to train Neural AF \lit{Volpp et al.'19}}
+\begin{frame}[c]{RL to train Neural AF \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \begin{description}
 \item[Policy $\policy_\weights$:] Neural acquisition function $\alpha_\weights$
@@ -166,9 +166,9 @@ where $\weights$ are the parameters of a neural network,\\ and $\mu$ and $sigma$
 \item $\mathcal{F}$ is a set of functions we can sample functions from
 \end{itemize}
 \pause
-\item[State $\stateRL_t$:] $\mu_t$ and $\sigma_t$ on a set of points $\xi_t$
+\item[State $\stateRL_t$:] $\mu_t$ and $\sigma_t$ on a set of points $\xi_t$, and $t$ and $T$
 \pause
-\item[Action $\actionRL_t$:] Sampled point $x_t$
+\item[Action $\actionRL_t$:] Sampled point $x_t \in \xi_t$
 \pause
 \item[Reward $\rewardRL_t$:] negative simple regret: $r_t = f(x^*) - f(\hat{x})$
 \begin{itemize}
@@ -181,15 +181,15 @@ where $\weights$ are the parameters of a neural network,\\ and $\mu$ and $sigma$
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{State \lit{Volpp et al.'19}}
+\begin{frame}[c]{Policy \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \begin{itemize}
 \item The state is described by a discrete set of points $\xi_t = \{\xi_n\}^N_{n=1}$
 \pause
-\item We feed these points through the predictive model and the neural AF to obtain $\alpha_\weights(\xi_i) = \alpha_\weights(\mu_t(\xi_i), \sigma_t(\xi_i)) $
+\item We feed these points through the predictive model and the neural AF to obtain $\alpha_\weights(\xi_n) = \alpha_\weights(\mu_t(\xi_n), \sigma_t(\xi_n), \xi_n, t, T),  $
 \pause
-\item $\alpha_\weights(\xi_i)$ are interpreted as the logits of multinomial distribution, s.t.
-$$\pi_\alpha(\cdot \mid s_t) = \text{Mult}\left[\alpha_\weights(\xi_1), \ldots, \alpha_\weights(\xi_N) \right] $$
+\item $\alpha_\weights(\xi_i)$ are interpreted as the logits of categorical distribution, s.t.
+$$\pi_\alpha(\cdot \mid s_t) = \text{Cat}\left[\alpha_\weights(\xi_1), \ldots, \alpha_\weights(\xi_N) \right] $$
 \pause
 \item Due to curse of dimensionality, we need a two step approach for~$\xi_t$
 \begin{enumerate}
@@ -202,7 +202,7 @@ $$\pi_\alpha(\cdot \mid s_t) = \text{Mult}\left[\alpha_\weights(\xi_1), \ldots, 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Learning Acquisition Functions\newline Results \lit{Volpp et al.'19}}
+\begin{frame}[c,fragile]{Learning Acquisition Functions: Overview \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \centering
 \includegraphics[width=0.8\textwidth]{images/l2acq.png}
@@ -211,10 +211,10 @@ $$\pi_\alpha(\cdot \mid s_t) = \text{Mult}\left[\alpha_\weights(\xi_1), \ldots, 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Results on Artificial Functions \lit{Volpp et al.'19}}
+\begin{frame}[c]{Results on Artificial Functions \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \centering
-\includegraphics[width=0.8\textwidth]{images/l2acq_results.png}
+\includegraphics[width=0.9\textwidth]{images/l2acq_results.png}
 
 \medskip
 
