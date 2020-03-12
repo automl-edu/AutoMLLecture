@@ -2,7 +2,7 @@
 
 ## AutoML?
 
-Based on machine learning (ML), AI achieved major breakthroughs in the last years. However, applying machine learning practice is challenging task and requires a lot of expertise. Among other things, the success of ML applications depends on many design decisions, including an appropiate preprocessing of the data, choosing a well-performing machine learning algorithm and tuning its hyperparameters, giving rise to ML pipeline. Unfortunately, even experienced ML experts need days, weeks or even months to find well-performing ML pipelines. To support ML users, developers and researches, automated machine learning (AutoML) was proposed. AutoML tools propose well-performing ML pipelines for a dataset at hand such that the development time of new ML applications will reduced, the efficiency of the users increases and the required expertise in ML will be minimized. Therefore, AutoML helps to apply ML to new applications and fosters the democratization of machine learning.
+Based on machine learning (ML), AI achieved major breakthroughs in the last years. However, applying machine learning in practice is a challenging task and requires a lot of expertise. Among other things, the success of ML applications depends on many design decisions, including an appropriate preprocessing of the data, choosing a well-performing machine learning algorithm and tuning its hyperparameters, giving rise to a ML pipeline. Unfortunately, even experienced ML experts need days, weeks or even months to find well-performing ML pipelines. To support ML users, developers and researchers, automated machine learning (AutoML) was proposed. AutoML tools propose well-performing ML pipelines for a dataset at hand such that the development time of new ML applications willi be reduced, the efficiency of the users increases and the required expertise in ML will be minimized. Therefore, AutoML helps to apply ML to new applications and fosters the democratization of machine learning.
 
 ## Content 
 
@@ -32,6 +32,7 @@ The course is targeted at students and practitioners with solid background in ma
 * University of Hannover, Germany:
   * Marius Lindauer
   * Theresa Eimer
+  * Difan Deng
 * Ludwig Maximilian University of Munich:
   * Bernd Bischl
   * Janek Thomas (Fraunhofer)
@@ -40,9 +41,9 @@ The course is targeted at students and practitioners with solid background in ma
   * André Biedenkapp
   * Arber Zela
   * Matthias Feurer
-* University of Wyoming:
+* University of Wyoming, USA:
   * Lars Kotthoff
-* University of Eindhoven
+* University of Eindhoven, Netherlands:
   * Joaquin Vanschoren
 
 ## License
