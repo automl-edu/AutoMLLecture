@@ -421,7 +421,7 @@ HP combinations on a multi-dimensional discretized grid
 \vspace{0.5cm}
 
 \begin{center}
-\begin{tabular}{ c | c}
+\begin{tabular}{ c | c }
 \textbf{Definition} & \textbf{Correspondence} \\[0.05cm]
 \hline \\[0.01cm]
 solution candidate $\x\in \mathcal{S}$ & Chromosome of an individual \\[0.1cm]
@@ -430,6 +430,8 @@ Set of solution candidates $\mathcal{P}$ & Population \\[0.1cm]
 Objective function $f: \mathcal{S} \to \R$ & Fitness function
 \end{tabular}
 \end{center}
+
+For hyperparameter optimization a solution candidate is a hyperparmeter configuration $\conf$ and the objective function is $\widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \conf)\right)$
 
 \end{frame}
 
@@ -508,7 +510,7 @@ Usually for the optimization of a function $f:\R^n \to \R$ individuals are coded
 \end{frame}
 
 
-\begin{frame}{Step 1: initialize population}
+\begin{frame}{Step 1: Initialize population}
 
 We start with a randomly selected population $\mathcal{P} = \{\x_1, ..., \x_\mu\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
 
@@ -522,7 +524,7 @@ We start with a randomly selected population $\mathcal{P} = \{\x_1, ..., \x_\mu\
 
 \end{frame}
 
-\begin{frame}[containsverbatim,allowframebreaks]{Step 2: parent selection}
+\begin{frame}[containsverbatim,allowframebreaks]{Step 2: Parent selection}
 
 
 In the first step of an iteration, $\lambda$ parents are chosen, who create offspring in the next step.
@@ -550,7 +552,7 @@ In our example we choose $\lambda = 5$ offspring by neutral selection (red indiv
 
 \end{frame}
 
-\begin{frame}{Step 3: variation}
+\begin{frame}{Step 3: Variation}
 
 New individuals are now generated from the parent population. This is done by
 
@@ -618,128 +620,113 @@ with $\bar\x = \frac{1}{2} (\x + \tilde\x)$.
   % \normalsize
 
   \end{frame}
-
-
-  \begin{frame}[containsverbatim,allowframebreaks]{Mutation for numeric representations}
-
-    \textbf{Mutation:} individuals are changed, for example for $\x \in \R^n$
-    \begin{itemize}
-    \item \textbf{Uniform mutation:} choose a random gene $x_i$ and replace it with a value uniformly distributed (within the feasible range).
-    \item \textbf{Gauss mutation}: $\tilde\x = \x \pm \sigma \mathcal{N}(0, \boldsymbol{I})$
-    \item \textbf{Polynomial mutation:} polynomial distribution instead of normal distribution
-
-    \begin{center}
+\begin{frame}[containsverbatim,allowframebreaks]{Mutation for numeric representations}
+  \textbf{Mutation:} individuals are changed, for example for $\x \in \R^n$
+  \begin{itemize}
+  \item \textbf{Uniform mutation:} choose a random gene $x_i$ and replace it with a value uniformly distributed (within the feasible range).
+  \item \textbf{Gauss mutation}: $\tilde\x = \x \pm \sigma \mathcal{N}(0, \boldsymbol{I})$
+  \item \textbf{Polynomial mutation:} polynomial distribution instead of normal distribution
+  \begin{center}
+  \begin{figure}
+    \includegraphics[height = 3.5cm, width = 4cm]{images/polynomial_mutation.png}\\
+    \scriptsize{Source: K. Deb, Analysing mutation schemes for real-parameter genetic algorithms, 2014}
+  \end{figure}
+   \end{center}
+   \framebreak
+  More exact:
+  $$
+  {\tilde x_{i}} = x_{i} + (x_{i,upper} - x_{i,lower}) \delta_{i}
+  $$
+  with $x_{i,upper} (x_{i,lower})$ as upper (lower) bound for $x_{i}$.
+  $\delta_{i}$ results as:
+  \footnotesize
+  $$
+  \delta_{i} =
+  \begin{cases}
+  [2r_{i}+(1-2r_{i})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta +1}} -1, & r_{i} < 0.5 \\
+  1 - [2(1-r_{i})+2(r_{i}-\frac{1}{2})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta_{m} +1}}, &  \text{else.}
+  \end{cases}
+  $$
+  with  $\delta = \frac{min\{(x_{i} - x_{i,lower}), (x_{i,upper}-x_{i})\}}{x_{i,upper} - x_{i,lower}}$.
+  \normalsize
+  \vspace{0.5cm}
+  Here $r_{i} \in [0,1]$ is a uniformly distributed number, $\eta_{m}$ is the distribution index of the mutation and is chosen by the user.\\
+  % Remark: A $\eta_{m}$ of the order of $\eta_{m} \in [20,100]$ is common.
+  \normalsize
+  \end{itemize}
+  \vspace{0.5cm}
+  In our example, we have chosen a Gauss mutation with $\sigma = 2$, we do not apply a recombination.
+  \begin{center}
     \begin{figure}
-      \includegraphics[height = 3.5cm, width = 4cm]{images/polynomial_mutation.png}\\
-      \scriptsize{Source: K. Deb, Analysing mutation schemes for real-parameter genetic algorithms, 2014}
+    \includegraphics[width=\textwidth, height=5cm]{images/ea_ex4.png}
     \end{figure}
-     \end{center}
-
-     \framebreak
-
-    More exact:
-
-    $$
-    {\tilde x_{i}} = x_{i} + (x_{i,upper} - x_{i,lower}) \delta_{i}
-    $$
-
-    with $x_{i,upper} (x_{i,lower})$ as upper (lower) bound for $x_{i}$.
-
-    $\delta_{i}$ results as:
-
-    \footnotesize
-    $$
-    \delta_{i} =
-    \begin{cases}
-    [2r_{i}+(1-2r_{i})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta +1}} -1, & r_{i} < 0.5 \\
-    1 - [2(1-r_{i})+2(r_{i}-\frac{1}{2})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta_{m} +1}}, &  \text{else.}
-    \end{cases}
-    $$
-    with  $\delta = \frac{min\{(x_{i} - x_{i,lower}), (x_{i,upper}-x_{i})\}}{x_{i,upper} - x_{i,lower}}$.
-
-    \normalsize
-
-    \vspace{0.5cm}
-
-    Here $r_{i} \in [0,1]$ is a uniformly distributed number, $\eta_{m}$ is the distribution index of the mutation and is chosen by the user.\\
-    % Remark: A $\eta_{m}$ of the order of $\eta_{m} \in [20,100]$ is common.
-    \normalsize
-    \end{itemize}
-
-
-
-    \vspace{0.5cm}
-
-    In our example, we have chosen a Gauss mutation with $\sigma = 2$, we do not apply a recombination.
-
-    \begin{center}
-      \begin{figure}
-      \includegraphics[width=\textwidth, height=5cm]{images/ea_ex4.png}
-      \end{figure}
-      \end{center}
-
-    \end{frame}
-
-    \begin{frame}{Mutation for bit strings}
-
-    For example, an individual $\x \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
-
-    \vspace{0.5cm}
-
-    \textbf{Mutation:}
-    \begin{itemize}
-    \item \textbf{Bitflip}: for each index $k \in \{1, ..., n\}$: bit $k$ is flipped with probability $p \in (0,1)$.
-    \item If $(a)$ is an arbitrary bit sequence to which a bitflip mutation is applied, $(b)$ is obtained.
-    \end{itemize}
-
-    \footnotesize
-    \begin{center}
-    \begin{tabular}{c @{\hspace{2\tabcolsep}} *{5}{c}}
-      &
-      \itshape (a) &
-      \itshape " " &
-      \itshape " " &
-      \itshape " " &
-      \itshape (b)
-
-    \\[1ex]
-    " " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
-    " " & 0 & " " & " " & "  " & 0  \\
-    " " & 0 & " " & $\Rightarrow$ & "  " & \textcolor{red}{1}  \\
-    " " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
-    " " & 1 & " " & " " & "  " & 1
-    \end{tabular}
     \end{center}
-    \normalsize
+  \end{frame}
+  \begin{frame}{Mutation for bit strings}
+  For example, an individual $\x \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
+  \vspace{0.5cm}
+  \textbf{Mutation:}
+  \begin{itemize}
+  \item \textbf{Bitflip}: for each index $k \in \{1, ..., n\}$: bit $k$ is flipped with probability $p \in (0,1)$.
+  \item If $(a)$ is an arbitrary bit sequence to which a bitflip mutation is applied, $(b)$ is obtained.
+  \end{itemize}
+  \footnotesize
+  \begin{center}
+  \begin{tabular}{c @{\hspace{2\tabcolsep}} *{5}{c}}
+    &
+    \itshape (a) &
+    \itshape " " &
+    \itshape " " &
+    \itshape " " &
+    \itshape (b)
+  \\[1ex]
+  " " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
+  " " & 0 & " " & " " & "  " & 0  \\
+  " " & 0 & " " & $\Rightarrow$ & "  " & \textcolor{red}{1}  \\
+  " " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
+  " " & 1 & " " & " " & "  " & 1
+  \end{tabular}
+  \end{center}
+  \normalsize
+  \end{frame}
+  \begin{frame}[allowframebreaks]{Step 4: Survival selection}
+  Now individuals are chosen who survive. Two common strategies are:
+  \begin{itemize}
+  \item \textbf{$(\mu, \lambda)$-selection}: we select from the $\lambda$ descendants the $\mu$ best ($\lambda \ge \mu$ necessary).
+  \textbf{But:} best overall individual can get lost!
+  \item \textbf{$(\mu + \lambda)$-selection}: $\mu$ parents and $\lambda$ offspring are lumped together and the $\mu$ best individuals are chosen.
+  Best individual safely survives.
+  \end{itemize}
 
-    \end{frame}
+  \framebreak
 
-    \begin{frame}[allowframebreaks]{Step 4: survival selection}
+  In our example, a $(\mu + \lambda)$ selection was used. The selected points are green.
 
-    Now individuals are chosen who survive. Two common strategies are:
-
-    \begin{itemize}
-    \item \textbf{$(\mu, \lambda)$-selection}: we select from the $\lambda$ descendants the $\mu$ best ($\lambda \ge \mu$ necessary).
-
-    \textbf{But:} best overall individual can get lost!
-    \item \textbf{$(\mu + \lambda)$-selection}: $\mu$ parents and $\lambda$ offspring are lumped together and the $\mu$ best individuals are chosen.
-
-    Best individual safely survives.
-    \end{itemize}
-
-    \framebreak
-
-    In our example, a $(\mu + \lambda)$ selection was used. The selected points are green.
-
-    \begin{center}
-      \begin{figure}
+  \begin{center}
+    \begin{figure}
       \includegraphics[width=\textwidth, height=5cm]{images/ea_ex5.png}
-      \end{figure}
-      \end{center}
+    \end{figure}
+  \end{center}
 
+\end{frame}
 
-    \end{frame}
+\begin{frame}{Evolutionary Algorithms}
 
+  \begin{blocki}{Advantages}
+    \item Can solve a variety of optimization problems (including HPO)
+    \item All parameter types possible
+    \item Highly parallelizable
+    \item Conceptually simple, yet powerful enough to solve complex problems
+    \end{blocki}
+
+    \begin{blocki}{Disadvantages}
+    \item Stagnation: Optimization process does not progress anymore
+    \item Premature Convergence: Algorithm converges to a single solution, which is not as good as expected
+    \item Diversity of population structures: Loss of pipulation diversity for solving complex optimization problems
+    \item Lacks balance between exploration and exploitation
+    \end{blocki}
+
+\end{frame}
 
 \begin{frame}{Tuning Example}
 
