@@ -2,8 +2,9 @@
 \input{../latex_main/main.tex}
 
 \newcommand{\inducer}{\mathcal{I}}
+\newcommand{\R}{\mathds{R}}
 
-\newenvironment{blocki}[1]   % itemize block
+\newenvironment{blocki}[1] % itemize block
 {
  \begin{block}{#1}\begin{itemize}
 }
@@ -14,7 +15,7 @@
 \title[AutoML: Hyperparameter Optimization]{AutoML: Hyperparameter Optimization}
 \subtitle{Overview for this Week}
 %TODO: change authors!
-\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Bernd Bischl]{\underline{Bernd Bischl} \and Frank Hutter \and Lars Kotthoff \and Marius Lindauer}
 \institute{}
 \date{}
 
@@ -48,7 +49,7 @@
 % FIGURE SOURCE: https://docs.google.com/presentation/d/14xwcs5zncTjFL4hIHAprjZMmyGIPqk5vs8DS32vEAvQ/edit?usp=sharing
 \begin{center}
 \begin{figure}
-\includegraphics[width=0.6\textwidth]{images/riskmin_bilevel1.png}
+\includegraphics[width=0.5\textwidth]{images/riskmin_bilevel1.png}
 \end{figure}
 \end{center}
 
@@ -64,7 +65,7 @@ $$
 % FIGURE SOURCE: https://docs.google.com/presentation/d/14xwcs5zncTjFL4hIHAprjZMmyGIPqk5vs8DS32vEAvQ/edit?usp=sharing
 \begin{center}
 \begin{figure}
-\includegraphics[width=0.75\textwidth]{images/riskmin_bilevel2.png}
+\includegraphics[width=0.5\textwidth]{images/riskmin_bilevel2.png}
 \end{figure}
 \end{center}
 
@@ -196,7 +197,7 @@ We face a \textbf{bi-level} optimization problem: The well-known risk minimizati
 \begin{center}
 \begin{figure}
 % FIGURE SOURCE: https://docs.google.com/presentation/d/14xwcs5zncTjFL4hIHAprjZMmyGIPqk5vs8DS32vEAvQ/edit?usp=sharing
-\includegraphics[width=0.8\textwidth]{images/riskmin_bilevel3.png}
+\includegraphics[width=0.7\textwidth]{images/riskmin_bilevel3.png}
 \end{figure}
 \end{center}
 
@@ -219,7 +220,7 @@ where $\Lambda_{i}$ is the domain of the $i$-th hyperparameter.
 % \item Additionally, some hyperparameters may only need to be specified if another hyperparameter (or combination of hyperparameters) takes on a certain value.
 \end{itemize}
 
-% \lz
+% \vspace{0.5cm}
 
 % Note that
 
@@ -261,10 +262,9 @@ where $\Lambda_{i}$ is the domain of the $i$-th hyperparameter.
 % \framebreak
 
 % The hyperparameter optimization problem is difficult in many ways:
-\end{frame}
 
+\framebreak
 
-\begin{frame}[containsverbatim,allowframebreaks]{Tuning: A bi-level optimization problem}
 We formally state the nested hyperparameter tuning problem as:
 
 $$
@@ -341,24 +341,24 @@ The components of a tuning problem are:
 
 \begin{frame}[containsverbatim,allowframebreaks]{Grid search}
 
-    \begin{columns}
-        \begin{column}{0.49\textwidth}
-            \begin{itemize}
-                \item Simple technique which is still quite popular, tries all
-                HP combinations on a multi-dimensional discretized grid
-                \item For each hyperparameter a finite set of candidates is predefined
-                \item Then, we simply search all possible combinations in arbitrary order
-                \end{itemize}
-        \end{column}
-        \begin{column}{0.49\textwidth}
-            \begin{center}
-            \begin{figure}
-                \includegraphics[width=0.8\textwidth]{images/grid.png}
-                \caption*{Grid search over 10x10 points}
-            \end{figure}
-            \end{center}
-        \end{column}
-    \end{columns}
+\begin{columns}
+\begin{column}{0.49\textwidth}
+\begin{itemize}
+\item Simple technique which is still quite popular, tries all
+HP combinations on a multi-dimensional discretized grid
+\item For each hyperparameter a finite set of candidates is predefined
+\item Then, we simply search all possible combinations in arbitrary order
+\end{itemize}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{center}
+\begin{figure}
+\includegraphics[width=0.8\textwidth]{images/grid.png}
+\caption*{Grid search over 10x10 points}
+\end{figure}
+\end{center}
+\end{column}
+\end{columns}
 
 \framebreak
 
@@ -369,9 +369,9 @@ The components of a tuning problem are:
 \end{blocki}
 
 \begin{blocki}{Disadvantages}
-\item  Scales badly: Combinatorial explosion
-\item  Inefficient: Searches large irrelevant areas
-\item  Arbitrary: Which values / discretization?
+\item Scales badly: Combinatorial explosion
+\item Inefficient: Searches large irrelevant areas
+\item Arbitrary: Which values / discretization?
 \end{blocki}
 \end{frame}
 
@@ -380,22 +380,22 @@ The components of a tuning problem are:
 
 
 
-    \begin{columns}
-        \begin{column}{0.49\textwidth}
-            \begin{itemize}
-                \item Small variation of grid search
-                \item Uniformly sample from the region-of-interest
-                \end{itemize}
-        \end{column}
-        \begin{column}{0.49\textwidth}
-            \begin{center}
-            \begin{figure}
-                \includegraphics[width=0.8\textwidth]{images/random.png}
-                \caption*{Random search over 100 points}
-            \end{figure}
-            \end{center}
-        \end{column}
-    \end{columns}
+\begin{columns}
+\begin{column}{0.49\textwidth}
+\begin{itemize}
+\item Small variation of grid search
+\item Uniformly sample from the region-of-interest
+\end{itemize}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{center}
+\begin{figure}
+\includegraphics[width=0.8\textwidth]{images/random.png}
+\caption*{Random search over 100 points}
+\end{figure}
+\end{center}
+\end{column}
+\end{columns}
 
 \framebreak
 
@@ -411,31 +411,361 @@ The components of a tuning problem are:
 \end{blocki}
 \end{frame}
 
-\begin{frame}[containsverbatim,allowframebreaks]{Tuning Example}
+
+
+
+\begin{frame}[containsverbatim,allowframebreaks]{Evolutionary algorithms}
+
+\textbf{Evolutionary algorithms} (EA) are a class of stochastic, metaheuristic optimization techniques whose mode of operation is inspired by the evolution of natural organisms.
+
+\vspace{0.5cm}
+
+\begin{center}
+\begin{tabular}{ c | c}
+\textbf{Definition} & \textbf{Correspondence} \\[0.05cm]
+\hline \\[0.01cm]
+solution candidate $\x\in \mathcal{S}$ & Chromosome of an individual \\[0.1cm]
+$\x_i$& $i$-th gene of chromosome\\[0.1cm]
+Set of solution candidates $\mathcal{P}$ & Population \\[0.1cm]
+Objective function $f: \mathcal{S} \to \R$ & Fitness function
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+\begin{frame}[containsverbatim,allowframebreaks]{History of evolutionary algorithms}
+
+Similar techniques differ in genetic representation:
+
+\begin{itemize}
+\item \textbf{Genetic algorithms}: uses binary problem representation, therefore closest to the biological model of evolution.
+\item \textbf{Evolution strategies}: uses direct problem representation, e.g. vector of real numbers.
+\item \textbf{Genetic programming}: create structures that convert an input into a fixed output (e.g. computer programs); solution candidates are represented as trees.
+\item \textbf{Evolutionary programming}: similar to GP, but solution candidates are not represented by trees, but by finite state machines.
+\end{itemize}
+
+The boundaries between the terms become increasingly blurred and are often used synonymously.
+
+\end{frame}
+
+
+\begin{frame}{Structure of an evolutionary algorithm}
+
+\begin{center}
+\begin{figure}
+\centering
+\begin{tikzpicture}[node distance=0.8cm, auto,]
+%nodes
+\node (init) {Initialize population};
+\node[below = 0.3cm of init](rating1) {Rate population};
+\node[below = 0.3cm of rating1](selection1) {Parent selection};
+\node[below = 0.3cm of selection1](variation) {Variation};
+\node[below = 0.3cm of variation](rating2) {Rate offspring};
+\node[below = 0.3cm of rating2](selection2) {Survival selection};
+\node[below = 0.3cm of selection2](stop) {Stop};
+\node[below = 1cm of stop](dummy2) {};
+\node[below = 0.2cm of stop](dummy3) {};
+\node[right = 0.01cm of dummy3](dummy4) {yes};
+\node[left = 1.1cm of rating2](dummy1) {no};
+\draw[->] (init) to (rating1) node[midway, above]{};
+\draw[->] (rating1) to (selection1) node[midway, above]{};
+\draw[->] (selection1) to (variation) node[midway, above]{};
+\draw[->] (variation) to (rating2) node[midway, above]{};
+\draw[->] (rating2) to (selection2) node[midway, above]{};
+\draw[->] (selection2) to (stop) node[midway, above]{};
+\draw[->] (stop) to (dummy2) node[midway, above]{};
+\draw[->] (stop) to [bend left=90, looseness=2](selection1) node[midway, above]{};
+\end{tikzpicture}
+\end{figure}
+\end{center}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example of an evolutionary algorithm}
+
+In the following, methods for the individual steps of an evolutionary algorithm are presented.
+
+\vspace{0.5cm}
+
+These are demonstrated using the one-dimensional Ackley function, which we want to optimize on the $[-30, 30]$ interval.
+
+\vspace{0.5cm}
+
+In this case, each individual has exactly one chromosome. The chromosome is (obviously) encoded as a real number: $x_i \in \R$.
+
+Usually for the optimization of a function $f:\R^n \to \R$ individuals are coded as real vectors $\x_i \in \R^n$.
+
+
+\framebreak
+
+
+\begin{center}
+\begin{figure}
+\includegraphics[width=\textwidth, height=6cm]{images/ea_ex1.png}
+\end{figure}
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}{Step 1: initialize population}
+
+We start with a randomly selected population $\mathcal{P} = \{\x_1, ..., \x_\mu\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
+
+
+\begin{center}
+\begin{figure}
+\includegraphics[width=\textwidth, height=6cm]{images/ea_ex2.png}
+\end{figure}
+\end{center}
+
+
+\end{frame}
+
+\begin{frame}[containsverbatim,allowframebreaks]{Step 2: parent selection}
+
+
+In the first step of an iteration, $\lambda$ parents are chosen, who create offspring in the next step.
+
+Possibilities for selection of parents:
+\begin{itemize}
+\item \textbf{Neutral selection: }choose individual with a probability $1/\mu$.
+\item \textbf{Fitness-proportional selection: }draw individuals with probability proportional to their fitness.
+\item \textbf{Tournament Selection: }randomly select $k$ individuals for a "Tournament Group". Of the drawn individuals, the best one (with the highest fitness value) is then chosen. In order to draw $\lambda$ individuals, the procedure must be performed $\lambda$-times.
+\end{itemize}
+\vspace*{-0.2cm}
+\begin{figure}
+\includegraphics[width = 7cm, height = 2.5cm ]{images/tournament_selection.png}
+\end{figure}
+
+\framebreak
+
+In our example we choose $\lambda = 5$ offspring by neutral selection (red individuals).
+
+\begin{center}
+\begin{figure}
+\includegraphics[width=\textwidth, height=5cm]{images/ea_ex3.png}
+\end{figure}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{Step 3: variation}
+
+New individuals are now generated from the parent population. This is done by
+
+\begin{itemize}
+\item Recombination: combine two parents into one offspring.
+\item Mutation: change an individual.
+\end{itemize}
+
+Recombination and mutation are not always performed both, sometimes only recombination or mutation is performed.
+
+\end{frame}
+
+\begin{frame}{Recombination for numeric representations}
+
+Two individuals $\x, \tilde\x \in \R^n$ in numerical representation can be recombined as follows:
+
+\begin{itemize}
+\item \textbf{Uniform crossover}: choose gene $i$ with probability $p$ of 1st parent and probability $1-p$ of 2nd parent.
+\item \textbf{Intermediate recombination}: new individual is created from the mean value of two parents $\frac{1}{2}(\x + \tilde\x)$
+\item \textbf{Simulated Binary Crossover (SBX)}: generate \textbf{two offspring} based on
+
+$$
+\bar\x \pm \frac{1}{2} \beta (\tilde\x - \x)
+$$
+
+with $\bar\x = \frac{1}{2} (\x + \tilde\x)$.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Recombination for bit strings}
+
+  For example, two individuals $\x, \tilde\x \in \{0, 1\}^n$ encoded as bit strings can be recombined as follows:
+
+  \begin{itemize}
+  \item \textbf{1-point crossover}: select crossover $k \in \{1, ..., n - 1\}$ randomly and select the first $k$ bits from 1st parent, the last $n-k$ bits from 2nd parent.
+
+  \footnotesize
+  \begin{center}
+  \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
+   " " & \textcolor{red}{1} & \textcolor{blue}{1} & " " & " " & "  " & \textcolor{red}{1}  \\
+   " " & \textcolor{red}{0} & \textcolor{blue}{0} & " " & " " & "  " & \textcolor{red}{0}  \\ \cmidrule{2-3}
+   " " & \textcolor{red}{0} & \textcolor{blue}{1} & " " &$\Rightarrow$ & "  " & \textcolor{blue}{1}  \\
+   " " & \textcolor{red}{1} & \textcolor{blue}{1} & " " & " " & "  " & \textcolor{blue}{1}  \\
+   " " & \textcolor{red}{1} & \textcolor{blue}{0} & " " & " " & "  " & \textcolor{blue}{0}
+  \end{tabular}
+  \end{center}
+  \normalsize
+
+  \item \textbf{Uniform crossover}: select bit $i$ with probability $p$ of 1st parent and probability $1-p$ of 2nd parent.
+
+  \end{itemize}
+
+
+  % \footnotesize
+  % \begin{center}
+  % \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
+  %  " " & \textcolor{red}{1} & \textcolor{blue}{1} & " " & " " & "  " & \textcolor{red}{1}  \\
+  %  " " & \textcolor{red}{0} & \textcolor{blue}{0} & " " & " " & "  " & \textcolor{blue}{0}  \\
+  %  " " & \textcolor{red}{0} & \textcolor{blue}{1} & " " &$\Rightarrow$ & "  " & \textcolor{blue}{1}  \\
+  %  " " & \textcolor{red}{1} & \textcolor{blue}{1} & " " & " " & "  " & \textcolor{blue}{1}  \\
+  %  " " & \textcolor{red}{1} & \textcolor{blue}{0} & " " & " " & "  " & \textcolor{red}{1}
+  % \end{tabular}
+  % \end{center}
+  % \normalsize
+
+  \end{frame}
+
+
+  \begin{frame}[containsverbatim,allowframebreaks]{Mutation for numeric representations}
+
+    \textbf{Mutation:} individuals are changed, for example for $\x \in \R^n$
+    \begin{itemize}
+    \item \textbf{Uniform mutation:} choose a random gene $x_i$ and replace it with a value uniformly distributed (within the feasible range).
+    \item \textbf{Gauss mutation}: $\tilde\x = \x \pm \sigma \mathcal{N}(0, \boldsymbol{I})$
+    \item \textbf{Polynomial mutation:} polynomial distribution instead of normal distribution
+
+    \begin{center}
+    \begin{figure}
+      \includegraphics[height = 3.5cm, width = 4cm]{images/polynomial_mutation.png}\\
+      \scriptsize{Source: K. Deb, Analysing mutation schemes for real-parameter genetic algorithms, 2014}
+    \end{figure}
+     \end{center}
+
+     \framebreak
+
+    More exact:
+
+    $$
+    {\tilde x_{i}} = x_{i} + (x_{i,upper} - x_{i,lower}) \delta_{i}
+    $$
+
+    with $x_{i,upper} (x_{i,lower})$ as upper (lower) bound for $x_{i}$.
+
+    $\delta_{i}$ results as:
+
+    \footnotesize
+    $$
+    \delta_{i} =
+    \begin{cases}
+    [2r_{i}+(1-2r_{i})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta +1}} -1, & r_{i} < 0.5 \\
+    1 - [2(1-r_{i})+2(r_{i}-\frac{1}{2})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta_{m} +1}}, &  \text{else.}
+    \end{cases}
+    $$
+    with  $\delta = \frac{min\{(x_{i} - x_{i,lower}), (x_{i,upper}-x_{i})\}}{x_{i,upper} - x_{i,lower}}$.
+
+    \normalsize
+
+    \vspace{0.5cm}
+
+    Here $r_{i} \in [0,1]$ is a uniformly distributed number, $\eta_{m}$ is the distribution index of the mutation and is chosen by the user.\\
+    % Remark: A $\eta_{m}$ of the order of $\eta_{m} \in [20,100]$ is common.
+    \normalsize
+    \end{itemize}
+
+
+
+    \vspace{0.5cm}
+
+    In our example, we have chosen a Gauss mutation with $\sigma = 2$, we do not apply a recombination.
+
+    \begin{center}
+      \begin{figure}
+      \includegraphics[width=\textwidth, height=5cm]{images/ea_ex4.png}
+      \end{figure}
+      \end{center}
+
+    \end{frame}
+
+    \begin{frame}{Mutation for bit strings}
+
+    For example, an individual $\x \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
+
+    \vspace{0.5cm}
+
+    \textbf{Mutation:}
+    \begin{itemize}
+    \item \textbf{Bitflip}: for each index $k \in \{1, ..., n\}$: bit $k$ is flipped with probability $p \in (0,1)$.
+    \item If $(a)$ is an arbitrary bit sequence to which a bitflip mutation is applied, $(b)$ is obtained.
+    \end{itemize}
+
+    \footnotesize
+    \begin{center}
+    \begin{tabular}{c @{\hspace{2\tabcolsep}} *{5}{c}}
+      &
+      \itshape (a) &
+      \itshape " " &
+      \itshape " " &
+      \itshape " " &
+      \itshape (b)
+
+    \\[1ex]
+    " " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
+    " " & 0 & " " & " " & "  " & 0  \\
+    " " & 0 & " " & $\Rightarrow$ & "  " & \textcolor{red}{1}  \\
+    " " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
+    " " & 1 & " " & " " & "  " & 1
+    \end{tabular}
+    \end{center}
+    \normalsize
+
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]{Step 4: survival selection}
+
+    Now individuals are chosen who survive. Two common strategies are:
+
+    \begin{itemize}
+    \item \textbf{$(\mu, \lambda)$-selection}: we select from the $\lambda$ descendants the $\mu$ best ($\lambda \ge \mu$ necessary).
+
+    \textbf{But:} best overall individual can get lost!
+    \item \textbf{$(\mu + \lambda)$-selection}: $\mu$ parents and $\lambda$ offspring are lumped together and the $\mu$ best individuals are chosen.
+
+    Best individual safely survives.
+    \end{itemize}
+
+    \framebreak
+
+    In our example, a $(\mu + \lambda)$ selection was used. The selected points are green.
+
+    \begin{center}
+      \begin{figure}
+      \includegraphics[width=\textwidth, height=5cm]{images/ea_ex5.png}
+      \end{figure}
+      \end{center}
+
+
+    \end{frame}
+
+
+\begin{frame}{Tuning Example}
 
 Tuning random forest with random search and 5CV on the \texttt{sonar} data set for AUC:
 
 
 
 \begin{columns}
-    \begin{column}{0.49\textwidth}
-        \begin{center}
-            \begin{tabular}{|l|l|l|l}
-            Parameter  &  Type & Min & Max \\
-            \hline
-            \texttt{num.trees} & integer  & 3 & 500 \\
-            \texttt{mtry}  & integer  & 5 & 50  \\
-            \texttt{min.node.size} & integer  & 10 & 100\\
-            \end{tabular}
-            \end{center}
-    \end{column}
-    \begin{column}{0.49\textwidth}
-        \begin{center}
-            \begin{figure}
-            \includegraphics[width=0.8\textwidth]{images/curve.png}
-            \end{figure}
-            \end{center}
-    \end{column}
+\begin{column}{0.49\textwidth}
+\begin{center}
+\begin{tabular}{|l|l|l|l}
+Parameter&Type & Min & Max \\
+\hline
+\texttt{num.trees} & integer& 3 & 500 \\
+\texttt{mtry}& integer& 5 & 50\\
+\texttt{min.node.size} & integer& 10 & 100\\
+\end{tabular}
+\end{center}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{center}
+\begin{figure}
+\includegraphics[width=0.8\textwidth]{images/curve.png}
+\end{figure}
+\end{center}
+\end{column}
 \end{columns}
 
 
