@@ -7,23 +7,22 @@
 \begin{column}{.48\textwidth}
     \begin{block}{Mandatory}
     \begin{itemize}
-    	\item<1-6> Regression model
-    	\item<2-6> Uncertainty estimates
-    	\item<3-6> Accurate predictions
+    	\item Regression model
+    	\item Uncertainty estimates
+    	\item Accurate predictions
     \end{itemize}
     \end{block}
     
-    \only<4-6>{
+\pause
         \begin{block}{Depending on the application}
         \begin{itemize}
-        	\item<4-6> Cheap-to-train
-        	\item<5-6> Scales with the complexity of the data
+        	\item Cheap-to-train
+        	\item Scales with the complexity of the data
         	\note[item]{(number of features and observations)}
-        	\item<6-6> Can handle different types of inputs
+        	\item Can handle different types of inputs
         	\note[item]{(categorical and continuous)}
         \end{itemize}
         \end{block}
-    }
     
 \end{column}%
 
@@ -31,8 +30,10 @@
 
 \begin{column}{.48\textwidth}
 
-\only<1-1>{\includegraphics[width=1.\textwidth]{images/bo_loop_overview/03_mean.png}}
-\only<2-6>{\includegraphics[width=1.\textwidth]{images/bo_loop_overview/04_std.png}}
+%\only<1-1>{\includegraphics[width=1.\textwidth]{images/bo_loop_overview/03_mean.png}}
+%\only<2-6>{
+\includegraphics[width=1.\textwidth]{images/bo_loop_overview/04_std.png}
+%}
 
 \end{column}%
 \end{columns}
@@ -246,10 +247,8 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
 \hfill%
 
 \begin{column}{.48\textwidth}
-\only<1-6>{
     \centering
     \includegraphics[width=0.8\textwidth]{images/surrogate_models/random_forest_pic}
-}
 \end{column}
 \end{columns}
 
@@ -295,7 +294,6 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
 
-\only<1-8>{
     \begin{block}{Advantages}
     \begin{itemize}
         \item Cheap to train 
@@ -308,14 +306,12 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
         \item Quite robust against its own hyperparameters
     \end{itemize}
     \end{block}
-}
 \end{column}%
 
 \hfill%
 \pause
 
 \begin{column}{.48\textwidth}
-\only<6-8>{
     \begin{block}{Disadvantages}
     \begin{itemize}
         \item Poor uncertainty estimates 
@@ -323,7 +319,7 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
     	\item Priors cannot be incorporated easily 
     \end{itemize}
     \end{block}
-}
+
 \end{column}
 \end{columns}
 
