@@ -1,16 +1,11 @@
 
 \input{../latex_main/main.tex}
 
-
-
-\title[AutoML: Overview]{AutoML: Automated Machine Learning}
+\title[AutoML: Capping]{AutoML: Beyond AutoML}
 \subtitle{Capping of Runtimes}
-%TODO: change authors!
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
-
-
 
 % \AtBeginSection[] % Do nothing for \section*
 % {
@@ -144,7 +139,7 @@
 	}
 	\Output{best incumbent configuration $\hat{\conf}$}
 	\BlankLine
-	for each $\conf \in \confs$ initialize a queue $Q_\conf$ with entries $(\inst_k, \kappa_0)$; \tcp*{small queue in the beginning}
+	for each $\conf \in \confs$ initialize a queue $Q_{\conf}$ with entries $(\inst_k, \kappa_0)$; \tcp*{small queue in the beginning}
 	initialize a look-up table $R(\conf, \inst) = 0$; \tcp*{optimistic runtime estimate}
 	\pause
 	\While{$b$ remains} {

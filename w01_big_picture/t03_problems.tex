@@ -4,7 +4,8 @@
 
 
 
-\title[AutoML: Problem]{AutoML: Overview of Problems}
+\title[AutoML: Problems]{AutoML: Introduction}
+\subtitle{Overview of AutoML Problems}
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
@@ -73,12 +74,12 @@ Different metrics to measure the success of AutoML:
 		\pause
 		\item $\dataset_{opt}$ be a dataset which is split into $\datasettrain$ and $\datasetval$ 
 		\pause
-		\item $\cost(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the cost of $\algo_\conf$ trained on $\datasettrain$ and evaluated on $\datasetval$.
+		\item $\cost(\algo_{\conf}, \dataset_{train}, \dataset_{valid})$ denote the cost of $\algo_{\conf}$ trained on $\datasettrain$ and evaluated on $\datasetval$.
 	\end{itemize}
 	\pause
 	The \emph{hyper-parameter optimization (HPO)} problem is to find a hyper-parameter configuration that minimizes this cost:
 	\begin{equation}
-	\optconf \in \argmin_{\conf \in \pcs} \cost(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber  
+	\optconf \in \argmin_{\conf \in \pcs} \cost(\algo_{\conf}, \dataset_{train}, \dataset_{valid}) \nonumber  
 	\end{equation}
 \end{block}
 
@@ -135,11 +136,11 @@ Remarks:
 		\item \alert{$\algos = \{\algo_1, \algo_2, \ldots, \algo_k\}$ be a set of algorithms (a.k.a. portfolio)}
 		\item $\pcs$ be a set of hyperparameters of each machine learning algorithm $\algo_i$
 		\item $\dataset_{opt}$ be a dataset which is split into $\dataset_{train}$ and $\dataset_{valid}$ 
-		\item $\cost(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the cost of $\algo_\conf$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
+		\item $\cost(\algo_{\conf}, \dataset_{train}, \dataset_{valid})$ denote the cost of $\algo_{\conf}$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
 	\end{itemize}
 	we want to find \alert{the best combination of algorithm $\algo \in \mathbf{A}$ and its hyperparameter configuration $\conf \in \pcs$} minimizing:
 	\begin{equation}
-	(\algo^*, \optconf) \in \argmin_{\algo \in \algos, \conf \in \pcs} \cost(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber
+	(\algo^*, \optconf) \in \argmin_{\algo \in \algos, \conf \in \pcs} \cost(\algo_{\conf}, \dataset_{train}, \dataset_{valid}) \nonumber
 	\end{equation}
 \end{block}
 
@@ -194,11 +195,11 @@ Remarks:
 	\begin{itemize}
 		\item $\conf$ be \alert{an architecture for a deep neural network $N$} with domain $\pcs$,
 		\item $\dataset_{opt}$ be a dataset which is split into $\dataset_{train}$ and $\dataset_{valid}$ 
-		\item $\cost(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the cost of $N_\conf$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
+		\item $\cost(N_{\conf}, \dataset_{train}, \dataset_{valid})$ denote the cost of $N_{\conf}$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
 	\end{itemize}
 	The \emph{neural architecture search (NAS)} problem is to find an architecture that minimizes this cost:
 	\begin{equation}
-	\conf^* \in \argmin_{\conf \in \pcs} \cost(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber  
+	\conf^* \in \argmin_{\conf \in \pcs} \cost(N_{\conf}, \dataset_{train}, \dataset_{valid}) \nonumber  
 	\end{equation}
 \end{block}
 
