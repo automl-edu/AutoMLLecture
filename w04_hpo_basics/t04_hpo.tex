@@ -143,7 +143,7 @@ We summarize all hyperparameters we want to tune over in a vector $\conf \in \La
 \item Integer parameters, e.g.:
 \begin{itemize}
 \item Neighborhood size $k$ for $k$-NN
-\item $mtry$ in a random forest
+\item minimum number of samples for a split in a random forest
 \end{itemize}
 \item Categorical parameters, e.g.:
 \begin{itemize}
@@ -740,9 +740,9 @@ Tuning random forest with random search and 5CV on the \texttt{sonar} data set f
 \begin{tabular}{|l|l|l|l}
 Parameter&Type & Min & Max \\
 \hline
-\texttt{num.trees} & integer& 3 & 500 \\
-\texttt{mtry}& integer& 5 & 50\\
-\texttt{min.node.size} & integer& 10 & 100\\
+\texttt{n trees} & integer& 3 & 500 \\
+\texttt{max features}& integer& 5 & 50\\
+\texttt{min samples} & integer& 10 & 100\\
 \end{tabular}
 \end{center}
 \end{column}
