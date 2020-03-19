@@ -27,7 +27,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \lit{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \litw{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
 
 \centering
 \includegraphics[width=0.4\textwidth]{images/l2o_comic}
@@ -38,7 +38,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \lit{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \litw{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
 
 \begin{block}{Reinforcement Learning for Learning to Optimize}
 \begin{description}
@@ -63,7 +63,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning Results \lit{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning Results \litw{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
 
 \centering
 \includegraphics[width=0.4\textwidth]{images/l2o_dnn}
@@ -79,7 +79,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c, fragile]{Learning Acquisition Functions \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c, fragile]{Learning Acquisition Functions \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \begin{itemize}
 \item Instead of learning everything, it might be sufficient to \alert{learn hand-design heuristics}
@@ -132,7 +132,7 @@ Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Neural Acquisition Function  \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{Neural Acquisition Function  \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 Although the \alert{acquisition function $\alpha$} depends on the history $\mathcal{D}_{n-1}$ and the predictive model $\surro$, $\alpha$ mainly makes use of the \alert{predictive mean $\mu$ and variance $\sigma^2$}.
 
@@ -156,7 +156,7 @@ where $\weights$ are the parameters of a neural network, and $\mu$, $\sigma$, $x
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{RL to train Neural AF \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{RL to train Neural AF \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \begin{description}
 \item[Policy $\policy_\weights$:] Neural acquisition function $\alpha_\weights$
@@ -181,7 +181,7 @@ where $\weights$ are the parameters of a neural network, and $\mu$, $\sigma$, $x
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Policy \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{Policy \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \begin{itemize}
 \item The state is described by a discrete set of points $\xi_t = \{\xi_n\}^N_{n=1}$
@@ -202,7 +202,7 @@ $$\pi_\alpha(\cdot \mid s_t) = \text{Cat}\left[\alpha_\weights(\xi_1), \ldots, \
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Learning Acquisition Functions: Overview \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c,fragile]{Learning Acquisition Functions: Overview \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \centering
 \includegraphics[width=0.8\textwidth]{images/l2acq.png}
@@ -211,7 +211,7 @@ $$\pi_\alpha(\cdot \mid s_t) = \text{Cat}\left[\alpha_\weights(\xi_1), \ldots, \
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Results on Artificial Functions \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{Results on Artificial Functions \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \centering
 \includegraphics[width=0.9\textwidth]{images/l2acq_results.png}
