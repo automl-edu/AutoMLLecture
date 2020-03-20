@@ -494,9 +494,10 @@ HP combinations on a multi-dimensional discretized grid
 \end{itemize}
 \end{column}
 \begin{column}{0.49\textwidth}
+\vspace*{-0.8cm}
 \begin{center}
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{images/grid.png}
+\includegraphics[width=0.9\textwidth]{images/grid.png}
 \caption*{Grid search over 10x10 points}
 \end{figure}
 \end{center}
@@ -531,9 +532,10 @@ HP combinations on a multi-dimensional discretized grid
 \end{itemize}
 \end{column}
 \begin{column}{0.49\textwidth}
+\vspace*{-0.8cm}
 \begin{center}
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{images/random.png}
+\includegraphics[width=0.9\textwidth]{images/random.png}
 \caption*{Random search over 100 points}
 \end{figure}
 \end{center}
@@ -879,7 +881,7 @@ There are many more methods for hyperparmeter tuning, some of which will be disc
 
 \begin{itemize}
 \item Stochastic local search, e.g. simulated annealing
-\item Bayesian Optimization
+\item Bayesian optimization
 \item Hyperband
 \item Iterated F-Racing
 \item many more $\dots$
@@ -888,6 +890,24 @@ There are many more methods for hyperparmeter tuning, some of which will be disc
 \end{frame}
 
 
+\begin{frame}{Expert Knowledge}
+
+\begin{itemize}
+	\item Expert knowledge can help to guide hyperparameter optimization
+	\item For example, some hyperparameters might not be sampled uniformly
+\end{itemize}
+
+
+Example: regularization hyperparameter of SVM: $[0.001, 1000.0]$
+
+\begin{itemize}
+	\item The distance between $999.9$ and $1000.0$ should not be the same as between $0.001$ and $0.10$.
+    \item We might want to sample here from from a log-scale, e.g., $[10^{-x}, 10^{x}]$ with $x \in [-3, 3]$
+\end{itemize}
+
+
+
+\end{frame}
 \begin{frame}{Tuning Example}
 
 Tuning random forest with random search and 5CV on the \texttt{sonar} data set for AUC:
