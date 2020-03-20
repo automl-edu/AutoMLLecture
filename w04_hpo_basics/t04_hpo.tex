@@ -92,7 +92,7 @@ and generalization performance might be bad, if we have chosen a suboptimal conf
 % \item Hyperparameters often control the complexity of a model, i.e., how flexible the model is.
 % \item But they can in principle influence any structural property of a model or computational part of the training process.
 % \item If a model is not flexible enough, it cannot approximate the relationship between the features and the output well and will underfit.
-% \item If a model is too flexible so that it simply \enquote{memorizes} the training data, we will face the dreaded problem of overfitting.
+% \item If a model is too flexible so that it simply \textit{memorizes} the training data, we will face the dreaded problem of overfitting.
 % \item[$\implies$] Hence, controlling the model's capacity, i.e., finding suitable hyperparameters,
 % can prevent overfitting the model on the training set.
 % \end{itemize}
@@ -338,7 +338,7 @@ Selecting the best model from a set of potential candidates (e.g., different cla
 
 \begin{itemize}
 \item All parts of the model building (including model selection, preprocessing) should be embedded in the model-finding process \textbf{on the training data}.
-\item The test set should only be touched once, so we have no way of \enquote{cheating}. The test dataset is only used once \emph{after} a model is completely trained, after deciding for example on specific hyper-parameters.
+\item The test set should only be touched once, so we have no way of \textit{cheating}. The test dataset is only used once \emph{after} a model is completely trained, after deciding for example on specific hyper-parameters.
 
 Only if we do this are the performance estimates we obtained from the test set  \textbf{unbiased estimates} of the true performance.
 
@@ -379,7 +379,7 @@ Simplest method to achieve this: a 3-way split
 \hspace*{-0.3cm}
 \begin{itemize}
 \item Effectively, the tuning step is now simply part of a more complex training procedure.
-\item We could see this as removing the hyperparameters from the inputs of the algorithm and making it \enquote{self-tuning}.
+\item We could see this as removing the hyperparameters from the inputs of the algorithm and making it \textit{self-tuning}.
 \end{itemize}
 
 \column{0.5\textwidth}
@@ -392,7 +392,7 @@ Simplest method to achieve this: a 3-way split
 
 \framebreak
 
-More precisely: the combined training \& validation set is actually the training test for the \enquote{self-tuning} endowed algorithm.
+More precisely: the combined training \& validation set is actually the training test for the \textit{self-tuning} endowed algorithm.
 
 \vspace{1cm}
 \begin{columns}[c, onlytextwidth]
@@ -901,9 +901,10 @@ There are many more methods for hyperparmeter tuning, some of which will be disc
 Example: regularization hyperparameter of SVM: $[0.001, 1000.0]$
 
 \begin{itemize}
-	\item The distance between $999.9$ and $1000.0$ should not be the same as between $0.001$ and $0.10$.
+	\item The distance between $999.9$ and $1000.0$ should not be the same as between $0.001$ and $0.10$
     \item We might want to sample here from from a log-scale, e.g., $[10^{-x}, 10^{x}]$ with $x \in [-3, 3]$
 \end{itemize}
+
 
 
 
