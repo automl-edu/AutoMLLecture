@@ -1,25 +1,24 @@
 \section{High Dimensional Bayesian Optimization}
 \begin{frame}[c]{High Dimensional Bayesian Optimization}
 \begin{itemize}
-    \item Bayesian Optimization success stories:
-    \pause
+%    \item Bayesian Optimization success stories:
+%    \begin{itemize}
+%        \item robotics, planning, recommendation, automatic algorithm configuration etc.
+%    \end{itemize}
+%    \pause
+    \item Issue: BO works best on problems of moderate dimensions $d\leq20$
+%    \pause
     \begin{itemize}
-        \item robotics, planning, recommendation, automatic algorithm configuration etc.
+        \item Standard GPs do not tend to fit well in high dimensions
+        \item Maximizing the acquisition function is also computationally challenging
     \end{itemize}
-    \pause
-    \item Issue: BO works best on problems of moderate dimensions $d\leq20$.
-    \pause
+\medskip
+\pause
+
+    \item Possible solutions we will discuss:
     \begin{itemize}
-        \item In high dimensions GPs depend exponentially in dimension.
-        \item Maximizing the acquisition function is computationally challenging.
-    \end{itemize}
-    \item Proposed solution:
-    \pause
-    \begin{itemize}
-        \item REMBO \lit{\href{wang16}}
-        \pause
-        \item High dimensional BO via additive models \lit{\href{kandasamy15}}
-        \pause
+        \item Embedding into a low-dimensional space (REMBO) \lit{\href{wang16}}
+        \item Additive models \lit{\href{kandasamy15}}
         \item Random Forests \lit{\href{hutter11}}
     \end{itemize}
 \end{itemize}
@@ -28,23 +27,20 @@
 \end{frame}
 
 %----------------------------------------------------------------------
-\subsection{REMBO}
-\begin{frame}[c]{Random Embedding Bayesian Optimization}
+%\subsection{REMBO}
+\begin{frame}[c]{The Curse of Dimensionality vs. Low Effective Dimensionality}
 \begin{itemize}
-    \item Good coverage of $\pcs$ is required to ensure that the global optimum is found.
-    \pause
-    \item The number of evaluations needed to cover $\pcs$ increases exponentially with dimensionality.
-    \pause
-    \item Numerous optimization problems in practice have \emph{"low effective dimensionality"}.
+    \item Good coverage of $\pcs$ is required to ensure that the global optimum is found
+    \item The number of evaluations needed to cover $\pcs$ increases exponentially with dimensionality
+    \item Numerous optimization problems in practice have \emph{"low effective dimensionality"}
     \begin{itemize}
-    \pause
-        \item HPO for neural networks and deep belief networks
+        \item E.g., HPO for neural networks and deep belief networks
         \lit{\href{bergstra12}}
+        \item E.g., algorithm configuration for combinatorial optimization solvers \lit{\href{fANOVA}}
     \end{itemize}
-    \pause
-    \item Idea: Exploit low effective dimensionality without knowing which dimensions are important.
-    \pause
-    \item Solution: Random Embedding Bayesian Optimization (REMBO).
+\pause
+\medskip
+    \item Idea: Exploit low effective dimensionality to cover a lower-dimensional space well
 \end{itemize}
 
 \end{frame}
@@ -64,7 +60,7 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
     \end{column}
     \begin{column}{0.5\linewidth}
         \begin{figure}
-    \includegraphics[width=0.5\textwidth]{w06_hpo_bo/images/highdim_images/Random embeddings in a nutshell1.png}
+    \includegraphics[width=0.5\textwidth]{images/highdim_images/Random embeddings in a nutshell1.png}
     \end{figure}
     \end{column}
 \end{columns}
@@ -76,7 +72,7 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
         \end{column}
         \begin{column}{0.5\linewidth}
     \begin{figure}
-    \includegraphics[width=0.5\textwidth]{w06_hpo_bo/images/highdim_images/Random embeddings in a nutshell2.png}
+    \includegraphics[width=0.5\textwidth]{images/highdim_images/Random embeddings in a nutshell2.png}
     \end{figure}
     \end{column}
 \end{columns}
@@ -84,8 +80,8 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
 \begin{columns}
 \begin{column}{0.45\linewidth}
     \vspace{-8em}
-    \item Largely scales to arbitrary $D$.
-    \item Applies to any $d$-dimensional linear subspace.
+    \item Idea applies to any $d$-dimensional linear subspace
+    \item Let's us scale to arbitrary $D$ (e.g., $D=1$ billion)
 \end{column}
 \begin{column}{0.5\linewidth}
 
@@ -97,20 +93,18 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
 \end{frame}
 
 %----------------------------------------------------------------------
-\begin{frame}[c]{Random Embedding Bayesian Optimization}
+\begin{frame}[c]{Random Embedding Bayesian Optimization (REMBO)}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \begin{itemize}
-    \item Generate a random matrix $A \in \realnum^{D \times d}$.
-    \pause
-    \item Choose a bounded region set $\boobsspace\subset\realnum^d$.
-    \pause
-    \item Use BO to optimize $g(\conf)=\cost(\pmb{Ay})$ instead of high dimensional $\cost(\conf)$.
+    \item Generate a random matrix $A \in \realnum^{D \times d}$
+    \item Choose a bounded region set $\boobsspace\subset\realnum^d$
+    \item Use BO to optimize $g(\conf)=\cost(\pmb{Ay})$ instead of high dimensional $\cost(\conf)$
 \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{figure}
-    \includegraphics[width=0.8\textwidth]{w06_hpo_bo/images/highdim_images/Embedding.png}
+    \includegraphics[width=0.8\textwidth]{images/highdim_images/Embedding.png}
 \end{figure}
 \end{column}
 
@@ -151,14 +145,10 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
     \begin{block}{Advantages}
     \begin{itemize}
     	\item Exploits low effective dimensionality 
-    	\pause
-    	\item Scales BO to high dimensional parameter spaces 
-    	\pause
-    	\item Applies to domains with both categorical and continuous variables
-    	\pause
-    	\item Requires a simple modification of the original BO algorithm
-    	\pause
-    	\item REMBO is coordinate independent
+    	\item Allows scaling to very high dimensions
+    	\item Applies to both continuous and categorical variables
+    	\item Trivial modification of BO algorithm
+    	\item Coordinate independent (invariant under rotations)
     \end{itemize}
     \end{block}
 \pause
@@ -170,11 +160,10 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
 
     \begin{block}{Disadvantages}
     \begin{itemize}
-    	\item Sensitive to the definition of the bounded low dimensional constrained space $\boobsspace$.
-    	\pause
-    	\item Limits a high dimensional function in a low dimensional embedding.
-    	\pause
-    	\item Sensitive to the effective dimension.
+    	\item Sensitive to the definition of the bounded low dimensional constrained space $\boobsspace$
+    	\item Assumes truly unimportant dimensions
+    	%Limits a high dimensional function in a low dimensional embedding
+    	%\item Sensitive to the effective dimension
     \end{itemize}
 \end{block}
 
@@ -183,28 +172,25 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
 \end{frame}
 
 %----------------------------------------------------------------------
-\subsection{High dimensional BO via additive models}
+%\subsection{High dimensional BO via additive models}
 \begin{frame}{High Dimensional Bayesian Optimisation and Bandits via Additive Models}
 \vspace{2em}
 \begin{itemize}
     \item Recall:
-    \pause
+
     \begin{itemize}
-        \item In high dimensions GPs depend exponentially in dimension.
-        \pause
-        \item Maximizing the acquisition function is computationally challenging.
+        \item Standard GPs do not tend to fit well in high dimensions
+        \item Maximizing the acquisition function is also computationally challenging
         \pause
     \end{itemize}
+\medskip
     \item Idea:
-    \pause
     \begin{itemize}
-        \item Assume additive structure of the objective function. 
-        \pause
+        \item Assume additive structure of the objective function
         \begin{equation*}
             f(\conf)=f^{(1)}(\conf^{(1)})+f^{(2)}(\conf^{(2)})+...+f^{(M)}(\conf^{(M)})
-            \pause
         \end{equation*}
-        \item Use an alternative acquisition function which applies to an additive kernel.
+        \item Use an alternative acquisition function which applies to an additive kernel
     \end{itemize}
 \end{itemize}
 
@@ -220,16 +206,15 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
 \begin{column}{0.45\linewidth}
 
 \hspace{2em}
-    \item Key assumption: $f$ decomposes into lower dimensional additive components $\conf^{(j)} \in \pcs^{(j)}, j \in \{1,..,M\}$.
+    \item Key assumption: $f$ decomposes into lower-dimensional additive components $\conf^{(j)} \in \pcs^{(j)}, j \in \{1,..,M\}$
+    \item The decompositions are disjoint $\conf^{(i)} \cap \conf^{(j)} = \varnothing$
     \pause
-    \item The decompositions are disjoint $\conf^{(i)} \cap \conf^{(j)} = \varnothing$.
-    \pause
-    \item Each decomposition $f^{(j)}(\conf^{(j)})$ is modelled by an individual GP.
+    \item Each decomposition $f^{(j)}(\conf^{(j)})$ is modelled by an individual GP
     \pause
     \end{column}
     \begin{column}{0.45\linewidth}
         \begin{figure}
-    \includegraphics[width=0.7\textwidth]{w06_hpo_bo/images/highdim_images/additive-models.png}
+    \includegraphics[width=0.7\textwidth]{images/highdim_images/additive-models.png}
     \caption{Decomposition in two additive components (M=2)}
     \end{figure}
     \end{column}
@@ -241,13 +226,12 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
 \begin{itemize}
 
     \item Idea: Represent acquisition function as sum of functions on decompositions:
-    \pause
     \begin{equation*}
         \acq_{t}(\conf) = \sum_{j}\acq_{t}^{(j)}(\conf^{(j)})
     \end{equation*}
-    \pause
+\pause
+\medskip    
     \item $\acq_{t}$ is maximized by maximizing each $\acq_{t}^{(j)}$ separately:
-    \pause
     \begin{equation*}
         \hat{\varphi}_{t}^{(j)}(\conf^{(j)}) = \mean_{t-1}^{(j)}(\conf^{(j)}) + \beta_{t}^{1/2}\stddev_{t-1}^{(j)}(\conf^{(j)})
     \end{equation*}
@@ -294,13 +278,10 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
 
     \begin{block}{Advantages}
     \begin{itemize}
-    	\item Exploits low effective dimensionality. 
-    	\pause
-    	\item Scales GP-UCB to high dimensional parameter spaces.
-    	\pause
-    	\item Regret is linearly dependent on the dimension D when $\cost$ is additive.
-    	\pause
-    	\item Add-GP-UCB applies to an additive kernel.
+    	\item Exploits low effective dimensionality
+    	\item Scales GP-UCB to high dimensional parameter spaces
+    	\item Regret is linearly dependent on the dimension D when $\cost$ is additive
+    	\item Add-GP-UCB applies to an additive kernel
     \end{itemize}
     \end{block}
 \pause
@@ -312,11 +293,9 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
 
     \begin{block}{Disadvantages}
     \begin{itemize}
-    	\item Relies on structural assumptions about the objective function.
-    	\pause
-    	\item Restricted to an axis aligned representation.
-    	\pause
-    	\item Sensitive on the number of additive components.
+    	\item Relies on structural assumptions about the objective function
+    	\item Restricted to an axis aligned representation
+    	\item Sensitive on the number of additive components
     \end{itemize}
 \end{block}
 
@@ -325,37 +304,34 @@ Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
 \end{frame}
 
 %---------------------------------------------------------------------
-\subsection{Random Forests}
+%\subsection{Random Forests}
 \begin{frame}{Random Forests}
 %\note{We're not 100\% sure whether SMAC should be in the methods for high-dimensional problems?}
 BO with random forests as surrogates has been shown to perform well in high dimensions:
 \begin{itemize}
     \item Can handle complex parameter spaces:
-    \pause
     \begin{itemize}
         \item High dimensionality (low effective dimensionality)
-        \pause
         \item Mixed continuous/discrete parameters
-        \pause
         \item Conditional parameters
-        \pause
     \end{itemize}
+\pause
+\smallskip
     \item Can handle non-standard noise
-    \pause
     \begin{itemize}
         \item Non-Gaussian noise
-        \pause
         \item Heteroscedastic noise
-        \pause
     \end{itemize}
-    \item Represents an efficient use in off-the-shelf Bayesian optimization.
-    \pause
+\pause
+\smallskip
+    \item Effective model for off-the-shelf Bayesian optimization
     \begin{itemize}
         \item Robustness of the model
-        \pause
         \item Model overhead
     \end{itemize}
-    \item SMAC is an optimization tool that uses random forests as a surrogate model.
+\pause
+\smallskip
+    \item SMAC is a Bayesian optimization tool that uses random forests as a surrogate model
 \end{itemize}
 \end{frame}
 

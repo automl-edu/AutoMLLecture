@@ -1,8 +1,7 @@
 %-----------------------------------------------------------------------
-\subsection{Advanced Acquisition Functions}
+\section{Advanced Acquisition Functions}
 \begin{frame}[c]{Advanced Acquisition Functions}
 \framesubtitle{Contents}
-\pause
 \begin{itemize}
     \item Concept: One-step look-ahead.
     \item Knowledge Gradient
@@ -16,7 +15,6 @@
 \begin{frame}[c]{Advanced Acquisition Functions}
 %\framesubtitle{Knowledge Gradient - Concept}
 \framesubtitle{One-Step Look Ahead}
-\pause
 
 \begin{figure}
   \centering
@@ -41,7 +39,6 @@
 \begin{frame}[c]{Advanced Acquisition Functions - KG}
 %\framesubtitle{Knowledge Gradient - Concept}
 \framesubtitle{Knowledge Gradient - Concept}
-\pause
 
 \begin{figure}
   \centering
@@ -67,15 +64,15 @@
 %-----------------------------------------------------------------------
 \begin{frame}[c]{Advanced Acquisition Functions - KG}
 \framesubtitle{Knowledge Gradient - Choosing a candidate}
-\pause
+
 \begin{itemize}\abovedisplayskip=0.5em\belowdisplayskip=0.5em
-    \action<+->{\item Given a GP $\iter{\gp}$ fit on $\iter[\bocount-1]{\dataset}$, on the $\bocount\,$th iteration we have}
-    \action<+->{\[\iter{\left(\mean^*\right)} = \max_{\conf'\in\pcs}(\iter{\mean}(\conf'\given{\dataset_{\bocount-1}}))\]}
-    \action<+->{\item If we choose a candidate $\bonextsample=\conf$ to evaluate $\cost(\cdot)$ at,}
+    \action<+->{\item Given a GP $\iter{\gp}$ fit on $\iter[\bocount-1]{\dataset}$, on the $\bocount\,$th iteration we have
+    \[\iter{\left(\mean^*\right)} = \max_{\conf'\in\pcs}(\iter{\mean}(\conf'\given{\dataset_{\bocount-1}}))\]}
+    \action<+->{\item If we choose a candidate $\bonextsample=\conf$ to evaluate $\cost(\cdot)$ at,
     %\action<+->{\[\dataset_{\bocount}\given{\conf} = \{(\conf_1, \boobs_1),\dots,(\conf_{\bocount-1}, \boobs_{\bocount-1})\}\cup\{(\iter{\conf},\iter{\boobs})\given{\bonextsample=\conf}\}.\]}
-    \action<+->{\[\iter{\dataset}\given\conf = \iter[\bocount-1]{\dataset}\cup\{\langle\bonextsample,\,\bonextobs\rangle\given{\bonextsample=\conf}\}.\]}
-    \action<+->{\item Thus, if we hypothesize about the $\bocount+1\,$th iteration, we would get}
-    \action<+->{\[\iter[\bocount+1]{\left(\mean^*\right)} \given_{\conf} = \max_{\conf'\in\pcs}(\iter[\bocount+1]{\mean}(\conf'\given{\iter{\dataset},\bonextsample=\conf}))\]}
+    \[\iter{\dataset}\given\conf = \iter[\bocount-1]{\dataset}\cup\{\langle\bonextsample,\,\bonextobs\rangle\given{\bonextsample=\conf}\}.\]}
+    \action<+->{\item Thus, if we hypothesize about the $\bocount+1\,$th iteration, we would get
+    \[\iter[\bocount+1]{\left(\mean^*\right)} \given_{\conf} = \max_{\conf'\in\pcs}(\iter[\bocount+1]{\mean}(\conf'\given{\iter{\dataset},\bonextsample=\conf}))\]}
 \end{itemize}
 \comment{Source:https://arxiv.org/pdf/1807.02811.pdf}
 \end{frame}
@@ -85,16 +82,15 @@
 \begin{itemize}\abovedisplayskip=1em\belowdisplayskip=0em
     \action<+->{\item In a risk-neutral setting, $\iter{\left(\mean^*\right)}$ and $\iter[\bocount+1]{\left(\mean^*\right)}$ are the global optima for $\iter{\mean}$ and $\iter[\bocount+1]{\mean}\given_{\conf}$ respectively.}
     \action<+->{\item Thus, the conditional improvement in the cost (adjusted for maximization) is \[\iter{\left(\mean^*\right)} - \left.\iter[\bocount+1]{\left(\mean^*\right)} \right|_{\bonextsample=\conf}\]}
-    \action<+->{\item We cannot directly compute this improvement, but we can compute its expected value, which we call Knowledge Gradient:}
-    \action<+->{\[\iter{KG}(\conf) = \E\left[ \iter{\left(\mean^*\right)} - \left. \iter[\bocount+1]{\left(\mean^*\right)} \right|_{\bonextsample=\conf} \right]\]}
-    \action<+->{\item Finally, \[\boxed{\bonextsample = \argmax_{\conf\in\pcs}(\iter{KG}(\conf))}\]}
+    \action<+->{\item We cannot directly compute this improvement, but we can compute its expected value, which we call Knowledge Gradient:
+    \[\iter{KG}(\conf) = \E\left[ \iter{\left(\mean^*\right)} - \left. \iter[\bocount+1]{\left(\mean^*\right)} \right|_{\bonextsample=\conf} \right]\]}
+    \action<+->{\item Finally, \[\text{Choose } \boxed{\bonextsample = \argmax_{\conf\in\pcs}(\iter{KG}(\conf))}\]}
 \end{itemize}
 \comment{Source:https://arxiv.org/pdf/1807.02811.pdf}
 \end{frame}
 %-----------------------------------------------------------------------
 \begin{frame}[c]{Advanced Acquisition Functions - ES}
 \framesubtitle{Entropy Search - Concept}
-\pause
 
 \begin{figure}
   \centering

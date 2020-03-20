@@ -1,0 +1,216 @@
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Overview]{AutoML: Automated Machine Learning}
+\subtitle{Algorithm Selection}
+\author[Lars Kotthoff]{Bernd Bischl \and Frank Hutter \and \underline{Lars Kotthoff} \and Marius Lindauer}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+
+\begin{frame}{Types of Performance Models}
+\begin{itemize}
+\item models for entire portfolios
+\item models for individual algorithms
+\item models that are somewhere in between (e.g.\ pairs of algorithms)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Models for Entire Portfolios}
+\begin{itemize}
+\item predict the best algorithm in the portfolio
+\item alternatively: cluster and assign best algorithms to clusters
+\end{itemize}
+optional (but important):
+\begin{itemize}
+\item attach a ``weight'' during learning (e.g.\ the difference between best
+    and worst solver) to bias model towards the ``important'' instances
+\item special loss metric
+\end{itemize}
+\lit{Gent, Ian P., Christopher A. Jefferson, Lars Kotthoff, Ian Miguel,
+Neil Moore, Peter Nightingale, and Karen E. Petrie. ``Learning When to Use Lazy
+Learning in Constraint Solving.'' In 19th European Conference on Artificial
+Intelligence, 873–78, 2010.}
+\lit{Kadioglu, Serdar, Yuri Malitsky, Meinolf Sellmann, and Kevin
+Tierney. ``ISAC – Instance-Specific Algorithm Configuration.'' In 19th European
+Conference on Artificial Intelligence, 751–56, 2010.}
+\end{frame}
+
+\begin{frame}{Models for Individual Algorithms}
+\begin{itemize}
+\item predict the performance for each algorithm separately
+\item combine the predictions to choose the best one
+\item for example: predict the runtime for each algorithm, choose the one with
+    the lowest runtime
+\end{itemize}
+\lit{Xu, Lin, Frank Hutter, Holger H. Hoos, and Kevin Leyton-Brown.
+``SATzilla: Portfolio-Based Algorithm Selection for SAT.'' J. Artif. Intell.
+Res. (JAIR) 32 (2008): 565–606.}
+\end{frame}
+
+\begin{frame}{Hybrid Models}
+\begin{itemize}
+\item get the best of both worlds
+\item for example: consider pairs of algorithms to take relations into account
+\item for each pair of algorithms, learn model that predicts which one is faster
+\end{itemize}
+\lit{Xu, Lin, Frank Hutter, Holger H. Hoos, and Kevin Leyton-Brown.
+``Hydra-MIP: Automated Algorithm Configuration and Selection for Mixed Integer
+Programming.'' In RCRA Workshop on Experimental Evaluation of Algorithms for
+Solving Problems with Combinatorial Explosion at the International Joint
+Conference on Artificial Intelligence (IJCAI), 16–30, 2011.}
+\lit{Kotthoff, Lars. ``Hybrid Regression-Classification Models for
+Algorithm Selection.'' In 20th European Conference on Artificial Intelligence,
+480–85, 2012.}
+\end{frame}
+
+\begin{frame}{Types of Performance Models}
+\begin{center}
+\resizebox{!}{.8\textheight}{%
+\tikzset{>=latex}
+\begin{tikzpicture}[node distance=1em,inner sep=.5em,n/.style={drop shadow,fill=white,rounded corners}
+]
+
+\node (pm2c) [n,align=center,draw] {Regression Models\\
+\begin{tikzpicture}[scale=0.3]
+\draw (0,1) .. controls (1,1) .. (4,0) node [right]{A1};
+\draw (0,0) .. controls (1,0) .. (4,4) node [right]{A2};
+\draw (0,2) .. controls (2,3) .. (4,2) node [right]{A3};
+\end{tikzpicture}
+};
+
+\node (pm2cr) [align=left,right=3em of pm2c] {A1: 1.2\\\textbf{A2: 4.5}\\A3: 3.9};
+
+\node (pm1c) [n,align=center,above=of pm2c,draw] {Classification Model\\[1em]
+\begin{tikzpicture}[scale=0.3,sibling distance=8em,every node/.style={circle,fill=black,inner sep=.2em}]
+\node (pm1) [draw] {}
+child{ node [draw] {}
+        child{ node [draw,label={below left:A1}] {} }
+        child{ node [draw] {}
+                        child{ node [draw,label={below:A3}] {}}
+                        child{ node [draw,label={below:A1}] {}}
+        }
+}
+child{ node [draw,label={below right:A2}] {} }
+;
+\end{tikzpicture}
+};
+
+\node (pm1cr) [align=left,right=3em of pm1c] {\textbf{A1}};
+
+\node (pm3c) [n,align=center,below=of pm2c,draw] {Pairwise Classification Models\\[1em]
+\begin{tikzpicture}[scale=0.3,every label/.append style={shape=rectangle},sibling distance=3em,every node/.style={circle,fill=black,inner sep=.2em}]
+\node [draw,label={above:A1 vs.\ A2}] {}
+child{ node [draw] {}
+        child{ node [draw,label={below left:A1}] {} }
+        child{ node [draw] {}
+                        child{ node [draw,label={below left:A2}] {}}
+                        child{ node [draw,label={below right:A1}] {}}
+        }
+}
+child{ node [draw,label={below right:A1}] {} }
+;
+\end{tikzpicture}
+\hspace{1em}
+\begin{tikzpicture}[scale=0.3,every label/.append style={shape=rectangle},sibling distance=3em,every node/.style={circle,fill=black,inner sep=.2em}]
+\node [draw,label={above:A1 vs.\ A3}] {}
+child{ node [draw] {}
+        child{ node [draw,label={below left:A1}] {} }
+        child{ node [draw] {}
+                        child{ node [draw,label={below left:A1}] {}}
+                        child{ node [draw,label={below right:A3}] {}}
+        }
+}
+child{ node [draw,label={below right:A3}] {} }
+;
+\end{tikzpicture}
+\hspace{1em}
+\raisebox{3.7em}{\ldots}
+};
+
+\node (pm3cr) [align=left,right=1em of pm3c] {A1: 1 vote\\A2: 0 votes\\\textbf{A3: 2 votes}};
+
+\node (pm4c) [n,align=center,below=of pm3c,draw] {Pairwise Regression Models\\[1em]
+\begin{tikzpicture}[scale=0.3]
+\draw (2,6) node {A1 - A2};
+\draw (0,3) .. controls (1,1) .. (4,0);
+\draw (0,2) -- (4,2) node [right] {0};
+\end{tikzpicture}
+\hspace{1em}
+\begin{tikzpicture}[scale=0.3]
+\draw (2,6) node {A1 - A3};
+\draw (0,0) .. controls (1,0) .. (4,4);
+\draw (0,2) -- (4,2) node [right] {0};
+\end{tikzpicture}
+\hspace{1em}
+\raisebox{2em}{\ldots}
+};
+
+\node (pm4cr) [align=left,right=1em of pm4c] {A1: -1.3\\A2: 0.4\\\textbf{A3: 1.7}};
+
+\node (pmc) [fit={(pm1c) (pm1cr) (pm2c) (pm2cr) (pm3c) (pm3cr) (pm4c) (pm4cr)},draw,dashed] {};
+
+\node (it) [align=center,left=3em of pmc] {Instance 1\\Instance 2\\Instance 3\\$\vdots$};
+
+\node (ps) [align=center,right=3em of pmc] {Instance 1: Algorithm 2\\Instance 2:
+Algorithm 1\\Instance 3: Algorithm 3\\$\vdots$};
+
+\path [->] (it) edge (pmc);
+\path [->] (pmc) edge (ps);
+\path [->] (pm1c) edge (pm1cr);
+\path [->] (pm2c) edge (pm2cr);
+\path [->] (pm3c) edge (pm3cr);
+\end{tikzpicture}}
+\end{center}
+\end{frame}
+
+\begin{frame}{Types of Predictions/Algorithm Selectors}
+\begin{itemize}
+\item best algorithm
+\item $n$ best algorithms ranked
+\item allocation of resources to $n$ algorithms
+\item change the currently running algorithm?
+\end{itemize}
+\lit{Kotthoff, Lars. ``Ranking Algorithms by Performance.'' In LION 8,
+2014.}
+\lit{Kadioglu, Serdar, Yuri Malitsky, Ashish Sabharwal, Horst Samulowitz,
+and Meinolf Sellmann. ``Algorithm Selection and Scheduling.'' In 17th
+International Conference on Principles and Practice of Constraint Programming,
+454–69, 2011.}
+\lit{Stergiou, Kostas. ``Heuristics for Dynamically Adapting Propagation
+in Constraint Satisfaction Problems.'' AI Commun. 22, no. 3 (2009): 125–41.}
+\end{frame}
+
+\begin{frame}{Time of Prediction}
+\begin{itemize}
+\item before problem is being solved
+    \begin{itemize}
+    \item select algorithm(s) once
+    \item no recourse if predictions are bad
+    \end{itemize}
+\item while problem is being solved
+    \begin{itemize}
+    \item continuously monitor problem features and/or performance
+    \item can remedy bad initial choice or react to changing problem
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\end{document}

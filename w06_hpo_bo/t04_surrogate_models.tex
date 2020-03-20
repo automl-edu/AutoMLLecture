@@ -1,29 +1,28 @@
 \section{Surrogate Models}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models: Features}
+\begin{frame}[c]{Characteristics we Require our Surrogate Models to Have}
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
     \begin{block}{Mandatory}
     \begin{itemize}
-    	\item<1-6> Regression model
-    	\item<2-6> Uncertainty estimates
-    	\item<3-6> Accurate predictions
+    	\item Regression model
+    	\item Uncertainty estimates
+    	\item Accurate predictions
     \end{itemize}
     \end{block}
     
-    \only<4-6>{
+\pause
         \begin{block}{Depending on the application}
         \begin{itemize}
-        	\item<4-6> Cheap-to-train
-        	\item<5-6> Scales with the complexity of the data
+        	\item Cheap-to-train
+        	\item Scales with the complexity of the data
         	\note[item]{(number of features and observations)}
-        	\item<6-6> Can handle different types of features
+        	\item Can handle different types of inputs
         	\note[item]{(categorical and continuous)}
         \end{itemize}
         \end{block}
-    }
     
 \end{column}%
 
@@ -31,8 +30,10 @@
 
 \begin{column}{.48\textwidth}
 
-\only<1-1>{\includegraphics[width=1.\textwidth]{w06_hpo_bo/images/bo_loop_overview/03_mean.png}}
-\only<2-6>{\includegraphics[width=1.\textwidth]{w06_hpo_bo/images/bo_loop_overview/04_std.png}}
+%\only<1-1>{\includegraphics[width=1.\textwidth]{images/bo_loop_overview/03_mean.png}}
+%\only<2-6>{
+\includegraphics[width=1.\textwidth]{images/bo_loop_overview/04_std.png}
+%}
 
 \end{column}%
 \end{columns}
@@ -42,7 +43,7 @@
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models: Candidates}
+\begin{frame}[c]{Surrogate Models we Will Discuss}
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
@@ -56,52 +57,51 @@
 \hfill%
 
 \begin{column}{.48\textwidth}
-\only<1-1>{\includegraphics[width=1.\textwidth]{w06_hpo_bo/images/surrogate_models/uncertainty_gp.jpg}}
-\only<2-2>{\includegraphics[width=1.\textwidth]{w06_hpo_bo/images/surrogate_models/uncertainty_forest.jpg}}
-\only<3-3>{\includegraphics[width=1.\textwidth]{w06_hpo_bo/images/surrogate_models/uncertainty_dngo.jpg}}
+\only<1-1>{\includegraphics[width=1.\textwidth]{images/surrogate_models/uncertainty_gp.jpg}}
+\only<2-2>{\includegraphics[width=1.\textwidth]{images/surrogate_models/uncertainty_forest.jpg}}
+\only<3-3>{\includegraphics[width=1.\textwidth]{images/surrogate_models/uncertainty_dngo.jpg}}
 \end{column}%
 \end{columns}
 
 \source{A. Klein: Introduction Automated Machine Learning}
 
-\comment{adjust those plots}
+\comment{adjust those plots
+FH: best to have plots stay on the slide, e.g., next to each other.}
 
 \end{frame}
 %-----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models: Gaussian Processes - reminder}
+\begin{frame}[c]{Gaussian Processes - reminder}
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
 
-\only<1-7>{
     \begin{block}{Advantages}
     \begin{itemize}
-    	\item Smooth and reliable uncertainty estimates \pause
-    	\item We can encode in the kernel expert knowledge about the design space \pause
-    	\item ... 
+    	\item Smooth and reliable uncertainty estimates 
+		\item Sample efficiency
+    	\item We can encode expert knowledge about the design space in the kernel 
     \end{itemize}
     \end{block}
-}
 \end{column}%
 
 \hfill%
+\pause
 
 \begin{column}{.48\textwidth}
-\only<3-7>{
     \begin{block}{Disadvantages}
     \begin{itemize}
-    	\item We have to define a good kernel for each application \pause
+    	\item We have to define a good kernel for each application 
     	\note[item]{(if we don't optimize small-dimensional, continuous functions)}
-    	\item Cost scales cubically with the number of observations \pause
+    	\item Cost scales cubically with the number of observations 
     	\note[item]{(because of inverting the kernel)}
-    	\item Not easily applicable in discrete or conditional spaces \pause
+    	\item Not easily applicable in discrete or conditional spaces 
     	\item Sensitive to its own hyperparameters
     \end{itemize}
 \end{block}
-}
+
 \end{column}
 \end{columns}
 
@@ -122,27 +122,26 @@
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models: Gaussian Processes - reminder}
-
-\begin{itemize}
-    \item<1-3> Samples from the prior are zero-mean, with values drawn from a multivariate Gaussian distribution
-    \item<2-3> The kernel (covariance) function $K$ tells us how correlated the function values at two points are
-    \item<3-3> The posterior is also a GP, with predictive distribution:
-    \begin{equation*}
-         P(\func_{\bocount+1} \vert \dataset_{1:\bocount}, \conf_{\bocount+1}) =  \mathcal{N}(\mean_{\bocount}(\conf_{\bocount+1}), \variance_{\bocount}(\conf_{\bocount+1}))
-    \end{equation*}
-    \begin{equation*}
-        \mean_{\bocount}(\conf_{\bocount+1}) = \bm{k}^{T} \bm{K}^{-1} \bm{\func_{1:\bocount}}
-    \end{equation*}
-    \begin{equation*}
-        \variance_{\bocount}(\conf_{\bocount+1}) = k(\conf_{\bocount+1}, \conf_{\bocount+1}) - \bm{k}^{T} \bm{K}^{-1} \bm{k}
-    \end{equation*}
-\end{itemize}
-
-
-\note[item]{for the review of GPs - Rasmussen and Williams}
-
-\end{frame}
+%\begin{frame}[c]{Gaussian Processes - reminder}
+%
+%\begin{itemize}
+%    \item<1-3> The prior is a GP with constant mean and variance; draws are jointly Gaussian
+%    \item<2-3> The kernel (covariance) function $K$ tells us how correlated the function values at two points are
+%    \item<3-3> The posterior is also a GP, with predictive distribution:
+ %   \begin{equation*}
+ %        P(\func_{\bocount+1} \vert \dataset_{1:\bocount}, \conf_{\bocount+1}) =  \mathcal{N}(\mean_{\bocount}(\conf_{\bocount+1}), \variance_{\bocount}(\conf_{\bocount+1}))
+ %   \end{equation*}
+ %   \begin{equation*}
+ %       \mean_{\bocount}(\conf_{\bocount+1}) = \bm{k}^{T} \bm{K}^{-1} \bm{\func_{1:\bocount}}
+ %   \end{equation*}
+ %   \begin{equation*}
+ %       \variance_{\bocount}(\conf_{\bocount+1}) = k(\conf_{\bocount+1}, \conf_{\bocount+1}) - \bm{k}^{T} \bm{K}^{-1} \bm{k}
+ %   \end{equation*}
+%\end{itemize}
+%
+%\note[item]{for the review of GPs - Rasmussen and Williams}
+%
+%\end{frame}
 %-----------------------------------------------------------------------
  
 %-----------------------------------------------------------------------
@@ -151,11 +150,11 @@
 
 \begin{itemize}
     \item After choosing the kernel, we must also manage the hyperparameters that govern its behaviour, as well as that of the mean function.  \pause
-    \item For our problems of interest, typically we have $D + 3$ GPs hyperparameters:  \pause
+    \item For our problems of interest, typically we have $D + 3$ GPs hyperparameters:  
     \begin{itemize}
-        \item $D$ length scales $\theta_{1:D}$, \pause
-        \item the covariance amplitude $\theta_{0}$, \pause
-        \item the observation noise $\noise$, \pause
+        \item $D$ length scales $\theta_{1:D}$, 
+        \item the covariance amplitude $\theta_{0}$, 
+        \item the observation noise $\noise$, 
         \item a constant mean $\mean$. 
     \end{itemize}
 \end{itemize}
@@ -170,7 +169,7 @@
 \begin{columns}[T] % align columns
 \begin{column}{.58\textwidth}
 \begin{itemize}
-    \item We can use Maximum A Posteriori (MAP) or Maximum Likelihood Estimation (MLE) to sample hyperparameters \pause
+    \item We can use Maximum A Posteriori (MAP) or Maximum Likelihood Estimation (MLE) to sample hyperparameters 
     \item However, it is more realistic not to assume that hyperparameters distribution can be represented by a single point
 \end{itemize}
 \end{column}%
@@ -181,7 +180,7 @@
 \end{column}%
 \end{columns}
 
-\source{Snoek et al. 2015}
+%\source{Snoek et al. 2015}
 \end{frame}
 %-----------------------------------------------------------------------
 
@@ -208,7 +207,7 @@
 \hfill%
 
 \begin{column}{.38\textwidth}
-\includegraphics[width=0.9\textwidth]{w06_hpo_bo/images/surrogate_models/kernel_hp_mcmc.jpg}
+\includegraphics[width=0.9\textwidth]{images/surrogate_models/kernel_hp_mcmc.jpg}
 \end{column}%
 \end{columns}
 
@@ -226,21 +225,21 @@
 
 \begin{block}{Train}
 \begin{itemize}
-	\item<1-6> $n$ regression trees. 
-	\item<2-6> Subsampled training data for each tree (with bootstrapping).
-	\item<3-6> Each tree gives us a possible explanation for the observations.
+	\item $n$ regression trees
+	\item Subsampled training data for each tree (with bootstrapping)
+	\item Each tree gives us a possible explanation for the observations
 \end{itemize}
 \end{block}
 
-\only<4-6>{
+\pause
     \begin{block}{Predict}
     \begin{itemize}
-    	\item<4-6> Obtain prediction of each tree.
-    	\item<5-6> Aggregate predictions (e.g., average).
-    	\item<6-6> Uncertainty of predictions: stdev across tree predictions. 
+    	\item Obtain prediction of each tree
+    	\item Aggregate predictions (e.g., average)
+    	\item Uncertainty of predictions: stdev across tree predictions
     \end{itemize}
     \end{block}
-}
+
 \end{column}%
 
 \note[item]{Uncertainty in the leaves is dropped}
@@ -248,10 +247,8 @@
 \hfill%
 
 \begin{column}{.48\textwidth}
-\only<1-6>{
     \centering
     \includegraphics[width=0.8\textwidth]{images/surrogate_models/random_forest_pic}
-}
 \end{column}
 \end{columns}
 
@@ -297,35 +294,32 @@
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
 
-\only<1-8>{
     \begin{block}{Advantages}
     \begin{itemize}
-        \item Cheap to train \pause
+        \item Cheap to train 
         \item Scales well with \#observations: 
         \begin{itemize}
-        	\item Worst-case complexity for $T$ tress with $n$ data points of dimensionality $p$: $\mathcal O(T\cdot p \cdot n^2 \log{n})$. \pause
+        	\item Worst-case complexity for $T$ tress with $n$ data points of dimensionality $p$: $\mathcal O(T\cdot p \cdot n^2 \log{n})$. 
         \end{itemize}
-        \item Training can be parallelized \pause
-        \item Can easily handle conditional, categorical, continuous and discrete spaces \pause
-        \item Fairly robust against its own hyperparameters
+        \item Training can be parallelized 
+        \item Can easily handle conditional, categorical, continuous and discrete spaces 
+        \item Quite robust against its own hyperparameters
     \end{itemize}
     \end{block}
-}
 \end{column}%
 
 \hfill%
 \pause
 
 \begin{column}{.48\textwidth}
-\only<6-8>{
     \begin{block}{Disadvantages}
     \begin{itemize}
-        \item Poor uncertainty estimates \pause
-        \item Poor extrapolation (constant) \pause
-    	\item Priors cannot easily be incorporated
+        \item Poor uncertainty estimates 
+        \item Poor extrapolation (constant) 
+    	\item Priors cannot be incorporated easily 
     \end{itemize}
     \end{block}
-}
+
 \end{column}
 \end{columns}
 
@@ -344,7 +338,7 @@
     \end{itemize}
 
 \centering
-\includegraphics[width=0.6\textwidth]{w06_hpo_bo/images/surrogate_models/bnn.jpg}
+\includegraphics[width=0.6\textwidth]{images/surrogate_models/bnn.jpg}
 
 \end{itemize}
 
@@ -359,12 +353,10 @@
 
 \begin{itemize}
     \item Deal with all sources of parameter uncertainty
-    \item If possible, also deal with all sources of architecture uncertainty \pause
+    \item If possible, one would also deal with uncertainty about the network architecture
      \begin{itemize}
-        \item This would mean not to determine a single architecture, but a
-distribution \pause
-        \item For every architecture, one would still want to be Bayesian about its weights... \pause
-        \item Nobody is really Bayesian about architectures these days \pause
+        \item For every architecture, one would still want to be Bayesian about its weights... 
+        \item Nobody is really Bayesian about architectures these days 
         \item This has been too expensive; but that may change with efficient
 gradient-based architecture search methods...
     \end{itemize}
@@ -376,21 +368,20 @@ gradient-based architecture search methods...
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models: BNNs for Bayesian optimization}
+\begin{frame}[c]{Surrogate Models: NNs for Bayesian optimization}
 
 \begin{itemize}
-	\item BNNs are known to have good predictions given big data \pause
-	\item In Bayesian optimization, we have (often) little data \pause
-	\item Nevertheless, we can use BNNs for BO \pause
+	\item NNs work well given large data sets
+	\item In Bayesian optimization, we (often) have few data points
+	\item Nevertheless, we can use NNs for BO when we handle uncertainty well\pause
 	\bigskip
-	\item Different implementations:
+	\item Overview of examples using NNs for BO:
 	\begin{itemize}
-	    \item Snoek et al.: Scalable Bayesian Optimization Using Deep Neural Networks, \pause
-	    \item Springenberg et al.: Bayesian Optimization with Robust Bayesian Neural Networks, \pause
-        \item Schilling et al.: Hyperparameter Optimization with Factorized Multilayer Perceptrons, \pause
-        \item Perrone et al.: Scalable Hyperparameter Transfer Learning, \pause
-        \item Hern\'andez-Lobato et al.: Parallel and Distributed Thompson Sampling for Large-scale Accelerated Exploration of Chemical Space.
-
+	    \item Snoek et al.: Scalable Bayesian Optimization Using Deep Neural Networks
+	    \item Springenberg et al.: Bayesian Optimization with Robust Bayesian Neural Networks
+        \item Schilling et al.: Hyperparameter Optimization with Factorized Multilayer Perceptrons
+        \item Perrone et al.: Scalable Hyperparameter Transfer Learning
+        \item Hern\'andez-Lobato et al.: Parallel and Distributed Thompson Sampling for Large-scale Accelerated Exploration of Chemical Space
 	\end{itemize}
 \end{itemize}
 
@@ -399,16 +390,16 @@ gradient-based architecture search methods...
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models: Bayesian Neural Networks - DNGO}
+\begin{frame}[c]{Surrogate Models: the Bayesian Neural Networks - DNGO}
 
 \begin{itemize}
-    \item Fit a standard neural network to the data \pause
-    \item Use the representation in the last hidden layer as basis \\ functions $\phi(x)$ of the input $x$ \pause
-    \item Use Bayesian linear regression for the output layer
+    \item Fit a standard neural network to the data 
+    \item Use the representation in the last hidden layer as basis \\ functions $\phi(x)$ of the input $x$ 
+    \item Use Bayesian linear regression for the output layer \pause
     \begin{itemize}
-        \item The last layer is linear in its parameters $\theta$  \pause
-        \item Therefore, the Bayesian linear regression formulas work directly \pause
-        \item Feasible in closed form, in time $O(N d^3)$, \\ where $N$ is the number of data points and $d$ is the number of \\ hidden units in the last layer \pause
+        \item The last layer is linear in its parameters $\theta$  
+        \item Therefore, the Bayesian linear regression formulas work directly 
+        \item Feasible in closed form, in time $O(N d^3)$, \\ where $N$ is the number of data points and $d$ is the number of \\ hidden units in the last layer 
     \end{itemize}
     
 \end{itemize}
@@ -424,31 +415,28 @@ gradient-based architecture search methods...
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
 
-\only<1-7>{
     \begin{block}{Advantages}
     \begin{itemize}
-        \item Scales linearly with \#observations \pause
-        \item Given enough network samples obtain nice and smooth uncertainty estimates \pause
+        \item Scales linearly with \#observations 
+        \item Given enough network samples obtain nice and smooth uncertainty estimates 
         \item Can handle categorical, continuous and discrete spaces
     \end{itemize}
     \end{block}
-}
 \end{column}%
 
 \hfill%
 \pause
 
 \begin{column}{.48\textwidth}
-\only<4-7>{
     \begin{block}{Disadvantages}
     \begin{itemize}
-        \item Poor uncertainty estimates \pause
-        \item Many meta-design decisions \pause
-    	\item No follow-up research \pause
-    	\item Need usually more data than Gaussian processes
+        \item Poor uncertainty estimates 
+        \item Many meta-design decisions 
+    	\item No robust off-the-shelf implementation 
+    	\item Usually needs more data than Gaussian processes
     \end{itemize}
     \end{block}
-}
+
 \end{column}
 \end{columns}
 
