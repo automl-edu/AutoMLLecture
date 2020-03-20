@@ -905,7 +905,20 @@ Example: regularization hyperparameter of SVM: $[0.001, 1000.0]$
     \item We might want to sample here from from a log-scale, e.g., $[10^{-x}, 10^{x}]$ with $x \in [-3, 3]$
 \end{itemize}
 
-
+\begin{figure}[htb]
+\centering
+  \begin{tikzpicture}[auto]%[scale=1.5]
+    \draw [->](-0.3,0)-- (12.3,0) coordinate;
+    \draw [->](-0.3,-2)-- (12.3,-2) coordinate;
+    \foreach \x/\xtext/\xxtext in {-3/-3/0.001, -2/-2/ , -1/-1/, 0/0/, 1/1/, 2/2/100, 3/3/1000} {
+      \draw [very thick] ({\x*2+6},-2pt) -- ++(0, 4pt) node[xshift = -6pt, yshift=-3pt,anchor=south west,baseline]{\strut$\xtext$};
+      \draw [very thick] ({10^(\x)*0.012},-2cm+2pt) -- ++(0,-4pt) node[anchor=north]{$\xxtext$};
+      \draw [->] ({\x*2+6},-2pt) .. controls ({\x*2+6},-0.5) and ({10^(\x)*0.012},-1.5) .. ({10^(\x)*0.012},-2cm+2pt);
+    }
+    \node[] at (-0.7,-0.1) (t1) {$x$};
+    \node[] at (-0.7,-1.9) (t2) {$10^x$};
+  \end{tikzpicture}
+\end{figure}
 
 
 \end{frame}
