@@ -139,7 +139,7 @@ $\leadsto$ To achieve state-of-the-art performance,\\ this manual tuning has to 
   \pause
   \item Size of neighbourhood ($k$) is very important for its performance
   \pause
-  \item The performance function depending on $k$ is quite complex\\ (not at all convex)
+  \item The performance function depending on $k$ is quite complex (not at all convex)
 \end{itemize}
 
 \end{frame}
@@ -176,12 +176,13 @@ that performs best for this particular application.
 \end{center}
 
 \bigskip
+\pause
 With AutoML, we ...
 \begin{itemize}
 	\item support ML users
 	\item improve the efficiency of developping new ML applications
 	\item reduce the required ML-expertise 
-	\item might achieve better performance than developers (w/o AutoML)
+	\item might achieve better performance than developers w/o AutoML
 \end{itemize}
 
 \end{frame}
@@ -208,6 +209,7 @@ AutoML enables:
   \begin{itemize}
     \item human's unsystematic approaches cannot be reproduced,\\ but AutoML is systematic
   \end{itemize}
+  \smallskip
   \pause
   \item broader use of ML also in other disciplines
   \begin{itemize}
@@ -222,22 +224,22 @@ AutoML enables:
 \begin{frame}[c]{Challenges in AutoML}
 
 \begin{enumerate}
-  \item Each dataset potentially have \alert{different optimal ML-designs}
+  \item Each dataset potentially require \alert{different optimal ML-designs}
   \begin{itemize}
-    \item[$\leadsto$] Design decisions have to be made for each dataset again
+    \item Design decisions have to be made for each dataset again
   \end{itemize}
   \smallskip
   \pause
   \item Training of a single ML model can be quite \alert{expensive}\\
   		(e.g., hours, days or weeks)
   \begin{itemize}
-    \item[$\leadsto$] often, we cannot try many design decisions
+    \item often, we cannot try many design decisions
   \end{itemize}
   \smallskip
   \pause
   \item the \alert{mathematical relation} between design decisions\\ and performance is (often) \alert{unknown}
   \begin{itemize}
-    \item[$\leadsto$] gradient-based optimization is not directly possible
+    \item gradient-based optimization is not directly possible
   \end{itemize}
   \smallskip
   \pause
