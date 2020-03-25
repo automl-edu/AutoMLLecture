@@ -923,35 +923,29 @@ Example: regularization hyperparameter of SVM: $[0.001, 1000.0]$
 
 \end{frame}
 \begin{frame}{Tuning Example}
-
-Tuning random forest with random search and 5CV on the \texttt{sonar} data set for AUC:
-
-
-
+Tuning xgboost with random search, grid search and simulated annealing using a 5CV on the \texttt{spam} and \texttt{sonar} data set for AUC:
 \begin{columns}
-\begin{column}{0.49\textwidth}
-\begin{center}
-\begin{tabular}{|l|l|l|l}
-Parameter&Type & Min & Max \\
-\hline
-\texttt{n trees} & integer& 3 & 200 \\
-\texttt{max features}& integer& 5 & 20\\
-\texttt{min samples} & integer& 2 & 20\\
-\end{tabular}
-\end{center}
+\begin{column}{0.3\textwidth}
+  \begin{center}
+  \begin{tabular}{|l|l|l|l}
+  Parameter&Type & Min & Max \\
+  \hline
+  \texttt{eta} & double & $0.1$ & $0.5$ \\
+  \texttt{lambda}&  double & $10^{-1}$ & $10^{0}$ \\
+  \end{tabular}
+  \end{center}
 \end{column}
-\begin{column}{0.49\textwidth}
-\begin{center}
-\begin{figure}
-\includegraphics[width=0.8\textwidth]{images/curve.png}
-\end{figure}
-\end{center}
+\begin{column}{0.7\textwidth}
+  \begin{center}
+  \begin{figure}
+  \only<1>{\includegraphics[width=\textwidth]{images/benchmark_curve.png}}
+  \only<2>{\includegraphics[width=\textwidth]{images/benchmark_scatter.png}}
+  \end{figure}
+  \end{center}
 \end{column}
 \end{columns}
 
-
 \end{frame}
-
 
 
 \end{document}
