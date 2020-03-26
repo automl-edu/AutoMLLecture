@@ -43,30 +43,7 @@
 %----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframetop{NAS as Hyperparameter Optimization}{
-\centering
-	\begin{itemize}
-		\item 2 types of cells: normal and reduction cells
-		\item For each type of cell: $B$ blocks, each with 5 choices
-		\myit{
-			\item[-] Choose two previous feature maps (from this cell)
-			\item[-] For each of these, choose an operation (3$\times$3 conv, max-pool, etc.)
-			\item[-] Choose a merge operation to combine the two results (concat or add)
-		}
-	
-	\end{itemize}
-	\bigskip
-	
-	\begin{itemize}
-	  \item This can be modelled as a HPO problem with 2$\times$5$\times$B variables
-	\end{itemize}
-	\includegraphics[width=0.6\textwidth]{images/NAS-RL-space_as_HPO}
-	
-}
-%----------------------------------------------------------------------
-
-%----------------------------------------------------------------------
-\myframetop{Example of an architecture sample}{
+\myframetop{Example of an architecture sample with B=5}{
 \centering
 \begin{columns}
 	\column{0.3\textwidth}
