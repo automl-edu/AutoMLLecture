@@ -102,7 +102,7 @@
 		\pause
 		\item $p(\dataset)$ be a probability distribution over meta datasets $\dataset \in \datasets$,
 		\pause
-		\item $\stateRL_t$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
+		\item $\stateRL^{(t)}$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
 		\pause
 		\item $\cost: \policies \times \datasets \to \perf$ be a cost metric assessing the cost of a control policy $\pi \in \Pi$ on $\dataset \in \datasets$
 	\end{itemize}
@@ -122,13 +122,13 @@
 
 
 \begin{description}
-	\item[State $\stateRL_t$] are described by statistics gathered in the algorithm run
+	\item[State $\stateRL^{(t)}$] are described by statistics gathered in the algorithm run
 	\pause
-	\item[Action $\actionRL_t$] change hyperparameters according to some control policy $\pi$
+	\item[Action $\actionRL^{(t)}$] change hyperparameters according to some control policy $\pi$
 	\pause
-	\item[Transition] run the algorithm from state $s_t$ to $s_{t+1}$ for a "short" moment by using the hyperparameters defined by $a_t$
+	\item[Transition] run the algorithm from state $\stateRL^{(t)}$ to $\stateRL^{(t+1)}$ for a "short" moment by using the hyperparameters defined by $a^{(t)}$
 	\pause
-	\item[Reward $\rewardRL_t$] Return your current solution quality (or an approximation)
+	\item[Reward $\rewardRL^{(t)}$] Return your current solution quality (or an approximation)
 	\pause
 	\item[Context $\dataset$] A given dataset (or task)
 \end{description}
@@ -147,7 +147,7 @@
 Solve unknown MDP by using reinforcement learning (RL):
 
 \begin{equation}
-\mathcal{V}_\dataset^\policy(s_t) =  \mathbb{E} \left[\sum_{k=0}^\infty\gamma^k \rewardRL^{(t+k+1)}_\dataset| \stateRL_t=\stateRL \right]\nonumber
+\mathcal{V}_\dataset^\policy(\stateRL^{(t)}) =  \mathbb{E} \left[\sum_{k=0}^\infty\gamma^k \rewardRL^{(t+k+1)}_\dataset| \stateRL^{(t)}=\stateRL \right]\nonumber
 \end{equation}
 \pause
 
