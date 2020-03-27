@@ -5,6 +5,7 @@ library(mlr3tuning)
 library(paradox)
 library(future)
 library(future.batchtools)
+library(batchtools)
 library(ggplot2)
 library(stringi)
 library(gridExtra)
@@ -65,7 +66,8 @@ des$resampling = Map(function(task) {
 }, task = des$task)
 
 #init parallelization
-plan(batchtools_multicore)
+temp_reg = makeRegistry(file.dir = NA) #just a dummy to get the systems default cluster function
+plan(batchtools_custom, cluster.functions = temp_reg$cluster.functions)
 #run tuning benchmark
 bres = benchmark(des[,.(task, learner, resampling)], store_models = TRUE)
 
