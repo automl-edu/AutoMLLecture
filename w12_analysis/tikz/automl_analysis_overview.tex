@@ -1,5 +1,5 @@
 \begin{tikzpicture}[node distance=4cm, thick]
-	\node (function) [data] {Loss $\loss$};
+	\node (function) [data] {Cost $\cost$};
 	\node (budgets) [data, below of=function, node distance=1cm] {Budgets};
 	\node (space) [data, below of=budgets, node distance=1cm] {Design Space $\pcs$};
 	
@@ -8,18 +8,18 @@
 	\node (kde) [activity, above of=hb, node distance=2cm] {AutoML Optimizer};
 	
 	\draw[myarrow] ($(kde.south)+(-0.3,0.0)$) -- ++(0.0,-0.6) node[left] {$\conf \in \pcs$} -- ($(hb.north)+(-0.3,+0.0)$);
-	\draw[myarrow] ($(hb.north)+(0.3,+0.0)$) -- ++(0.0,0.6) node[right] {$\loss(\conf)$} -- ($(kde.south)+(0.3,0.0)$);
+	\draw[myarrow] ($(hb.north)+(0.3,+0.0)$) -- ++(0.0,0.6) node[right] {$\cost(\conf)$} -- ($(kde.south)+(0.3,0.0)$);
 	
 	\draw[myarrow] (function.east) -- ($(kde.west)+(-0.3,0.0)$);
 	\draw[myarrow] (budgets.east) -- ($(kde.west)+(-0.3,-1.)$);
 	\draw[myarrow] (space.east) -- ($(kde.west)+(-0.3,-2.)$);
 	
 	\pause
-	\node (perf) [activity, right of=kde, node distance=6cm] {Performance Analysis};
+	\node (perf) [activity, right of=kde, node distance=6.3cm] {Performance Analysis};
 	\node (budget) [activity, below of=perf, node distance=1.2cm] {Incumbent Analysis};
 	\node (imp) [activity, below of=budget, node distance=1cm] {Space Analysis};
 	
-	\draw[myarrow] ($(kde.east)+(0.3,-1.)$) -- node[above] {$\langle \conf_i, \loss(\conf_i)\rangle_i$} ($(perf.west)+(-0.3,-1.)$);
+	\draw[myarrow] ($(kde.east)+(0.3,-1.)$) -- node[above] {$\langle \conf^{(i)}, \cost(\confI{i}) \rangle_i$} ($(perf.west)+(-0.3,-1.)$);
 	\draw[myarrow] ($(kde.east)+(0.3,-1.)$) -- node[below] {$\incumbent$} ($(perf.west)+(-0.3,-1.)$);
 	
 	\begin{pgfonlayer}{background}
