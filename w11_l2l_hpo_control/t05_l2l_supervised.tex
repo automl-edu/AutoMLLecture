@@ -36,15 +36,15 @@
 
 \pause
 
-\begin{block}{Learning to learn by gradient descent by gradient descent\newline \lit{\href{https://arxiv.org/abs/1606.04474}{Andrychowicz et al'16}}}
-Weight updates (note: \alert{$\weights$ denote DNN weights!}):
+\begin{block}{Learning to learn by gradient descent by gradient descent\newline \litw{\href{https://arxiv.org/abs/1606.04474}{Andrychowicz et al'16}}}
+Weight updates (note: $\weights$ denote DNN weights):
 \begin{equation}
-\weights_{t+1} = \weights_t - \alpha_t \nabla f(\weights_t) \nonumber
+\weights^{(t+1)} = \weights^{(t)} - \alpha^{(t)} \nabla f(\weights^{(t)}) \nonumber
 \end{equation}
 \pause
 Even more general:
 \begin{equation}
-\weights_{t+1} = \weights_t + g_t(\nabla f(\weights_t), \metaweights) \nonumber
+\weights^{(t+1)} = \weights^{(t)} + g^{(t)}(\nabla f(\weights^{(t)}), \metaweights) \nonumber
 \end{equation}
 where $g$ is the optimizer and $\metaweights$ are the parameters of the optimizer $g$.\\
 \pause
@@ -67,7 +67,7 @@ where $\loss$ is a loss function and $\weights^*(f,\metaweights)$ are the optimi
 
 %\vspace{-0.5cm}
 \begin{equation}
-\loss(\metaweights) = \mathbb{E}\left[\sum_{t=1}^T w_t f(\weights_t)\right]\nonumber
+\loss(\metaweights) = \mathbb{E}\left[\sum_{t=1}^T w^{(t)} f(\weights^{(t)})\right]\nonumber
 \end{equation}
 
 \pause
@@ -77,8 +77,8 @@ and
 \pause
 \vspace{-0.5cm}
 \begin{eqnarray}
-\weights_{t+1} = \weights_t + g_t\nonumber\\
-\begin{pmatrix}g_t\\h_{t+1}\end{pmatrix} = m(\nabla_\weights f(\weights_t), h_t, \metaweights)\nonumber
+\weights^{(t+1)} = \weights^{(t)} + g_t\nonumber\\
+\begin{pmatrix}g^{(t)}\\h^{(t+1)}\end{pmatrix} = m(\nabla_\weights f(\weights^{(t+1)}), h^{(t+1)}, \metaweights)\nonumber
 \end{eqnarray}
 
 \pause
@@ -158,13 +158,13 @@ $\leadsto$ fails on other activation functions
 \begin{block}{Black Box Optimization Setting}
 
 \begin{equation}
-x^* \in \argmin_{x \in \mathcal{X}} f(x) \nonumber
+\x^* \in \argmin_{\x \in \mathcal{X}} f(\x) \nonumber
 \end{equation}
 	
 \begin{enumerate}
-\item Given the current state of knowledge $h_t$ propose a query point $x_t$
-\item Observe the response $y_t$
-\item Update any internal statistics to produce $h_{t+1}$
+\item Given the current state of knowledge $h^{(t)}$ propose a query point $\x^{(t)}$
+\item Observe the response $y^{(t)}$
+\item Update any internal statistics to produce $h^{(t+1)}$
 \end{enumerate}
 \end{block}
 
@@ -178,13 +178,13 @@ x^* \in \argmin_{x \in \mathcal{X}} f(x) \nonumber
 \begin{block}{Learning Black Box Optimization}
 	Essentially, a similar idea as before:
 	\begin{eqnarray}
-	h_t, x_t = \text{RNN}_\metaweights(h_{t-1}, x_{t-1}, y_{t-1}) \nonumber \\
-	y_t \sim p(y|x_t)\nonumber
+	h^{(t)}, \x^{(t)} &=& \text{RNN}_\metaweights(h^{(t-1)}, \x^{(t-1)}, y^{(t)}) \nonumber \\
+	y^{(t)} &\sim& p(y|\x^{(t)})\nonumber
 	\end{eqnarray}
 	
 	\begin{itemize}
 		\item Using recurrent neural network (RNN) to predict next $x_t$.
-		\item $h_t$ is the internal hidden state 
+		\item $h^{(t)}$ is the internal hidden state 
 	\end{itemize}
 	
 \end{block}
@@ -200,7 +200,7 @@ x^* \in \argmin_{x \in \mathcal{X}} f(x) \nonumber
 \item Sum loss: Provides more information than final loss
 \end{itemize}
 \begin{equation}
-\loss_{\text{sum}}(\metaweights) = \mathbb{E}_{f,y_{1:T-1}}\left[\sum_{t=1}^T f(x_t)\right]\nonumber
+\loss_{\text{sum}}(\metaweights) = \mathbb{E}_{f,y^{(1:T-1)}}\left[\sum_{t=1}^T f(\x^{(t)})\right]\nonumber
 \end{equation}
 
 \pause
@@ -212,7 +212,7 @@ x^* \in \argmin_{x \in \mathcal{X}} f(x) \nonumber
 \end{itemize}
 \end{itemize}
 \begin{equation}
-\loss_{\text{EI}}(\metaweights) = - \mathbb{E}_{f,y_{1:T-1}}\left[\sum_{t=1}^T \text{EI}(x_t | y_{1:t-1})\right]\nonumber
+\loss_{\text{EI}}(\metaweights) = - \mathbb{E}_{f,y^{(1:T-1)}}\left[\sum_{t=1}^T \text{EI}(\x^{(t)} | y^{(1:t-1)})\right]\nonumber
 \end{equation}
 
 \pause
@@ -222,7 +222,7 @@ x^* \in \argmin_{x \in \mathcal{X}} f(x) \nonumber
 \end{itemize}
 
 \begin{equation}
-\loss_{\text{OI}}(\metaweights) = \mathbb{E}_{f,y_{1:T-1}}\left[\sum_{t=1}^T \min \left\{f(x_t) - \min_{i<t}(f(x_i)),0 \right\}  \right]\nonumber
+\loss_{\text{OI}}(\metaweights) = \mathbb{E}_{f,y^{(1:T-1)}}\left[\sum_{t=1}^T \min \left\{f(\x^{(t)}) - \min_{i<t}(f(\x^{(i)})),0 \right\}  \right]\nonumber
 \end{equation}
 
 \end{frame}
