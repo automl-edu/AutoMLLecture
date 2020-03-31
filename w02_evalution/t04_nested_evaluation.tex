@@ -119,4 +119,73 @@
     \end{itemize}
     \end{frame}
 
+    \begin{frame}[c,allowframebreaks]{Nested Resampling}
+    Just like we can generalize holdout splitting to resampling to get more reliable estimates of the predictive performance, we can generalize the training/validation/test approach to \textbf{nested resampling}.
+
+    \bigskip
+
+    This results in two nested resampling loops, i.e., resampling strategies for both tuning and outer evaluation.
+
+    \framebreak
+
+    Assume we want to tune over a set of candidate HP configurations $\lambda_i; i = 1, \dots$ with 4-fold CV in the inner resampling and 3-fold CV in the outer loop. The outer loop is visualized as the light green and dark green parts.
+
+    \begin{center}
+        \includegraphics[height=0.6\textheight]{Nested_Resampling.png}
+    \end{center}
+
+    \framebreak
+
+    \begin{footnotesize}
+    In each iteration of the outer loop we:
+    \begin{itemize}
+    \item Split off the light green testing data
+    \item Run the tuner on the dark green part of the data, e.g.,
+      evaluate each $\lambda_i$ through fourfold CV on the dark green part
+    \end{itemize}
+    \end{footnotesize}
+
+    \begin{center}
+        \includegraphics[height=0.55\textheight]{Nested_Resampling.png}
+    \end{center}
+
+    \framebreak
+
+    \begin{footnotesize}
+    In each iteration of the outer loop we:
+    \begin{itemize}
+    \item Return the winning $\lambda^*$ that performed best on the grey inner test sets
+    \item Re-train the model on the full outer dark green train set
+    \item Evaluate it on the outer light green test set
+    \end{itemize}
+    \end{footnotesize}
+
+    \begin{center}
+        \includegraphics[height=0.55\textheight]{Nested_Resampling.png}
+    \end{center}
+
+    \framebreak
+
+    \begin{footnotesize}
+    The error estimates on the outer samples (light green) are unbiased because this data was strictly excluded from the model-building process of the model that was tested on.
+    \end{footnotesize}
+
+    \begin{center}
+        \includegraphics[height=0.6\textheight]{Nested_Resampling.png}
+    \end{center}
+
+    \end{frame}
+
+
+    \begin{frame}[c]{Nested Resampling Example}
+
+    Taking again a look at the motivating example and adding a nested resampling outer loop, we get the expected behavior:
+
+    \begin{center}
+        \includegraphics[width=0.8\textwidth]{nested-resampling-example}
+    \end{center}
+
+
+    \end{frame}
+
 \end{document}
