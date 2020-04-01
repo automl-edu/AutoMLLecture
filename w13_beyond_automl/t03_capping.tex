@@ -87,13 +87,13 @@
 		$[\ldots$ add new run for incumbent $\ldots]$;\\
 		\While{true}{
 			$\insts^+, \mathbf{s}^+ \xleftarrow{} $getAlreadyEvaluatedOn$(\hat{\conf}, \hist)$;\\
-			$\insts^{(\bocount)}, \mathbf{s^{(\bocount)}} \xleftarrow{} $getAlreadyEvaluatedOn$(\confI{\bocount}, \hist)$;\\
+			$\insts^{(\bocount)}, \mathbf{s}^{(\bocount)} \xleftarrow{} $getAlreadyEvaluatedOn$(\confI{\bocount}, \hist)$;\\
 			$\instI{\bocount}, s^{(\bocount)} \xleftarrow{}$ drawn uniformly at random from $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$;\\
 			\alert{$\cutoff^{(i)} \xleftarrow{}$ AdaptCutoff$(\cutoff_{max}, \langle(\confI{j}, \costI{j})\rangle_{\confI{j} = \conf^+}) \cdot \xi$;}\\
 			$c_i \xleftarrow{}$ EvaluateRun$(\confI{\bocount}, \instI{\bocount},  s^{(i)}, \alert{\cutoff^{(i)}})$;\\
 			$\hist \xleftarrow{} \hist \cup (\confI{\bocount}, \instI{\bocount},  s^{(\bocount)},  \cost^{(\bocount)})$;\\
-			\If{average cost of $\confI{\bocount} >$ average cost of $\hat{\conf}$ across $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$}{break;}
-			\ElseIf{average cost of $\confI{\bocount} <$ average cost of $\hat{\conf}$ and $\insts_+ =  \insts^{(\bocount)}$  and $|\mathbf{s}^{(\bocount)}| = |\mathbf{s}^+|$}{
+			\If{average cost of $\confI{\bocount} >$ average cost of $\hat{\conf}$ across $\insts^{(\bocount)}$ and $\mathbf{s}^{(\bocount)}$}{break;}
+			\ElseIf{average cost of $\confI{\bocount} <$ average cost of $\hat{\conf}$ and $\insts^+ =  \insts^{(\bocount)}$  and $\mathbf{s}^{(\bocount)} = \mathbf{s}^+$}{
 				$\hat{\conf} \xleftarrow{} \confI{\bocount}$;
 			}
 		}
