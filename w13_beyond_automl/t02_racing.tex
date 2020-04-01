@@ -1,3 +1,4 @@
+% !TeX spellcheck = en_US
 
 \input{../latex_main/main.tex}
 
@@ -47,16 +48,16 @@ SMAC: Sequential Model-based Algorithm Configuration \lit{\href{https://ml.infor
 	performance metric $c$,
 	Configuration budget $b$
 }
-\Output{best incumbent configuration $\hat{\conf}$}
+%\Output{best incumbent configuration $\hat{\conf}$}
 \BlankLine
-run history H $\leftarrow$ initial design based on $\conf_0$; \tcp*{H = $(\conf, \inst, c(\inst,\conf))_i$}
+run history $\hist$ $\leftarrow$ initial design based on $\conf_0$; \tcp*{$\hist = (\conf, \inst, c(\inst,\conf))_i$}
 \While{$b$ remains} {
 	\pause
-	$\epm \leftarrow$ train empirical performance model based on run history H;\\
+	$\epm \leftarrow$ train empirical performance model based on run history $\hist$;\\
 	\pause
 	$\confs_{challengers} \leftarrow$ select configurations based on $\epm$;\\
 	\pause
-	$\hat{\conf}$, H $\leftarrow$ intensify($\confs_{challengers}$, $\hat{\conf}$); \tcp*{racing and capping}
+	$\hat{\conf}, \hist$  $\leftarrow$ intensify($\confs_{challengers}$, $\hat{\conf}$); \tcp*{racing and capping}
 }
 \pause
 \Return{$\hat{\conf}$}
@@ -264,27 +265,27 @@ In the beginning: $N(\conf)=0$ for every configuration $\conf$
 
 
 \begin{block}{Definition: domination}
-\alert{$\conf_1$ dominates $\conf_2$} if 
+\alert{$\confI1$ dominates $\confI2$} if 
 \begin{itemize}
-\item $N(\conf_1) \ge N(\conf_2)$ and 
-\item $\hat{c}_{N(\conf_2)}(\conf_1) \le \hat{c}_{N(\conf_2)}(\conf_2)$.
+\item $N(\confI1) \ge N(\confI2)$ and 
+\item $\hat{c}_{N(\confI2)}(\confI1) \le \hat{c}_{N(\confI2)}(\confI2)$.
 \end{itemize}
-I.e.: we have at least as many runs for $\conf_1$ and its cost is at least as low.
+I.e.: we have at least as many runs for $\confI1$ and its cost is at least as low.
 \end{block}
 
 \pause
 
-\begin{block}{\textit{better($\conf', \conf^*$)} in a nutshell}
+\begin{block}{\textit{better($\conf', \hat{\conf}$)} in a nutshell}
 \begin{itemize}
-\item $\conf^*$ is the current configuration to beat (incumbent)
+\item $\hat{\conf}$ is the current configuration to beat (incumbent)
 \pause
 \item Perform runs of $\conf'$ until either
 \begin{itemize}
-\item $\conf^*$ dominates $\conf'$ $\leadsto$ reject $\conf'$, or
-\item $\conf'$ dominates $\conf^*$ $\leadsto$ change current configuration $(\conf^* \leftarrow \conf')$
+\item $\hat{\conf}$ dominates $\conf'$ $\leadsto$ reject $\conf'$, or
+\item $\conf'$ dominates $\hat{\conf}$ $\leadsto$ change current incumbent $(\hat{\conf} \leftarrow \conf')$
 \end{itemize}
 \pause	
-\item Over time: perform extra runs of $\conf^*$ to gain more confidence in it
+\item Over time: perform extra runs of $\hat{\conf}$ to gain more confidence in it
 \end{itemize}
 \end{block}
 
@@ -298,18 +299,18 @@ I.e.: we have at least as many runs for $\conf_1$ and its cost is at least as lo
 
 
 \begin{itemize}
-\item Let $\conf^*$ be the incumbent  (evaluated on $\pi_1, \pi_2, \pi_3$)
+\item Let $\hat{\conf}$ be the incumbent  (evaluated on $\instI1, \instI2, \instI3$)
 \item We'll look at challengers $\conf'$ and $\conf''$
 \end{itemize}
 
 \begin{center}
 \begin{tabular}{l ccc}
-& $\inst_1$ & $\inst_2$ & $\inst_3$ \\
+& $\instI1$ & $\instI2$ & $\instI3$ \\
 \hline
-$\conf^*$ 	& 3 		& 2			& 10	\onslide<2->\\
+$\hat{\conf}$ 	& 3 		& 2			& 10	\onslide<2->\\
 \hline
 $\conf'$		& \onslide<3->{2}			& \onslide<4->{10} 		& \\
-& 			& \onslide<5->{$\to$ reject, since $\hat{c}_2(\conf')=6 > \hat{c}_2(\conf^*)=2.5$} & \\
+& 			& \onslide<5->{$\to$ reject, since $\hat{c}_2(\conf')=6 > \hat{c}_2(\hat{\conf})=2.5$} & \\
 \hline
 \onslide<6->{$\conf''$}		& \onslide<6->{3}			& \onslide<7->{1} 		& \onslide<8->{5}\\
 \end{tabular}
@@ -317,8 +318,8 @@ $\conf'$		& \onslide<3->{2}			& \onslide<4->{10} 		& \\
 
 \onslide<9->
 \begin{itemize}
-\item new incumbent: $\conf^* \leftarrow \conf''$
-\item Perform an additional run for new $\conf^*$ to increase confidence over time
+\item new incumbent: $\hat{\conf} \leftarrow \conf''$
+\item Perform an additional run for new $\hat{\conf}$ to increase confidence over time
 \end{itemize}
 
 
@@ -345,34 +346,33 @@ Test performance\\
 \begin{algorithm}[H]
 	\scriptsize
 	\Input{%
-		 candidate configurations $\confs_{new}$, cutoff $\cutoff_{max}$, previously evaluated runs $\hist$, budget $\bobudget$, incumbent $\incumbent$}
-		\Output{best found configuration $\incumbent$, list of all evaluated runs $\hist$}
+		 candidate configurations $\confs_{new}$, cutoff $\cutoff_{max}$, previously evaluated runs $\hist$, budget $\bobudget$, incumbent $\hat{\conf}$}
 		\While{$\confs_{new}$ not empty}{
 			$\confI{\bocount} \xleftarrow{} $ getNext$(\confs_{new})$;\\
 			\pause
 			$\inst, s \xleftarrow{}$ instance and seed drawn uniformly at random;\\
-			$c$ $\xleftarrow{}$ EvaluateRun$(\incumbent, \inst, s, \cutoff_{max})$;\\
-			$\hist \xleftarrow{} \hist \cup (\incumbent, \inst, s, \cost)$;\\
+			$c$ $\xleftarrow{}$ EvaluateRun$(\hat{\conf}, \inst, s, \cutoff_{max})$;\\
+			$\hist \xleftarrow{} \hist \cup (\hat{\conf}, \inst, s, \cost)$;\\
 			\pause
 			\While{true}{
-				 $\insts^+, \mathbf{s}^+ \xleftarrow{} $getAlreadyEvaluatedOn$(\incumbent, \hist)$;\\
+				 $\insts^+, \mathbf{s}^+ \xleftarrow{} $getAlreadyEvaluatedOn$(\hat{\conf}, \hist)$;\\
 				 $\insts^{(\bocount)}, \mathbf{s^{(\bocount)}} \xleftarrow{} $getAlreadyEvaluatedOn$(\confI{\bocount}, \hist)$;\\
-				$\instI{\bocount}, s^{(\bocount)} \xleftarrow{}$ drawn uniformly at random from $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$;\\
+				$\instI{\bocount}, s^{(\bocount)} \xleftarrow{}$ drawn uniformly at random from $\insts^+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$;\\
 				\pause
 %				$\mathbf{s_i} \xleftarrow{} \mathbf{s_i} \cup s_i$;\\
 %				$\cutoff_i \xleftarrow{}$ AdaptCutoff$(\cutoff_{max}, \langle(\conf_j, \cost_j)\rangle_{\conf_j = \conf^+})$;\\
 				$c_i \xleftarrow{}$ EvaluateRun$(\confI{\bocount}, \instI{\bocount},  s^{(\bocount)}, \cutoff_{max})$;\\
-				$\mathcal{D} \xleftarrow{} \mathcal{D} \cup (\confI{\bocount}, \instI{\bocount},  s^{(\bocount)},  \cost^{(\bocount)})$;\\
+				$\hist \xleftarrow{} \hist \cup (\confI{\bocount}, \instI{\bocount},  s^{(\bocount)},  \cost^{(\bocount)})$;\\
 				\pause
-				\If{average cost of $\confI{\bocount} >$ average cost of $\incumbent$ across $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$}{break;}
+				\If{average cost of $\confI{\bocount} >$ average cost of $\hat{\conf}$ across $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$}{break;}
 				\pause
-				\ElseIf{average cost of $\confI{\bocount} <$ average cost of $\incumbent$ and $\insts_+ =  \insts^{(\bocount)}$  and $|\mathbf{s}^{(\bocount)}| = |\mathbf{s}^+|$}{
-					$\incumbent \xleftarrow{} \confI{\bocount}$;
+				\ElseIf{average cost of $\confI{\bocount} <$ average cost of $\hat{\conf}$ and $\insts_+ =  \insts^{(\bocount)}$  and $|\mathbf{s}^{(\bocount)}| = |\mathbf{s}^+|$}{
+					$\hat{\conf} \xleftarrow{} \confI{\bocount}$;
 					}
 			}
 		\pause
 		\If{time spent exceeds $\bobudget$ or $\confs_{new}$ is empty} {
-			\Return{$\incumbent, \hist$}
+			\Return{$\hat{\conf}, \hist$}
 		}
 		}
 \end{algorithm}

@@ -1,3 +1,4 @@
+% !TeX spellcheck = en_US
 
 \input{../latex_main/main.tex}
 
@@ -77,8 +78,8 @@ and
 \pause
 \vspace{-0.5cm}
 \begin{eqnarray}
-\weights^{(t+1)} = \weights^{(t)} + g_t\nonumber\\
-\begin{pmatrix}g^{(t)}\\h^{(t+1)}\end{pmatrix} = m(\nabla_\weights f(\weights^{(t+1)}), h^{(t+1)}, \metaweights)\nonumber
+\weights^{(t+1)} = \weights^{(t)} + g^{(t)}\nonumber\\
+\begin{pmatrix}g^{(t)}\\h^{(t+1)}\end{pmatrix} = m(\nabla_\weights f(\weights^{(t)}), h^{(t)}, \metaweights)\nonumber
 \end{eqnarray}
 
 \pause
@@ -234,7 +235,7 @@ $\leadsto$ fails on other activation functions
 \includegraphics[width=0.4\textwidth]{images/l2bo_hartmann3}
 
 \begin{itemize}
-\item Hartmann3 is an artifical function with 3 dimensions
+\item Hartmann3 is an artificial function with 3 dimensions
 \pause
 \item[$\leadsto$] $\loss_{\text{OI}}$ and $\loss_{\text{EI}}$ perform best
 \item[$\leadsto$] $\loss_{\text{OI}}$ easier to compute than $\loss_{\text{EI}}$\\ because we need a predictive model to compute EI 

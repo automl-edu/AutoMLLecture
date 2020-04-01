@@ -1,3 +1,4 @@
+% !TeX spellcheck = en_US
 
 \input{../latex_main/main.tex}
 
@@ -75,29 +76,29 @@
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
 \begin{frame}[fragile]{Overview of Racing and Adaptive Capping}
+\vspace{-1em}
 \LinesNotNumbered
 \begin{algorithm}[H]
 	\scriptsize
 	\Input{%
-		candidate configurations $\confs_{new}$, cutoff $\cutoff_{max}$, previously evaluated runs $\hist$, budget $\bobudget$, incumbent $\incumbent$}
-	\Output{best found configuration $\incumbent$, list of all evaluated runs $\hist$}
+		candidate configurations $\confs_{new}$, cutoff $\cutoff_{max}$, previously evaluated runs $\hist$, budget $\bobudget$, incumbent $\hat{\conf}$}
 	\While{$\confs_{new}$ not empty}{
 		$\confI{\bocount} \xleftarrow{} $ getNext$(\confs_{new})$;\\
 		$[\ldots$ add new run for incumbent $\ldots]$;\\
 		\While{true}{
-			$\insts^+, \mathbf{s}^+ \xleftarrow{} $getAlreadyEvaluatedOn$(\incumbent, \hist)$;\\
+			$\insts^+, \mathbf{s}^+ \xleftarrow{} $getAlreadyEvaluatedOn$(\hat{\conf}, \hist)$;\\
 			$\insts^{(\bocount)}, \mathbf{s^{(\bocount)}} \xleftarrow{} $getAlreadyEvaluatedOn$(\confI{\bocount}, \hist)$;\\
 			$\instI{\bocount}, s^{(\bocount)} \xleftarrow{}$ drawn uniformly at random from $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$;\\
 			\alert{$\cutoff^{(i)} \xleftarrow{}$ AdaptCutoff$(\cutoff_{max}, \langle(\confI{j}, \costI{j})\rangle_{\confI{j} = \conf^+}) \cdot \xi$;}\\
-			$c_i \xleftarrow{}$ EvaluateRun$(\confI{\bocount}, \instI{\bocount},  \alert{s^{(i)}}, \cutoff_{max})$;\\
-			$\mathcal{D} \xleftarrow{} \mathcal{D} \cup (\confI{\bocount}, \instI{\bocount},  s^{(\bocount)},  \cost^{(\bocount)})$;\\
-			\If{average cost of $\confI{\bocount} >$ average cost of $\incumbent$ across $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$}{break;}
-			\ElseIf{average cost of $\confI{\bocount} <$ average cost of $\incumbent$ and $\insts_+ =  \insts^{(\bocount)}$  and $|\mathbf{s}^{(\bocount)}| = |\mathbf{s}^+|$}{
-				$\incumbent \xleftarrow{} \confI{\bocount}$;
+			$c_i \xleftarrow{}$ EvaluateRun$(\confI{\bocount}, \instI{\bocount},  s^{(i)}, \alert{\cutoff^{(i)}})$;\\
+			$\hist \xleftarrow{} \hist \cup (\confI{\bocount}, \instI{\bocount},  s^{(\bocount)},  \cost^{(\bocount)})$;\\
+			\If{average cost of $\confI{\bocount} >$ average cost of $\hat{\conf}$ across $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$}{break;}
+			\ElseIf{average cost of $\confI{\bocount} <$ average cost of $\hat{\conf}$ and $\insts_+ =  \insts^{(\bocount)}$  and $|\mathbf{s}^{(\bocount)}| = |\mathbf{s}^+|$}{
+				$\hat{\conf} \xleftarrow{} \confI{\bocount}$;
 			}
 		}
 		\If{time spent exceeds $\bobudget$ or $\confs_{new}$ is empty} {
-			\Return{$\incumbent, \hist$}
+			\Return{$\hat{\conf}, \hist$}
 		}
 	}
 \end{algorithm}

@@ -1,0 +1,107 @@
+% !TeX spellcheck = en_US
+
+\input{../latex_main/main.tex}
+
+\title[AutoML: Capping]{AutoML: Beyond AutoML}
+\subtitle{Structured Procastination}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Structured Procrastination \litw{\href{https://www.ijcai.org/proceedings/2017/0281.pdf}{Kleinberg et al. 2017}}}
+
+\begin{block}{Idea}
+	\begin{itemize}
+		\item incumbent driven methods (such as aggressive racing with adaptive capping) provide no theoretical guarantees about runtime
+		\pause
+		\item task: for a fix set of configuration, identify the one with the best average runtime
+		
+		\item instead of top-down capping, use bottom up capping
+		\pause
+		\item start with a minimal cap-time and increase it step by step
+		\pause
+		\item unsuccessful runs (with too small cap-time) are procrastinated to later
+		\item[$\leadsto$] worst-case runtime guarantees
+	\end{itemize}
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Structured Procrastination: Outline \litw{\href{https://www.ijcai.org/proceedings/2017/0281.pdf}{Kleinberg et al. 2017}}}
+
+
+\LinesNotNumbered
+\begin{algorithm}[H]
+\begin{footnotesize}
+	\Input{%
+		finite (small) set of configurations $\confs$,
+		minimal cap-time $\kappa_0$,
+		sequence of instances $\inst^{(1)}, \ldots, \inst^{(N)}$
+	}
+	\Output{best incumbent configuration $\hat{\conf}$}
+	\BlankLine
+	for each $\conf \in \confs$ initialize a queue $Q_{\conf}$ with entries $(\inst^{(k)}, \kappa_0)$; \tcp*{small queue in the beginning}
+	initialize a look-up table $R(\conf, \inst) = 0$; \tcp*{optimistic runtime estimate}
+	\pause
+	\While{$b$ remains} {
+		\pause
+		determine the best $\hat{\conf}$ according to $R(\lambda, \cdot)$;\\
+		\pause
+		get first element $(\inst^{(k)}, \kappa)$ from $Q_{\hat{\conf}}$;\\
+		\pause
+		Run $\hat{\conf}$ on $\inst^{(k)}$ capped at $\kappa$;\\
+		\If{terminates}{$R(\hat{\conf}, \inst^{(k)})$ := t;}
+		\pause
+		\Else{
+		$R(\hat{\conf}, \inst^{(k)}) := \kappa$;\\
+		Insert $(\inst^{(k)}, 2\cdot \kappa)$ at the end of $Q_{\hat{\conf}}$;
+		}
+		\pause
+		Replenish queue $Q_{\hat{\conf}}$ if too small;	
+	}
+	\pause
+	\Return{$\hat{\conf}:= \argmin_{\conf \in \confs} \sum_{k=1}^N R(\lambda, \inst^{(k)})$}
+	\caption{Structured Procrastination}
+\end{footnotesize}
+\end{algorithm}
+\end{frame}
+%------------
+
+%-----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Extensions}
+
+\begin{itemize}
+	\item We can derive theoretical optimality guarantees with structured procrastination (SP)
+	\pause
+	\item In practice, plain SP is rather slow and requires the setting of some hyperparameters
+	\pause
+	\item Several extensions and similar ideas:
+	\begin{itemize}
+		\item \lit{\href{https://arxiv.org/abs/1902.05454}{Procrastinating with Confidence: Near-Optimal, Anytime, Adaptive Algorithm Configuration}}
+		\item \lit{\href{https://arxiv.org/abs/1807.00755}{LeapsAndBounds: A Method for Approximately Optimal Algorithm Configuration}}
+		\item \lit{\href{http://proceedings.mlr.press/v97/weisz19a/weisz19a.pdf}{CapsAndRuns: An Improved Method for Approximately Optimal Algorithm
+				Configuration}}
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%------------
+
+
+\end{document}
