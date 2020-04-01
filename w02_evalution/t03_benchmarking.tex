@@ -266,6 +266,21 @@
     For any two algorithms $j_1$ and $j_2$, we compute the test statistic as:
     $$q = \frac{\bar{R}_{.j_1} - \bar{R}_{.j_2}}{\sqrt{\frac{k(k+1)}{6n}}}.$$
 
+    \framebreak
+
+    Critical Difference Plot:
+    \begin{itemize}
+        \item quick way to see what differences are significant across all
+            compared learners
+        \item all learners that do not differ by at least the critical
+            difference are connected by line
+        \item a learner not connected to another learner and of lower rank can
+            be considered better according to the chosen significance level
+    \end{itemize}
+
+    \begin{center}
+        \includegraphics[height=.5\textheight]{crit-diff-nemenyi}
+    \end{center}
 
     \framebreak
 
@@ -280,6 +295,17 @@
     $$q = \frac{\bar{R}_{.j_1} - \bar{R}_{.j_2}}{\sqrt{\frac{k(k+1)}{6n}}}.$$
 
     The performance of $j_1$ and $j_2$ are significantly different when $|q| > q_{\alpha}$, where the critical value $q_{\alpha}$ is obtained from a table of the studentized range statistic scaled by dividing it by $\sqrt{2}$.
+
+    \framebreak
+
+    \begin{itemize}
+        \item learners within the baseline interval (gray line) perform not
+            significantly different from the baseline
+    \end{itemize}
+    \begin{center}
+        \includegraphics[height=.6\textheight]{crit-diff-bd}
+    \end{center}
+
     \end{frame}
 
 \end{document}
