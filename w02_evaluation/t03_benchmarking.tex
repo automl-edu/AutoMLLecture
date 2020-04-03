@@ -294,9 +294,9 @@
     \textbf{Post-hoc Bonferonni-Dunn test}:
 
     \begin{itemize}
-    \item Compares all algorithms with a baseline (i.e.\ $k-1$ comparisons).
-    \item It is used after a Friedman test to find which algorithms differ from the baseline significantly.
-    \item It uses the Bonferonni correction to prevent randomly accepting one of the algorithms as significant due to multiple testing.
+    \item compares all algorithms with a baseline (i.e.\ $k-1$ comparisons)
+    \item used after a Friedman test to find which algorithms differ from the baseline significantly
+    \item uses the Bonferonni correction to prevent randomly accepting one of the algorithms as significant due to multiple testing
     \end{itemize}
     The test statistic is the same as before:
     $$q = \frac{\bar{R}_{.j_1} - \bar{R}_{.j_2}}{\sqrt{\frac{k(k+1)}{6n}}}.$$
@@ -311,6 +311,26 @@
     \end{itemize}
     \begin{center}
         \includegraphics[height=.6\textheight]{crit-diff-bd}
+    \end{center}
+
+    \end{frame}
+
+    \begin{frame}[c,allowframebreaks]{Comparing Visually}
+
+    It can be helpful to inspect distributions visually for additional insights,
+    e.g.\
+
+    \bigskip
+    Boxplots
+    \begin{center}
+        \includegraphics[height=.65\textheight]{multiple-boxplots}
+    \end{center}
+
+    \framebreak
+
+    Rank plots
+    \begin{center}
+        \includegraphics[height=.7\textheight]{multiple-ranks}
     \end{center}
 
     \end{frame}

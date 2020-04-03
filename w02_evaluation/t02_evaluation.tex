@@ -80,7 +80,7 @@
     \end{center}
 
     Optimally: inner loss = outer loss\\[.5em]
-    Not always possible:\\ some losses are hard to optimize / no loss is specified directly\\
+    Not always possible:\\ some losses are hard to optimize/no loss is specified directly\\
 
     \underline{Example}:\\[.5em]
     \begin{tabular}{ll}
@@ -247,7 +247,8 @@
 
     \begin{itemize}
     \item Compares performance of a model on training and test data over a varying number of training instances $\rightarrow$ how fast can a learner learn the given relationship in the data?
-    \item Can also be over number of iterations of a learner (e.g.\ epochs in deep learning)
+    \item Can also be over number of iterations of a learner (e.g.\ epochs in
+        deep learning), or AutoML system over time
     \item Learning usually fast in the beginning
     \item Visualizes when a learner has learned as much as it can:
     \begin{itemize}
@@ -257,7 +258,7 @@
     \end{itemize}
 
     \begin{center}
-    \includegraphics[height=.4\textheight]{learning-curve}
+    \includegraphics[height=.35\textheight]{learning-curve}
     \end{center}
 
     \framebreak
@@ -273,7 +274,7 @@
     In general, there are two reasons for a bad learning curve:
 
     \begin{enumerate}
-    \item High bias in model / underfitting
+    \item High bias in model/underfitting
     \begin{itemize}
     \item Training and test errors converge at a high value
     \item Model can't learn underlying relationship and has high systematic errors, no matter how big the training set
@@ -286,7 +287,7 @@
 
     \framebreak
 
-    \item High variance in model / overfitting
+    \item High variance in model/overfitting
     \begin{itemize}
     \item Large gap between training and test errors
     \item Model requires more training data to improve
