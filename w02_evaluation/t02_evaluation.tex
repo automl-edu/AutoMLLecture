@@ -40,7 +40,7 @@
         of a certain size, on new (unseen) data, all drawn from the same data generating process.
     \item[Model selection]
         Select the best model from a set of potential candidate models (e.g., different model classes, different
-        hyperparameter settings, different feature sets)
+        hyperparameter settings, different feature sets).
     \end{description}
     \end{frame}
 
@@ -49,9 +49,9 @@
     validation. 
 
     \begin{itemize}
-    \item Often simpler than classical statistical model diagnosis
-    \item Rely only on few assumptions
-    \item Still hard enough and offers \textbf{lots} of options to cheat and make mistakes
+    \item often simpler than classical statistical model diagnosis
+    \item relies only on few assumptions
+    \item still hard enough and offers \textbf{lots} of options to cheat and make mistakes
     \end{itemize}
     \end{frame}
 
@@ -80,17 +80,15 @@
     \end{center}
 
     Optimally: inner loss = outer loss\\[.5em]
-    Not always possible:\\ some losses are hard to optimize/no loss is specified directly\\
+    Not always possible:\\ some losses are hard to optimize or no loss is specified directly\\
+    
+    \bigskip
 
-    \underline{Example}:\\[.5em]
+    Example:\\[.5em]
     \begin{tabular}{ll}
     Logistic Regression & $\rightarrow$ minimize binomial loss \\
     kNN & $\rightarrow$ no explicit loss minimization\\
     \end{tabular}
-    \begin{itemize}
-      \item When evaluating the models we might be interested in (cost-weighted) classification error 
-      \item Or some of the more advanced measures from ROC analysis like AUC
-    \end{itemize}
 
     \end{frame}
 
@@ -153,23 +151,24 @@
 
     \begin{frame}[c]{Resampling}
         \begin{itemize}
-            \item Uses the data efficiently.
-            \item Repeatedly split in train and test, then average results.
-            \item Make training sets large (to keep the pessimistic bias small),
-                and reduce variance introduced by smaller test sets through many
-                repetitions and averaging of results.
+            \item uses data efficiently
+            \item repeatedly split in train and test, average results
+            \item make training sets large (to keep the pessimistic bias small),
+                reduce variance introduced by smaller test sets through many
+                repetitions and averaging of results
         \end{itemize}
     \end{frame}
 
     \begin{frame}[c]{Cross-Validation}
 
     \begin{itemize}
-      \item Split the data into $k$ roughly equally-sized partitions.
-      \item Use each part once as test set and join the $k-1$ others for training
-      \item Obtain $k$ test errors and average
+      \item split data into $k$ roughly equally-sized partitions
+      \item use each part as test set and join the $k-1$ others for training,
+          repeat for all $k$ combinations
+      \item obtain $k$ test errors and average
     \end{itemize}
 
-    Example: 3-fold cross-validation:
+    Example 3-fold cross-validation:
 
     \begin{center}
     % FIGURE SOURCE: https://docs.google.com/presentation/d/1sKtnj5nIQrcOGU7rTisMsppUGOk7UX2gbjKhtQmTX7g/edit?usp=sharing
@@ -181,11 +180,11 @@
     \begin{frame}[c]{Bootstrap}
 
         \begin{itemize}
-          \item Randomly draw $k$ training sets of size $n$ with replacement
+          \item randomly draw $k$ training sets of size $n$ with replacement
                 from the data
-          \item Evaluate on observations from the original data that are not in
+          \item evaluate on observations from the original data that are not in
               the training set
-          \item Obtain $k$ test errors and average
+          \item obtain $k$ test errors and average
         \end{itemize}
 
     \begin{center}
@@ -239,21 +238,21 @@
     \end{tikzpicture}
     \end{center}
 
-    Training sets will contain about 63.2\% of observations.
+    Training sets will contain about 63.2\% of observations on average.
 
     \end{frame}    
 
     \begin{frame}[c,allowframebreaks]{Learning Curves}
 
     \begin{itemize}
-    \item Compares performance of a model on training and test data over a varying number of training instances $\rightarrow$ how fast can a learner learn the given relationship in the data?
-    \item Can also be over number of iterations of a learner (e.g.\ epochs in
+    \item compares performance of a model on training and test data over a varying number of training instances $\rightarrow$ how fast can a learner learn the given relationship in the data?
+    \item can also be over number of iterations of a learner (e.g.\ epochs in
         deep learning), or AutoML system over time
-    \item Learning usually fast in the beginning
-    \item Visualizes when a learner has learned as much as it can:
+    \item learning usually fast in the beginning
+    \item visualizes when a learner has learned as much as it can:
     \begin{itemize}
-    \item When performance on training and test set reach a plateau
-    \item When gap between training and test error remains the same
+    \item when performance on training and test set reach a plateau
+    \item when gap between training and test error remains the same
     \end{itemize}
     \end{itemize}
 
@@ -274,11 +273,11 @@
     In general, there are two reasons for a bad learning curve:
 
     \begin{enumerate}
-    \item High bias in model/underfitting
+    \item high bias in model/underfitting
     \begin{itemize}
-    \item Training and test errors converge at a high value
-    \item Model can't learn underlying relationship and has high systematic errors, no matter how big the training set
-    \item Poor fit, which also translates to high test error
+    \item training and test errors converge at a high value
+    \item model can't learn underlying relationship and has high systematic errors, no matter how big the training set
+    \item poor fit, which also translates to high test error
     \end{itemize}
 
     \begin{center}
@@ -287,11 +286,11 @@
 
     \framebreak
 
-    \item High variance in model/overfitting
+    \item high variance in model/overfitting
     \begin{itemize}
-    \item Large gap between training and test errors
-    \item Model requires more training data to improve
-    \item Model has a poor fit and does not generalize well
+    \item large gap between training and test errors
+    \item model requires more training data to improve
+    \item model has a poor fit and does not generalize well
     \end{itemize}
 
     \begin{center}
