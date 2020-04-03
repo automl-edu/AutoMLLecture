@@ -62,7 +62,7 @@
 
     $\text{GE} = $ expected loss of a fixed model
 
-    $\hat{\text{GE}} = $ average loss 
+    $\hat{\text{GE}} = $ estimated loss averaged across finite sample
 
     Example: Mean squared error (L2 loss)
     \[
@@ -246,8 +246,8 @@
     \begin{frame}[c,allowframebreaks]{Learning Curves}
 
     \begin{itemize}
-    \item Compares the performance of a model on training and test data over a varying number of training instances.
-    $\rightarrow$ How fast can a learner learn the given relationship in the data?
+    \item Compares performance of a model on training and test data over a varying number of training instances $\rightarrow$ how fast can a learner learn the given relationship in the data?
+    \item Can also be over number of iterations of a learner (e.g.\ epochs in deep learning)
     \item Learning usually fast in the beginning
     \item Visualizes when a learner has learned as much as it can:
     \begin{itemize}
