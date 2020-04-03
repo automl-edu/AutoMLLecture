@@ -55,29 +55,29 @@
 		minimal cap-time $\kappa_0$,
 		sequence of instances $\inst^{(1)}, \ldots, \inst^{(N)}$
 	}
-	\Output{best incumbent configuration $\hat{\conf}$}
+	\Output{best incumbent configuration $\finconf$}
 	\BlankLine
 	for each $\conf \in \confs$ initialize a queue $Q_{\conf}$ with entries $(\inst^{(k)}, \kappa_0)$; \tcp*{small queue in the beginning}
 	initialize a look-up table $R(\conf, \inst) = 0$; \tcp*{optimistic runtime estimate}
 	\pause
 	\While{$b$ remains} {
 		\pause
-		determine the best $\hat{\conf}$ according to $R(\lambda, \cdot)$;\\
+		determine the best $\finconf$ according to $R(\conf, \cdot)$;\\
 		\pause
-		get first element $(\inst^{(k)}, \kappa)$ from $Q_{\hat{\conf}}$;\\
+		get first element $(\inst^{(k)}, \kappa)$ from $Q_{\finconf}$;\\
 		\pause
-		Run $\hat{\conf}$ on $\inst^{(k)}$ capped at $\kappa$;\\
-		\If{terminates}{$R(\hat{\conf}, \inst^{(k)})$ := t;}
+		Run $\finconf$ on $\inst^{(k)}$ capped at $\kappa$;\\
+		\If{terminates}{$R(\finconf, \inst^{(k)})$ := t;}
 		\pause
 		\Else{
-		$R(\hat{\conf}, \inst^{(k)}) := \kappa$;\\
-		Insert $(\inst^{(k)}, 2\cdot \kappa)$ at the end of $Q_{\hat{\conf}}$;
+		$R(\finconf, \inst^{(k)}) := \kappa$;\\
+		Insert $(\inst^{(k)}, 2\cdot \kappa)$ at the end of $Q_{\finconf}$;
 		}
 		\pause
-		Replenish queue $Q_{\hat{\conf}}$ if too small;	
+		Replenish queue $Q_{\finconf}$ if too small;	
 	}
 	\pause
-	\Return{$\hat{\conf}:= \argmin_{\conf \in \confs} \sum_{k=1}^N R(\lambda, \inst^{(k)})$}
+	\Return{$\finconf:= \argmin_{\conf \in \confs} \sum_{k=1}^N R(\conf, \inst^{(k)})$}
 	\caption{Structured Procrastination}
 \end{footnotesize}
 \end{algorithm}

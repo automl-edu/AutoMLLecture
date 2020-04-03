@@ -33,14 +33,14 @@
 	\end{itemize}
 	\pause    
 	
-	\item E.g., $\conf^*$ needed $1$ sec to solve $\inst_1$
+	\item E.g., $\finconf$ needed $1$ sec to solve $\inst_1$
 	\begin{itemize}
 		\item Do we need to run $\conf'$ for $300$ sec?
-		\item Terminate evaluation of $\conf'$ once guaranteed to be worse than $\conf^*$
+		\item Terminate evaluation of $\conf'$ once guaranteed to be worse than $\finconf$
 	\end{itemize}
 	\pause
 	\bigskip    
-	\item[$\leadsto$] To compare against $\conf^*$ based on $N$ runs,\\ we can terminate evaluation of $\conf'$ after time $\sum_{k=1}^N c(\conf^*,\inst_k)$
+	\item[$\leadsto$] To compare against $\finconf$ based on $N$ runs,\\ we can terminate evaluation of $\conf'$ after time $\sum_{k=1}^N c(\finconf,\inst_k)$
 \end{itemize}
 
 \end{frame}
@@ -54,7 +54,7 @@
 \begin{tabular}{l cc}
 	& $\inst_1$ & $\inst_2$ \\
 	\hline
-	$\conf^*$ 	& 4 		& 2		\onslide<2->\\
+	$\finconf$ 	& 4 		& 2		\onslide<2->\\
 	\hline
 	\multicolumn{3}{l}{\emph{Without adaptive capping}}\\
 	$\conf'$		& \onslide<3->{3}			& \onslide<4->{300} 		\\
@@ -81,24 +81,24 @@
 \begin{algorithm}[H]
 	\scriptsize
 	\Input{%
-		candidate configurations $\confs_{new}$, cutoff $\cutoff_{max}$, previously evaluated runs $\hist$, budget $\bobudget$, incumbent $\hat{\conf}$}
+		candidate configurations $\confs_{new}$, cutoff $\cutoff_{max}$, previously evaluated runs $\hist$, budget $\bobudget$, incumbent $\finconf$}
 	\While{$\confs_{new}$ not empty}{
 		$\confI{\bocount} \xleftarrow{} $ getNext$(\confs_{new})$;\\
 		$[\ldots$ add new run for incumbent $\ldots]$;\\
 		\While{true}{
-			$\insts^+, \mathbf{s}^+ \xleftarrow{} $getAlreadyEvaluatedOn$(\hat{\conf}, \hist)$;\\
+			$\insts^+, \mathbf{s}^+ \xleftarrow{} $getAlreadyEvaluatedOn$(\finconf, \hist)$;\\
 			$\insts^{(\bocount)}, \mathbf{s}^{(\bocount)} \xleftarrow{} $getAlreadyEvaluatedOn$(\confI{\bocount}, \hist)$;\\
 			$\instI{\bocount}, s^{(\bocount)} \xleftarrow{}$ drawn uniformly at random from $\insts_+ \setminus \insts^{(\bocount)}$ and $\mathbf{s}^+ \setminus \mathbf{s^{(\bocount)}}$;\\
 			\alert{$\cutoff^{(i)} \xleftarrow{}$ AdaptCutoff$(\cutoff_{max}, \langle(\confI{j}, \costI{j})\rangle_{\confI{j} = \conf^+}) \cdot \xi$;}\\
 			$c_i \xleftarrow{}$ EvaluateRun$(\confI{\bocount}, \instI{\bocount},  s^{(i)}, \alert{\cutoff^{(i)}})$;\\
 			$\hist \xleftarrow{} \hist \cup (\confI{\bocount}, \instI{\bocount},  s^{(\bocount)},  \cost^{(\bocount)})$;\\
-			\If{average cost of $\confI{\bocount} >$ average cost of $\hat{\conf}$ across $\insts^{(\bocount)}$ and $\mathbf{s}^{(\bocount)}$}{break;}
-			\ElseIf{average cost of $\confI{\bocount} <$ average cost of $\hat{\conf}$ and $\insts^+ =  \insts^{(\bocount)}$  and $\mathbf{s}^{(\bocount)} = \mathbf{s}^+$}{
-				$\hat{\conf} \xleftarrow{} \confI{\bocount}$;
+			\If{average cost of $\confI{\bocount} >$ average cost of $\finconf$ across $\insts^{(\bocount)}$ and $\mathbf{s}^{(\bocount)}$}{break;}
+			\ElseIf{average cost of $\confI{\bocount} <$ average cost of $\finconf$ and $\insts^+ =  \insts^{(\bocount)}$  and $\mathbf{s}^{(\bocount)} = \mathbf{s}^+$}{
+				$\finconf \xleftarrow{} \confI{\bocount}$;
 			}
 		}
 		\If{time spent exceeds $\bobudget$ or $\confs_{new}$ is empty} {
-			\Return{$\hat{\conf}, \hist$}
+			\Return{$\finconf, \hist$}
 		}
 	}
 \end{algorithm}
