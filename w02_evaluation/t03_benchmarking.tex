@@ -67,7 +67,8 @@
     \textbf{Null Hypothesis Statistical Testing (NHST)} in Benchmarking:
 
     \begin{itemize}
-    \item Formulate a null hypothesis $H_0$ (e.g.\ the expected generalization error of two algorithms is equivalent).
+    \item Formulate a null hypothesis $H_0$ (e.g.\ the expected generalization
+        error of two algorithms is equivalent) and alternative hypothesis $H_1$.
     \item Use a hypothesis test to reject $H_0$ (not rejecting $H_0$ does not mean that we accept it).
     \item Rejecting $H_0$ gives us some confidence in the belief that the observed results may not be only random.
     \end{itemize}
@@ -93,7 +94,7 @@
     Overview of different hypothesis tests for matched samples:
 
     \begin{center}
-    \includegraphics[height=.4\textheight]{tests_overview.png}
+    \includegraphics[height=.45\textheight]{tests_overview.png}
     \end{center}
 
     \end{frame}
@@ -165,12 +166,18 @@
     $$\chi^2_{Mc} =  \frac{(|5-17| - 1)^2}{5 + 17} = 5.5 > 3.841 = \chi^2_{1,0.95}$$
 
     We can reject $H_0$ at a significance level of 0.05, i.e.\ we reject the hypothesis that the tree and the random forest have the same performance.
+
+    Significance level must be chosen before applying the test (avoid p-value
+    hacking).
     \end{frame}
 
 
     \begin{frame}[c,allowframebreaks]{Two-Matched-Samples t-Test}
 
-    A two-matched-samples t-test (i.e.\ a paired t-test) is the simplest hypothesis test if the aim is to compare two \textbf{models} on a single test set based on arbitrary performance measures.
+    A two-matched-samples t-test (i.e.\ a paired t-test) is the simplest
+    hypothesis test if the aim is to compare two \textbf{models} on a single
+    test set based on arbitrary performance measures. Pairs are e.g.\
+    performance numbers of different models on the same data.
 
     However, it is a parametric test and distributional assumptions must be made (which are often problematic).
 
