@@ -42,7 +42,7 @@
             resampling splits that we have used to perform model selection for
             it, e.g.\ to tune its hyperparameters.
         \item By repeatedly evaluating the learner on the same test set, or the same CV splits, information
-          about the test set \enquote{leaks} into our evaluation.
+          about the test set ``leaks'' into our evaluation.
         \item Danger of overfitting to the resampling splits / overtuning!
         \item The final performance estimate will be optimistically biased.
         \item One could also see this as a problem similar to multiple testing.
@@ -52,14 +52,14 @@
     \begin{frame}[c,allowframebreaks]{Motivating Example}
     \begin{itemize}
         \item Assume a binary classification problem with equal class sizes.
-        \item Assume a learner with hyperparameter $\lambda$.
+        \item Assume a learner with hyperparameter $\conf$.
         \item Here, the learner is a (nonsense) feature-independent classifier,
-              where $\lambda$ has no effect. The learner simply
+              where $\conf$ has no effect. The learner simply
               predicts random labels with equal probability.
         \item Of course, it's true generalization error is 50\%.
-        \item A cross-validation of the learner (with any fixed $\lambda$) will easily show this
+        \item A cross-validation of the learner (with any fixed $\conf$) will easily show this
           (given that the partitioned data set for CV is not too small).
-        \item Now lets \enquote{tune} it, by trying out 100 different $\lambda$ values.
+        \item Now let's ``tune'' it, by trying out 100 different $\conf$ values.
         \item We repeat this experiment 50 times and average results.
     \end{itemize}
 
@@ -70,7 +70,8 @@
     \end{center}
 
     \begin{itemize}
-    \item Plotted is the best \enquote{tuning error} (i.e.\ the performance of the model with fixed $\lambda$ as evaluated by the cross-validation) after $k$ tuning iterations.
+    \item Plotted is the best ``tuning error'' (i.e.\ the performance of the
+        model with fixed $\conf$ as evaluated by the cross-validation) after $k$ tuning iterations.
     \item We have performed the experiment for different sizes of learning data
           that where cross-validated.
     \end{itemize}
@@ -104,7 +105,8 @@
     \item All parts of the model building (including model selection,
       preprocessing) should be embedded in the model-finding process
       \textbf{on the training data}.
-    \item The test set should only be touched once, so we have no way of \enquote{cheating}. The test dataset is only used once \emph{after} a model is completely trained, after deciding for example on specific hyper-parameters. 
+    \item The test set should only be touched once, so we have no way of
+        ``cheating''. The test dataset is only used once \emph{after} a model is completely trained, after deciding for example on specific hyper-parameters. 
 
     Only if we do this are the performance estimates we obtained from the test set  \textbf{unbiased estimates} of the true performance.
 
@@ -128,7 +130,7 @@
 
     \framebreak
 
-    Assume we want to tune over a set of candidate HP configurations $\lambda_i; i = 1, \dots$ with 4-fold CV in the inner resampling and 3-fold CV in the outer loop. The outer loop is visualized as the light green and dark green parts.
+    Assume we want to tune over a set of candidate HP configurations $\conf_i; i = 1, \dots$ with 4-fold CV in the inner resampling and 3-fold CV in the outer loop. The outer loop is visualized as the light green and dark green parts.
 
     \begin{center}
         \includegraphics[height=0.6\textheight]{Nested_Resampling.png}
@@ -141,7 +143,7 @@
     \begin{itemize}
     \item Split off the light green testing data
     \item Run the tuner on the dark green part of the data, e.g.,
-      evaluate each $\lambda_i$ through fourfold CV on the dark green part
+      evaluate each $\conf_i$ through four-fold CV on the dark green part
     \end{itemize}
     \end{footnotesize}
 
@@ -154,7 +156,7 @@
     \begin{footnotesize}
     In each iteration of the outer loop we:
     \begin{itemize}
-    \item Return the winning $\lambda^*$ that performed best on the grey inner test sets
+    \item Return the winning $\finconf$ that performed best on the grey inner test sets
     \item Re-train the model on the full outer dark green train set
     \item Evaluate it on the outer light green test set
     \end{itemize}
