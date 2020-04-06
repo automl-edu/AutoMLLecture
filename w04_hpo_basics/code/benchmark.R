@@ -11,6 +11,7 @@ library(batchtools)
 library(ggplot2)
 library(stringi)
 library(gridExtra)
+library(data.table)
 
 set.seed(1)
 
@@ -75,7 +76,7 @@ baseline_design = benchmark_grid(tasks = tasks, learners = list(learner), resamp
 design = rbind(design, baseline_design)
 
 #init parallelization
-reg_dir = if (fs::dir_exists("~/nobackup/")) "~/nobackup/w04_hpo_benchmark" else "w04_hpo_basics/code/benchmark_bt"
+reg_dir = if (fs::file_exists("~/nobackup/")) "~/nobackup/w04_hpo_benchmark" else "w04_hpo_basics/code/benchmark_bt"
 reg = makeRegistry(file.dir = reg_dir)
 
 batchMap(benchmark, store_models = TRUE, design = split(design, seq_row(design)))
