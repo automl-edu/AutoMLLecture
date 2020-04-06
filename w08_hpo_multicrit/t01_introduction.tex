@@ -1,0 +1,391 @@
+\input{../latex_main/main.tex}
+
+\newcommand{\a}[0]{\mathbf{a}}
+\newcommand{\y}[0]{\mathbf{y}}
+\newcommand{\q}[0]{\mathbf{q}}
+\newcommand{\Xspace}[0]{\mathcal{X}}
+
+\title[AutoML: Overview]{Multi-criteria Optimization}
+\subtitle{Introduction}
+%TODO: change authors!
+\author[Bernd Bischl]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+
+	\maketitle
+
+
+\begin{frame}{Notation}
+
+\begin{itemize}
+\item Admissible set $\Xspace \subset \realnum^n$
+\item Target region $\realnum^m$
+\item Multi-criteria objective function $f: \Xspace \to \realnum^m$
+\item Objective function vector $f(\x) = \left(f_1(\x), ..., f_m(\x\right))^\top \in \realnum^m$, which maps $\x$ into the space $\realnum^m$.
+% \item $F:=f(\Xspace) = \left\{f(\x) ~|~ \x \in \Xspace\right\}$: Bild einer Funktion (Menge aller möglichen Funktionswerte)
+\end{itemize}
+
+w.l.o.g. we look at minimization problems.
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Introduction example}
+
+Often we want to solve optimization problems concerning several goals.
+
+\begin{itemize}
+\item Medicine: maximum effect, but minimum side effect of a drug.
+\item Finances: maximum return, but minimum risk of an equity portfolio.
+\item Production planning: maximum revenue, but minimum costs.
+\item Booking a hotel: maximum rating, but minimum costs.
+\end{itemize}
+
+A \textit{simple} approach would be to formulate all but one objective function simplified as a secondary condition.
+
+\vspace*{0.2cm}
+
+\framebreak
+
+\textbf{Example}:
+
+Maximize proceeds subject to costs $\le C, C \in \realnum$.
+
+\vspace*{0.2cm}
+
+ \textbf{Disadvantages}:
+\begin{itemize}
+ \item The result depends of course on how we select $C$ and usually returns different solutions for different values of $C$.
+ \item The more target functions we optimize, the more difficult such a formulation becomes.
+\end{itemize}
+
+\vspace*{0.2cm}
+
+\textbf{Target}: find a general approach to solving multi-criteria problems.
+
+
+\begin{center}
+\includegraphics[width = 0.35\linewidth]{images/booking1.png} ~~~ \includegraphics[width = 0.35\linewidth]{images/booking2.png}
+\end{center}
+
+When booking a hotel: find the hotel with
+
+\begin{itemize}
+\item Minimum price per night (\textbf{costs}) and
+\item Maximum user rating (\textbf{performance}).
+\end{itemize}
+
+\vfill
+
+\begin{footnotesize}
+Since we limit ourselves to minimizing problems, we minimize negative valuations.
+\end{footnotesize}
+
+\framebreak
+
+The goals often conflict with each other:
+
+\begin{itemize}
+\item Lower price $\to$ often lower hotel rating.
+\item Better rating $\to$ frequently higher price.
+\end{itemize}
+
+Example: (negative) average rating by hotel guests (1 - 5) vs. average price per night in USD from hotels on Expedia (excerpt).
+
+\vspace*{0.2cm}
+
+\centering \includegraphics[width=0.5\linewidth]{images/expedia-1-1}
+
+
+In addition, targets are often not comparable because they have different units, for example.
+
+\begin{itemize}
+\item Left: a hotel with rating $4$ for $89$ Euro ($\textcolor{green}{y_1} = \left(89, - 4.0\right)$ would be preferred to a hotel $\textcolor{red}{y_2} = \left(108, - 4.0\right)$ (left)
+\item Right: how to decide if $\textcolor{orange}{y_1} = \left(89, - 4.0\right)$ and $\textcolor{orange}{y_1} = \left(95, - 4.5\right)$?
+\item How much is a \textit{scoring point} worth?
+\end{itemize}
+
+\centering \includegraphics[width=\linewidth]{images/expedia-2-1}
+
+\end{frame}
+
+
+\begin{frame}{Definition: multi-criteria optimization problem}
+
+Be $\Xspace \subset \realnum^n$ and $f: \Xspace \to \realnum^m$, $m \ge 2$. A \textbf{multi-criteria optimization problem} is defined by
+
+$$
+\min_{\x \in \Xspace}  f(\x) \Leftrightarrow \min_{\x \in \Xspace} \left(f_1(\x), f_2(\x), ..., f_m(\x)\right).
+$$
+
+\begin{itemize}
+\item \textbf{Aim: } minimize multiple target functions simultaneously.
+\item Objective functions are often contradictory here.
+\item Often no clearly best solution, but a set of solutions that are equally good.
+\item Synonym terms: multi-criteria optimization, multi-objective optimization, Pareto optimization
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[allowframebreaks]{How to define optimality?}
+
+Be still $\y = (\text{price}, - \text{evaluation})$. In some cases it is \textit{clear} which point is the better one:
+
+\begin{itemize}
+\item The solution $\textcolor{green}{\textbf{y}_1} = \left(89, - 4.0\right)$ dominates $\textcolor{red}{\textbf{y}_2} = \left(108, - 4.0\right)$: $\textcolor{green}{\textbf{y}_1}$ is not worse in any dimension and is better in one dimension. $\textcolor{red}{\textbf{y}_2}$ gets \textbf{dominated} of $\textcolor{green}{\textbf{y}_1}$
+$$
+\textcolor{red}{\textbf{y}_2} \prec \textcolor{green}{\textbf{y}_1}.
+$$
+\end{itemize}
+
+\centering \includegraphics[width=0.5\linewidth]{images/expedia-3-1}
+
+\framebreak
+
+For the points $\textcolor{orange}{\textbf{y}_1} = \left(89, - 4.0\right)$ and $\textcolor{orange}{\textbf{y}_2} = \left(95, - 4.5\right)$ we cannot say which point is the better one.
+
+\begin{itemize}
+\item We designate the points as \textbf{equivalent} and write
+
+$$
+\textcolor{orange}{\textbf{y}_1} \not\prec \textcolor{orange}{\textbf{y}_2} \text{ und } \textcolor{orange}{\textbf{y}_2} \not\prec \textcolor{orange}{\textbf{y}_1}.
+$$
+
+\centering \includegraphics[width=0.5\linewidth]{images/expedia-4-1}
+
+
+\item The set of all equivalent points that are not dominated by another point is called the \textbf{Pareto front}.
+
+\vspace*{0.3cm}
+
+\centering \includegraphics[width=0.8\linewidth]{images/expedia-5-1}
+
+
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Pareto sets und Pareto optimality}
+
+\textbf{Definition:}
+
+Given a multicriteria optimization problem $$\min_{\x \in \Xspace} f(\x) = \left(f_1(\x), ..., f_m(\x)\right), \quad f_i: \Xspace \to \R.$$
+
+\begin{itemize}
+\item A solution $\x_1$ \textbf{(Pareto-) dominates} $\x_2$, if $f(\x_1) \prec f(\x_2)$, i.e.
+\begin{enumerate}
+\item $f_i(\x_1) \le f_i(\x_2)$ for all $i \in \{1, 2, ..., m\}$ und
+\item $f_j(\x_1) < f_j(\x_2)$ for at least one $j \in \{1, 2, ..., m\}$
+\end{enumerate}
+\vspace*{0.1cm}
+\item A solution $\x^*$ that is not dominated by any other solution is called \textbf{Pareto optimal}.
+\vspace*{0.1cm}
+\item The set of all Pareto optimal solutions is called \textbf{Pareto set} $\mathcal{P} := \{\x \in \Xspace |\not \exists ~\tilde{\x} \text{ with } f(\tilde{\x}) \prec f(\x)\}$
+\item $\mathcal{F} = f(\mathcal{P}) = \{f(\x) | \x \in \mathcal{P}\}$ is called \textbf{Pareto front}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Example: an objective function}
+
+We consider the minimization problem
+
+$$
+\min_{x} f(x) = (x - 1)^2, \qquad 0 \le x \le 3.
+$$
+
+The optimum is at $x^* = 1$.
+
+\vspace*{0.1cm}
+
+
+\centering \includegraphics[width=0.5\linewidth,height=0.5\textheight]{images/expedia-6-1}
+
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example: two target functions}
+
+We extend the above problem to two objective functions $f_1(x) = (x - 1)^2$ and $f_2(x) = 3(x - 2)^2$, thus
+
+$$
+\min_x f(x) := \left(f_1(x), f_2(x)\right), \qquad 0 \le x \le 3.
+$$
+
+\vspace*{0.1cm}
+
+
+\centering \includegraphics[width=0.5\linewidth,height=0.5\textheight]{images/expedia-7-1}
+
+
+\framebreak
+
+We consider the functions in the objective function space $f(\Xspace)$ by drawing the objective function values $\left(f_1(x), f_2(x)\right)$ for all $0 \le x \le 3$.
+
+\vspace*{0.1cm}
+
+
+\centering \includegraphics[width=0.5\linewidth,height=0.5\textheight]{images/expedia-8-1}
+
+    \vspace*{-0.3cm}
+
+The Pareto front is shown in green.
+The Pareto front cannot be \enquote{left} without getting worse in at least one objective function.
+
+\end{frame}
+
+
+% \begin{frame}[allowframebreaks]{Zusammenfassung}
+%
+% Bisher:
+% \begin{itemize}
+% \item Multikriterielle Optimierungsprobleme sind Probleme, in denen mehrere Funktionen gleichzeitig optimiert werden sollen.
+% \item Zielfunktionen sind häufig konkurrierend und lassen sich nicht auf derselben Skala vergleichen
+% \item $\to$ Einführung eines geeigneten Optimalitätsbegriffs: Pareto-Optimalität
+% \end{itemize}
+%
+% \begin{itemize}
+% \item Wie findet man eine Pareto-Front?
+% \item $\to$ Lösungsverfahren
+% \end{itemize}
+%
+% \end{frame}
+
+
+\begin{frame}{Two solutions}
+
+\begin{itemize}
+\item The Pareto set is a set of equally optimal solutions.
+\item One is often interested in a \textbf{single} optimal solution.
+\item Without further information no unambiguous optimal solution can be determined \\
+$\to$ decision must be based on other criteria.
+\end{itemize}
+
+Basically, there are two possible solutions:
+\begin{itemize}
+\item \textbf{A-priori approach}: user preferences are considered \textbf{before} the optimization process
+\item \textbf{A-posteriori approach}: user preferences are considered \textbf{after} the optimization process
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{A-priori procedure}
+
+\textbf{Example: weighted total}
+
+
+\textbf{Previous knowledge: } one rating point is worth $50$ Euro to a customer. \\ $\to$ We optimize the weighted sum:
+
+$$
+\min_\text{Hotel} \text{(Price / Night)} - 50 \cdot \text{Rating}
+$$
+
+\centering \includegraphics[width=0.7\linewidth,height=0.4\textheight]{images/expedia-9-1}
+
+\framebreak
+
+A-priori approach: weighted sum
+
+\begin{eqnarray*}
+\min_{x \in \Xspace} && \sum_{i = 1}^m w_i f_i(\x) \\
+&\text{with}& w_i \ge 0
+ \end{eqnarray*}
+
+% Bei systematischem Variieren der Gewichte können alle Lösungen auf dem konvexen Zielbereich gefunden werden.
+
+\framebreak
+
+\textbf{Example: lexicographic method}
+
+\lz
+
+\textbf{Previous knowledge: } customer prioritizes rating over price. \\
+$\to$ optimize target functions one after the other.
+
+\lz
+
+\centering \includegraphics[width=0.8\linewidth,height=0.4\textheight]{images/expedia-10-1}
+
+\framebreak
+
+A-priori approach: lexicographic method
+
+\begin{eqnarray*}
+y_1^* &=& \min_{\x \in \Xspace} f_1(\x)\\
+y_2^* &=& \min_{\x \in \{\x ~|~ f_1(\x) = y_1^*\}} f_2(\x) \\
+y_3^* &=& \min_{\x \in \{\x ~|~ f_1(\x) = y_1^* \land f_2(\x) = y_2^*\}} f_3(\x) \\
+&\vdots&
+\end{eqnarray*}
+
+Also here: different sequences provide different solutions.
+
+\framebreak
+
+\textbf{Summary a-priori approach:}
+\begin{itemize}
+\item In a single application, only one solution is obtained, which depends on the a-priori selection of weights, order, etc.
+\item In case of repeated use, several solutions are obtained if weights, order, etc. are systematically varied.
+\item Usually there are solutions that remain hidden from these methods.
+\item Implicit assumption: monocritical optimization \enquote{simple}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{A-posteriori procedure}
+
+A-posteriori methods, on the other hand, have the goal to
+
+\begin{itemize}
+\item find the set of \textbf{all} optimal solutions (the Pareto set),
+\item select (if necessary) an optimal solution based on prior knowledge or individual preferences.
+\end{itemize}
+
+A-posteriori methods are therefore the more generic approach to solving a multi-criteria optimization problem.
+
+
+\framebreak
+
+\textbf{Example:}
+
+A user gets more detailed information about all Pareto optimal hotels (left) and chooses an optimal solution (right) based on previous knowledge or additional criteria (e.g. location of the hotel).
+
+\vspace*{0.3cm}
+
+
+\centering \includegraphics[width=0.8\linewidth,height=0.5\textheight]{images/expedia-11-1}
+
+
+\end{frame}
+
+
+\begin{frame}{Evaluation of solutions}
+
+A common metric for evaluating a set of solutions $\mathcal{P} \subset \Xspace$ is the \textbf{dominated hypervolume} (S-metric), which we call $S(\mathcal{P}, R)$.
+
+\vspace*{-0.4cm}
+
+\begin{center}
+\includegraphics[width = 0.3\linewidth]{images/dominated_hypervolume.png}
+\end{center}
+
+\vspace*{-0.4cm}
+
+The dominated hypervolume of the set of points $\mathcal{P} \subset \Xspace$ (here: 5 black points) is the area in the target function space (regarding a reference point $R$) which is dominated by points $\mathcal{P}$.
+
+\end{frame}
+
+\end{document}
