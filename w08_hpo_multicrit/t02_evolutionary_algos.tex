@@ -5,8 +5,6 @@
 \newcommand{\y}[0]{\mathbf{y}}
 \newcommand{\q}[0]{\mathbf{q}}
 \newcommand{\Xspace}[0]{\mathcal{X}}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
 \title[AutoML: Overview]{Multi-criteria Optimization}
 \subtitle{Evolutionary Approaches}
 %TODO: change authors!
@@ -34,7 +32,7 @@
 
 \begin{frame}[allowframebreaks]{A-posteriori methods and evolutionary algorithms}
 
-Evolutionary algorithms return as a solution a \textbf{population} of solution candidates. Evolutionary multi-objective (EMO) algorithms aim to provide a set of solution candidates that corresponds to the Pareto set \enquote{as well as possible}.
+Evolutionary algorithms return as a solution a \textbf{population} of solution candidates. Evolutionary multi-objective (EMO) algorithms aim to provide a set of solution candidates that corresponds to the Pareto set \textit{as well as possible}.
 
 \vspace*{-0.4cm}
 
@@ -49,21 +47,19 @@ Image of the function (grey) and target function values $(f_1(\x), f_2(\x))$ for
 \end{footnotesize}
 
 \framebreak
-
+TODO: FIX ALGORITHMS
 %\begin{algorithm}[H]
 %  \begin{center}
 %  \caption{Evolutionary algorithm}
 %      \begin{algorithmic}[1]
-%    \State Initialize and rate population $P_0 \subset \Xspace$ with $|\mathcal{P}| = \mu$
-%    \State $t \leftarrow 0$
+%      \State Initialize and rate population $P_0 \subset \Xspace$ with $|\mathcal{P}| = \mu$
+%      \State $t \leftarrow 0$
 %      \Repeat
 %        \State Variation: generate offspring $Q_t$ with $|Q_t| = \lambda$
-%        \State Rate fitness of offspring
 %        \State Selection: select survivors $P_{t + 1}$
 % 		\State $t \leftarrow t + 1$
 %      \Until{Stop criterion fulfilled}
-%            \vspace*{-0.3cm}
-%    \end{algorithmic}
+%       \end{algorithmic}
 %    \end{center}
 %\end{algorithm}
 
@@ -135,7 +131,7 @@ We write $F_1 \prec F_2 \prec F_4 \prec ... $
 
 \framebreak
 
-Which individuals survive? We fill $\mu$ \enquote{places} one by one with $F_1, F_2, ...$ until a front can no longer \textbf{fully} survive (here: $F_3$).
+Which individuals survive? We fill $\mu$ \textit{places} one by one with $F_1, F_2, ...$ until a front can no longer \textbf{fully} survive (here: $F_3$).
 
 \begin{center}
 \includegraphics[width = 0.45\linewidth]{images/NSGA2_2.png}
@@ -147,7 +143,7 @@ Which individuals survive from $F_3$? $\to$ \textbf{crowding sort}
 
 \begin{frame}[allowframebreaks]{NSGA-II: crowding sort}
 
-\textbf{Idea:} add a \enquote{good} representative of the front $F_3$ if possible.
+\textbf{Idea:} add a \textit{good} representative of the front $F_3$ if possible.
 
 \begin{center}
 \includegraphics[height = 0.5\textheight]{images/NSGA2_CS1.png}
@@ -234,7 +230,7 @@ TODO: Fix Algo
 % Hierbei ist
 
 % \begin{itemize}
-% \item $\text{raw}(x)$ die \enquote{Grundfitness} (bzgl. Population und Archiv)
+% \item $\text{raw}(x)$ die \textit{Grundfitness} (bzgl. Population und Archiv)
 % \vspace*{-0.2cm}
 % $$
 % \text{raw}(x) = |\{y \in P_t: f(x) \prec f(y)\}| + |\{y \in A_t: f(x) \prec f(y)\}|,
@@ -259,7 +255,7 @@ TODO: Fix Algo
 %       \Repeat
 %         \State Berechne Fitness der Individuen in $P_t$ und $A_t$ anhand der oben definierten Fitnessfunktion
 %         \State Fülle $A_{t+1}$ auf mit nichtdominierten Individuen aus $P_t \cup A_t$ $^{(*)}$
-%         \State Fülle \enquote{mating pool} durch binäre Turnierselektion mit Zurücklegen auf $A_{t + 1}$
+%         \State Fülle \textit{mating pool} durch binäre Turnierselektion mit Zurücklegen auf $A_{t + 1}$
 %         \State Generiere $P_{t + 1}$ durch Rekombination und Mutation
 %       \Until{Stoppkriterium erfüllt}
 %       \State Gib $A_t$ zurück
@@ -337,7 +333,7 @@ Hypervolume contribution in a 2-dimensional objective space:\\
 
 \begin{frame}[allowframebreaks]{SMS-EMOA algorithm}
 
-
+    TODO: FIX ALGORITHM
 %\begin{algorithm}[H]
 %  \begin{center}
 %  \caption{SMS-EMOA}
