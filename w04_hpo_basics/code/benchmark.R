@@ -2,6 +2,8 @@ library(mlr3)
 library(mlr3misc)
 library(mlr3learners)
 library(mlr3tuning)
+library(GenSA)
+library(xgboost)
 library(paradox)
 library(future)
 library(future.batchtools)
@@ -65,23 +67,41 @@ des$resampling = Map(function(task) {
   return(resampling)
 }, task = des$task)
 
-#init parallelization
-temp_reg = makeRegistry(file.dir = NA) #just a dummy to get the systems default cluster function
-plan(batchtools_custom, cluster.functions = temp_reg$cluster.functions)
-#run tuning benchmark
-bres = benchmark(des[,.(task, learner, resampling)], store_models = TRUE)
+
+design = des[,.(task, learner, resampling)]
 
 #add baseline
-baseline_des = benchmark_grid(tasks = tasks, learners = list(learner), resamplings = rsmp_tuning)
-baseline_bres = benchmark(baseline_des)
-baseline_res = baseline_bres$aggregate(measures = msr("classif.auc"))
+baseline_design = benchmark_grid(tasks = tasks, learners = list(learner), resamplings = rsmp_tuning)
+design = rbind(design, baseline_design)
+
+#init parallelization
+reg_dir = if (fs::dir_exists("~/nobackup/")) "~/nobackup/w04_hpo_benchmark" else "w04_hpo_basics/code/benchmark_bt"
+reg = makeRegistry(file.dir = reg_dir)
+
+batchMap(benchmark, store_models = TRUE, design = split(design, seq_row(design)))
+submitJobs()
+waitForJobs()
+res = reduceResultsList()
+res_tune = res[[1]]
+res_baseline = NULL
+for (i in 2:length(res)) {
+  if (inherits(res[[i]]$learners$learner[[1]], "AutoTuner")) {
+    res_tune$combine(res[[i]])
+  } else if (is.null(res_baseline)) {
+    res_baseline = res[[i]]
+  } else {
+    res_baseline$combine(res[[i]])
+  }
+}
+
+baseline_res = res_baseline$aggregate(measures = msr("classif.auc"))
 baseline_res$tuner = "untuned"
 
 #build dt for plotting
-res_compl = map_dtr(bres$data$learner, function(x) cbind(x$archive(), tuner = class(x$tuner)[1]))
+res_compl = map_dtr(res_tune$data$learner, function(x) cbind(x$archive(), tuner = class(x$tuner)[1]))
 res_compl[, classif.auc.cummax := cummax(classif.auc), by = .(task_id, learner_id, tuner)]
 res_compl[, tuner := stri_replace_first_fixed(tuner, "Tuner", "")]
-unnest(res_compl, "params")
+#unnest(res_compl, "params")
 
 #tune curve
 g = ggplot(res_compl, aes(y = classif.auc.cummax, x = nr, color = tuner))
