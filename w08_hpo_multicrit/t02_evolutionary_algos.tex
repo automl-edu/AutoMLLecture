@@ -1,0 +1,375 @@
+
+\input{../latex_main/main.tex}
+
+\newcommand{\a}[0]{\mathbf{a}}
+\newcommand{\y}[0]{\mathbf{y}}
+\newcommand{\q}[0]{\mathbf{q}}
+\newcommand{\Xspace}[0]{\mathcal{X}}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\title[AutoML: Overview]{Multi-criteria Optimization}
+\subtitle{Evolutionary Approaches}
+%TODO: change authors!
+\author[Bernd Bischl]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+
+	\maketitle
+
+
+
+
+\begin{frame}[allowframebreaks]{A-posteriori methods and evolutionary algorithms}
+
+Evolutionary algorithms return as a solution a \textbf{population} of solution candidates. Evolutionary multi-objective (EMO) algorithms aim to provide a set of solution candidates that corresponds to the Pareto set \enquote{as well as possible}.
+
+\vspace*{-0.4cm}
+
+\begin{center}
+\includegraphics[width = 0.7\linewidth]{images/EA-steps.png}
+\end{center}
+
+\vspace*{-0.4cm}
+
+\begin{footnotesize}
+Image of the function (grey) and target function values $(f_1(\x), f_2(\x))$ for $\x \in \mathcal{P}_i, i = 1, 3, 10$.
+\end{footnotesize}
+
+\framebreak
+
+\begin{algorithm}[H]
+  \begin{center}
+  \caption{Evolutionary algorithm}
+    \begin{algorithmic}[1]
+    \State Initialize and rate population $P_0 \subset \Xspace$ with $|\mathcal{P}| = \mu$
+    \State $t \leftarrow 0$
+      \Repeat
+        \State Variation: generate offspring $Q_t$ with $|Q_t| = \lambda$
+        \State Rate fitness of offspring
+        \State Selection: select survivors $P_{t + 1}$
+ 		\State $t \leftarrow t + 1$
+      \Until{Stop criterion fulfilled}
+            \vspace*{-0.3cm}
+    \end{algorithmic}
+    \end{center}
+\end{algorithm}
+
+The population of solution candidates consists of $\x \in \Xspace$.
+
+\end{frame}
+
+
+\begin{frame}[allowframebreaks]{Objectives of an evolutionary strategy}
+
+The aim is to select the evolution strategy in such a way that the algorithm provides an approximation of the Pareto front, where
+
+\begin{enumerate}
+\item The individuals of the population (or the corresponding functional values in the target function space) \textbf{converge} to the Pareto front.
+\item The individuals of the population provide a \textbf{diverse} as possible approximation of the Pareto front.
+\end{enumerate}
+
+\vspace*{-0.3cm}
+
+\begin{center}
+\includegraphics[width = 0.2\linewidth]{images/EMO_goals.png}
+\end{center}
+
+\vspace*{-0.5cm}
+
+\begin{footnotesize}
+\textbf{Caution}: in this graphic the objective function values are exceptionally \textbf{maximized}.
+\end{footnotesize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{NSGA-II}
+
+The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by K. Deb in 2002.
+
+\begin{itemize}
+\item The NSGA-II follows a $(\mu + \lambda)$ strategy
+\item All previously discussed strategies can be used as a variation strategy; the original paper uses polynomial mutation and simulated binary crossover.
+\item The selection strategy is based on
+\begin{itemize}
+\item \textbf{Non-dominated sorting}
+\item \textbf{Crowding distance assignment}
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{NSGA-II: non-dominated sorting}
+
+% \begin{center}
+% \includegraphics[width = 0.5\linewidth]{images/NSGA2_1.png}
+% \end{center}
+
+% \framebreak
+
+\begin{footnotesize}
+We subdivide $R_t = P_t \cup Q_t$ into fronts $F_1, F_2, F_3, ...$ such that
+
+\begin{itemize}
+\item the points in the fronts are equivalent to each other, and
+\item that any point $\x \in F_1$ dominates any point from $F_2, F_3, F_4...$; any point $\x \in F_2$ dominates all points from $F_3, F_4, ...$, etc. \\
+We write $F_1 \prec F_2 \prec F_4 \prec ... $
+\end{itemize}
+\end{footnotesize}
+
+\begin{center}
+\includegraphics[width = 0.4\linewidth]{images/NSGA2_NDS.png}
+\end{center}
+
+\framebreak
+
+Which individuals survive? We fill $\mu$ \enquote{places} one by one with $F_1, F_2, ...$ until a front can no longer \textbf{fully} survive (here: $F_3$).
+
+\begin{center}
+\includegraphics[width = 0.45\linewidth]{images/NSGA2_2.png}
+\end{center}
+
+Which individuals survive from $F_3$? $\to$ \textbf{crowding sort}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{NSGA-II: crowding sort}
+
+\textbf{Idea:} add a \enquote{good} representative of the front $F_3$ if possible.
+
+\begin{center}
+\includegraphics[height = 0.5\textheight]{images/NSGA2_CS1.png}
+\end{center}
+
+\begin{footnotesize}
+The points on the left (marked by a triangle) do not represent the front very well because they are very close together. The front is better represented by the points on the right plot.
+\end{footnotesize}
+
+\framebreak
+
+\textbf{Crowding sort} sorts the individuals based on their crowding distance:
+
+\begin{itemize}
+\item The crowding distance describes the solution density by one point.
+\item It is calculated from the mean distance to the nearest neighbors around a point in the target function space.
+\item The crowding distance is greater when the neighbors are very far away.
+\item The maximum crowding distance is assigned to the boundary points so that they are always selected.
+\end{itemize}
+
+\begin{center}
+\includegraphics[width = 0.4\linewidth]{images/NSGA2_CS2.png}
+\end{center}
+
+\begin{footnotesize}
+One point with high crowding distance (red) and one point with very small crowding distance (blue).
+\end{footnotesize}
+
+\framebreak
+
+\begin{algorithm}[H]
+
+  \begin{center}
+  \caption{NSGA-II}
+    \begin{algorithmic}[1]
+   	\begin{footnotesize}
+    \State Initialize population $P_0$, $t \leftarrow 0$
+    \State $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_0)$
+    \State Generate $Q_0$ by binary tournament selection, recombination and mutation
+      \Repeat
+        \State $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_t \cup Q_t)$
+        \State $i \leftarrow 1$
+        \While{$|P_{t + 1} \cup F_i| < \mu$}
+        	\State $P_{t + 1} = P_{t + 1} \cup F_i$
+        	\State $i \leftarrow i + 1$
+    	\EndWhile
+        \State $\tilde F_i = (\x_1, \x_2, ..., \x_k)= \texttt{SortByCrowdingDistance}(F_i)$
+        \While {$P_{t + 1} < \mu$}
+        	\State $P_{t + 1} = P_{t + 1} \cup \x_j$
+        	\State $j \leftarrow j + 1$
+        \EndWhile
+        \State Generate $Q_{t + 1}$ by binary tournament selection, recombination and mutation
+      \Until{Stop criterion fulfilled}
+      \vspace*{-0.3cm}
+      \end{footnotesize}
+    \end{algorithmic}
+    \end{center}
+\end{algorithm}
+
+\end{frame}
+
+% \begin{frame}[allowframebreaks]{SPEA-2}
+
+% Ebenso im Jahr 2002 wurde der \textbf{Strength Pareto EA} (SPEA-2) von Zitzler et al. veröffentlicht.
+
+% \lz
+
+% \begin{itemize}
+% \item Neben der aktuellen Population $P_t$ gibt es auch ein sogenanntes Archiv $A_t$, das lediglich zur Bewertung der aktuellen Population dient.
+
+% \begin{images}
+% 	\centering
+% 	\includegraphics[width=0.6\linewidth]{images/SPEA-archive}
+% \end{images}
+
+% \framebreak
+
+% \item Die Bewertung (und damit auch die Selektion) eines Individuums erfolgt anhand von
+
+% $$
+% \text{fitness}(x) = \text{raw}(x) + \text{density}(x).
+% $$
+
+% Hierbei ist
+
+% \begin{itemize}
+% \item $\text{raw}(x)$ die \enquote{Grundfitness} (bzgl. Population und Archiv)
+% \vspace*{-0.2cm}
+% $$
+% \text{raw}(x) = |\{y \in P_t: f(x) \prec f(y)\}| + |\{y \in A_t: f(x) \prec f(y)\}|,
+% $$
+
+% \item $\text{density}(x)$ die Dichte des Punktes
+% $$
+% \text{density}(x) = \frac{1}{\sigma^{(k)}(x) + 2},
+% $$
+% ($\sigma^{(k)}$ bezeichne den Abstand zum $k$-nächsten Nachbarn).
+% \end{itemize}
+% \end{itemize}
+
+% \framebreak
+
+% \begin{algorithm}[H]
+% \begin{footnotesize}
+%   \begin{center}
+%   \caption{SPEA-2}
+%     \begin{algorithmic}[1]
+%     \State Initialisiere Population $P_0$, $|P_0| = \lambda$ und ein leeres Archiv $A_0, |A_0| = \gamma$
+%       \Repeat
+%         \State Berechne Fitness der Individuen in $P_t$ und $A_t$ anhand der oben definierten Fitnessfunktion
+%         \State Fülle $A_{t+1}$ auf mit nichtdominierten Individuen aus $P_t \cup A_t$ $^{(*)}$
+%         \State Fülle \enquote{mating pool} durch binäre Turnierselektion mit Zurücklegen auf $A_{t + 1}$
+%         \State Generiere $P_{t + 1}$ durch Rekombination und Mutation
+%       \Until{Stoppkriterium erfüllt}
+%       \State Gib $A_t$ zurück
+%     \end{algorithmic}
+%     \end{center}
+% \end{footnotesize}
+% \end{algorithm}
+
+% \vfill
+% \begin{footnotesize}
+% $^{(*)}$ Wenn $|A_{t + 1}| > \gamma$, dann entferne solange Individuen mit kleinster Distanz zum Nachbarn, bis $|A_{t + 1}| = \gamma$. Sollte $|A_{t + 1}| < \gamma$, füge die besten dominierten Individuen aus $P_t \cup A_t$ hinzu.
+% \end{footnotesize}
+
+% \end{frame}
+
+
+\begin{frame}[allowframebreaks]{Selection criteria: contribution to the hypervolume}
+
+\begin{itemize}
+\item The SMS-EMOA (S-Metric-Selection-EMOA) evaluates the fitness of an individual $\x \in \mathcal{P} \subset \Xspace$ based on its contribution to the dominated hypervolume (S-Metric):
+$$
+\Delta s(\x, \mathcal{P}) = S(\mathcal{P}, R) - S(\mathcal{P} \setminus \{ \x\}, R).
+$$
+\end{itemize}
+% \framebreak
+
+% \textbf{Berechnung des Hypervolumens im 2 dimensionalen Fall:}
+% \begin{enumerate}
+% \item Sortiere die Zielfunktionsvektoren bzgl. eines Kriteriums (z.B. aufsteigend bzgl. $f_1$)\\
+% $\Rightarrow$ Da Pareto-Front (kein Punkt dominiert anderen): Punkte sind bzgl. $f_2$ absteigend sortiert .
+% \item Für das $j$-te Individuum $a^{(j)}, j\in \{2,..., |F_{\nu}|\}$ in der sortierten Sequenz der Front $F_{\nu}$ berechnet sich der Hypervolumensbeitrag als:
+% \medskip
+
+% $$
+% \Delta s(\y^{(j)}, F_{\nu}) = (y_{1}^{(j+1)} - y_{1}^{(j)}) (y_{2}^{(j-1)} - y_{2}^{(j)})
+% $$
+% \end{enumerate}
+
+\framebreak
+
+\begin{center}
+Hypervolume contribution in a 2-dimensional objective space:\\
+\includegraphics[width = 0.4\textwidth]{images/hypervolumenbeitrag.png}
+\end{center}
+
+\footnotesize
+\vspace*{-0.5cm}
+\begin{itemize}
+% \item Links: Punkte entsprechen Werten der Individuen in 2-dimensionalem Zielraum.
+% \item Links: Punkte ohne Füllung zeigen dominierte Lösungen. Gelbe Fläche zeigt Bereich in dem dominierende Lösungen liegen.
+\item Dark rectangles correspond to the hypervolume contribution of the black dots.
+\item Grey point is the so-called reference point and limits the space.
+\item The hypervolume contribution thus corresponds to the size of the space that is dominated only by the individual $\bm{a}$, and not to any other of the space.
+\item $a^\star$ has lowest S-metric contribution .
+\end{itemize}
+\end{frame}
+
+% \begin{frame}[allowframebreaks]{SMS-EMOA}
+% \textbf{Motivation:}
+% \begin{itemize}
+% \item Pareto-Front bildet Menge von optimalen Parameterkonbinationen ab.
+% \item Oft ist die Menge dieser Kombinationen noch sehr groß.
+% \item In Praxis ist es meist nicht möglich alle Pareto-Effizienten Lösungen zu prüfen
+% \end{itemize}
+% $\Rightarrow$ SMS-EMOA soll möglichst guten Kompromiss zwischen Aufwand der Überprüfung der Paretoeffizienten Lösungen bei gleichzeitig umfassender Abdeckung möglicher Kompromisslösungen darstellen.
+% \medskip
+
+% $\Rightarrow$ SMS-EMOA ist einfach handhabbar und verzichtet auf Erstellung eines Archivs um den Aufwand zu reduzieren.
+% \medskip
+
+% $\Rightarrow$ Optimierung wird allein auf Grundlage der Population durchgeführt.
+
+% \framebreak
+% \end{frame}
+
+\begin{frame}[allowframebreaks]{SMS-EMOA algorithm}
+
+\vspace*{-0.5cm}
+
+\begin{algorithm}[H]
+  \begin{center}
+  \caption{SMS-EMOA}
+    \begin{algorithmic}[1]
+    \begin{footnotesize}
+    \State Generate start population $P_0$ of size $\mu$
+    \State $t \leftarrow 0$
+      \Repeat
+        \State Generate \textbf{one} individual $\q \in \R^n$ by recombination and mutation of $\mathcal{P}_t$
+        \State $\{F_{1},..., F_k\} \leftarrow \text{fast-dominated-sort}(P_{t}\cup \q)$
+        \State $\bm{a}^\star \leftarrow \text{argmin}_{\bm{a} \in F_{k}}\Delta s(\bm{a}, F_{k})$
+        \State $P_{t+1} \leftarrow (P_t \cup \{\q\}) \setminus\{\bm{a}^\star\}$
+        \State $ t \leftarrow t+1$
+      \Until{Termination criterion fulfilled}
+    \end{footnotesize}
+    \vspace*{-0.3cm}
+    \end{algorithmic}
+    \end{center}
+\end{algorithm}
+
+\vspace*{-0.6cm}
+\footnotesize
+\begin{itemize}
+\item L5: the set of temporary $(\mu + 1)$ individuals is divided by \textbf{fast-dominated-sort} into $k$ fronts $F_{1},...,F_{k}$.
+\item L6: determine individual $\bm{a}^\star \in F_{k}$ with smallest hypervolume contribution.
+\item L7: the individual $\bm{a}^\star$ from the worst front with the smallest contribution to the dominated hypervolume does not survive.
+\item The fitness of an individual is therefore primarily the rank of its associated front and secondarily its contribution to hypervolume.
+\end{itemize}
+\end{frame}
+
+
+\end{frame}
+\end{document}
