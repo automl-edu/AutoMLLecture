@@ -926,15 +926,16 @@ Example: regularization hyperparameter of SVM: $[0.001, 1000.0]$
 Tuning xgboost with random search, grid search and simulated annealing using a 5CV on the \texttt{spam} and \texttt{sonar} data set for AUC:
 \begin{columns}
 \begin{column}{0.3\textwidth}
-  \begin{center}
-  \begin{tabular}{|l|l|l|l}
-  Parameter&Type & Min & Max \\
-  \hline
-  \texttt{eta} & double & $0.1$ & $0.5$ \\
-  \texttt{lambda}&  double & $10^{-1}$ & $10^{0}$ \\
-  \end{tabular}
-  \end{center}
-\end{column}
+  \vspace{2em}
+  \resizebox{\linewidth}{!}{
+    \begin{tabular}{|l|l|l|l}
+    Parameter&Type & Min & Max \\
+    \hline
+    \texttt{eta} & double & $0.1$ & $0.5$ \\
+    \texttt{lambda}&  double & $10^{-1}$ & $10^{0}$ \\
+    \end{tabular}
+  }
+\end{column}%
 \begin{column}{0.7\textwidth}
   \begin{center}
   \begin{figure}
