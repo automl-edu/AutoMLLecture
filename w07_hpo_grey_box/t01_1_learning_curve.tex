@@ -1,20 +1,27 @@
 \section{Learning Curves}
 \begin{frame}{Learning Curves}
+\begin{figure}
+   \centering
+   \includegraphics[width=0.44\textwidth]{w07_hpo_grey_box/images/learningcurve/learning_curve_domhan.png}
+   \caption{Exemplary learning curves of training deep neural networks}
+\end{figure}
 
-\centering
-\includegraphics[width=0.4\textwidth]{images/learningcurve/learning_curves.png}
 
-Exemplary learning curves of training deep neural networks\\
-Many ML algorithms iteratively optimize a (loss) function
+
 
 \end{frame}
 %-----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
 \begin{frame}{Learning Curve Predictions}
+\onslide<1->
+\begin{figure}
+    \centering
+    \only <1>{\includegraphics[width=0.5\textwidth]{w07_hpo_grey_box/images/learningcurve/learning_curve_questionmark.png}}
+    \only <2->{\includegraphics[width=0.5\textwidth]{w07_hpo_grey_box/images/learningcurve/learning_curve_single_pred.jpg}}
+    
+\end{figure}
 
-\centering
-\includegraphics[width=0.5\textwidth]{images/learningcurve/learning_curve_single_pred.jpg}
 
 \begin{enumerate}
   \item Observe learning curve for the first $n$ steps (here $n=250$)
@@ -120,37 +127,19 @@ All learning curves vs. learning curves with early termination
 		\myit{
 			\item[$\rightarrow$] can't learn across hyperparameters
 		}
-		\item Does not even learn across curves; simply extrapolates one at a time
+		\item Does not learn across curves; simply extrapolates one at a time
 %		\item Cannot quickly integrate new information from extending the curve
 	}
 }
 
 \end{frame}
-%-----------------------------------------------------------------------
-\begin{frame}{Freeze-Thaw Bayesian Optimization}
-
-\myit{
-	\item Use a Gaussian process with inputs $\conf$ and $t$; special kernel for $t$
-	\item For $N$ configurations and $T$ epochs each: $O(N^3 t^3)$ $\rightarrow$ approximation
-	\item Iteratively: either extend existing configuration or try new one
-\pause
-	\item Result for probabilistic matrix factorization:
-	\includegraphics[width=0.8\textwidth]{images/learningcurve/FTBO.png}
-\pause
-	\item Unfortunately, no results for DNNs; no code available
-}
-
-
-\end{frame}
-%-----------------------------------------------------------------------
-
 
 %-----------------------------------------------------------------------
 \begin{frame}{LC-Net}
 
 \vspace*{-0.25em}
 {
-	\rightimage[.4]{images/learningcurve/LC-Net-network.png}
+	\rightimage[.4]{w07_hpo_grey_box/images/learningcurve/LC-Net-network.png}
 	\myit{
 		\item \goleft[.45]{Make a layer out of the parametric learning curves by Domhan et al.}
 		\item \goleft[.45]{Also support hyperparameters as inputs (in the figure denoted by $x_1, \dots, x_d$)}
@@ -169,6 +158,7 @@ All learning curves vs. learning curves with early termination
 }
 \end{frame}
 %-----------------------------------------------------------------------
+
 
 
 
@@ -231,6 +221,25 @@ All learning curves vs. learning curves with early termination
 
 \end{frame}
 %-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}{Freeze-Thaw Bayesian Optimization}
+
+\myit{
+	\item Use a Gaussian process with inputs $\conf$ and $t$; special kernel for $t$
+	\item For $N$ configurations and $T$ epochs each: $O(N^3 t^3)$ $\rightarrow$ approximation
+	\item Iteratively: either extend existing configuration or try new one
+\pause
+	\item Result for probabilistic matrix factorization:
+	\includegraphics[width=0.8\textwidth]{w07_hpo_grey_box/images/learningcurve/FTBO.png}
+\pause
+	\item Unfortunately, no results for DNNs; no code available
+}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+
 
 
 \myframe{Possible extension of LC models waiting to be done}{

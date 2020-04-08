@@ -1,8 +1,64 @@
+\section{BOHB}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{}
+\begin{frame}[c]{Robust and Efficient Hyperparameter Optimization at Scale}
+Desiderata for a practical solution to the hyperparamenter optimization problem:
+\begin{itemize}
+    \item Strong Anytime Performance
+    \pause
+    \item Strong Final Performance
+    \pause
+    \item Effective Use of Parallel Resources
+    \pause
+    \item Scalability
+    \pause
+    \item Robustness $\&$ Flexibility
+    \pause
+    \item Simplicity
+    \pause
+    \item Computational Efficiency
+    \pause
+\end{itemize}
+To fulfill all of these desiderata BOHB combines Bayesian Optimization with Hyperband
 
-TODO
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{BOHB}
+\begin{itemize}
+    \item BOHB combines Bayesian Optimization and Hyperband to combine both advantages into one.
+    \pause
+    \item Bayesian Optimization part is handled by a variant of the Tree Parzen Estimator with a product kernel.
+    \pause
+    \item BOHB uses Hyperband to allocate budgets to configurations.
+    \pause
+    \item BOHB replaces the random selection of configurations at the beginning of each HB iteration by a model-based search.
+    \begin{itemize}
+        \item The configurations are sampled sequentially.
+        \item The model is trained on the highest budget for which there are sufficiently many configurations evaluated.
+        \item The model is trained on the configurations that were evaluated on that budget so far.
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{BOHB}
+\begin{itemize}
+    \item Strong anytime performance of BOHB(desideratum 1) stems from its use of Hyperband.
+    \begin{itemize}
+        \item Quickly evaluating lots of configurations on small budgets allows BOHB to quickly identify promising configurations.
+        \pause
+    \end{itemize}
+    \item The strong final performance (desideratum 2) stems from BOHB's BO part as the guided search is able to refine the selected configurations.
+    \pause
+    \item BOHB also efficiently takes advantage of parallel resources (desideratum 3).
+    \begin{itemize}
+        \item In each iteration BOHB is evaluations multiple configurations, which can be independently run on multiple workers.
+        \item The parallelism in TPE is achieved by limiting the number of samples to optimize EI.
+        \item Single pool of workers, and whenever a worker becomes available preferentially execute waiting runs with smaller budgets.
+    \end{itemize}
+\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -26,11 +82,11 @@ TODO
     
     \lIf{$b=\varnothing$}{\Return{random configuration}}
     
-    fit KDEs according to Eqs. (2) and (3)
+    fit KDEs according to Equation~\ref{eq:TPE_Densities}
     
-    Draw $N_s$ samples acoording to $l'(x)$
+    Draw $N_s$ samples acoording to $l'(\conf)$
     
-    \Return{sample with highest ratio $l(x)/g(x)$}
+    \Return{sample with highest ratio $l(\conf)/g(\conf)$}
     
    
  
@@ -38,6 +94,119 @@ TODO
     
     \caption{Pseudocode for sampling in BOHB}
 \end{algorithm}
+\vspace{-2em}
+\begin{equation}
+    l(\conf)=p(\obs<\alpha|\conf, \dataset)\quad\quad\quad\quad
+    g(\conf)=p(\obs>\alpha|\conf, \dataset)
+    \label{eq:TPE_Densities}
+\end{equation}
+
+\begin{itemize}
+    \item To optimize EI, we sample $N_s$ points from $l^{'}(\conf)$ which is $l(\conf)$ but with all bandwidths multiplied by a factor $b_w$ to encourage more exploration around the promising configurations.
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{BOHB: Comparison}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.68\textwidth]{w07_hpo_grey_box/images/bohb/BOHB_1.pdf}
+    \caption{Performance of RS and BOHB on Auto-Net on datasted Adult}
+\end{figure}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{BOHB: Comparison}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.68\textwidth]{w07_hpo_grey_box/images/bohb/BOHB_2.pdf}
+    \caption{Performance of RS and BOHB on Auto-Net on datasted Adult}
+\end{figure}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{BOHB: Comparison}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.68\textwidth]{w07_hpo_grey_box/images/bohb/BOHB_3.pdf}
+    \caption{Performance of RS and BOHB on Auto-Net on datasted Adult}
+\end{figure}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{BOHB: Comparison}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.68\textwidth]{w07_hpo_grey_box/images/bohb/BOHB_4.pdf}
+    \caption{Performance of RS, TPE, HB and BOHB on Auto-Net on datasted Adult}
+\end{figure}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{BOHB: Different number of parallel workers}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.70\textwidth]{w07_hpo_grey_box/images/bohb/parallelization_letter.png}
+    \caption{Performance of BOHB with different number of parallel workers on the letter surrogate benchmark for 128 iterations}
+\end{figure}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{BOHB: Optimization of a Bayesian neural network}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.70\textwidth]{w07_hpo_grey_box/images/bohb/bnn_boston-1.png}
+    \caption{Optimization of 5 hyperparameters of a Bayesian neural network trained with SGHMC.}
+\end{figure}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{BOHB: Optimization of a reinforcement learning agent}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.70\textwidth]{w07_hpo_grey_box/images/bohb/cartpole-1.png}
+    \caption{Hyperparameter optimization of 8 hyperparameters of PPO on the cartpole task.}
+\end{figure}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{BOHB: Optimization of an SVM}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.70\textwidth]{w07_hpo_grey_box/images/bohb/svm_surrogate_test.pdf-1.png}
+    \caption{Comparison on the SVM on MNIST surrogates}
+\end{figure}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{BOHB: Counting Ones }
+\begin{figure}
+    \centering
+    \includegraphics[width=0.70\textwidth]{w07_hpo_grey_box/images/bohb/countingones_bohb.png}
+    \caption{Results for the counting ones problem in 16 dimensional
+space with 8 categorical and 8 continuous hyperparameters.}
+\end{figure}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{BOHB: Surrogate on poker }
+\begin{figure}
+    \centering
+    \includegraphics[width=0.70\textwidth]{w07_hpo_grey_box/images/bohb/surrogate_on_poker.png}
+    \caption{Optimizing six hyperparameter of a feed-forward neural
+network on featurized datasets; results are based on surrogate
+benchmarks. }
+\end{figure}
 
 \end{frame}
 %-----------------------------------------------------------------------

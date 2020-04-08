@@ -3,19 +3,19 @@
 
 %-----------------------------------------------------------------------
 
-\begin{frame}{Adaptive Hyperparameter Optimization}
+\begin{frame}{Bandit-Based Hyperparameter Optimization}
 \begin{columns}[T]
 
 \begin{column}{.45\textwidth}
     \begin{itemize}
-        \item Idea: Allocate more resources to promising configurations, eliminate poor ones.
+        \item Idea: Allocate more resources to promising configurations, eliminate poor ones early.
         \pause
     \end{itemize}
 \end{column}
     \begin{column}{.45\linewidth}
     \begin{figure}
     \centering
-    \includegraphics[width=0.9\linewidth]{images/hyperband/Figure_1_2.png}
+    \includegraphics[width=0.9\linewidth]{w07_hpo_grey_box/images/hyperband/Figure_1_2.png}
 \end{figure}
     \end{column}
     \end{columns}
@@ -31,11 +31,13 @@
 	\begin{itemize}
 	    \item Runtime
 	    \pause
-	    \item Number of epochs
+	    \item Number of epochs/iterations
 	    \pause
 	    \item Number of trees
 	    \pause
 	    \item Data subset size
+	    \pause
+	    \item Number of features
 	    \pause
 	    \item Number of cross validation folds
 	    
@@ -61,10 +63,10 @@
 \vspace{-1em}
 \begin{itemize}
     \item Simple technique
-    \item Does not make strong assumptions on the convergence of the underlying algorithm.
+    \item Assumes promising configurations outperform bad configurations, even early on in the algorithm run.
     %\item Bandit-based approach to hyperparameter optimization.
     \pause
-    \item Uniformly allocate a budget to a set.
+    \item Uniformly allocate a budget to a set of configurations.
     \pause
 \end{itemize}
 \end{column}
@@ -72,7 +74,7 @@
 \begin{column}{.5\textwidth}
 \begin{figure}
     \centering
-    \vspace{2em}
+    \vspace{3em}
     \only<3>{\includegraphics[width=\linewidth]{images/hyperband/SH-1.png}}
     \only<4>{\includegraphics[width=\linewidth]{images/hyperband/SH-2.png}}
     \only<5>{\includegraphics[width=\linewidth]{images/hyperband/SH-3.png}}
@@ -89,9 +91,9 @@ Given a budget $B$ and the number of configurations $n$ as an input:
 \begin{itemize}
     \item Evaluate the performance of all configurations.
     \pause
-    \item Throw out the worst performing half.
+    \item Drop the worst performing half.
     \pause
-    \item Repeat until one configuration remains.
+    \item Repeat until termination criterion is met e.g. maximum budget.
 
 \end{itemize}
 \end{column}
@@ -146,6 +148,8 @@ Given a budget $B$ and the number of configurations $n$ as an input:
     \pause
     \item Given finite $B$, $B/n$ resources are allocated across the configurations.
     \pause
+    \item Configurations need enough minimal resources to differentiate between them in terms of quality.
+    \pause
 \end{itemize}
 \end{column}
 
@@ -159,13 +163,13 @@ Given a budget $B$ and the number of configurations $n$ as an input:
 \end{figure}
 \end{column}
 \end{columns}
-\vspace{-10em}
+
+\vspace{-6.5em}
 \begin{columns}
 
 \begin{column}{.45\linewidth}
 \begin{itemize}
-    \item Configurations need enough minimal resources to differentiate between them in terms of quality.
-    \pause
+
     \item Issue: Optimal allocation strategy is unknown in practice.
     \pause
     \item Idea: Perform grid search over a feasible set of tuples of $n$ and minimal resource $r$. (Hyperband) 
@@ -194,7 +198,7 @@ Given a budget $B$ and the number of configurations $n$ as an input:
         \item Add further parameter: proportion of configurations discarded in each round of successive halving
     \end{itemize}
     \item Starts with many configurations that gets aggressively rejected.
-    \item In later iterations, few configurations with more budget each.
+    \item In later iterations, fewer configurations with more budget each.
     \item Returns: configuration with the smallest intermediate loss seen so far.
 \end{itemize}
 \end{frame}
@@ -229,10 +233,13 @@ Given a budget $B$ and the number of configurations $n$ as an input:
 \end{minipage}
 \end{frame}
 %-----------------------------------------------------------------------
-\begin{frame}{Hyperband}
+%-----------------------------------------------------------------------
+\begin{frame}{Tradeoffs between n and B/n}
+\vspace{2em}
 \begin{figure}
     \centering
-    \includegraphics[width=0.6\textwidth]{images/hyperband/Figure_experiments.png}
+    \includegraphics[width=0.7\textwidth]{images/hyperband/Hyperband_Table1-1.png}
+    \caption{The values of $n_i$ and $r_i$ for the brackets of Hyperband corresponding to various values of $s$, when $R = 81$ and $\eta = 3$.}
 \end{figure}
 
     
@@ -240,13 +247,46 @@ Given a budget $B$ and the number of configurations $n$ as an input:
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}{Random Search vs. Hyperband}
+\begin{frame}{Empirical comparison between individual brackets}
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\textwidth]{images/hyperband/bohb_2.png}
+    \includegraphics[width=0.4\textwidth]{w07_hpo_grey_box/images/hyperband/Hyperband_figure_3.png}
+    \caption{Performance of individual brackets $s$ and Hyperband.}
+\end{figure}
+\begin{itemize}
+    \item Hyperband is slower than SuccessiveHalving by a small factor if aggressive early-stopping is not suitable for the task.
+\end{itemize}
+
+    
+\end{frame}
+
+%-----------------------------------------------------------------------
+\begin{frame}{Hyperband: Comparison}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.55\textwidth]{w07_hpo_grey_box/images/hyperband/Figure_experiments.png}
+    \caption{Average test error of the best kernel regularized least square classification model found by each searcher on CIFAR-10.}
 \end{figure}
 
     
+\end{frame}
+
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}{Random Search vs. Hyperband}
+\begin{itemize}
+    \item In practice HB performs very well for small to medium budgets
+    \item Outperforms random search and vanilla BO
+    \item However, its convergence is limited by its reliance on randomly-drawn configurations
+    \item With larger budgets its advantage over random search diminishes
+\end{itemize}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/hyperband/comparison_rs_hb.png}
+\end{figure}
+
+
 \end{frame}
 
 %-----------------------------------------------------------------------

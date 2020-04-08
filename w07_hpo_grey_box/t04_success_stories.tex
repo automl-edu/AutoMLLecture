@@ -1,76 +1,59 @@
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \section{Success Stories}
-\begin{frame}[c]{Success Stories}
-\framesubtitle{HPO in the real world}
+
+\begin{frame}[c]{Large-scale meta-learning for hyperparameter optimization}
+
 \begin{itemize}
-    \item Spearmint
-    \item Hyperopt and Hyperopt-SKLearn
-    \item Auto-sklearn
+    \item Facebook has an internal self-service machine learning system
+    \item Non-ML departments can integrate highly optimized machine learning models into their workflow
+    \item Hyperparameters of the ML models are optimized with Bayesian optimization
+    \item Training data for the models changes over time \item Hyperparameters are constantly re-optimized using meta-learning Bayesian optimization as described in \lit{\href{https://arxiv.org/abs/1802.02219}{Feurer et al. 2018}}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\textwidth]{images/success_stories/FB_RGPE.png}
+        \caption{Bayesian optimization with meta-learning (RGPE) vs. vanilla Bayesian optimization (GP)}
+    \end{figure}
 \end{itemize}
 
-\end{frame}
-%-----------------------------------------------------------------------
-\begin{frame}[c]{Spearmint}
-\pause
-\begin{center}
-    \includegraphics[width=.9\linewidth, height=0.9\textheight, keepaspectratio=true]{images/success_stories/spearmint_alt_stats.png}
-    \newline \paragraph{Google Scholar screenshot from 3rd March, 2020}
-\end{center}
-\end{frame}
-%-----------------------------------------------------------------------
-\begin{frame}[c]{Spearmint}
-\pause
-\begin{itemize}
-    \item<+-> One of the first available comprehensive packages for performing HPO with state-of-the-art results at the time on deep neural networks.
-    
-    \item<+-> Open-source and non-commercial license based implementation available on Github.
-    
-    \item<+-> TODO: Include reference to state-of-the-art of Spearmint
-\end{itemize}
-
-\begin{center}
-    \only<+->{\includegraphics[width=\linewidth, height=\textheight, keepaspectratio=true]{images/success_stories/jsnoek_spearmint_git_stats.png}}
-    
-    \only<+->{\includegraphics[width=\linewidth, height=\textheight, keepaspectratio=true]{images/success_stories/hips_spearmint_git_stats.png}}
-\end{center}
-\end{frame}
-
-%-----------------------------------------------------------------------
-
-\begin{frame}[c]{Hyperopt and Hyperopt-SKLearn}
-\pause
-\begin{itemize}
-    \item<+-> Hyperopt is a python package for performing HPO over a user-described search space of parameters.
-    \item<+-> Hyperopt-SKLearn is a software project that uses Hyperopt to automate the optimization of the SciKit-Learn library.
-    \item<+-> TODO: Include stuff from the TPE paper "Making a Science of Model Search" http://proceedings.mlr.press/v28/bergstra13.pdf
-\end{itemize}
-
-\begin{center}
-    \only<+->{\includegraphics[width=\linewidth, height=\textheight, keepaspectratio=true]{images/success_stories/hyperopt_git_stats.png}}
-    
-    \only<+->{\includegraphics[width=\linewidth, height=\textheight, keepaspectratio=true]{images/success_stories/hyperopt_sklearn_git_stats.png}}
-\end{center}
 \end{frame}
 
 %-----------------------------------------------------------------------
 
 \begin{frame}[c]{Auto-sklearn}
-\pause
+Extension of Auto-WEKA with focus on speed improvements and robustness:
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/success_stories/automlworkflow.pdf}
+\end{figure}
 \begin{itemize}
-    \item<+-> TODO: Include usage statistics, salient features, references
+    \item Uses Meta-learning to warmstart Bayesian optimization
+    \item Won the 1st AutoML challenge
+    \item Open source (BSD) and trivial to use:
 \end{itemize}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/success_stories/Auto-sklearn_01.png}
+\end{figure}
+Available at \href{automl.github.io/auto-sklearn}{automl.github.io/auto-sklearn}
 \end{frame}
 
 %-----------------------------------------------------------------------
 
-\begin{frame}[c]{AlphaGo}
-\pause
+\begin{frame}[c]{PoSH-Auto-sklearn}
+Idea: integrate successive halving for further speed improvements:
 \begin{itemize}
-    \item<+-> TODO: AlphaGo used BO repeatedly during its lifecycle
-    \item<+-> TOOD: Find and reference paper
-    \item<+-> TODO: Quote figures from the paper
+    \item Uses task-independent Meta-learning to warmstart Bayesian optimization
+    \item Uses Successive Halving to quickly go through proposed configurations
+    \item Won the 2nd AutoML challenge
 \end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/success_stories/automl_bo_po_es.png}
+\end{figure}
+
+\hspace{12cm}\lit{\href{https://ml.informatik.uni-freiburg.de/papers/18-AUTOML-AutoChallenge.pdf}{Feurer et al. 2018}}
 \end{frame}
 
 %-----------------------------------------------------------------------
