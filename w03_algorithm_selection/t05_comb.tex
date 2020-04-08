@@ -1,0 +1,127 @@
+
+\input{../latex_main/main.tex}
+
+\title[AutoML: Overview]{AutoML: Algorithm Selection} % week title
+\subtitle{Bonus: Combinatorial Problems} % video title
+\author[Lars Kotthoff]{Bernd Bischl \and Frank Hutter \and \underline{Lars Kotthoff}\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+
+\begin{frame}[c]{Motivation}
+    \begin{itemize}
+        \item Algorithm Selection applied in many other domains
+        \item success and performance improvements for combinatorial and
+            optimization problems in AI dwarfs those in machine learning
+        \item important application area of AI facilitating cross-disciplinary
+            collaborations and advances
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[c,allowframebreaks]{Motivation: Performance Differences}
+\begin{center}
+\includegraphics[height=.65\textheight]{csp_v_sat}
+\end{center}
+\lit{Hurley, Barry, Lars Kotthoff, Yuri Malitsky, and Barry O’Sullivan.
+``Proteus: A Hierarchical Portfolio of Solvers and Transformations.'' In CPAIOR,
+2014.}
+\end{frame}
+
+\begin{frame}[c]{Motivation: Leveraging the Differences}
+\begin{center}
+\includegraphics[height=.7\textheight]{satzilla}
+\end{center}
+\lit{Xu, Lin, Frank Hutter, Holger H. Hoos, and Kevin Leyton-Brown.
+``SATzilla: Portfolio-Based Algorithm Selection for SAT.'' J. Artif. Intell.
+Res. (JAIR) 32 (2008): 565–606.}
+\end{frame}
+
+\begin{frame}[c]{Algorithms}
+    \begin{itemize}
+        \item constraint solvers
+        \item search strategies
+        \item modeling choices
+        \item different types of consistency
+    \end{itemize}
+\lit{Huberman, Bernardo A., Rajan M. Lukose, and Tad Hogg. ``An Economics
+    Approach to Hard Computational Problems.'' Science 275, no. 5296 (1997): 51–54.
+    doi:10.1126/science.275.5296.51.}
+\end{frame}
+
+\begin{frame}[c]{Features}
+    \begin{itemize}
+        \item number of variables, number of clauses/constraints/\ldots
+        \item ratios
+        \item order of variables/values
+        \item connectivity clause/constraints--variable graph or variable graph
+        \item number of nodes/propagations within time limit
+        \item estimate of search space size
+        \item tightness of problem/constraints
+        \item \ldots
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Example System -- SATzilla}
+\begin{itemize}
+\item portfolio of 7 SAT solvers, trained on 4811 problem instances
+\item syntactic (33) and probing features (15)
+\item ridge regression to predict log runtime for each solver, choose the solver with the best predicted performance
+\item later version uses random forests to predict better algorithm for each
+ pair, aggregation through simple voting scheme
+\item pre-solving, feature computation time prediction, hierarchical model,
+selection of algorithms to include in portfolio based on overall performance
+\item won several competitions
+\end{itemize}
+\lit{Xu, Lin, Frank Hutter, Holger H. Hoos, and Kevin Leyton-Brown.
+``SATzilla: Portfolio-Based Algorithm Selection for SAT.'' J. Artif. Intell.
+Res. (JAIR) 32 (2008): 565–606.}
+\end{frame}
+
+\begin{frame}[c]{Benchmark library -- ASlib}
+\begin{itemize}
+\item \url{https://github.com/coseal/aslib_data}
+\item SAT, CSP, QBF, ASP, MAXSAT, OR, ML\ldots
+\item includes data used frequently in the literature that you may want to
+    evaluate your approach on
+\item more scenarios in the pipeline
+\item \url{http://aslib.net}\\[1em]
+\end{itemize}
+\lit{
+Bischl, Bernd, Pascal Kerschke, Lars Kotthoff, Marius Lindauer, Yuri Malitsky,
+Alexandre Fréchette, Holger H. Hoos, et al. ``ASlib: A Benchmark Library for
+Algorithm Selection.'' Artificial Intelligence Journal (AIJ), no. 237 (2016): 41–58.
+}
+\end{frame}
+
+\begin{frame}[c]{Tools}
+\begin{description}
+\item[autofolio] \url{https://bitbucket.org/mlindauer/autofolio/}
+\item[LLAMA] \url{https://bitbucket.org/lkotthoff/llama}
+\item[SATzilla]
+ \footnotesize{\url{http://www.cs.ubc.ca/labs/beta/Projects/SATzilla/}}
+\end{description}
+\end{frame}
+
+\begin{frame}[c]{(Much) More Information}
+\begin{center}
+\includegraphics[height=.6\textheight]{survey}\\
+\url{http://larskotthoff.github.io/assurvey/}
+\end{center}
+\lit{Kotthoff, Lars. ``Algorithm Selection for Combinatorial Search
+Problems: A Survey.'' AI Magazine 35, no. 3 (2014): 48–60.}
+\end{frame}
+
+\end{document}
