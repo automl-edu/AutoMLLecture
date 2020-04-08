@@ -122,9 +122,9 @@ But they can in principle influence any structural property of a model or comput
 Examples:
 
 \begin{itemize}
-\item The maximum depth of a tree
-\item $k$ and which distance measure to use for $k$-NN
-\item the number and maximal order of interactions to be included in a linear regression model
+\item Tree: The maximum depth of a tree
+\item $k$ Nearest Neighbours: Number of neighbours $k$ and distance measure
+\item Linear regression: Number and maximal order of interactions
 \end{itemize}
 
 \end{frame}
@@ -142,8 +142,8 @@ We summarize all hyperparameters we want to tune over in a vector $\conf \in \La
 \end{itemize}
 \item Integer parameters, e.g.:
 \begin{itemize}
-\item Neighborhood size $k$ for $k$-NN
-\item minimum number of samples for a split in a random forest
+\item Neighbourhood size $k$ for $k$-NN
+\item Minimum number of samples for a split in a random forest
 \end{itemize}
 \item Categorical parameters, e.g.:
 \begin{itemize}
@@ -205,12 +205,12 @@ We face a \textbf{bi-level} optimization problem: The well-known risk minimizati
 
 \begin{itemize}
 \item For a learning algorithm $\inducer$ (also inducer) with $d$ hyperparameters, the hyperparameter \textbf{configuration space} is:
-$$\Lambda=\Lambda_{1} \times \Lambda_{2} \times \ldots \Lambda_{d}$$
+$$\Lambda=\Lambda_{1} \times \Lambda_{2} \times \ldots \times \Lambda_{d}$$
 where $\Lambda_{i}$ is the domain of the $i$-th hyperparameter.
 \item The domains can be continuous, discrete or categorical.
 \item For practical reasons, the domain of a continuous or integer-valued hyperparameter is typically bounded.
 \item A vector in this configuration space is denoted as $\conf \in \Lambda$.
-\item A learning algorithm $\inducer$ takes a (training) dataset $\dataset$ and a hyperparameter configuration $\conf \in \Lambda$ and returns a trained model (through risk minimization)
+\item A learning algorithm $\inducer$ takes a (training) dataset $\dataset$ and a hyperparameter configuration $\conf \in \Lambda$ and returns a trained model (through risk minimization).
 
 \vspace*{-0.2cm}
 \begin{eqnarray*}
@@ -272,7 +272,7 @@ $$
 $$
 
 \begin{itemize}
-\item The learner $\inducer(\datasettrain, \conf)$ takes a training dataset as well as hyperparameter settings $\Lambda$ (e.g. the maximal depth of a classification tree) as an input.
+\item The learner $\inducer(\datasettrain, \conf)$ takes a training dataset as well as hyperparameter settings $\Lambda$ (e.g.\ the maximal depth of a classification tree) as an input.
 \item $\inducer(\datasettrain, \conf)$ performs empirical risk minimization on the training data and returns the optimal model $\hat f$ for the given hyperparameters.
 \item Note that for the estimation of the generalization error, more sophisticated resampling strategies like cross-validation can be used.
 \end{itemize}
@@ -287,7 +287,7 @@ The components of a tuning problem are:
 \item The learner's hyperparameters and their respective regions-of-interest over which we optimize % (e.g. $\texttt{tree depth} \in \{1, 2, ..., 20\}$)
 \item The performance measure, as determined by the application.\\ Not necessarily identical to the loss function that defines the risk minimization problem for the learner!\\
 % We could even be interested in multiple measures simultaneously, e.g., accuracy and computation time of our model, TPR and PPV, etc.
-\item A (resampling) procedure for estimating the predictive performance.
+\item A (resampling) procedure for estimating the predictive performance according to the performance measure.
  % The expected performance on unseen data can be estimated by holdout (i.e., a single train-test-split) or more advanced techniques like cross-validation.
 % More on this later.
 \end{itemize}
@@ -340,13 +340,13 @@ Selecting the best model from a set of potential candidates (e.g., different cla
 \item All parts of the model building (including model selection, preprocessing) should be embedded in the model-finding process \textbf{on the training data}.
 \item The test set should only be touched once, so we have no way of \textit{cheating}. The test dataset is only used once \emph{after} a model is completely trained, after deciding for example on specific hyper-parameters.
 
-Only if we do this are the performance estimates we obtained from the test set  \textbf{unbiased estimates} of the true performance.
+Only if we do this, the performance estimates we obtained from the test set are \textbf{unbiased estimates} of the true performance.
 
 \item For steps that themselves require resampling (e.g., hyperparameter tuning) this results
-  in \textbf{nested resampling}, i.e., resampling strategies for both
+  in \textbf{nested resampling}, i.e., resampling strategies for both.
   \begin{itemize}
   \item tuning: an inner resampling loop to find what works best based on training data
-  \item outer evaluation on data not used for tuning to get honest estimates of the expected performance on new data
+  \item evaluation: an outer resampling loop to evaluate on data not used for tuning to get honest estimates of the expected performance on new data
   \end{itemize}
 \end{itemize}
 
@@ -359,7 +359,7 @@ Only if we do this are the performance estimates we obtained from the test set  
 Simplest method to achieve this: a 3-way split
 \begin{itemize}
 \item During tuning, a learner is trained on the \textbf{training set},
-  evaluated on the  \textbf{validation set}
+  evaluated on the  \textbf{validation set}.
 \item After the best model configuration $\lambda^\star$ is selected, we re-train on the joint (training+validation) set and evaluate the model's performance on the \textbf{test set}.
 \end{itemize}
 
@@ -392,7 +392,7 @@ Simplest method to achieve this: a 3-way split
 
 \framebreak
 
-More precisely: the combined training \& validation set is actually the training test for the \textit{self-tuning} endowed algorithm.
+More precisely: the combined training \& validation set is actually the training set for the \textit{self-tuning} endowed algorithm.
 
 \vspace{1cm}
 \begin{columns}[c, onlytextwidth]
@@ -410,7 +410,7 @@ More precisely: the combined training \& validation set is actually the training
 
 Just like we can generalize holdout splitting to resampling to get more reliable estimates of the predictive performance, we can generalize the training/validation/test approach to \textbf{nested resampling}.
 \vskip 2em
-This results in two nested resampling loops, i.e., resampling strategies for both tuning and outer evaluation.
+This results in two resampling loops, whereas the resampling for the tuning is nested in the resampling for the outer evaluation, i.e., one resampling strategy for  tuning and another for outer evaluation.
 % \vskip 2em
 % Let's look at this for a simple example: say we want to find out whether a logistic regression model or a $k$-NN classifier performs better on some data set.
 
@@ -475,7 +475,7 @@ The error estimates on the outer samples (light green) are unbiased because this
 \begin{itemize}
 \item Tuning is derivative-free (black box problem): It is usually impossible to compute derivatives of the objective (i.e., the resampled performance measure) that we optimize with regard to the HPs. All we can do is evaluate the performance for a given hyperparameter configuration.
 \item Every evaluation requires one or multiple train and predict steps of the learner. I.e., every evaluation is very \textbf{expensive}.
-\item Even worse: the answer we get from that evaluation is \textbf{not exact, but stochastic} in most settings, as we use resampling.
+\item Even worse: the answer we get from that evaluation is \textbf{not exact, but stochastic} in most settings, as we use resampling (and often stochastic learners).
 \item Categorical and dependent hyperparameters aggravate our difficulties: the space of hyperparameters we optimize over has a non-metric, complicated structure.
 \end{itemize}
 
@@ -515,6 +515,7 @@ HP combinations on a multi-dimensional discretized grid
 \begin{blocki}{Disadvantages}
 \item Scales badly: Combinatorial explosion
 \item Inefficient: Searches large irrelevant areas
+\item Low resolution in each dimension
 \item Arbitrary: Which values / discretization?
 \end{blocki}
 \end{frame}
@@ -673,7 +674,7 @@ We start with a randomly selected population $\mathcal{P} = \{\x_1, ..., \x_\mu\
 \begin{frame}[containsverbatim,allowframebreaks]{Step 2: Parent selection}
 
 
-In the first step of an iteration, $\lambda$ parents are chosen, who create offspring in the next step.
+In the first step of an iteration, $\lambda$ parents are chosen, who create offspring in the next step. %FIXME: JR: lambda is HP configuration! double notation
 
 Possibilities for selection of parents:
 \begin{itemize}
@@ -866,9 +867,9 @@ with $\bar\x = \frac{1}{2} (\x + \tilde\x)$.
     \end{blocki}
 
     \begin{blocki}{Disadvantages}
-    \item Stagnation: Optimization process does not progress anymore
+    \item Stagnation: Optimization process does not progress any more %FIXME: JR: Isn't that the same as the point below?
     \item Premature Convergence: Algorithm converges to a single solution, which is not as good as expected
-    \item Diversity of population structures: Loss of pipulation diversity for solving complex optimization problems
+    \item Diversity of population structures: Loss of population diversity for solving complex optimization problems
     \item Lacks balance between exploration and exploitation
     \end{blocki}
 
@@ -901,8 +902,8 @@ There are many more methods for hyperparmeter tuning, some of which will be disc
 Example: regularization hyperparameter of SVM: $[0.001, 1000.0]$
 
 \begin{itemize}
-	\item The distance between $999.9$ and $1000.0$ should not be the same as between $0.001$ and $0.10$
-    \item We might want to sample here from from a log-scale, e.g., $[10^{-x}, 10^{x}]$ with $x \in [-3, 3]$
+	\item The distance between $999.9$ and $1000.0$ should not be the same as between $0.1$ and $0.2$.
+  \item We might want to sample here from from a log-scale, e.g., $[10^{\lambda_l}, 10^{\lambda_u}]$ with $\lambda_l = -3$ and $\lambda_u = 3$.
 \end{itemize}
 
 \begin{figure}[htb]
@@ -915,25 +916,37 @@ Example: regularization hyperparameter of SVM: $[0.001, 1000.0]$
       \draw [very thick] ({10^(\x)*0.012},-2cm+2pt) -- ++(0,-4pt) node[anchor=north]{$\xxtext$};
       \draw [->] ({\x*2+6},-2pt) .. controls ({\x*2+6},-0.5) and ({10^(\x)*0.012},-1.5) .. ({10^(\x)*0.012},-2cm+2pt);
     }
-    \node[] at (-0.7,-0.1) (t1) {$x$};
-    \node[] at (-0.7,-1.9) (t2) {$10^x$};
+    \node[] at (-0.7,-0.1) (t1) {$\lambda$};
+    \node[] at (-0.7,-1.9) (t2) {$10^{\lambda}$};
   \end{tikzpicture}
 \end{figure}
 
 
 \end{frame}
 \begin{frame}{Tuning Example}
-Tuning xgboost with random search, grid search and simulated annealing using a 5CV on the \texttt{spam} and \texttt{sonar} data set for AUC:
+Tuning \emph{xgboost} with random search, grid search and simulated annealing using a 5CV on the \texttt{spam} and \texttt{sonar} data set for AUC:
 \begin{columns}
 \begin{column}{0.3\textwidth}
-  \vspace{2em}
+  \vspace{0.5em}
   \resizebox{\linewidth}{!}{
-    \begin{tabular}{|l|l|l|l}
+    \begin{tabular}{l|l|l|l}
     Parameter&Type & Min & Max \\
     \hline
     \texttt{eta} & double & $0.1$ & $0.5$ \\
     \texttt{lambda}&  double & $10^{-1}$ & $10^{0}$ \\
     \end{tabular}
+  }
+  \only<1>{
+    \begin{itemize}
+    \footnotesize
+      \item Tuning does not necessarily improve the performance of the learner, because e.g.\ tuning is badly configured or default values are determined by \emph{clever} heuristics.
+      \item Tuning error can be overly optimistic (see \emph{nested resampling}).
+    \end{itemize}
+  }
+  \only<2>{
+    \begin{itemize}
+      \item Effect of the chosen resampling split (objective noise) can dominate tuning effect.
+    \end{itemize}
   }
 \end{column}%
 \begin{column}{0.7\textwidth}
