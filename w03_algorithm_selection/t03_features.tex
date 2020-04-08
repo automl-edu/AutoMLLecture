@@ -4,7 +4,7 @@
 
 \title[AutoML: Overview]{AutoML: Algorithm Selection} % week title
 \subtitle{Features} % video title
-\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and \underline{Lars Kotthoff}\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\author[Lars Kotthoff]{Bernd Bischl \and Frank Hutter \and \underline{Lars Kotthoff}\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -22,7 +22,7 @@
 	
 \maketitle
 
-\begin{frame}{Algorithm Selection}
+\begin{frame}[c]{Algorithm Selection}
 \begin{center}
 \resizebox{.7\textwidth}{!}{%
 \tikzset{>=latex}
@@ -36,10 +36,10 @@ shadow,fill=white,rounded corners},scale=.5]
 \node (pc) [n,fit={(p) (a1) (a2) (a3)},draw] {};
 \end{pgfonlayer}
 
-\node (i) [align=left,right=15em of p.east] {Training Instances};
-\node (i2) [rectangle,align=center,below=of i,draw] {Instance 2};
-\node (i1) [rectangle,align=center,left=of i2,draw] {Instance 1};
-\node (i3) [rectangle,align=center,right=of i2,draw] {Instance 3};
+\node (i) [align=left,right=15em of p.east] {Training Datasets};
+\node (i2) [rectangle,align=center,below=of i,draw] {Dataset 2};
+\node (i1) [rectangle,align=center,left=of i2,draw] {Dataset 1};
+\node (i3) [rectangle,align=center,right=of i2,draw] {Dataset 3};
 \begin{pgfonlayer}{background}
 \node (ic) [n,fit={(i) (i1) (i2) (i3)},draw] {};
 \end{pgfonlayer}
@@ -47,9 +47,9 @@ shadow,fill=white,rounded corners},scale=.5]
 \node (as) [n,draw,align=left,below=10em of $(p)!0.5!(i)$] {Algorithm Selection};
 \node (m) [n,draw,align=left,below=3em of as] {Performance Model};
 
-\node (it) [align=center,right=10em of m] {Instance 4\\Instance 5\\Instance 6\\$\vdots$};
+\node (it) [align=center,right=10em of m] {Dataset 4\\Dataset 5\\Dataset 6\\$\vdots$};
 
-\node (s) [align=center,below=3em of m] {Instance 4: Algorithm 2\\Instance 5: Algorithm 3\\Instance 6: Algorithm 3\\$\vdots$};
+\node (s) [align=center,below=3em of m] {Dataset 4: Algorithm 2\\Dataset 5: Algorithm 3\\Dataset 6: Algorithm 3\\$\vdots$};
 
 \path [->] (pc.south) edge (as);
 \path [->] (ic.south) edge node [below right, rectangle, draw = blue, line width = 3pt] {Feature Extraction} (as);
@@ -60,89 +60,52 @@ shadow,fill=white,rounded corners},scale=.5]
 \end{center}
 \end{frame}
 
-\begin{frame}{Features}
+\begin{frame}[c]{Features}
 \begin{itemize}
-\item relate properties of datasets or problem instances to algorithm performance
+\item relate properties of datasets to algorithm performance
 \item relatively cheap to compute -- must be cheaper than running the algorithm
     to see what its performance is
 \item often specified by domain expert
-\item syntactic -- analyze dataset or instance description
-\item probing -- run algorithm for short time
-\item dynamic -- monitor changes while algorithm is running
+\item syntactic and information-theoretic -- analyze dataset
+\item probing -- run an algorithm for short time or on subset of data
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Syntactic Features}
-\begin{itemize}
-    \item for machine learning datasets:
-        \begin{itemize}
-            \item number of binary/numeric/categorical features
-            \item skewness of classes
-            \item fraction of missing values
-            \item \ldots
-        \end{itemize}
-    \item for combinatorial problems:
-        \begin{itemize}
-            \item number of variables, number of clauses/constraints/\ldots
-            \item ratios
-            \item order of variables/values
-            \item connectivity clause/constraints--variable graph or variable graph
-            \item \ldots
-        \end{itemize}
-\end{itemize}
+\begin{frame}[c]{Syntactic and Information-Theoretic Features}
+    \begin{itemize}
+        \item number of binary/numeric/categorical features
+        \item number of classes
+        \item class entropy
+        \item skewness of classes
+        \item fraction of missing values
+        \item correlation between features and target
+        \item \ldots
+    \end{itemize}
 \end{frame}
 
-\begin{frame}{Probing Features}
-\begin{itemize}
-    \item for machine learning datasets (also called landmarkers):
-        \begin{itemize}
-            \item performance of majority class/mean value predictor
-            \item decision stump performance
-            \item simple rule model performance
-            \item \ldots
-        \end{itemize}
-    \item for combinatorial problems:
-        \begin{itemize}
-            \item number of nodes/propagations within time limit
-            \item estimate of search space size
-            \item tightness of problem/constraints
-            \item \ldots
-        \end{itemize}
-\end{itemize}
+\begin{frame}[c]{Probing Features (Landmarkers)}
+    \begin{itemize}
+        \item performance of majority class/mean value predictor
+        \item decision stump performance
+        \item simple rule model performance
+        \item performance of algorithm of interest on 1\% of data
+        \item \ldots
+    \end{itemize}
+    $\rightarrow$ usually leads to much better results that using just syntactic
+    and information-theoretic features
 \end{frame}
 
-\begin{frame}{Dynamic Features}
-\begin{itemize}
-    \item for machine learning datasets:
-        \begin{itemize}
-            \item change in information gain between levels of a tree
-            \item convergence speed
-            \item performance gain through additional ensemble model
-            \item \ldots
-        \end{itemize}
-    \item for combinatorial problems:
-        \begin{itemize}
-            \item change of variable domains
-            \item number of constraint propagations
-            \item number of failures a clause participated in
-            \item \ldots
-        \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{No Features}
+\begin{frame}[c]{No Features}
     \begin{itemize}
         \item use deep learning to process dataset or problem instance as-is
         \item no need for expert-designed features
-        \item performance not good, no widespread adoption yet
+        \item only preliminary applications so far, performance not good, no widespread adoption yet
     \end{itemize}
-    \lit{Loreggia, Andrea, Yuri Malitsky, Horst Samulowitz, and Vijay Saraswat. ``Deep Learning for Algorithm Portfolios.'' In Thirtieth AAAI Conference on Artificial Intelligence, 1280–86. 2016.}
 \end{frame}
 
-\begin{frame}{Aside: Algorithm Features}
+\begin{frame}[c]{Aside: Algorithm Features}
     \begin{itemize}
-        \item can characterize algorithm in addition to datasets and problem
-            instances
+        \item can characterize algorithm in addition to datasets
         \item allows to relate performance to specific aspects of an algorithm
             rather than black boxes
         \item for example size of code base, properties of abstract syntax
@@ -151,10 +114,10 @@ shadow,fill=white,rounded corners},scale=.5]
     \end{itemize}
 \end{frame}
 
-\begin{frame}{What Features Do We Need in Practice?}
+\begin{frame}[c]{What Features Do We Need in Practice?}
     \begin{itemize}
         \item trade-off between complex features and complex models
-        \item in practice, very simple features (e.g.\ problem size) can perform well
+        \item in practice, very simple features can perform well
         \item often only few features of a set are needed (e.g.\ 5 out of $>$100)
         \item in the end, whatever works best
     \end{itemize}
