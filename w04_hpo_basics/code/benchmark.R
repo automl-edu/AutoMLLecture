@@ -77,10 +77,11 @@ reg_dir = if (fs::file_exists("~/nobackup/")) "~/nobackup/w04_hpo_benchmark" els
 unlink(reg_dir, recursive = TRUE)
 reg = makeRegistry(file.dir = reg_dir, seed = 1)
 
-batchMap(function(...) {
-  set.seed(1) #makes inner resampling folds the same?
-  #future::plan(multiprocess)
-  res = benchmark(...)
+batchMap(function(design, ...) {
+  #makes inner resampling folds the same if the outer resampling is the same?
+  set.seed(as.integer(substr(stri_replace_all_regex(design$resampling[[1]]$hash, "[a-z]", ""),0,9)))
+  future::plan(multiprocess)
+  res = benchmark(design = design, ...)
   for (i in seq_row(res$data)) {
     if(!is.null(res$data$learner[[i]]$tuning_instance)) {
       res$data$learner[[i]]$tuning_instance$archive$data[,resample_result := NULL]
@@ -89,6 +90,7 @@ batchMap(function(...) {
   return(res)
 }, store_models = TRUE, design = split(design, seq_row(design)))
 
+testJob(1)
 submitJobs(resources = list(ncpus = rsmp_outer$param_set$values$folds %??% 10))
 waitForJobs()
 res = reduceResultsList()
