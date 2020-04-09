@@ -1,8 +1,13 @@
+# if (!exists("TunerCMAES", where = "package:mlr3tuning")) {
+#   remotes::install_github("mlr-org/bbotk")
+#   remotes::install_github("mlr-org/mlr3tuning@bbotk_cmaes")
+# }
+
 library(mlr3)
 library(mlr3misc)
 library(mlr3learners)
 library(mlr3tuning)
-library(GenSA)
+library(cmaes)
 library(xgboost)
 library(paradox)
 library(future)
@@ -12,75 +17,79 @@ library(ggplot2)
 library(stringi)
 library(gridExtra)
 library(data.table)
+library(checkmate)
 
 set.seed(1)
 
 #define 1! leaners
-learner = lrn("classif.xgboost", predict_type = "prob", nrounds = 100)
+learner = lrn("classif.svm", predict_type = "prob", cost = 1, gamma = 1, type = "C-classification", kernel = "radial")
 #define 1! terminator
 n_evals = 100
 terminator = term("evals", n_evals = n_evals)
 #define n tuners
-tuners = tnrs(c("grid_search", "random_search", "gensa"))
+tuners = tnrs(c("grid_search", "random_search", "cmaes"))
 tuners[[1]]$param_set$values$resolution = ceiling(sqrt(n_evals))
 #define m tasks
 tasks = tsks(c("spam", "sonar"))
 
-#define m paramsets for each task in same order
+ps = ParamSet$new(params = list(
+    ParamDbl$new("cost", lower = -3, upper = 3),
+    ParamDbl$new("gamma", lower = -3, upper = 3)
+))
 
-# Made sense for RF
-# paramsets = list(
-#   spam = ParamSet$new(params = list(
-#     ParamInt$new("mtry", 1, 58),
-#     ParamInt$new("min.node.size", 2, 20)
-#   )),
-#   sonar = ParamSet$new(params = list(
-#     ParamInt$new("mtry", 1, 61),
-#     ParamInt$new("min.node.size", 2, 20)
-#   ))
-# )
-
-paramsets = list(
-  ParamSet$new(params = list(
-    ParamDbl$new("eta", lower = 0.1, upper = 0.5),
-    ParamDbl$new("lambda", lower = - 1, upper = 0)
-  ))
-)
-paramsets[[1]]$trafo = function(x, param_set) {
-  x$lambda = 10^x$lambda
-  x
+ps$trafo = function(x, param_set) {
+  lapply(x, function(x) 10^x)
 }
 
-#matching paramsets and tasks
-ptdt = data.table(paramset = paramsets, task = tasks)
-#building all combinations
-des = merge.data.frame(ptdt, data.table(tuner = tuners))
-setDT(des)
-#creating autotuner learner
 rsmp_tuning =  rsmp("cv", folds = 5)
-des$learner = Map(function(ps, tuner) {
-  AutoTuner$new(learner = learner, resampling = rsmp_tuning, measures = msr("classif.auc"), terminator = terminator, tune_ps = ps, tuner = tuner)  
-}, des$paramset, des$tuner)
-#init outer resampling for all
-des$resampling = Map(function(task) {
-  resampling = rsmp("holdout", ratio = 1)
-  resampling$instantiate(task = task)
-  return(resampling)
-}, task = des$task)
+#rsmp_tuning = rsmp("cv", folds = 2)
 
+rsmp_outer = rsmp("cv", folds = 10)
+#rsmp_outer = rsmp("cv", folds = 2)
 
-design = des[,.(task, learner, resampling)]
+learners = Map(function(ps, tuner) {
+  AutoTuner$new(learner = learner, resampling = rsmp_tuning, measures = msr("classif.auc"), terminator = terminator, search_space = ps, tuner = tuner)  
+}, ps = list(ps), tuners)
 
 #add baseline
-baseline_design = benchmark_grid(tasks = tasks, learners = list(learner), resamplings = rsmp_tuning)
-design = rbind(design, baseline_design)
+learner_default = lrn(learner$id, predict_type = learner$predict_type)
+learner_default$id = paste0(learner_default$id, ".default")
+
+#build design
+design = benchmark_grid(tasks = tasks, learners = c(learners, learner, learner_default), resamplings = rsmp_outer)
+
+
+#init inner resampling for all AutoTuners #FIXME Does not work because we would have to do it for the internal split
+# design[, task_hash := map_chr(task, function(x) x$hash)]
+# init_autotuner = function(task, at_learner) {
+#   resampling = at_learner[[1]]$instance_args$resampling #already cloned
+#   resampling$instantiate(task[[1]]) #all tasks are the same
+#   for (lrn in at_learner) {
+#     lrn$instance_args$resampling = resampling$clone()
+#   }
+#   return(list(at_learner))
+# }
+# design[map_lgl(learner, inherits, "AutoTuner"), learner := init_autotuner(.SD$task, .SD$learner), by = task_hash]
+# design$task_hash = NULL
 
 #init parallelization
 reg_dir = if (fs::file_exists("~/nobackup/")) "~/nobackup/w04_hpo_benchmark" else "w04_hpo_basics/code/benchmark_bt"
-reg = makeRegistry(file.dir = reg_dir)
+unlink(reg_dir, recursive = TRUE)
+reg = makeRegistry(file.dir = reg_dir, seed = 1)
 
-batchMap(benchmark, store_models = TRUE, design = split(design, seq_row(design)))
-submitJobs()
+batchMap(function(...) {
+  set.seed(1) #makes inner resampling folds the same?
+  #future::plan(multiprocess)
+  res = benchmark(...)
+  for (i in seq_row(res$data)) {
+    if(!is.null(res$data$learner[[i]]$tuning_instance)) {
+      res$data$learner[[i]]$tuning_instance$archive$data[,resample_result := NULL]
+    }
+  }
+  return(res)
+}, store_models = TRUE, design = split(design, seq_row(design)))
+
+submitJobs(resources = list(ncpus = rsmp_outer$param_set$values$folds %??% 10))
 waitForJobs()
 res = reduceResultsList()
 res_tune = res[[1]]
