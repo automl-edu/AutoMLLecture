@@ -2,6 +2,25 @@ import numpy as np
 from scipy.stats import norm
 
 
+def PI(x, model, eta, add, plotting=False):
+    """
+	Probability of Improvement
+	:param x: point to determine the acquisition value
+    :param model: GP to predict target function value
+    :param eta: best so far seen value
+    :param add: (epsilon) trade-off parameter (>=0)
+    :param plotting: flag to fulfill fmin interface / show plots with functions to be maximized.
+    :return: positive PI value for plotting, negative for the optimizer.
+    """
+    x = np.array([x]).reshape([-1, 1])
+    mu, sigma = model.predict(x, return_std=True)
+    Z = (mu - eta - add)/sigma
+    pi = norm.cdf(Z)
+    # return pi
+    return -pi if plotting else pi
+
+
+
 def EI(x, model, eta, add=None, plotting=False):
     """
     Expected Improvement.
@@ -20,22 +39,20 @@ def EI(x, model, eta, add=None, plotting=False):
         Z = improvement/sigma
         ei = improvement * norm.cdf(Z) + sigma * norm.pdf(Z)
         ei[sigma == 0.0] = 0.0
-    # return negative value for the Python Scipy Optimize .minimize, positive for plots
-    return (ei if plotting else -ei)
+    # return ei
+    return -ei if plotting else ei
 
-def UCB(x, model, eta, add, plotting=False):
+def LCB(x, model, eta, add):
     """
-    Upper Confidence Bound
+    Lower Confidence Bound, returns a value for the minimizer
     :param x: point to determine the acquisition value
     :param model: GP to predict target function value
     :param eta: best so far seen value
     :param add: additional parameters necessary for the function (kappa)
-    :param plotting: flag to fulfill fmin interface / show plots with functions to be maximized.
-    :return: positive UCB value for plotting, negative for the optimizer.
+    :return: positive LCB value for plotting, negative for the optimizer.
     """
     x = np.array([x]).reshape([-1, 1])
     mu, sigma = model.predict(x, return_std=True)
 
-    kappa = np.sqrt(add)
-    ucb = mu + kappa * sigma
-    return (ucb if plotting else -ucb)
+    lcb = mu - add * sigma
+    return lcb
