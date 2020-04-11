@@ -1,14 +1,18 @@
 
 \input{../latex_main/main.tex}
 
+
+
 \newcommand{\lz}{\vspace{0.5cm}}
 \newcommand{\thetab}{\bm{\weights}}
 \newcommand{\zero}{\mathbf{0}}
 \newcommand{\Xmat}{\mathbf{X}}
 \newcommand{\ydat}{\mathbf{y}}
 \newcommand{\id}{\boldsymbol{I}}
+\newcommand{\Amat}{\mathbf{A}}
 
-\usepackage{pgffor}
+
+
 
 \title[AutoML: GPs]{AutoML: Gaussian Processes} % week title
 \subtitle{The Bayesian Linear Model} % video title
@@ -127,54 +131,106 @@ $$
 \begin{footnotesize}
 \textbf{Theorem:}\\
 \begin{itemize}
-  \item For a Gaussian prior on $\thetab \sim \normaldist(\zero, \tau^2 \id_p)$, and
-  \item a Gaussian likelihood $y \mid \Xmat, \thetab \sim \normaldist(\Xmat^\top \thetab, \sigma^2 \id_n)$, 
-\end{itemize}
-the resulting posterior is Gaussian: $\normaldist(\sigma^{-2}\bm{A}^{-1}\Xmat^\top\ydat, \bm{A}^{-1})$, with $\bm{A}:= \sigma^{-2}\Xmat^\top\Xmat + \frac{1}{\tau^2} \id_p$.
+  \item For a Gaussian prior on $\thetab \sim \normaldist(\zero, \tau^2 \id_p)$ and a Gaussian likelihood $y \mid \Xmat, \thetab \sim \normaldist(\Xmat^\top \thetab, \sigma^2 \id_n)$, the resulting posterior is Gaussian: $\normaldist(\sigma^{-2}\bm{A}^{-1}\Xmat^\top\ydat, \bm{A}^{-1})$, with $\bm{A}:= \sigma^{-2}\Xmat^\top\Xmat + \frac{1}{\tau^2} \id_p$.
+  \end{itemize}
 
-\vspace{+.4cm}
+\vspace{+.2cm}
 \textbf{Proof:}\\
-%\vspace{-.4cm}
-
 Plugging in Bayes' rule and multiplying out yields
 
+\vspace{-.5cm}
 
 \begin{eqnarray*}
 p(\thetab \mid \Xmat, \ydat) &\propto& p(\ydat \mid \Xmat, \thetab) q(\thetab) \propto \exp\biggl[-\frac{1}{2\sigma^2}(\ydat - \Xmat\thetab)^\top(\ydat - \Xmat\thetab)-\frac{1}{2\tau^2}\thetab^\top\thetab\biggr] \\
-&=& \exp\biggl[-\frac{1}{2}\biggl(\underbrace{\sigma^{-2}\ydat^\top\ydat}_{\text{doesn't depend on } \thetab} - 2 \sigma^{-2} \ydat^\top \Xmat \thetab + \sigma^{-2}\thetab^\top \Xmat^\top \Xmat \thetab  + \tau^{-2} \thetab^\top\thetab \biggr)\biggr] %\\
-%&\propto& \exp\biggl[-\frac{1}{2}\biggl(\sigma^{-2}\thetab^\top \Xmat^\top \Xmat \thetab  + \tau^{-2} \thetab^\top\thetab  - 2 \sigma^{-2} \ydat^\top \Xmat \thetab \biggr)\biggr] \\
-%&=& \exp\biggl[-\frac{1}{2}\thetab^\top\underbrace{\biggl(\sigma^{-2} \Xmat^\top \Xmat + \tau^{-2} \id_p \biggr)}_{:= \Amat} \thetab + \textcolor{red}{\sigma^{-2} \ydat^\top \Xmat \thetab}\biggr]
+&=& \exp\biggl[-\frac{1}{2}\biggl(\underbrace{\sigma^{-2}\ydat^\top\ydat}_{\text{doesn't depend on } \thetab} - 2 \sigma^{-2} \ydat^\top \Xmat \thetab + \sigma^{-2}\thetab^\top \Xmat^\top \Xmat \thetab  + \tau^{-2} \thetab^\top\thetab \biggr)\biggr] \\
+&\propto& \exp\biggl[-\frac{1}{2}\biggl(\sigma^{-2}\thetab^\top \Xmat^\top \Xmat \thetab  + \tau^{-2} \thetab^\top\thetab  - 2 \sigma^{-2} \ydat^\top \Xmat \thetab \biggr)\biggr] \\
+&=& \exp\biggl[-\frac{1}{2}\thetab^\top\underbrace{\biggl(\sigma^{-2} \Xmat^\top \Xmat + \tau^{-2} \id_p \biggr)}_{:= \Amat} \thetab + \textcolor{red}{\sigma^{-2} \ydat^\top \Xmat \thetab}\biggr]
 \end{eqnarray*}
-
 
 This expression resembles a normal density - except for the term in red!
 
+
+%\end{footnotesize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framebreak
+
+\textbf{Note:} We need not worry about the normalizing constant since its mere role is to convert probability functions to density functions with a total probability of one.
+
+\vspace{+.2cm}
+
+We subtract a (not yet defined) constant $c$ while compensating for this change by adding the respective terms (``adding $0$''), emphasized in green:
+
+\vspace{-.5cm}
+
+\begin{eqnarray*}
+	p(\thetab | \Xmat, \ydat) &\propto&  \exp\biggl[-\frac{1}{2}(\thetab \textcolor{green}{- c})^\top\Amat  (\thetab \textcolor{green}{- c}) \textcolor{green}{- c^\top \Amat \thetab} + \underbrace{\textcolor{green}{\frac{1}{2}c^\top\Amat c}}_{\text{doesn't depend on } \thetab} +\sigma^{-2} \ydat^\top \Xmat \thetab\biggr] \\
+	&\propto& \exp\biggl[-\frac{1}{2}(\thetab \textcolor{green}{- c})^\top\Amat  (\thetab \textcolor{green}{- c}) \textcolor{green}{- c^\top \Amat \thetab} +\sigma^{-2} \ydat^\top \Xmat \thetab\biggr]
+\end{eqnarray*}
+
+If we choose $c$ such that $- c^\top \Amat \thetab +\sigma^{-2} \ydat^\top \Xmat \thetab = 0$, the posterior is normal with mean $c$ and covariance matrix $\Amat^{-1}$. Taking into account that $\Amat$ is symmetric, this is if we choose
+
+\vspace{-.5cm}
+
+\begin{eqnarray*}
+&& \sigma^{-2} \ydat^\top \Xmat = c^\top\Amat \\
+&\Leftrightarrow & \sigma^{-2} \ydat^\top \Xmat \Amat^{-1} = c^\top \\
+&\Leftrightarrow& c = \sigma^{-2} \Amat^{-1} \Xmat^\top \ydat
+\end{eqnarray*}
+
+\vspace{-.3cm}
+
+as claimed.
+
 \end{footnotesize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framebreak
+
+\begin{itemize}
+
+\item Based on the posterior destribution, 
+$\thetab \mid \Xmat, \ydat \sim \normaldist(\sigma^{-2}\bm{A}^{-1}\Xmat^\top\ydat, \bm{A}^{-1})$,
+we can derive the predictive distribution for a new observations $\x_*$.
+
+\lz
+
+\item The predictive distribution for the Bayesian linear model, i.e. the distribution of $\thetab^\top \x_*$, is
+$$y_* \mid \Xmat, \ydat, \x_* \sim \normaldist(\sigma^{-2}\ydat^\top \Xmat \Amat^{-1}\x_*, \x_*^\top\Amat^{-1}\x_*).$$
+\end{itemize}
+
+\lz
+
+\textbf{Note:} This can be obtained by applying the rules for linear transformations of Gaussians.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \framebreak
 
+%\foreach \x in{5, 10, 20} {
+%\begin{figure}
+%  \includegraphics[width=0.5\textwidth]{figure_man/bayes-lm/posterior-\x-3.pdf} \\
+%  \begin{footnotesize}
+%    For every test input $\xv_*$, we get a distribution over the prediction $y_*$. In particular, we get a posterior mean (orange) and a posterior variance (the grey region, which equals $+/-$ two times the standard deviation).
+%  \end{footnotesize}
+%\end{figure}
+%}
 
-
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\framebreak
 
+\begin{frame}[c]{Summary: The Bayesian Linear Model}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\framebreak
-
-
-
-
-
-
-
-
-
-
+\begin{itemize}
+  \item By switching to a Bayesian perspective, we have not only point estimation for the parameter $\thetab$ but also whole \textbf{distributions}.
+  \lz
+  \item From the posterior distribution of $\thetab$, we can derive a predictive distribution for $y_* = \thetab^\top \x_*$.  
+  \lz
+  \item We can perform online updates: the \textbf{posterior distribution} of $\thetab$ can be updated whenever new datapoints are observed. 
+\lz
+\item In the next step, we would like go beyond the linear funtions and develop a theory for functions with general shapes.
+\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
