@@ -71,11 +71,18 @@ $$\epsilon^{(i)} \sim \normaldist (0, \variance).$$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \framebreak
-Let us assume we have \textbf{prior beliefs} about the parameter $\thetab$ that are represented in a prior distribution $\thetab \sim \normaldist (\zero, \tau^2 \id_p).$
+\begin{itemize}
+  \item Let us assume we have \textbf{prior beliefs} about the parameter $\thetab$ that are represented in a prior distribution $\thetab \sim \normaldist (\zero, \tau^2 \id_p).$
 
-\lz 
+\lz
+\lz
 
-Whenever data points are observed, we update the parameters' prior distribution according to Bayes' rule 
+\item Whenever data points are observed, we update the parameters' prior distribution according to Bayes' rule
+
+\end{itemize}
+
+
+
 
 $$
 \underbrace{p(\thetab \mid \Xmat, \ydat)}_{\text{posterior}} = \frac{\overbrace{p(\ydat \mid \Xmat, \thetab)}^{\text{likelihood}}\overbrace{q(\thetab)}^{\text{prior}}}{\underbrace{p(\ydat\mid\Xmat)}_{\text{marginal}}}.
