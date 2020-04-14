@@ -5,6 +5,7 @@
 \newcommand{\y}[0]{\mathbf{y}}
 \newcommand{\q}[0]{\mathbf{q}}
 \newcommand{\Xspace}[0]{\mathcal{X}}
+\usepackage{algpseudocode}
 \title[AutoML: Overview]{Multi-criteria Optimization}
 \subtitle{Evolutionary Approaches}
 %TODO: change authors!
@@ -48,20 +49,20 @@ Image of the function (grey) and target function values $(f_1(\x), f_2(\x))$ for
 
 \framebreak
 TODO: FIX ALGORITHMS
-%\begin{algorithm}[H]
-%  \begin{center}
-%  \caption{Evolutionary algorithm}
-%      \begin{algorithmic}[1]
-%      \State Initialize and rate population $P_0 \subset \Xspace$ with $|\mathcal{P}| = \mu$
-%      \State $t \leftarrow 0$
-%      \Repeat
-%        \State Variation: generate offspring $Q_t$ with $|Q_t| = \lambda$
-%        \State Selection: select survivors $P_{t + 1}$
-% 		\State $t \leftarrow t + 1$
-%      \Until{Stop criterion fulfilled}
-%       \end{algorithmic}
-%    \end{center}
-%\end{algorithm}
+\begin{algorithm}[H]
+  \begin{center}
+  \caption{Evolutionary algorithm}
+      \begin{algorithmic}[1]
+      \State Initialize and rate population $P_0 \subset \Xspace$ with $|\mathcal{P}| = \mu$
+      \State $t \leftarrow 0$
+      \Repeat
+        \State Variation: generate offspring $Q_t$ with $|Q_t| = \lambda$
+        \State Selection: select survivors $P_{t + 1}$
+ 		\State $t \leftarrow t + 1$
+      \Until{Stop criterion fulfilled}
+       \end{algorithmic}
+    \end{center}
+\end{algorithm}
 
 The population of solution candidates consists of $\x \in \Xspace$.
 
