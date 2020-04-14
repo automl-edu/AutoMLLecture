@@ -69,7 +69,6 @@ $$
 $$
 
 \lz 
-
 \lz 
 
 The observed values $\yI{i}$ differ from the function values $f(\xI{i})$ by some additive noise, which is assumed to be i.i.d. Gaussian 
@@ -78,6 +77,7 @@ $$\epsilon^{(i)} \sim \normaldist (0, \variance).$$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \framebreak
+
 \begin{itemize}
   \item Let us assume we have \textbf{prior beliefs} about the parameter $\thetab$ that are represented in a prior distribution $\thetab \sim \normaldist (\zero, \tau^2 \id_p).$
 
@@ -122,21 +122,22 @@ $$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \framebreak
 
-%\begin{figure}
-%  \includegraphics[width=0.5\textwidth]{figure_man/bayes-lm/prior-1.pdf}~\includegraphics[width=0.5\textwidth]{figure_man/bayes-lm/prior-2.pdf}
-%\end{figure}
+\begin{figure}
+\includegraphics[width=0.4\textwidth]{figure_man/bayes-lm/prior-1.pdf}~\includegraphics[width=0.4\textwidth]{figure_man/bayes-lm/prior-2.pdf}
+\end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \framebreak
 
 
-%\foreach \x in{5, 10, 20} {
-%\begin{figure}
-%  \includegraphics[width=0.5\textwidth]{figure_man/bayes-lm/posterior-\x-1.pdf}~  \includegraphics[width=0.5\textwidth]{figure_man/bayes-lm/posterior-\x-2.pdf}
-%\end{figure}
-%}
-%\end{comment}
+\foreach \x in{5, 10, 20} {
+\begin{figure}
+\includegraphics[width=0.4\textwidth]{figure_man/bayes-lm/posterior-\x-1.pdf}~  \includegraphics[width=0.4\textwidth]{figure_man/bayes-lm/posterior-\x-2.pdf}
+\end{figure}
+\framebreak
+}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \framebreak
@@ -221,14 +222,15 @@ $$y_* \mid \Xmat, \ydat, \x_* \sim \normaldist(\sigma^{-2}\ydat^\top \Xmat \Amat
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \framebreak
 
-%\foreach \x in{5, 10, 20} {
-%\begin{figure}
-%  \includegraphics[width=0.5\textwidth]{figure_man/bayes-lm/posterior-\x-3.pdf} \\
-%  \begin{footnotesize}
-%    For every test input $\xv_*$, we get a distribution over the prediction $y_*$. In particular, we get a posterior mean (orange) and a posterior variance (the grey region, which equals $+/-$ two times the standard deviation).
-%  \end{footnotesize}
-%\end{figure}
-%}
+\foreach \x in{5, 10, 20} {
+\begin{figure}
+\includegraphics[width=0.4\textwidth]{figure_man/bayes-lm/posterior-\x-3.pdf} \par
+\begin{footnotesize}
+For every test input $\x_*$, we get a distribution over the prediction $y_*$. In particular, we get a posterior mean (orange) and a posterior variance (the grey region, which equals $+/-$ two times the standard deviation).
+\end{footnotesize}
+\end{figure}
+\framebreak
+}
 
 \end{frame}
 
