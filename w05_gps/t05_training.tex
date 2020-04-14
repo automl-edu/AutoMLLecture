@@ -14,10 +14,14 @@
 \newcommand{\ls}{\ell}
 \newcommand{\natnum}{\mathbb{N}}
 \newcommand{\intnum}{\mathbb{Z}}
+\newcommand{\order}{\mathcal{O}}  
 
 \usepackage{fontawesome}
 \usepackage{dirtytalk}
 \usepackage{csquotes}
+
+
+\def\argmin{\mathop{\sf arg\,min}} 
 
 %\begin{frame}[c]{}
 %\centering
@@ -44,6 +48,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[c]{Training of a Gaussian Process}
 
+\begin{itemize}
+\vspace{.5cm}
+\item To make predictions for a regression task by a Gaussian process, one needs to perform matrix computations. 
+\vspace{.5cm}
+\item Here, the main difficulty is how to do \textbf{model selection}, i.e., how to choose the best covariance function and how to tune the hyperparameters. 
+\vspace{.5cm}
+\item There is a multitude of possible families of covariance functions, each coming with a number of hyperparameters to be chosen.
+\vspace{.5cm}
+\item We will refer to the model selection as \textbf{training} of a Gaussian process.
+\end{itemize}
 
 
 \end{frame}
@@ -51,11 +65,39 @@
 
 \begin{frame}[c,allowframebreaks]{Training a GP via the Maximum Likelihood}
 
+\begin{itemize}
+\item Let us assume $y = f(\x) + \epsilon, ~ \epsilon \sim \mathcal{N}\left(0, \variance\right),$ where $f(\x) \sim \gp\left(\bm{0}, k\left(\x, \x^\prime \mid \thetab \right)\right)$.
 
+\lz
+\lz
+
+\item Noticing that $\bm{y} \sim \mathcal{N}\left(\bm{0}, \bm{K} + \variance \id\right)$, we can find the marginal log-likelihood (or evidence):
+
+\vspace{-5mm}
+
+\begin{eqnarray*}
+log\, p(\bm{y} ~\mid~ \bm{X}, \thetab) &=& log \left[\left(2 \pi\right)^{-n / 2} |\bm{K}_y|^{-1 / 2} \exp\left(- \frac{1}{2} \bm{y}^\top \bm{K}_y^{-1} \bm{y}\right) \right]\\
+&=& -\frac{1}{2}\bm{y}^\top\bm{K}_y^{-1} \bm{y} - \frac{1}{2}\, log \left| \bm{K}_y \right| - \frac{n}{2} log\,2\pi. 
+\end{eqnarray*}
+
+with $\bm{K}_y:=\bm{K} + \variance \id$ and $\thetab$ denoting the parameters of the covariance function (i.e., the hyperparameters).
+\end{itemize}
 
 \framebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Recalling that the increase of the length-scale reduces the model flexibility, the three terms of the marginal likelihood can be interpreted as follows.
+\vspace{1cm}
+
+\begin{itemize}
+\item The data fit $-\frac{1}{2}\bm{y}^T\bm{K}_y^{-1} \bm{y}$. The data fit tends to decrease by increasing the length-scale.
+\vspace{.5cm}
+
+\item The complexity penalty $- \frac{1}{2}\,log\,\left| \bm{K}_y \right|$, which depends on the covariance function. This term also decreases with the increase of the length-scale (the model gets less complex as the length-scale grows).
+\vspace{.5cm}
+
+\item The normalization constant $- \frac{n}{2}\,log\,2\pi$.
+\end{itemize}
 
 
 \end{frame}
@@ -63,21 +105,86 @@
 
 \begin{frame}[c,allowframebreaks]{Training a GP: Example}
 
+To visualize the said ideas, let us consider a zero-mean Gaussian process with a squared exponential kernel:
+
+$$
+k(\x, \x^\prime) = \exp\left(-\frac{1}{2\ls^2}\|\x - \x^\prime\|^2\right).
+$$
+
+
+\begin{itemize}
+	\item[\faLightbulbO] Recall that the model becomes smoother and less complex as the length-scale $\ls$ increases.
+	\lz
+	\item[\faLightbulbO] We will show how each of the following terms behaves if the value of $\ls$ increases:
+	\vspace{2mm}
+	\begin{itemize}
+		\item the data fit $-\frac{1}{2}\bm{y}^\top\bm{K}_y^{-1} \bm{y}$,
+		\vspace{2mm}
+		\item the complexity penalty $-\frac{1}{2}\,log\,\left| \bm{K}_y \right|$,
+		\vspace{2mm}
+		\item the overall value of the marginal likelihood $log\,p(\bm{y}\mid\bm{X}, \thetab)$.
+	\end{itemize}
+\end{itemize}
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}
+	\includegraphics[width = 0.4\textwidth]{figure_man/training/fit-vs-penalty.pdf}~	\includegraphics[width = 0.4\textwidth]{figure_man/training/datapoints.pdf}
+\end{figure}
+
+\begin{footnotesize}
+\textcolor{blue}{\faInfoCircle} The left plot depicts how the data fit, the complexity penalty (a higher value means less penalization), and the overall marginal likelihood behave for increasing values of the length-scale.
+\end{footnotesize}
+
 
 \framebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+\begin{figure}
+	\includegraphics[width = 0.4\textwidth]{figure_man/training/fit-vs-penalty-0_2.pdf}~	\includegraphics[width = 0.4\textwidth]{figure_man/training/datapoints-0_2.pdf}
+\end{figure}
+
+
+\begin{footnotesize}
+\textcolor{blue}{\faInfoCircle} The left plot depicts how the data fit, the complexity penalty (a higher value means less penalization), and the overall marginal likelihood behave for increasing values of the length-scale.\\
+\vspace{3mm}
+\textcolor{blue}{\faLightbulbO} A small $\ls$ leads to a good fit, but, to a high complexity penalty.
+\end{footnotesize}
+
+
 
 
 \framebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{figure}
+	\includegraphics[width = 0.4\textwidth]{figure_man/training/fit-vs-penalty-2.pdf}~	\includegraphics[width = 0.4\textwidth]{figure_man/training/datapoints-2.pdf}
+\end{figure}
+
+\begin{footnotesize}
+\textcolor{blue}{\faInfoCircle} The left plot depicts how the data fit, the complexity penalty (a higher value means less penalization), and the overall marginal likelihood behave for increasing values of the length-scale.\\
+\vspace{3mm}
+\textcolor{blue}{\faLightbulbO} A large $\ls$ results in a poor fit.
+\end{footnotesize}
 
 
 \framebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{figure}
+	\includegraphics[width = 0.4\textwidth]{figure_man/training/fit-vs-penalty-0_5.pdf}~	\includegraphics[width = 0.4\textwidth]{figure_man/training/datapoints-0_5.pdf}
+\end{figure}
+
+
+\begin{footnotesize}
+\textcolor{blue}{\faInfoCircle} The left plot depicts how the data fit, the complexity penalty (a higher value means less penalization), and the overall marginal likelihood behave for increasing values of the length-scale.\\
+\vspace{3mm}
+\textcolor{blue}{\faLightbulbO} The maximizer of the log-likelihood ($\ls = 0.5$) balances the complexity and data the fit.
+\end{footnotesize}
 
 
 \end{frame}
@@ -85,15 +192,53 @@
 
 \begin{frame}[c,allowframebreaks]{Training a GP via the Maximum Likelihood}
 
+To choose the hyperparameters by maximizing the marginal likelihood, we need to find the partial derivatives of the likelihood w.r.t. the hyperparameters:
 
+\begin{footnotesize}
+\begin{eqnarray*}
+\frac{\partial}{\partial\theta_j} \, log\,p(\bm{y} \mid \bm{X}, \thetab) &=& \frac{\partial}{\partial\theta_j}  \left(-\frac{1}{2}\bm{y}^\top\bm{K}_y^{-1} \bm{y} - \frac{1}{2}\,log\, \left| \bm{K}_y \right| - \frac{n}{2} \,log\, 2\pi\right) \\ 
+&=&\frac{1}{2} \bm{y}^\top \bm{K}^{-1} \frac{\partial \bm{K}}{\partial \theta_j}\bm{K}^{-1} \bm{y} - \frac{1}{2} \text{tr}\left(\bm{K}^{-1} \frac{\partial \bm{K}}{\partial \thetab} \right) \\
+&=& \frac{1}{2} \text{tr}\left((\bm{K}^{-1}\bm{y}\bm{y}^\top\bm{K}^{-1} - \bm{K}^{-1})\frac{\partial\bm{K}}{\partial\theta_j}\right)
+\end{eqnarray*}
+\end{footnotesize}
 
+\textcolor{blue}{\faLightbulbO} Above, we used the following identities:
+\begin{footnotesize}
+$$\frac{\partial}{\partial \theta_j} \bm{K}^{-1} = - \bm{K}^{-1} \frac{\partial \bm{K}}{\partial \theta_j}\bm{K}^{-1}\text{ and } \frac{\partial}{\partial \thetab} log  |\bm{K}| = \text{tr}\left(\bm{K}^{-1} \frac{\partial \bm{K}}{\partial \thetab} \right)$$
+\end{footnotesize}
 \framebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+\begin{itemize}
+  \item The complexity and the runtime of training a Gaussian process is dominated by the computational task of inverting $\bm{K}$.
+  \lz
+  \item Standard methods require $\order(n^3)$ time (!) for inverting an $n\times n$ matrix.
+  \lz
+  \item Once $\bm{K}^{-1}$ is known, the computation of the partial derivatives requires only $\order(n^2)$ time per hyperparameter.
+  \lz
+  \item[\faLightbulbO] Thus, the computational overhead of computing derivatives is small, and using a gradient based optimizer is advantageous. 
+\end{itemize}
+
 
 \framebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Workarounds to make GP estimation feasible for big data include:
+
+\begin{itemize}
+\item Using kernels that yield sparse $\bm K$: cheaper to invert.
+\vspace{3mm}
+\item Subsampling the data to estimate $\theta$; $\order(m^3)$ for subset of size $m$.
+\vspace{3mm}
+\item Combining estimates on different subsets of size $m$: \textbf{Bayesian committee}; $\order(n m^2)$.
+\vspace{3mm}
+\item Exploiting low-rank approximations of $\bm{K}$ by using only a representative subset (enducing points) of $m$ training data $\bm X_m$:\textbf{Nyström approximation} $\bm K\approx\bm K_{nm} \bm K_{mm}^{-} \bm K_{mn}$, with $\order(nmk + m^3)$ for a rank-k-approximate inverse of $\bm K_{mm}$.
+\vspace{3mm}
+\item Utilizing structure in $\bm{K}$ induced by the kernel: exact solutions but complicated maths, not applicable for all kernels.
+\end{itemize}
+
+\vspace{3mm}
+... this is still an active area of research.
 
 
 
