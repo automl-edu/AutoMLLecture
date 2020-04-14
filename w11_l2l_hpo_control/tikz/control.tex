@@ -5,10 +5,10 @@
     	minimum height=.75cm] {Policy $\policy$};
         			
         			\node (Algo) [activity, right of=Agent, xshift=3cm,
-    	minimum height=.75cm] {Algorithm $A$};
+    	minimum height=.75cm] {Algorithm $\algo$};
         			
         			\begin{pgfonlayer}{background}
-        			\path (Agent -| Agent.west)+(-0.12,1.25) node (resUL) {};
+        			\path (Agent -| Agent.west)+(-0.12,1.35) node (resUL) {};
         			\path (Algo.east |- Algo.south)+(0.125,-1.25) node (resBR) {};
         			
         			% Context
@@ -26,12 +26,12 @@
         			
         			%        \draw[myarrow] (feat.south) -- ($(feat.south |- Agent)+(0,1.125)$);
         			
-        			\draw[myarrow] (Agent.north) -- ($(Agent.north)+(0.0,+0.35)$) -- ($(Algo.north)+(0.0,+0.35)$) node [above,pos=0.5] { apply action $a_t$} node [below,pos=0.5] {set $\conf_i := v$} -- (Algo.north);
-        			\draw[myarrow, dashed] ($(Algo.south)+(-0.25, 0)$) -- ($(Algo.south)+(-0.25, -0.35)$) -- ($(Agent.south)+(0.25, -0.35)$) node [above,pos=0.5] {state $s_{t+1}$} -- ($(Agent.south)+(0.25, 0)$);
-        			\draw[myarrow] ($(Algo.south)+(0.25, 0)$) -- ($(Algo.south)+(0.25, -0.55)$) -- ($(Agent.south)+(-0.25, -0.55)$) node [below,pos=0.5] {reward $r_{t+1}$} -- ($(Agent.south)+(-0.25, 0)$);
+        			\draw[myarrow] (Agent.north) -- ($(Agent.north)+(0.0,+0.35)$) -- ($(Algo.north)+(0.0,+0.35)$) node [above,pos=0.5] { apply action $a^{(t)}$} node [below,pos=0.5] {set $\conf_i := v$} -- (Algo.north);
+        			\draw[myarrow, dashed] ($(Algo.south)+(-0.25, 0)$) -- ($(Algo.south)+(-0.25, -0.35)$) -- ($(Agent.south)+(0.25, -0.35)$) node [above,pos=0.5] {state $\stateRL^{(t+1)}$} -- ($(Agent.south)+(0.25, 0)$);
+        			\draw[myarrow] ($(Algo.south)+(0.25, 0)$) -- ($(Algo.south)+(0.25, -0.55)$) -- ($(Agent.south)+(-0.25, -0.55)$) node [below,pos=0.5] {reward $\rewardRL^{(t+1)}$} -- ($(Agent.south)+(-0.25, 0)$);
         			
         			\draw[<->, thick, draw=black!32.5] (resBR.east |- resUL.center) -- ($(resBR.east |- resUL.center)+(0.5, -0.5)$);
-        			\path (resBR.east |- resUL.center)+(.8, -0.175) node [text=black!32.5] {$\mdata$};
+        			\path (resBR.east |- resUL.center)+(.8, -0.175) node [text=black!32.5] {$\datasets$};
         			% This path is only needed so the figure stays centered (the text is not visible)
         			\path (resUL.west |- resUL.center)+(-.5, -0.175) node [text=black!0] {$\mdata$}; 
         			

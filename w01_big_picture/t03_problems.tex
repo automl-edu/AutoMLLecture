@@ -4,7 +4,8 @@
 
 
 
-\title[AutoML: Problem]{AutoML: Overview of Problems}
+\title[AutoML: Problems]{AutoML: Introduction}
+\subtitle{Overview of AutoML Problems}
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
@@ -28,7 +29,7 @@
 %----------------------------------------------------------------------
 \begin{frame}[c]{Objectives of AutoML}
 
-Different metrics to measure the success of AutoML:
+Different metrics to measure the success of ML and AutoML:
 
 \begin{itemize}
 	\item Accuracy on a validation dataset
@@ -73,12 +74,12 @@ Different metrics to measure the success of AutoML:
 		\pause
 		\item $\dataset_{opt}$ be a dataset which is split into $\datasettrain$ and $\datasetval$ 
 		\pause
-		\item $\cost(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the cost of $\algo_\conf$ trained on $\datasettrain$ and evaluated on $\datasetval$.
+		\item $\cost(\algo_{\conf}, \dataset_{train}, \dataset_{valid})$ denote the cost of $\algo_{\conf}$ trained on $\datasettrain$ and evaluated on $\datasetval$.
 	\end{itemize}
 	\pause
 	The \emph{hyper-parameter optimization (HPO)} problem is to find a hyper-parameter configuration that minimizes this cost:
 	\begin{equation}
-	\optconf \in \argmin_{\conf \in \pcs} \cost(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber  
+	\optconf \in \argmin_{\conf \in \pcs} \cost(\algo_{\conf}, \dataset_{train}, \dataset_{valid}) \nonumber  
 	\end{equation}
 \end{block}
 
@@ -108,7 +109,7 @@ Remarks:
 	\begin{itemize}
 		\item logistic regression
 		\item k-nearest neighbor
-		\item naive bayes
+		\item na\"ive Bayes
 		\item support vector machine
 		\item decision tree
 		\item random forest
@@ -135,11 +136,11 @@ Remarks:
 		\item \alert{$\algos = \{\algo_1, \algo_2, \ldots, \algo_k\}$ be a set of algorithms (a.k.a. portfolio)}
 		\item $\pcs$ be a set of hyperparameters of each machine learning algorithm $\algo_i$
 		\item $\dataset_{opt}$ be a dataset which is split into $\dataset_{train}$ and $\dataset_{valid}$ 
-		\item $\cost(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the cost of $\algo_\conf$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
+		\item $\cost(\algo_{\conf}, \dataset_{train}, \dataset_{valid})$ denote the cost of $\algo_{\conf}$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
 	\end{itemize}
 	we want to find \alert{the best combination of algorithm $\algo \in \mathbf{A}$ and its hyperparameter configuration $\conf \in \pcs$} minimizing:
 	\begin{equation}
-	(\algo^*, \optconf) \in \argmin_{\algo \in \algos, \conf \in \pcs} \cost(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber
+	(\algo^*, \optconf) \in \argmin_{\algo \in \algos, \conf \in \pcs} \cost(\algo_{\conf}, \dataset_{train}, \dataset_{valid}) \nonumber
 	\end{equation}
 \end{block}
 
@@ -180,7 +181,7 @@ Remarks:
 	
 	\pause
 	\begin{itemize}
-		\item For similar datasets, you might use scaled versions of known architectures (e.g., CIFAR10 and Imagenet)
+		\item For similar datasets, you might use scaled versions of known architectures\\ (e.g., CIFAR10 and Imagenet)
 	\end{itemize}
 \end{itemize}
 
@@ -194,11 +195,11 @@ Remarks:
 	\begin{itemize}
 		\item $\conf$ be \alert{an architecture for a deep neural network $N$} with domain $\pcs$,
 		\item $\dataset_{opt}$ be a dataset which is split into $\dataset_{train}$ and $\dataset_{valid}$ 
-		\item $\cost(\algo_\conf, \dataset_{train}, \dataset_{valid})$ denote the cost of $N_\conf$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
+		\item $\cost(N_{\conf}, \dataset_{train}, \dataset_{valid})$ denote the cost of $N_{\conf}$ trained on $\dataset_{train}$ and evaluated on $\dataset_{valid}$.
 	\end{itemize}
 	The \emph{neural architecture search (NAS)} problem is to find an architecture that minimizes this cost:
 	\begin{equation}
-	\conf^* \in \argmin_{\conf \in \pcs} \cost(\algo_\conf, \dataset_{train}, \dataset_{valid}) \nonumber  
+	\conf^* \in \argmin_{\conf \in \pcs} \cost(N_{\conf}, \dataset_{train}, \dataset_{valid}) \nonumber  
 	\end{equation}
 \end{block}
 
@@ -256,17 +257,17 @@ Remark:
 \begin{block}{Definition}
 	Let 
 	\begin{itemize}
-		\item $\pcs$ be a hyperparameter configuration of an algorithm $\algo$,
+		\item $\conf$ be a hyperparameter configuration of an algorithm $\algo$,
 		\pause
 		\item $p(\dataset)$ be a probability distribution over datasets $\dataset \in \datasets$,
 		\pause
 		\item $\stateRL_t$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
 		\pause
-		\item $\cost: \policies \times \datasets \to \perf$ be a cost metric assessing the \alert{cost of a control policy $\pi \in \Pi$} on $\dataset \in \datasets$
+		\item $\cost: \policies \times \datasets \to \perf$ be a cost metric assessing the \alert{cost of a conf. policy $\pi \in \Pi$} on $\dataset \in \datasets$
 	\end{itemize}
 	
 	\pause
-	the \emph{dynamic algorithm configuration problem} is to obtain a control policy $\policy^* : \stateRL_t \times \dataset \mapsto \conf$ by optimizing its cost across a distribution of datasets:
+	the \emph{dynamic algorithm configuration problem (DAC)} is to obtain a configuration policy $\policy^* : \stateRL_t \times \dataset \mapsto \conf$ by optimizing its cost across a distribution of datasets:
 	\begin{equation}
 	\pi^* \in \argmin_{\policy \in \policies} \int_{\datasets} p(\dataset) c(\policy, \dataset) \diff \dataset \nonumber
 	\end{equation}
@@ -276,14 +277,15 @@ Remark:
 %-----------------------------------------------------------------------	
 %-----------------------------------------------------------------------	
 %----------------------------------------------------------------------
-\begin{frame}[c]{Overview}
+\begin{frame}[c]{Summary}
 
 \begin{description}
 	\item[HPO] Search for the best hyperparameter configuration of a ML algorithm
 	\item[CASH] Search for the best combination of algorithm and hyperparameter configuration
 	\item[NAS] Search for the architecture of neural network
+	\bigskip
 	\item[Selection] Predict the best algorithm (and its hyperparameter configuration)
-	\item[Dynamic] Predict the best hyperparameter configuration for an algorithm state\\ at a given time point 
+	\item[DAC] Predict the best hyperparameter configuration for an algorithm state\\ at a given time point 
 \end{description}
 
 \end{frame}

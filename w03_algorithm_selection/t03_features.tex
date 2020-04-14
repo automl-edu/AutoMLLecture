@@ -2,13 +2,11 @@
 \input{../latex_main/main.tex}
 
 
-
-\title[AutoML: Overview]{AutoML: Automated Machine Learning}
-\subtitle{Algorithm Selection}
-\author[Lars Kotthoff]{Bernd Bischl \and Frank Hutter \and \underline{Lars Kotthoff} \and Marius Lindauer}
+\title[AutoML: Overview]{AutoML: Algorithm Selection} % week title
+\subtitle{Features} % video title
+\author[Lars Kotthoff]{Bernd Bischl \and Frank Hutter \and \underline{Lars Kotthoff}\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
-
 
 
 % \AtBeginSection[] % Do nothing for \section*
@@ -22,60 +20,107 @@
 
 \begin{document}
 	
-	\maketitle
-	
+\maketitle
 
-\begin{frame}{Features}
+\begin{frame}[c]{Algorithm Selection}
+\begin{center}
+\resizebox{.7\textwidth}{!}{%
+\tikzset{>=latex}
+\begin{tikzpicture}[node distance=1em,inner sep=.5em,n/.style={drop
+shadow,fill=white,rounded corners},scale=.5]
+\node (p) [align=left] {Portfolio};
+\node (a2) [rectangle,align=center,below=of p,draw] {Algorithm 2};
+\node (a1) [rectangle,align=center,left=of a2,draw] {Algorithm 1};
+\node (a3) [rectangle,align=center,right=of a2,draw] {Algorithm 3};
+\begin{pgfonlayer}{background}
+\node (pc) [n,fit={(p) (a1) (a2) (a3)},draw] {};
+\end{pgfonlayer}
+
+\node (i) [align=left,right=15em of p.east] {Training Datasets};
+\node (i2) [rectangle,align=center,below=of i,draw] {Dataset 2};
+\node (i1) [rectangle,align=center,left=of i2,draw] {Dataset 1};
+\node (i3) [rectangle,align=center,right=of i2,draw] {Dataset 3};
+\begin{pgfonlayer}{background}
+\node (ic) [n,fit={(i) (i1) (i2) (i3)},draw] {};
+\end{pgfonlayer}
+
+\node (as) [n,draw,align=left,below=10em of $(p)!0.5!(i)$] {Algorithm Selection};
+\node (m) [n,draw,align=left,below=3em of as] {Performance Model};
+
+\node (it) [align=center,right=10em of m] {Dataset 4\\Dataset 5\\Dataset 6\\$\vdots$};
+
+\node (s) [align=center,below=3em of m] {Dataset 4: Algorithm 2\\Dataset 5: Algorithm 3\\Dataset 6: Algorithm 3\\$\vdots$};
+
+\path [->] (pc.south) edge (as);
+\path [->] (ic.south) edge node [below right, rectangle, draw = blue, line width = 3pt] {Feature Extraction} (as);
+\path [->] ([xshift=-.5em]it.west) edge node [below,align=center, rectangle, draw = blue, line width = 3pt] {Feature\\Extraction} (m.east);
+\path [->] (as.south) edge (m.north);
+\path [->] (m.south) edge (s.north);
+\end{tikzpicture}}
+\end{center}
+\end{frame}
+
+\begin{frame}[c]{Features}
 \begin{itemize}
-\item relate properties of problem instances to performance
-\item relatively cheap to compute
-\item specified by domain expert
-\item syntactic -- analyse instance description
-\item probing -- run algorithm for short time
-\item dynamic -- instance changes while algorithm is running
+\item relate properties of datasets to algorithm performance
+\item relatively cheap to compute -- must be cheaper than running the algorithm
+    to see what its performance is
+\item often specified by domain expert
+\item syntactic and information-theoretic -- analyze dataset
+\item probing -- run an algorithm for short time or on subset of data
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Syntactic Features}
-\begin{itemize}
-\item number of variables, number of clauses/constraints/\ldots
-\item ratios
-\item order of variables/values
-\item clause/constraints--variable graph or variable graph:
+\begin{frame}[c]{Syntactic and Information-Theoretic Features}
     \begin{itemize}
-    \item node degrees
-    \item connectivity
-    \item clustering coefficient
-    \item \ldots
+        \item number of binary/numeric/categorical features
+        \item number of classes
+        \item class entropy
+        \item skewness of classes
+        \item fraction of missing values
+        \item correlation between features and target
+        \item \ldots
     \end{itemize}
-\item \ldots
-\end{itemize}
 \end{frame}
 
-\begin{frame}{Probing Features}
-\begin{itemize}
-\item number of nodes/propagations within time limit
-\item estimate of search space size
-\item tightness of problem/constraints
-\item \ldots
-\end{itemize}
+\begin{frame}[c]{Probing Features (Landmarkers)}
+    \begin{itemize}
+        \item performance of majority class/mean value predictor
+        \item decision stump performance
+        \item simple rule model performance
+        \item performance of algorithm of interest on 1\% of data
+        \item \ldots
+    \end{itemize}
+    $\rightarrow$ usually leads to much better results that using just syntactic
+    and information-theoretic features
 \end{frame}
 
-\begin{frame}{Dynamic Features}
-\begin{itemize}
-\item change of variable domains
-\item number of constraint propagations
-\item number of failures a clause participated in
-\item \ldots
-\end{itemize}
+\begin{frame}[c]{No Features}
+    \begin{itemize}
+        \item use deep learning to process dataset or problem instance as-is
+        \item no need for expert-designed features
+        \item only preliminary applications so far, performance not good, no widespread adoption yet
+    \end{itemize}
 \end{frame}
 
-\begin{frame}{What Features do we need in Practice?}
-\begin{itemize}
-\item trade-off between complex features and complex models
-\item in practice, very simple features (e.g.\ problem size) can perform well
-\item in the end, whatever works best
-\end{itemize}
+\begin{frame}[c]{Aside: Algorithm Features}
+    \begin{itemize}
+        \item can characterize algorithm in addition to datasets
+        \item allows to relate performance to specific aspects of an algorithm
+            rather than black boxes
+        \item for example size of code base, properties of abstract syntax
+            tree\ldots
+        \item ongoing work
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[c]{What Features Do We Need in Practice?}
+    \begin{itemize}
+        \item trade-off between complex features and complex models
+        \item in practice, very simple features can perform well
+        \item often only few features of a set are needed (e.g.\ 5 out of $>$100)
+        \item in the end, whatever works best
+    \end{itemize}
 \end{frame}
 
 \end{document}

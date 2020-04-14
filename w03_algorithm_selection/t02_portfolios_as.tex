@@ -2,10 +2,9 @@
 \input{../latex_main/main.tex}
 
 
-
-\title[AutoML: Overview]{AutoML: Automated Machine Learning}
-\subtitle{Algorithm Selection}
-\author[Lars Kotthoff]{Bernd Bischl \and Frank Hutter \and \underline{Lars Kotthoff} \and Marius Lindauer}
+\title[AutoML: Overview]{AutoML: Algorithm Selection} % week title
+\subtitle{Algorithm Selection} % video title
+\author[Lars Kotthoff]{Bernd Bischl \and Frank Hutter \and \underline{Lars Kotthoff}\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -25,7 +24,7 @@
 	\maketitle
 	
 
-\begin{frame}{Algorithm Selection}
+\begin{frame}[c]{Algorithm Selection}
 \begin{center}
 \resizebox{.7\textwidth}{!}{%
 \tikzset{>=latex}
@@ -39,10 +38,10 @@ shadow,fill=white,rounded corners},scale=.5]
 \node (pc) [n,fit={(p) (a1) (a2) (a3)},draw] {};
 \end{pgfonlayer}
 
-\node (i) [align=left,right=15em of p.east] {Training Instances};
-\node (i2) [rectangle,align=center,below=of i,draw] {Instance 2};
-\node (i1) [rectangle,align=center,left=of i2,draw] {Instance 1};
-\node (i3) [rectangle,align=center,right=of i2,draw] {Instance 3};
+\node (i) [align=left,right=15em of p.east] {Training Datasets};
+\node (i2) [rectangle,align=center,below=of i,draw] {Dataset 2};
+\node (i1) [rectangle,align=center,left=of i2,draw] {Dataset 1};
+\node (i3) [rectangle,align=center,right=of i2,draw] {Dataset 3};
 \begin{pgfonlayer}{background}
 \node (ic) [n,fit={(i) (i1) (i2) (i3)},draw] {};
 \end{pgfonlayer}
@@ -50,9 +49,9 @@ shadow,fill=white,rounded corners},scale=.5]
 \node (as) [n,draw,align=left,below=10em of $(p)!0.5!(i)$] {Algorithm Selection};
 \node (m) [n,draw,align=left,below=3em of as] {Performance Model};
 
-\node (it) [align=center,right=10em of m] {Instance 4\\Instance 5\\Instance 6\\$\vdots$};
+\node (it) [align=center,right=10em of m] {Dataset 4\\Dataset 5\\Dataset 6\\$\vdots$};
 
-\node (s) [align=center,below=3em of m] {Instance 4: Algorithm 2\\Instance 5: Algorithm 3\\Instance 6: Algorithm 3\\$\vdots$};
+\node (s) [align=center,below=3em of m] {Dataset 4: Algorithm 2\\Dataset 5: Algorithm 3\\Dataset 6: Algorithm 3\\$\vdots$};
 
 \path [->] (pc.south) edge (as);
 \path [->] (ic.south) edge node [below right] {Feature Extraction} (as);
@@ -63,48 +62,46 @@ shadow,fill=white,rounded corners},scale=.5]
 \end{center}
 \end{frame}
 
-\begin{frame}{Algorithm Portfolios}
+\begin{frame}[c]{Algorithm Portfolios}
 \begin{itemize}
-\item instead of a single algorithm, use several complementary algorithms
-\item idea from Economics -- minimise risk by spreading it out across several
+    \item instead of a single algorithm, use several (hopefully complementary) algorithms
+\item idea from Economics -- minimize risk by spreading it out across several
     securities
-\item same for computational problems -- minimise risk of algorithm performing
-    poorly
-\item in practice often constructed from competition winners
+\item same here -- minimize risk of algorithm performing poorly
+\item in practice often constructed from algorithms known to perform well
+\item idea similar to ensembles or boosting -- leverage strengths and alleviate
+    weaknesses, but learn which algorithm to choose for a particular dataset
 \end{itemize}
-\lit{Huberman, Bernardo A., Rajan M. Lukose, and Tad Hogg. “An Economics
-Approach to Hard Computational Problems.” Science 275, no. 5296 (1997): 51–54.
-doi:10.1126/science.275.5296.51.}
 \end{frame}
 
-\begin{frame}{Algorithms}
+\begin{frame}[c]{Algorithms}
 ``algorithm'' used in a very loose sense
 \begin{itemize}
-\item constraint solvers
-\item search strategies
-\item modelling choices
-\item different types of consistency
+\item different learners
+\item different parameterizations of the same learner
+\item different ensembles, boosted learners
+\item different machine learning workflows/pipelines
+\item \ldots
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Evaluation of Portfolios}
+\begin{frame}[c]{Evaluation of Portfolios}
 \begin{itemize}
 \item single best algorithm
     \begin{itemize}
-    \item algorithm with the best performance across all instances
+    \item algorithm with the best performance across all datasets
     \item lower bound for performance of portfolio -- hopefully we are better!
     \end{itemize}
 \item virtual best algorithm
     \begin{itemize}
-    \item choose the best algorithm for each instance
+    \item choose the best algorithm for each dataset
     \item corresponds to oracle predictor or overhead-free parallel portfolio
-    \item upper bound on portfolio performance (assuming robust performance
-    measurements) -- note difference to configuration
+    \item upper bound on portfolio performance
     \end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Parallel Portfolios}
+\begin{frame}[c]{Parallel Portfolios}
 Why not simply run all algorithms in parallel?
 \begin{itemize}
 \item not enough resources may be available/waste of resources
@@ -114,38 +111,40 @@ Why not simply run all algorithms in parallel?
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Building an Algorithm Selection System}
+\begin{frame}[c]{Building an Algorithm Selection System}
 \begin{itemize}
-\item most approaches rely on machine learning
+    \item most approaches rely on (meta-)machine learning
 \item train with representative data, i.e.\ performance of all algorithms in
-    portfolio on a number of instances
-\item evaluate performance on separate set of instances
+    portfolio on representative datasets
+\item evaluate performance on separate set of datasets
 \item potentially large amount of prep work
+\item existing repositories of machine learning performances (e.g. OpenML) can
+    help
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Choosing Instances}
+\begin{frame}[c]{Choosing Datasets}
 \begin{itemize}
-\item we want selectors that generalise, i.e.\ good for more than one
-instance
-\item split instances into training set (which we configure on) and test set
+\item we want selectors that generalize, i.e.\ good for more than one
+dataset
+\item split datasets into training set (which we learn a selector on) and test set
 (which we only evaluate performance on)
-\item need to balance easy/hard instances in both sets
-\item may need hundreds or thousands of instances
+\item need to balance easy/hard datasets in both sets
+\item may need a lot of data
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Key Components of an Algorithm Selection System}
+\begin{frame}[c]{Key Components of an Algorithm Selection System}
 \begin{itemize}
 \item feature extraction
 \item performance model
-\item prediction-based selector/scheduler
+\item prediction-based selector
 \end{itemize}
 optional:
 \begin{itemize}
 \item presolver
 \item secondary/hierarchical models and predictors (e.g.\ for feature extraction
-    time)
+    time to avoid spending a long time for small performance gains)
 \end{itemize}
 \end{frame}
 

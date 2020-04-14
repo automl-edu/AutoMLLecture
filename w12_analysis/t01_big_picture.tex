@@ -2,12 +2,9 @@
 
 \input{../latex_main/main.tex}
 
-
-
-\title[AutoML: Overview]{AutoML: Automated Machine Learning}
+\title[AutoML: Interpretability]{AutoML: Interpretability}
 \subtitle{Overview: Automated Empirical Analysis}
-%TODO: change authors!
-\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -35,7 +32,7 @@
 \begin{itemize}
 	\item Big challenge of ML: Interpretability
 	\begin{itemize}
-		\item In some applications, it is required to "understand" a prediction 
+		\item In some applications, it is required to ''understand`` a prediction 
 		\item Users have less trust in systems, they can't understand
 	\end{itemize}
 
@@ -44,11 +41,11 @@
 	\item AutoML is even worse?
 	\begin{itemize}
 		\item AutoML  is a black-box that automates the design  of another blackbox (ML)
-		\item Also ML-developers to have an understanding of the design of their ML pipelines
+		\item Also ML-developers have an basic understanding of the design of their ML pipelines
 	\end{itemize}
 
 	\bigskip
-	\item Automated empirical analysis helps to
+	\item Automated empirical interpretability helps to
 	\begin{itemize}
 		\item understand the finally returned ML system
 		\item understand the AutoML process
@@ -78,7 +75,8 @@
 }
 \end{center}
 
-$\leadsto$ Let's use this data to learn something about our problem
+\only<4->
+{$\leadsto$ Let's use this data to learn something about our AutoML problem}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -86,17 +84,17 @@ $\leadsto$ Let's use this data to learn something about our problem
 \begin{frame}[c]{Basic Examples}
 
 \begin{itemize}
-	\item Visualize final $\conf^*$
+	\item Visualize final incumbent $\finconf$
 	\begin{itemize}
 		\item ML pipeline with its components
 		\item Neural architecture
 	\end{itemize}
 	\medskip
 	\pause
-	\item Compare what changed between $\defconf$ and $\incumbent$
+	\item Compare what changed between $\defconf$ and $\finconf$
 	\medskip
 	\pause		
-	\item Show $\conf^*$ on different budgets (if you used a multi-fideltiy approach)
+	\item Show $\finconf$ on different budgets (if you used a multi-fideltiy approach)
 \end{itemize}
 
 \end{frame}
@@ -121,7 +119,7 @@ $\leadsto$ Let's use this data to learn something about our problem
 	\begin{itemize}
 		\item you need less time next time or 
 		\pause
-		\item the AutoML system is still improving; so you should give him more time
+		\item the AutoML system is still improving; so you should give it more time
 	\end{itemize}
 	\pause
 	\item \alert{Notes}: 

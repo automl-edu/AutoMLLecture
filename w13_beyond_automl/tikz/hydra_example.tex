@@ -1,0 +1,154 @@
+% !TeX spellcheck = en_US
+\begin{frame}[c]{Heterogeneous example}
+	\begin{figure}
+		\centering
+			\begin{tikzpicture}
+			%	\draw[very thin,color=gray] (-0.1,-1.1) grid (3.9,3.9);
+			\draw[->] (-0.2,0) -- (4.2,0) node[right] {${\conf}$};
+			\draw[->] (0,-0.2) -- (0,4.2) node[above] {$c_{\inst_i}({\conf})$};
+			\draw[color=blue,domain=3:7]   plot (\x-3,{sin((\x-2) r) + 1.275})   node[right] {$\inst_0({\conf})$};
+			\draw[color=orange,domain=0:4] plot (\x,{0.05*exp(\x)}) node[right] {$\inst_1({\conf})$};
+			\draw[color=red,domain=-2:2] plot (\x+2,{\x*\x}) node[right] {$\inst_2({\conf})$};
+			
+			\only<2->{
+				 \foreach \x/\xtext in {0/{\conf}_{\inst_1}^*, 2/{\conf}_{\inst_2}^*, 3.725/{\conf}_{\inst_0}^*}
+					\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext$};
+			}
+			\only<3->{
+				 \foreach \y/\ytext in {.75/c_{{\conf}_{SB}}}
+					\draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left] {$\ytext$};
+				 \foreach \x/\xtext in {2.725/{\conf}_{SB}}
+					\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext$};
+				 \draw[densely dotted,color=gray] (0,0.75) -- (2.725,.75);
+				 \draw[densely dotted,color=gray] (2.725,0) -- (2.725,.75);
+			}
+			\only<4->{
+			%	\draw[dashed,color=gray] (0,0.1275) -- (3.725,0.1275);
+				\foreach \y/\ytext in {0.1275/c_{oracle}}
+				\draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left] {$\ytext$};
+			}
+			\end{tikzpicture}
+	\end{figure}
+\end{frame}
+
+\begin{frame}[c]{Hydra: Iteration 1}
+		\centering
+		\begin{tikzpicture}
+		
+			\only<1>{
+				%	\draw[very thin,color=gray] (-0.1,-1.1) grid (3.9,3.9);
+				\draw[->] (-0.2,0) -- (4.2,0) node[right] {${\conf}$};
+				\draw[->] (0,-0.2) -- (0,4.2) node[above] {$c_{\inst_i}({\conf})$};
+				\draw[color=blue,domain=3:7]   plot (\x-3,{sin((\x-2) r) + 1.275})   node[right] {$\inst_0({\conf})$};
+				\draw[color=orange,domain=0:4] plot (\x,{0.05*exp(\x)}) node[right] {$\inst_1({\conf})$};
+				\draw[color=red,domain=-2:2] plot (\x+2,{\x*\x}) node[right] {$\inst_2({\conf})$};
+				
+%				\foreach \y/\ytext in {.75/c_{{\conf}_{0}}}
+%				\draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left] {$\ytext$};
+				\foreach \x/\xtext in {2.725/{\conf}_{0}}
+				\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext$};
+%				\draw[densely dotted,color=gray] (0,0.75) -- (2.725,.75);
+				\draw[densely dotted,color=gray] (2.725,0) -- (2.725,4);
+			}
+			\only<2>{
+				%Update metric
+				%	\draw[very thin,color=gray] (-0.1,-1.1) grid (3.9,3.9);
+				\draw[->] (-0.2,0) -- (4.2,0) node[right] {${\conf}$};
+				\draw[->] (0,-0.2) -- (0,4.2) node[above] {$c_{\inst_i}^{'}({\conf})$};
+				
+				\draw[color=orange,domain=0:2.725] plot (\x,{0.05*exp(\x)});
+				\draw[color=orange,domain=2.725:4] plot (\x,.75) node[right] {$\inst_1({\conf})$};
+				
+				\draw[color=red,domain=-.725:.725] plot (\x+2,{\x*\x});
+				\draw[color=red,domain=-2:-.725] plot (\x+2,0.525625);
+				\draw[color=red,domain=.725:2] plot (\x+2,0.525625) node[right] {$\inst_2({\conf})$};
+				
+				\draw[color=blue,domain=5.725:7]   plot (\x-3,{sin((\x-2) r) + 1.275})   node[right] {$\inst_0({\conf})$};
+				\draw[color=blue,domain=3:5.725]   plot (\x-3,.75);
+				
+				\foreach \y/\ytext in {.75/c^{'}_{\inst_{\left\{0, 1\right\}}}(\portfolio)}
+				\draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left,yshift=0.15cm] {$\ytext$};
+				\foreach \y/\ytext in {0.525625/c^{'}_{\inst_{2}}(\portfolio)}
+				\draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left,yshift=-0.15cm] {$\ytext$};
+				
+				\foreach \x/\xtext in {2.725/{\conf}_{0}}
+				\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext$};
+				
+%				\draw[densely dotted,color=gray] (0,0.75) -- (2.725,.75);
+				\draw[densely dotted,color=gray] (2.725,0) -- (2.725,.75);
+			}
+		\end{tikzpicture}
+
+			\only<1>{Search initial well performing configuration. Add ${\conf}_{0}$ to $\portfolio$}
+			\only<2>{Update metric}
+\end{frame}
+
+
+
+\begin{frame}[c]{Hydra: Iteration 2}
+	\centering
+	\begin{tikzpicture}
+	\only<1>{
+		%Update metric
+		%	\draw[very thin,color=gray] (-0.1,-1.1) grid (3.9,3.9);
+		\draw[->] (-0.2,0) -- (4.2,0) node[right] {${\conf}$};
+		\draw[->] (0,-0.2) -- (0,4.2) node[above] {$c_{\inst_i}^{'}({\conf})$};
+		
+		\draw[color=orange,domain=0:2.725] plot (\x,{0.05*exp(\x)});
+		\draw[color=orange,domain=2.725:4] plot (\x,.75) node[right] {$\inst_1({\conf})$};
+		
+		\draw[color=red,domain=-.725:.725] plot (\x+2,{\x*\x});
+		\draw[color=red,domain=-2:-.725] plot (\x+2,0.525625);
+		\draw[color=red,domain=.725:2] plot (\x+2,0.525625) node[right] {$\inst_2({\conf})$};
+		
+		\draw[color=blue,domain=5.725:7]   plot (\x-3,{sin((\x-2) r) + 1.275})   node[right] {$\inst_0({\conf})$};
+		\draw[color=blue,domain=3:5.725]   plot (\x-3,.75);
+		
+		\foreach \y/\ytext in {.75/}
+		\draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left,yshift=0.15cm] {$\ytext$};
+		\foreach \y/\ytext in {0.525625/}
+		\draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left,yshift=-0.15cm] {$\ytext$};
+		
+		\foreach \x/\xtext in {2.725/{\conf}_{0}, 3.725/{\conf}_{1}}
+		\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext$};
+		
+%		\draw[densely dotted,color=gray] (0,0.75) -- (2.725,.75);
+		\draw[densely dotted,color=gray] (2.725,0) -- (2.725,.75);
+		\draw[densely dotted,color=gray] (3.725,0) -- (3.725,4);
+	}
+
+	\only<2>{
+		%Update metric
+		%	\draw[very thin,color=gray] (-0.,-.) grid (3.9,3.9);
+		\draw[->] (-0.2,0) -- (4.2,0) node[right] {${\conf}$};
+		\draw[->] (0,-0.2) -- (0,4.2) node[above] {$c_{\inst_i}^{''}({\conf})$};
+		
+		\draw[color=orange,domain=0:2.725] plot (\x,{0.05*exp(\x)});
+		\draw[color=orange,domain=2.725:4] plot (\x,.75) node[right] {$\inst_({\conf})$};
+		
+		\draw[color=red,domain=-.725:.725] plot (\x+2,{\x*\x});
+		\draw[color=red,domain=-2:-.725] plot (\x+2,0.525625);
+		\draw[color=red,domain=.725:2] plot (\x+2,0.525625) node[right] {$\inst_2({\conf})$};
+		
+		\draw[color=blue,domain=0:4]   plot (\x,.25)   node[right] {$\inst_0({\conf})$};
+%		\draw[color=blue,domain=3:5.725]   plot (\x-3,.75);
+		
+		\foreach \y/\ytext in {.75/}
+		\draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left,yshift=0.cm] {$\ytext$};
+		\foreach \y/\ytext in {0.525625/}
+		\draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left,yshift=-0.0cm] {$\ytext$};
+		\foreach \y/\ytext in {0.25/}
+		\draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left,yshift=-0.0cm] {$\ytext$};
+		
+		\foreach \x/\xtext in {2.725/{\conf}_{0}, 3.725/{\conf}_{1}}
+		\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext$};
+		
+				\draw[densely dotted,color=gray] (0,0.75) -- (2.725,.75);
+		\draw[densely dotted,color=gray] (2.725,0) -- (2.725,.75);
+		\draw[densely dotted,color=gray] (3.725,0) -- (3.725,.25);
+	}
+	\end{tikzpicture}
+	
+		\only<1>{Search well performing configuration complementary to $\portfolio$.\\Add ${\conf}_{1}$ to $\portfolio$.}
+		\only<2>{Update metric}
+\end{frame}

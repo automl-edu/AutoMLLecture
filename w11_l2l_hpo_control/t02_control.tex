@@ -3,7 +3,7 @@
 
 
 
-\title[AutoML: Learning to Configure]{AutoML: Automated Machine Learning}
+\title[AutoML: DAC]{AutoML: Dynamic Configuration \& Learning}
 \subtitle{Dynamic Configuration}
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
@@ -79,7 +79,7 @@
 		\medskip
 		\item[$\leadsto$] Many hyperparameters only to control a single hyperparameter
 		\pause   
-		\item Still not guaranteed that optimal setting of e.g. learning rate schedules will lead to optimal learning rate behavior
+		\item Still not guaranteed that optimal setting of e.g. learning rate schedules will lead to optimal learning behavior
 		\begin{itemize}
 			\item Learning rate schedules are only heuristics
 		\end{itemize}
@@ -98,11 +98,11 @@
 \begin{block}{Definition}
 	Let 
 	\begin{itemize}
-		\item $\pcs$ be a hyperparameter configuration of an algorithm $\algo$,
+		\item $\conf \in \pcs$ be a hyperparameter configuration of an algorithm $\algo$,
 		\pause
 		\item $p(\dataset)$ be a probability distribution over meta datasets $\dataset \in \datasets$,
 		\pause
-		\item $\stateRL_t$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
+		\item $\stateRL^{(t)}$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
 		\pause
 		\item $\cost: \policies \times \datasets \to \perf$ be a cost metric assessing the cost of a control policy $\pi \in \Pi$ on $\dataset \in \datasets$
 	\end{itemize}
@@ -118,17 +118,17 @@
 %-----------------------------------------------------------------------	
 
 %----------------------------------------------------------------------
-\begin{frame}[c]{Dynamic Algorithm Configuration as Contextual MDP \lit{\href{https://ml.informatik.uni-freiburg.de/papers/20-ECAI-DAC.pdf}{Biedenkapp et al. 2020}}}
+\begin{frame}[c]{Dynamic Algorithm Configuration as Contextual MDP \litw{\href{https://ml.informatik.uni-freiburg.de/papers/20-ECAI-DAC.pdf}{Biedenkapp et al. 2020}}}
 
 
 \begin{description}
-	\item[State $\stateRL_t$] are described by statistics gathered in the algorithm run
+	\item[State $\stateRL^{(t)}$] are described by statistics gathered in the algorithm run
 	\pause
-	\item[Action $\actionRL_t$] change hyperparameters according to some control policy $\pi$
+	\item[Action $\actionRL^{(t)}$] change hyperparameters according to some control policy $\pi$
 	\pause
-	\item[Transition] run the algorithm from state $s_t$ to $s_{t+1}$ for a "short" moment by using the hyperparameters defined by $a_t$
+	\item[Transition] run the algorithm from state $\stateRL^{(t)}$ to $\stateRL^{(t+1)}$ for a "short" moment by using the hyperparameters defined by $a^{(t)}$
 	\pause
-	\item[Reward $\rewardRL_t$] Return your current solution quality (or an approximation)
+	\item[Reward $\rewardRL^{(t)}$] Return your current solution quality (or an approximation)
 	\pause
 	\item[Context $\dataset$] A given dataset (or task)
 \end{description}
@@ -147,18 +147,18 @@
 Solve unknown MDP by using reinforcement learning (RL):
 
 \begin{equation}
-\mathcal{V}_i^\policy(s_t) =  \mathbb{E} \left[\sum_{k=0}^\infty\gamma^k \rewardRL_{t+k+1}(\inst)| \stateRL_t=\stateRL \right]\nonumber
+\mathcal{V}_\dataset^\policy(\stateRL^{(t)}) =  \mathbb{E} \left[\sum_{k=0}^\infty\gamma^k \rewardRL^{(t+k+1)}_\dataset| \stateRL^{(t)}=\stateRL \right]\nonumber
 \end{equation}
 \pause
 
 \begin{equation}
- = \mathbb{E} \left[ \rewardRL_{t+1}(\inst)+\gamma\mathcal{V}_i^\policy(\stateRL_{t+1})| \stateRL_{t+1} \sim \mathcal{T}_i(\stateRL_t, \policy(\stateRL_t)) \right] \nonumber
+ = \mathbb{E} \left[ \rewardRL^{(t+1)}_\dataset+\gamma\mathcal{V}_\dataset^\policy(\stateRL^{(t+1)})| \stateRL^{(t+1)} \sim \mathcal{T}_\dataset(\stateRL^{(t)}, \policy(\stateRL^{(t)})) \right] \nonumber
 \end{equation}
 \pause
 \begin{equation}
 \policy^* \in
 \argmax_{\policy \in \policies}
-\int_{\mdata} p(\dataset) \int_{\statesRL_0} \Pr(\stateRL_0) \cdot \mathcal{V}^\policy_\dataset(\stateRL_0) \diff \stateRL_0 \diff \dataset \nonumber
+\int_{\datasets} p(\dataset) \int_{\statesRL^{(0)}} \Pr(\stateRL^{(0)}) \cdot \mathcal{V}^\policy_\dataset(\stateRL^{(0)}) \diff \stateRL^{(0)} \diff \dataset \nonumber
 \end{equation}
 
 \bigskip
@@ -169,7 +169,7 @@ $\leadsto$ equivalent to Dynamic Algorithm Configuration definition
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Dynamic Algorithm Configuration across Datasets \lit{\href{https://ml.informatik.uni-freiburg.de/papers/20-ECAI-DAC.pdf}{Biedenkapp et al. 2020}}}
+\begin{frame}[c]{Dynamic Algorithm Configuration across Datasets \litw{\href{https://ml.informatik.uni-freiburg.de/papers/20-ECAI-DAC.pdf}{Biedenkapp et al. 2020}}}
 	
 \begin{itemize}
 	\item Challenge: Evaluating a policies on all datasets is often not feasible
@@ -185,23 +185,23 @@ $\leadsto$ equivalent to Dynamic Algorithm Configuration definition
 \pause
 \begin{equation} 
 \label{spl_loss}
-\max_{\policy,\vec{v}}\mathcal{C}(\policy, \vec{v}, K) = \sum^{|\mdata|}_{i=1} \vec{v}_i\mathcal{R}_i(\policy) - \frac{1}{K} \sum^{|\mdata|}_{i=1} \vec{v}_i \nonumber
+\max_{\policy,\vec{v}}\mathcal{C}(\policy, \vec{v}, K) = \sum^{|\datasets|}_{i=1} \vec{v}_i\mathcal{R}_i(\policy) - \frac{1}{K} \sum^{|\datasets|}_{i=1} \vec{v}_i \nonumber
 \end{equation}
 
-with $\weights$ being the agent's policy parameters and $\vec{v}$ being a masking vector.
+with $\weights$ being the agent's policy parameters and\newline $\vec{v}$ being a masking vector for choosing the tasks at hand.
 
-\pause
-\medskip
-
-Iterative greedy optimization of $\vec{v}$:
-\begin{equation}
-\vec{v}_i = \left\{
-\begin{array}{ll}
-1, &  \mathrm{if}\quad\mathcal{C}(\policy, \vec{v}_{i}:=0, K) \leq \mathcal{C}(\policy, \vec{v}_{i}:=1, K)\\
-0, & \mathrm{otherwise}
-\end{array}
-\right.\nonumber
-\end{equation}
+%\pause
+%\medskip
+%
+%Iterative greedy optimization of $\vec{v}$:
+%\begin{equation}
+%\vec{v}_i = \left\{
+%\begin{array}{ll}
+%1, &  \mathrm{if}\quad\mathcal{C}(\policy, \vec{v}_{i}:=0, K) \leq \mathcal{C}(\policy, \vec{v}_{i}:=1, K)\\
+%0, & \mathrm{otherwise}
+%\end{array}
+%\right.\nonumber
+%\end{equation}
 \end{frame}
 %----------------------------------------------------------------------
 

@@ -1,0 +1,199 @@
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Risks]{AutoML: Evaluation} % week title
+\subtitle{Nested Resampling} % video title
+\author[Lars Kotthoff]{\underline{Bernd Bischl} \and Frank Hutter \and \underline{Lars Kotthoff}\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+\newcommand\reffootnote[1]{%
+    \begingroup
+    \renewcommand\thefootnote{}\footnote{
+        \tiny #1
+    \vspace*{1em}}%
+    \addtocounter{footnote}{-1}%
+    \endgroup
+}
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+
+    \begin{frame}[c]{Motivation}
+    Selecting the best model from a set of potential candidates (e.g.\ different
+    classes of learners, different hyperparameter settings, different feature
+    sets, different preprocessing\ldots) is an important part of most  machine
+    learning problems. However,
+
+    \begin{itemize}
+        \item cannot evaluate selected learner on the same
+            resampling splits used to select it
+        \item repeatedly evaluating learner on same test set or same CV splits
+            ``leaks'' information about test set into evaluation
+        \item danger of overfitting to the resampling splits or overtuning
+        \item final performance estimate would be optimistically biased
+        \item similar to multiple hypothesis testing
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}[c,allowframebreaks]{Motivating Example}
+    \begin{itemize}
+        \item binary classification problem with equal class sizes
+        \item learner with hyperparameter $\conf$
+        \item learner is (nonsense) feature-independent classifier that picks
+            random labels with equal probability,
+              $\conf$ has no effect
+        \item true generalization error is 50\%
+        \item cross-validation of learner (with any fixed $\conf$) will easily show this
+          (if the partitioned data set for CV is not too small)
+        \item let's ``tune'' it by trying out 100 different $\conf$ values
+        \item repeat this experiment 50 times and average results
+    \end{itemize}
+
+    \framebreak
+
+    \begin{center}
+        \includegraphics[height=.5\textheight]{example-nested-resampling}
+    \end{center}
+
+    \begin{itemize}
+    \item shown is best ``tuning error'' (i.e.\ performance of
+        model with fixed $\conf$ in cross-validation) after $k$ tuning iterations
+    \item evaluated for different data set sizes
+    \end{itemize}
+
+    \begin{center}
+        \includegraphics[height=.6\textheight]{dist-tuning1}
+    \end{center}
+
+    \begin{itemize}
+    \item for one experiment, CV score is close to 0.5, as expected
+    \item errors essentially sampled from (rescaled) binomial distribution
+    \item scores from multiple experiments also arranged around expected mean of 0.5
+    \end{itemize}
+
+    \framebreak
+
+    \begin{center}
+        \includegraphics[height=.55\textheight]{dist-tuning2}
+    \end{center}
+
+    \begin{itemize}
+    \item tuning means we take the minimum of the scores
+    \item not estimate of average performance, but best-case performance
+    \item the more we sample, the more ``biased'' this value becomes
+        $\rightarrow$ unrealistic generalization performance estimate
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}[c,allowframebreaks]{Untouched Test Set Principle}
+    Instead: simulate what actually happens when applying machine learning
+    models
+
+    \begin{itemize}
+    \item all parts of model construction (including model selection,
+      preprocessing) evaluated \textbf{on training data}
+    \item test set only touched once, so no way of ``cheating''
+    \item test dataset is only used once \emph{after} model is completely
+        trained (including e.g.\ deciding hyper-parameter values)
+    \item performance estimates from test set now \textbf{unbiased estimates} of the true performance
+
+    \framebreak
+
+    \item for steps that themselves require resampling (e.g.\ hyperparameter tuning) this results
+      in \textbf{nested resampling}, i.e.\ resampling strategies for both
+      \begin{itemize} 
+      \item inner evaluation to find what works best based on training data 
+      \item outer evaluation on data not used in inner evaluation to get unbiased estimates of expected performance on new data
+      \end{itemize}
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}[c,allowframebreaks]{Nested Resampling}
+
+        \begin{itemize}
+            \item holdout can be generalized to resampling for more reliable
+                generalization performance estimates
+            \item resampling can be generalized to nested resampling
+            \item nested resampling loops for inner and outer evaluation for
+                hyperparameter tuning
+        \end{itemize}
+
+    \framebreak
+
+    Example: four-fold CV for inner resampling, three-fold CV in outer
+    resampling
+
+    \begin{center}
+        \includegraphics[height=0.6\textheight]{Nested_Resampling.png}
+    \end{center}
+
+    \framebreak
+
+    \begin{footnotesize}
+    In each iteration of the outer loop:
+    \begin{itemize}
+    \item split light green testing data
+    \item run hyperparameter tuner on dark green part of data, i.e.\
+      evaluate each $\conf_i$ through four-fold CV on dark green part
+    \end{itemize}
+    \end{footnotesize}
+
+    \begin{center}
+        \includegraphics[height=0.55\textheight]{Nested_Resampling.png}
+    \end{center}
+
+    \framebreak
+
+    \begin{footnotesize}
+    In each iteration of the outer loop:
+    \begin{itemize}
+    \item return winning $\finconf$ that performed best on the grey inner test sets
+    \item re-train model on full outer dark green training set
+    \item evaluate model on outer light green test set
+    \end{itemize}
+    \end{footnotesize}
+
+    \begin{center}
+        \includegraphics[height=0.55\textheight]{Nested_Resampling.png}
+    \end{center}
+
+    \framebreak
+
+    \begin{footnotesize}
+    $\rightarrow$ error estimates on outer samples (light green) are unbiased
+    because this data was not used process constructing the tested model
+    \end{footnotesize}
+
+    \begin{center}
+        \includegraphics[height=0.6\textheight]{Nested_Resampling.png}
+    \end{center}
+
+    \end{frame}
+
+
+    \begin{frame}[c]{Nested Resampling Example}
+
+    Revisited motivating example: expected performance estimate with nested
+    resampling:
+
+    \begin{center}
+        \includegraphics[width=0.8\textwidth]{nested-resampling-example}
+    \end{center}
+
+
+    \end{frame}
+
+\end{document}

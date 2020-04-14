@@ -1,4 +1,4 @@
-# Lecture on Automated Machine Learning (AutoML)
+# Course on Automated Machine Learning (AutoML)
 
 ## AutoML?
 

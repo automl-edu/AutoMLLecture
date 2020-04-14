@@ -2,14 +2,11 @@
 \input{../latex_main/main.tex}
 
 
-
-\title[AutoML: Overview]{AutoML: Automated Machine Learning}
-\subtitle{Algorithm Selection}
-\author[Lars Kotthoff]{Bernd Bischl \and Frank Hutter \and \underline{Lars Kotthoff} \and Marius Lindauer}
+\title[AutoML: Overview]{AutoML: Algorithm Selection} % week title
+\subtitle{Performance Models} % video title
+\author[Lars Kotthoff]{Bernd Bischl \and Frank Hutter \and \underline{Lars Kotthoff}\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
-
-
 
 % \AtBeginSection[] % Do nothing for \section*
 % {
@@ -24,64 +21,87 @@
 	
 	\maketitle
 	
+\begin{frame}[c]{Algorithm Selection}
+\begin{center}
+\resizebox{.7\textwidth}{!}{%
+\tikzset{>=latex}
+\begin{tikzpicture}[node distance=1em,inner sep=.5em,n/.style={drop
+shadow,fill=white,rounded corners},scale=.5]
+\node (p) [align=left] {Portfolio};
+\node (a2) [rectangle,align=center,below=of p,draw] {Algorithm 2};
+\node (a1) [rectangle,align=center,left=of a2,draw] {Algorithm 1};
+\node (a3) [rectangle,align=center,right=of a2,draw] {Algorithm 3};
+\begin{pgfonlayer}{background}
+\node (pc) [n,fit={(p) (a1) (a2) (a3)},draw] {};
+\end{pgfonlayer}
 
-\begin{frame}{Types of Performance Models}
+\node (i) [align=left,right=15em of p.east] {Training Datasets};
+\node (i2) [rectangle,align=center,below=of i,draw] {Dataset 2};
+\node (i1) [rectangle,align=center,left=of i2,draw] {Dataset 1};
+\node (i3) [rectangle,align=center,right=of i2,draw] {Dataset 3};
+\begin{pgfonlayer}{background}
+\node (ic) [n,fit={(i) (i1) (i2) (i3)},draw] {};
+\end{pgfonlayer}
+
+\node (as) [n,draw,align=left,below=10em of $(p)!0.5!(i)$] {Algorithm Selection};
+\node (m) [n,align=left,below=3em of as, rectangle, draw = blue, line width = 3pt] {Performance Model};
+
+\node (it) [align=center,right=10em of m] {Dataset 4\\Dataset 5\\Dataset 6\\$\vdots$};
+
+\node (s) [align=center,below=3em of m] {Dataset 4: Algorithm 2\\Dataset 5: Algorithm 3\\Dataset 6: Algorithm 3\\$\vdots$};
+
+\path [->] (pc.south) edge (as);
+\path [->] (ic.south) edge node [below right] {Feature Extraction} (as);
+\path [->] ([xshift=-.5em]it.west) edge node [below,align=center] {Feature\\Extraction} (m.east);
+\path [->] (as.south) edge (m.north);
+\path [->] (m.south) edge (s.north);
+\end{tikzpicture}}
+\end{center}
+\end{frame}
+
+\begin{frame}[c]{Types of Performance Models}
 \begin{itemize}
 \item models for entire portfolios
 \item models for individual algorithms
 \item models that are somewhere in between (e.g.\ pairs of algorithms)
 \end{itemize}
+$\rightarrow$ for each of these, many different machine learning approaches are
+suitable
 \end{frame}
 
-\begin{frame}{Models for Entire Portfolios}
+\begin{frame}[c]{Models for Entire Portfolios}
 \begin{itemize}
-\item predict the best algorithm in the portfolio
-\item alternatively: cluster and assign best algorithms to clusters
+    \item predict the best algorithm in the portfolio (e.g.\ classifier to use)
+\item alternatively: cluster in meta-feature space and assign best algorithm to
+    each cluster
 \end{itemize}
 optional (but important):
 \begin{itemize}
 \item attach a ``weight'' during learning (e.g.\ the difference between best
-    and worst solver) to bias model towards the ``important'' instances
+    and worst algorithm) to bias model towards the ``important'' datasets
 \item special loss metric
 \end{itemize}
-\lit{Gent, Ian P., Christopher A. Jefferson, Lars Kotthoff, Ian Miguel,
-Neil Moore, Peter Nightingale, and Karen E. Petrie. ``Learning When to Use Lazy
-Learning in Constraint Solving.'' In 19th European Conference on Artificial
-Intelligence, 873–78, 2010.}
-\lit{Kadioglu, Serdar, Yuri Malitsky, Meinolf Sellmann, and Kevin
-Tierney. ``ISAC – Instance-Specific Algorithm Configuration.'' In 19th European
-Conference on Artificial Intelligence, 751–56, 2010.}
 \end{frame}
 
-\begin{frame}{Models for Individual Algorithms}
+\begin{frame}[c]{Models for Individual Algorithms}
 \begin{itemize}
 \item predict the performance for each algorithm separately
 \item combine the predictions to choose the best one
-\item for example: predict the runtime for each algorithm, choose the one with
-    the lowest runtime
+\item for example: predict accuracy, choose algorithm with highest predicted
+    accurcay
 \end{itemize}
-\lit{Xu, Lin, Frank Hutter, Holger H. Hoos, and Kevin Leyton-Brown.
-``SATzilla: Portfolio-Based Algorithm Selection for SAT.'' J. Artif. Intell.
-Res. (JAIR) 32 (2008): 565–606.}
 \end{frame}
 
-\begin{frame}{Hybrid Models}
+\begin{frame}[c]{Hybrid Models}
 \begin{itemize}
-\item get the best of both worlds
-\item for example: consider pairs of algorithms to take relations into account
-\item for each pair of algorithms, learn model that predicts which one is faster
+\item for example: consider pairs of algorithms to take relations between them into account
+\item for each pair of algorithms, learn model that predicts which one has
+    better performance, or predicts performance difference
+\item \ldots{}or collaborative filtering approaches
 \end{itemize}
-\lit{Xu, Lin, Frank Hutter, Holger H. Hoos, and Kevin Leyton-Brown.
-``Hydra-MIP: Automated Algorithm Configuration and Selection for Mixed Integer
-Programming.'' In RCRA Workshop on Experimental Evaluation of Algorithms for
-Solving Problems with Combinatorial Explosion at the International Joint
-Conference on Artificial Intelligence (IJCAI), 16–30, 2011.}
-\lit{Kotthoff, Lars. ``Hybrid Regression-Classification Models for
-Algorithm Selection.'' In 20th European Conference on Artificial Intelligence,
-480–85, 2012.}
 \end{frame}
 
-\begin{frame}{Types of Performance Models}
+\begin{frame}[c]{Types of Performance Models}
 \begin{center}
 \resizebox{!}{.8\textheight}{%
 \tikzset{>=latex}
@@ -167,10 +187,10 @@ child{ node [draw,label={below right:A3}] {} }
 
 \node (pmc) [fit={(pm1c) (pm1cr) (pm2c) (pm2cr) (pm3c) (pm3cr) (pm4c) (pm4cr)},draw,dashed] {};
 
-\node (it) [align=center,left=3em of pmc] {Instance 1\\Instance 2\\Instance 3\\$\vdots$};
+\node (it) [align=center,left=3em of pmc] {Dataset 1\\Dataset 2\\Dataset 3\\$\vdots$};
 
-\node (ps) [align=center,right=3em of pmc] {Instance 1: Algorithm 2\\Instance 2:
-Algorithm 1\\Instance 3: Algorithm 3\\$\vdots$};
+\node (ps) [align=center,right=3em of pmc] {Dataset 1: Algorithm 2\\Dataset 2:
+Algorithm 1\\Dataset 3: Algorithm 3\\$\vdots$};
 
 \path [->] (it) edge (pmc);
 \path [->] (pmc) edge (ps);
@@ -181,34 +201,25 @@ Algorithm 1\\Instance 3: Algorithm 3\\$\vdots$};
 \end{center}
 \end{frame}
 
-\begin{frame}{Types of Predictions/Algorithm Selectors}
+\begin{frame}[c]{Types of Predictions/Algorithm Selectors}
 \begin{itemize}
-\item best algorithm
+\item best algorithm (and its performance)
 \item $n$ best algorithms ranked
-\item allocation of resources to $n$ algorithms
-\item change the currently running algorithm?
+\item ensemble of $n$ best algorithms
 \end{itemize}
-\lit{Kotthoff, Lars. ``Ranking Algorithms by Performance.'' In LION 8,
-2014.}
-\lit{Kadioglu, Serdar, Yuri Malitsky, Ashish Sabharwal, Horst Samulowitz,
-and Meinolf Sellmann. ``Algorithm Selection and Scheduling.'' In 17th
-International Conference on Principles and Practice of Constraint Programming,
-454–69, 2011.}
-\lit{Stergiou, Kostas. ``Heuristics for Dynamically Adapting Propagation
-in Constraint Satisfaction Problems.'' AI Commun. 22, no. 3 (2009): 125–41.}
 \end{frame}
 
-\begin{frame}{Time of Prediction}
+\begin{frame}[c]{Time/Frequency of Prediction}
 \begin{itemize}
-\item before problem is being solved
+\item one-shot
     \begin{itemize}
     \item select algorithm(s) once
-    \item no recourse if predictions are bad
+    \item want to process single dataset and choose the best approach
     \end{itemize}
-\item while problem is being solved
+\item multi-shot
     \begin{itemize}
-    \item continuously monitor problem features and/or performance
-    \item can remedy bad initial choice or react to changing problem
+    \item continuously monitor dataset(s) features and/or performance
+    \item for example on data streams or to process sets of datasets
     \end{itemize}
 \end{itemize}
 \end{frame}
