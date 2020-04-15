@@ -5,7 +5,6 @@
 \newcommand{\y}[0]{\mathbf{y}}
 \newcommand{\q}[0]{\mathbf{q}}
 \newcommand{\Xspace}[0]{\mathcal{X}}
-\usepackage{algpseudocode}
 \title[AutoML: Overview]{Multi-criteria Optimization}
 \subtitle{Evolutionary Approaches}
 %TODO: change authors!
@@ -44,23 +43,22 @@ Evolutionary algorithms return as a solution a \textbf{population} of solution c
 \vspace*{-0.4cm}
 
 \begin{footnotesize}
-Image of the function (grey) and target function values $(f_1(\x), f_2(\x))$ for $\x \in \mathcal{P}_i, i = 1, 3, 10$.
+Image of the function (grey) and target function values $(\cost_1(\x), \cost_2(\x))$ for $\x \in \mathcal{P}_i, i = 1, 3, 10$.
 \end{footnotesize}
 
 \framebreak
-TODO: FIX ALGORITHMS
 \begin{algorithm}[H]
   \begin{center}
   \caption{Evolutionary algorithm}
       \begin{algorithmic}[1]
-      \State Initialize and rate population $P_0 \subset \Xspace$ with $|\mathcal{P}| = \mu$
-      \State $t \leftarrow 0$
-      \Repeat
-        \State Variation: generate offspring $Q_t$ with $|Q_t| = \lambda$
-        \State Selection: select survivors $P_{t + 1}$
- 		\State $t \leftarrow t + 1$
-      \Until{Stop criterion fulfilled}
-       \end{algorithmic}
+      \STATE Initialize and rate population $P_0 \subset \Xspace$ with $|\mathcal{P}| = \mu$
+      \STATE $t \leftarrow 0$
+      \REPEAT
+        \STATE Variation: generate offspring $Q_t$ with $|Q_t| = \lambda$
+        \STATE Selection: select survivors $P_{t + 1}$
+ 		\STATE $t \leftarrow t + 1$
+      \UNTIL{Stop criterion fulfilled}
+     \end{algorithmic}
     \end{center}
 \end{algorithm}
 
@@ -125,7 +123,7 @@ We subdivide $R_t = P_t \cup Q_t$ into fronts $F_1, F_2, F_3, ...$ such that
 We write $F_1 \prec F_2 \prec F_4 \prec ... $
 \end{itemize}
 \end{footnotesize}
-
+    \vspace{-0.5cm}
 \begin{center}
 \includegraphics[width = 0.4\linewidth]{images/NSGA2_NDS.png}
 \end{center}
@@ -174,35 +172,34 @@ One point with high crowding distance (red) and one point with very small crowdi
 \end{footnotesize}
 
 \framebreak
-TODO: Fix Algo
-%\begin{algorithm}[H]
-%
-%  \begin{center}
-%  \caption{NSGA-II}
-%    \begin{algorithmic}[1]
-%   	\begin{footnotesize}
-%    \State Initialize population $P_0$, $t \leftarrow 0$
-%    \State $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_0)$
-%    \State Generate $Q_0$ by binary tournament selection, recombination and mutation
-%      \Repeat
-%        \State $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_t \cup Q_t)$
-%        \State $i \leftarrow 1$
-%        \While{$|P_{t + 1} \cup F_i| < \mu$}
-%        	\State $P_{t + 1} = P_{t + 1} \cup F_i$
-%        	\State $i \leftarrow i + 1$
-%    	\EndWhile
-%        \State $\tilde F_i = (\x_1, \x_2, ..., \x_k)= \texttt{SortByCrowdingDistance}(F_i)$
-%        \While {$P_{t + 1} < \mu$}
-%        	\State $P_{t + 1} = P_{t + 1} \cup \x_j$
-%        	\State $j \leftarrow j + 1$
-%        \EndWhile
-%        \State Generate $Q_{t + 1}$ by binary tournament selection, recombination and mutation
-%      \Until{Stop criterion fulfilled}
-%      \vspace*{-0.3cm}
-%      \end{footnotesize}
-%    \end{algorithmic}
-%    \end{center}
-%\end{algorithm}
+\begin{algorithm}[H]
+
+  \begin{center}
+  \caption{NSGA-II}
+    \begin{algorithmic}[1]
+   	\begin{footnotesize}
+    \STATE Initialize population $P_0$, $t \leftarrow 0$
+    \STATE $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_0)$
+    \STATE Generate $Q_0$ by binary tournament selection, recombination and mutation
+      \REPEAT
+        \STATE $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_t \cup Q_t)$
+        \STATE $i \leftarrow 1$
+        \WHILE{$|P_{t + 1} \cup F_i| < \mu$}
+        	\STATE $P_{t + 1} = P_{t + 1} \cup F_i$
+        	\STATE $i \leftarrow i + 1$
+    	\ENDWHILE
+        \STATE $\tilde F_i = (\x_1, \x_2, ..., \x_k)= \texttt{SortByCrowdingDistance}(F_i)$
+        \WHILE {$P_{t + 1} < \mu$}
+        	\STATE $P_{t + 1} = P_{t + 1} \cup \x_j$
+        	\STATE $j \leftarrow j + 1$
+        \ENDWHILE
+        \STATE Generate $Q_{t + 1}$ by binary tournament selection, recombination and mutation
+      \UNTIL{Stop criterion fulfilled}
+      \vspace*{-0.3cm}
+      \end{footnotesize}
+    \end{algorithmic}
+    \end{center}
+\end{algorithm}
 
 \end{frame}
 
@@ -247,24 +244,6 @@ TODO: Fix Algo
 
 % \framebreak
 
-% \begin{algorithm}[H]
-% \begin{footnotesize}
-%   \begin{center}
-%   \caption{SPEA-2}
-%     \begin{algorithmic}[1]
-%     \State Initialisiere Population $P_0$, $|P_0| = \lambda$ und ein leeres Archiv $A_0, |A_0| = \gamma$
-%       \Repeat
-%         \State Berechne Fitness der Individuen in $P_t$ und $A_t$ anhand der oben definierten Fitnessfunktion
-%         \State Fülle $A_{t+1}$ auf mit nichtdominierten Individuen aus $P_t \cup A_t$ $^{(*)}$
-%         \State Fülle \textit{mating pool} durch binäre Turnierselektion mit Zurücklegen auf $A_{t + 1}$
-%         \State Generiere $P_{t + 1}$ durch Rekombination und Mutation
-%       \Until{Stoppkriterium erfüllt}
-%       \State Gib $A_t$ zurück
-%     \end{algorithmic}
-%     \end{center}
-% \end{footnotesize}
-% \end{algorithm}
-
 % \vfill
 % \begin{footnotesize}
 % $^{(*)}$ Wenn $|A_{t + 1}| > \gamma$, dann entferne solange Individuen mit kleinster Distanz zum Nachbarn, bis $|A_{t + 1}| = \gamma$. Sollte $|A_{t + 1}| < \gamma$, füge die besten dominierten Individuen aus $P_t \cup A_t$ hinzu.
@@ -285,8 +264,8 @@ $$
 
 % \textbf{Berechnung des Hypervolumens im 2 dimensionalen Fall:}
 % \begin{enumerate}
-% \item Sortiere die Zielfunktionsvektoren bzgl. eines Kriteriums (z.B. aufsteigend bzgl. $f_1$)\\
-% $\Rightarrow$ Da Pareto-Front (kein Punkt dominiert anderen): Punkte sind bzgl. $f_2$ absteigend sortiert .
+% \item Sortiere die Zielfunktionsvektoren bzgl. eines Kriteriums (z.B. aufsteigend bzgl. $\cost_1$)\\
+% $\Rightarrow$ Da Pareto-Front (kein Punkt dominiert anderen): Punkte sind bzgl. $\cost_2$ absteigend sortiert .
 % \item Für das $j$-te Individuum $a^{(j)}, j\in \{2,..., |F_{\nu}|\}$ in der sortierten Sequenz der Front $F_{\nu}$ berechnet sich der Hypervolumensbeitrag als:
 % \medskip
 
@@ -298,7 +277,7 @@ $$
 \framebreak
 
 \begin{center}
-Hypervolume contribution in a 2-dimensional objective space:\\
+hypervolume contribution in a 2-dimensional objective space:\\
 \includegraphics[width = 0.4\textwidth]{images/hypervolumenbeitrag.png}
 \end{center}
 
@@ -334,28 +313,27 @@ Hypervolume contribution in a 2-dimensional objective space:\\
 
 \begin{frame}[allowframebreaks]{SMS-EMOA algorithm}
 
-    TODO: FIX ALGORITHM
-%\begin{algorithm}[H]
-%  \begin{center}
-%  \caption{SMS-EMOA}
-%    \begin{algorithmic}[1]
-%    \begin{footnotesize}
-%    \State Generate start population $P_0$ of size $\mu$
-%    \State $t \leftarrow 0$
-%      \Repeat
-%        \State Generate \textbf{one} individual $\q \in \R^n$ by recombination and mutation of $\mathcal{P}_t$
-%        \State $\{F_{1},..., F_k\} \leftarrow \text{fast-dominated-sort}(P_{t}\cup \q)$
-%        \State $\bm{a}^\star \leftarrow \text{argmin}_{\bm{a} \in F_{k}}\Delta s(\bm{a}, F_{k})$
-%        \State $P_{t+1} \leftarrow (P_t \cup \{\q\}) \setminus\{\bm{a}^\star\}$
-%        \State $ t \leftarrow t+1$
-%      \Until{Termination criterion fulfilled}
-%    \end{footnotesize}
-%    \vspace*{-0.3cm}
-%    \end{algorithmic}
-%    \end{center}
-%\end{algorithm}
-
-\footnotesize
+\begin{algorithm}[H]
+  \begin{center}
+  \caption{SMS-EMOA}
+    \begin{algorithmic}[1]
+    \begin{footnotesize}
+    \STATE Generate start population $P_0$ of size $\mu$
+    \STATE $t \leftarrow 0$
+      \REPEAT
+        \STATE Generate \textbf{one} individual $\q \in \R^n$ by recombination and mutation of $\mathcal{P}_t$
+        \STATE $\{F_{1},..., F_k\} \leftarrow \text{fast-dominated-sort}(P_{t}\cup \q)$
+        \STATE $\bm{a}^\star \leftarrow \text{argmin}_{\bm{a} \in F_{k}}\Delta s(\bm{a}, F_{k})$
+        \STATE $P_{t+1} \leftarrow (P_t \cup \{\q\}) \setminus\{\bm{a}^\star\}$
+        \STATE $ t \leftarrow t+1$
+      \UNTIL{Termination criterion fulfilled}
+    \end{footnotesize}
+    \vspace*{-0.3cm}
+    \end{algorithmic}
+    \end{center}
+\end{algorithm}
+    \vspace{-0.5cm}
+\scriptsize
 \begin{itemize}
 \item L5: the set of temporary $(\mu + 1)$ individuals is divided by \textbf{fast-dominated-sort} into $k$ fronts $F_{1},...,F_{k}$.
 \item L6: determine individual $\bm{a}^\star \in F_{k}$ with smallest hypervolume contribution.

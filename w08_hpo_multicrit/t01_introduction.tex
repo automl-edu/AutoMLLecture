@@ -6,8 +6,7 @@
 
 \title[AutoML: Overview]{Multi-criteria Optimization}
 \subtitle{Introduction}
-%TODO: change authors!
-\author[Bernd Bischl]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Bernd Bischl]{\underline{Bernd Bischl} \and Frank Hutter \and Lars Kotthoff \and Marius Lindauer}
 \institute{}
 \date{}
 
@@ -159,7 +158,7 @@ Given a multicriteria optimization problem
     \item A solution $\conf^{(1)}$ \textbf{(Pareto-) dominates} $\conf^{(2)}$, if $\cost(\conf^{(1)}) \prec \cost(\conf^{(2)})$, i.e.
 \begin{enumerate}
     \item $\cost_i(\conf^{(1)}) \le \cost_i(\conf^{(2)})$ for all $i \in \{1, 2, ..., m\}$ and
-    \item $f_j(\conf^{(1)}) < f_j(\conf^{(2)})$ for at least one $j \in \{1, 2, ..., m\}$
+    \item $\cost_j(\conf^{(1)}) < \cost_j(\conf^{(2)})$ for at least one $j \in \{1, 2, ..., m\}$
 \end{enumerate}
 \vspace*{0.1cm}
 \item A solution $\optconf$ that is not dominated by any other solution is called \textbf{Pareto optimal}.
@@ -224,7 +223,7 @@ The optimum is at $\optconf = 1$.
 \vspace*{0.1cm}
 
 
-\centering \includegraphics[scale=1]{images/expedia-6-1}
+\centering \includegraphics[scale=0.2]{images/graph1}
 
 
 \end{frame}
@@ -234,11 +233,11 @@ The optimum is at $\optconf = 1$.
 We extend the above problem to two objective functions $\cost_1(\conf) = (\conf - 1)^2$ and $\cost_2(\conf) = 3(\conf - 2)^2$, thus
 
 $$
-    \min_{\conf} \cost(\cost) := \left(\cost_1(\conf), \conf_2(\cost)\right), \qquad 0 \le \conf \le 3.
+    \min_{\conf} \cost(\conf) := \left(\cost_1(\conf), \cost_2(\conf)\right), \qquad 0 \le \conf \le 3.
 $$
 
     \begin{center}
-    \includegraphics[scale=0.8]{images/expedia-7-1}
+    \includegraphics[scale=0.2]{images/graph2}
     \end{center}
 
 \framebreak
@@ -249,7 +248,7 @@ We consider the functions in the objective function space $\cost(\pcs)$ by drawi
 
 
     \begin{center}
-    \includegraphics[scale=0.9]{images/expedia-8-1}
+    \includegraphics[scale=0.2]{images/graph3}
     \end{center}
     \vspace*{-0.3cm}
 
