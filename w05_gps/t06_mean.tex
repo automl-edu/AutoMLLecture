@@ -6,6 +6,7 @@
 \newcommand{\thetab}{\bm{\weights}}
 \newcommand{\zero}{\mathbf{0}}
 \newcommand{\Xmat}{\mathbf{X}}
+\newcommand{\Kmat}{\mathbf{K}}
 \newcommand{\ydat}{\mathbf{y}}
 \newcommand{\id}{\boldsymbol{I}}
 \newcommand{\Amat}{\mathbf{A}}
@@ -51,6 +52,171 @@
 
 \begin{frame}[c,allowframebreaks]{The Role of Mean Functions}
 
+\begin{itemize}
+\item It is common but by no means necessary to consider GPs with zero-mean functions: $$m(\x) \equiv 0$$
+
+\vspace{3mm}
+\item This is not necessarily a drastic limitation, since the mean of the posterior process is not confined to be zero:
+\vspace{-3mm}
+  $$\bm{f}_* | \Xmat_*, \Xmat, \bm{f} \sim \mathcal{N}(\Kmat_{*}^\top\Kmat^{-1}\bm{f}, \Kmat_{**} - \Kmat_*^\top \Kmat ^{-1}\Kmat_*).$$
+  
+\vspace{3mm}
+\item There are several reasons why one might wish to explicitly model a mean function, including interpretability, convenience of expressing prior informations, etc.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\framebreak
+
+\item When assuming a non-zero mean GP prior $\gp (m(\x), k(\x, \x^\prime)$ with mean $m(\x)$, the predictive mean becomes:\vspace{-5mm}$$m(\Xmat_*) + \Kmat_*\Kmat_y^{-1}\left(\bm{y} - m(\Xmat)\right)$$\vspace{-7mm}but the predictive variance remains unchanged. 
+
+\vspace{20mm}
+\item Gaussian processes with non-zero mean Gaussian process priors are also called \textbf{Gaussian processes with trend}.  
+
+\end{itemize}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{figure}
+\includegraphics[width=0.6\textwidth]{figure_man/gp-sample-nonzero/gp-sample-nonzero-1-1.pdf}
+\end{figure}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foreach \x in{1, 2, 3, 4} {
+\begin{figure}
+  \includegraphics[width=0.6\textwidth]{figure_man/gp-sample-nonzero/gp-sample-nonzero-2-\x.pdf}
+\framebreak
+\end{figure}
+}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+\item In practice it is often difficult to specify a fixed mean function. Instead, it may be more convenient to specify a few fixed basis functions, whose coefficients, $\bm{\beta}$, are to be inferred from the data.
+\vspace{2mm}
+\item Consider 
+$$g(\x) = f(\x)+\bm{h}(\x)^\top\bm{\beta}, \text{   with } f(\x) \sim\gp \left(0, k(\x, \x^\prime)\right)$$ 
+
+where $f(\x)$ is a zero mean GP, $\bm{h}(\x)$ are a set of fixed basis functions, and $\bm{\beta}$ are additional parameters. 
+\vspace{2mm}
+\item This formulation expresses that the data is close to a global linear model with the residuals being modelled by a GP.
+\vspace{2mm}
+\item By taking the prior on $\bm{\beta}$ to be Gaussian, $\bm{\beta} \sim \mathcal{N}(\mathbf{b}, B)$, another GP with an added contribution in the covariance function can be obtained: 
+\vspace{-2mm}
+$$g(\x) \sim \gp\left(\mathbf{h}(\x^\top \mathbf{b}, k\left(\x, \x^\prime\right)+\mathbf{h}(\x)^\top B\,\, \mathbf{h}\left(\x^\prime\right)\right)$$
+
+\end{itemize}
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+
+\item The mean and covariance functions of $g(\x)$ will be then:
+\vspace{-2mm}
+
+$$\begin{aligned}
+\overline{\mathbf{g}}\left(X_{*}\right) &=\overline{\mathbf{f}}\left(X_{*}\right)+R^{\top} \overline{\boldsymbol{\beta}}, \\
+\operatorname{cov}\left(\mathbf{g}_{*}\right) &=\operatorname{cov}\left(\mathbf{f}_{*}\right)+R^{\top}(B^{-1}+H K_{y}^{-1} H^{\top})^{-1} R,
+\end{aligned}\label{41}$$ where $\overline{\boldsymbol{\beta}}=(B^{-1}+H K_{y}^{-1} H^{\top})^{-1}(H K_{y}^{-1} \mathbf{y}+B^{-1} \mathbf{b})$ and  $R=H_{*}-H K_{y}^{-1} K_{*}.$
+
+\vspace{4mm}
+\item Notice that $\overline{\boldsymbol{\beta}}$ is the mean of the global linear model parameters and the $H$ matrix collects the $\mathbf{h}(\x)$ vectors for all training and test cases.
+
+\vspace{4mm}
+\item Hence, the predictive mean is the sum of the mean linear output and what the GP model predicts from the residuals. The covariance is the usual covariance term plus a non negative contribution.
+\end{itemize}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}
+
+\item In the limiting case where the prior on the $\boldsymbol{\beta}$ becomes vague ($B^{-1} \rightarrow O$), the predictive distribution becomes independent of $\boldsymbol{b}$:
+\vspace{-2mm}
+
+$$\begin{aligned} 
+\overline{\mathbf{g}}\left(X_{*}\right) &=\overline{\mathbf{f}}\left(X_{*}\right)+R^{\top} \overline{\boldsymbol{\beta}}, \\
+\operatorname{cov}\left(\mathbf{g}_{*}\right) &=\operatorname{cov}(\mathbf{f}_{*})+R^{\top}(H K_{y}^{-1} H^{\top})^{-1} R, 
+\end{aligned}
+$$ where the limiting $\overline{\boldsymbol{\beta}}=(H K_{y}^{-1} H^{\top})^{-1} H K_{y}^{-1} \mathbf{y}$.
+
+\vspace{1cm}
+
+\item To make predictions under the limit $B^{-1} \rightarrow O$, it is important to use the above equation. Otherwise, by na{\"\i}vely plugging the modified covariance function into the standard prediction equations, the entries of the covariance function tend to infinity making it unsuitable for numerical implementation.
+
+\end{itemize}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+
+\item The marginal likelihood for the model with a Gaussian prior $\bm{\beta} \sim \mathcal{N}(\mathbf{b}, B)$ can be expressed as what follows (the explicit mean has been included).
+
+%\begin{footnotesize}
+$$\begin{aligned} 
+\log p(\mathbf{y} | X, \mathbf{b}, B)=&-\frac{1}{2}\left(H^{\top} \mathbf{b}-\mathbf{y}\right)^{\top}\left(K_{y}+H^{\top} B H\right)^{-1}\left(H^{\top} \mathbf{b}-\mathbf{y}\right) \\ &-\frac{1}{2} \log \left|K_{y}+H^{\top} B H\right|-\frac{n}{2} \log 2 \pi. 
+\end{aligned}$$
+%\end{footnotesize}
+
+\lz
+\lz
+
+\item We are interested in exploring the limit where $B^{-1} \rightarrow O$, i.e. when the prior is vague. In this limit the mean of the prior is irrelevant, so without loss of generality we assume for now that the mean is zero, $\mathbf{b} = \mathbf{0}$.
+
+\end{itemize}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+
+\item This assumption gives: 
+\vspace{-5mm}
+%\begin{footnotesize} 
+$$\begin{aligned} 
+\log p(\mathbf{y} | X, \mathbf{b}=\mathbf{0}, B)=&-\frac{1}{2} \mathbf{y}^{\top} K_{y}^{-1} \mathbf{y}+\frac{1}{2} \mathbf{y}^{\top} C \mathbf{y} \\ &-\frac{1}{2} \log \left|K_{y}\right|-\frac{1}{2} \log |B|-\frac{1}{2} \log |A|-\frac{n}{2} \log 2 \pi, 
+\end{aligned}$$
+where $A=B^{-1}+H K_{y}^{-1} H^{\top}$ and $C=K_{y}^{-1} H^{\top} A^{-1} H K_{y}^{-1}$.
+%\end{footnotesize}
+
+\vspace{4mm}
+\item The behaviour of the log marginal likelihood in the limiting case can be explored now. The variances of the Gaussian in the directions spanned by columns of $H^\top$ will become infinite, and it will require special treatment. 
+
+\vspace{4mm}
+\item[\faLightbulbO] The log marginal likelihood consists of three terms: a quadratic form in $\mathbf{y}$, a log determinant term, and a term involving $\log 2 \pi$.
+
+\end{itemize}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+
+\item Performing an eigendecomposition of the covariance matrix, the contributions to quadratic form term from the infinite-variance directions will be zero. However, the log determinant term will tend to minus infinity. 
+
+\vspace{3mm}
+\item The standard solution in this case is to project $\mathbf{y}$ onto the directions orthogonal to the span of $H^\top$ and compute the marginal likelihood in this subspace. 
+
+\vspace{3mm}
+\item By taking $m$ to denote the rank of $H^\top$, we can discard the terms $-\frac{1}{2} \log |B|-\frac{m}{2} \log 2 \pi$ from the previous equation to give:
+\vspace{-3mm}
+%\begin{footnotesize}
+$$\log p(\mathbf{y} | X)=-\frac{1}{2} \mathbf{y}^{\top} K_{y}^{-1} \mathbf{y}+\frac{1}{2} \mathbf{y}^{\top} C \mathbf{y}-\frac{1}{2} \log \left|K_{y}\right|-\frac{1}{2} \log |A|-\frac{n-m}{2} \log 2 \pi,$$
+where $A=H K_{y}^{-1} H^{\top}$ and $C=K_{y}^{-1} H^{\top} A^{-1} H K_{y}^{-1}$.
+%\end{footnotesize}
+
+\end{itemize}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 \framebreak
@@ -61,6 +227,25 @@
 \framebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
