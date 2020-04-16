@@ -358,19 +358,33 @@ A-posteriori methods are therefore the more generic approach to solving a multi-
 \end{frame}
 
 
-\begin{frame}{Evaluation of solutions}
+\begin{frame}[allowframebreaks]{Evaluation of solutions}
 
-A common metric for evaluating a set of solutions $\mathcal{P} \subset \pcs$ is the \textbf{dominated hypervolume} (S-metric), which we call $S(\mathcal{P}, R)$.
+A common metric for evaluating the performance of a set of solutions $\mathcal{P} \subset \pcs$ is the \textbf{dominated hypervolume}
 
-\vspace*{-0.4cm}
+$$
+    S(\mathcal{P}, R) = \Lambda\left(\bigcup_{\tilde{\conf} in \mathcal{P}}\left\{\conf | \tilde{\conf} \prec \conf \prec R\right\}\right),
+$$
+
+where $\Lambda$ is the Lebuesge measure.
+    \vspace{1cm}
+    \begin{itemize}
+            \item The dominated hypervolume is calculated respective to the reference point $R$, that can be chosen arbitrarely.
+            \item Exact computation of the hypervolume is expensive (NP-hard), but fast approximations exist.
+            \item The dominated hypervolume is also often called \textbf{S-Metric}.
+    \end{itemize}
+
+\framebreak
 
 \begin{center}
 \includegraphics[width = 0.3\linewidth]{images/dominated_hypervolume.png}
 \end{center}
 
-\vspace*{-0.4cm}
+The dominated hypervolume of $\mathcal{P}$ (5 black points) is the area in the target function space (in respect to the reference point $R$) which is dominated by points $\mathcal{P}$.
 
-The dominated hypervolume of the set of points $\mathcal{P} \subset \pcs$ (here: 5 black points) is the area in the target function space (regarding a reference point $R$) which is dominated by points $\mathcal{P}$.
+\framebreak
+
+
 
 \end{frame}
 
