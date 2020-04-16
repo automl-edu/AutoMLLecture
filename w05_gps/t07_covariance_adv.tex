@@ -126,8 +126,81 @@ $$
 \E[N_0] = \frac{1}{2\pi} \sqrt{\frac{- k^{\prime\prime}(0)}{k(0)}} = \frac{1}{2\pi} \sqrt{\frac{1}{\ls^2}} = (2\pi \ls)^{-1}.
 $$
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$\ls$ is called \textbf{characteristic length-scale}. Loosely speaking, the characteristic length-scale describes how far you need to move in input space for the function values to become uncorrelated. 
+
+\begin{itemize}
+\item[\faLightbulbO] Left plot: for higher $\ls$ the correlation between function values (for unchanged distance of input points) is also higher
+\item[\faLightbulbO] Right plot: a higher $\ls$ induces a smoother function and thus fewer level-0 upcrossings
+\end{itemize}
+
+\vspace{3mm}
+\begin{figure}
+	\includegraphics[width = .8\textwidth]{figure/lengthscale-1.pdf}
+\end{figure}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+For more than $p = 2$ dimensions, the squared exponential can be parameterized as follows:
+
+$$
+k(\xI{i}, \xI{j}) = \variance_f \exp\,\biggl(- \frac{1}{2}\left(\xI{i} - \xI{j}\right)^\top\bm{M}\left(\xI{i} - \xI{j}\right)\biggr)
+$$
+
+\vspace{7mm}
+
+Possible choices for the matrix $\bm{M}$ include
+
+$$
+\bm{M}_1 = \ls^{-2}\id \qquad \bm{M}_2 = \text{diag}(\bm{\ls})^{-2} \qquad \bm{M}_3 = \Gamma \Gamma^\top + \text{diag}(\bm{\ls})^{-2}
+$$
+
+where $\bm{\ls}$ is a $p$-vector of positive values and $\Gamma$ is a $p \times k$ matrix. 
+
+\lz 
+\lz
+
+Here again, $\bm{\ls} = (\ls_1,\dots, \ls_p)$ are characteristic length-scales for each dimension. 
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+What is the benefit of learning an individual hyperparameter $\ls_i$ for each dimension?
+
+\vspace{4mm}
+
+\begin{itemize} 
+\item The $\ls_1,\dots, \ls_p$ hyperparameters play the role of \textbf{characteristic length-scales}.
+\vspace{2mm}
+\item Losely speaking, $\ls_i$ describes how far you need to move along axis $i$ in input space for the function values to be uncorrelated.
+\vspace{2mm}
+\item Such a covariance function implements \textbf{automatic relevance determination} (ARD), since the inverse of the length-scale $\ls_i$ determines the relevancy of input feature $i$ to the regression.
+\vspace{2mm}
+\item If $\ls_i$ is very large, the covariance will become almost independent of that input, effectively removing it from inference.
+\vspace{2mm}
+\item If the features are on different scales, the data can be automatically \textbf{rescaled} by estimating $\ls_1,\dots, \ls_p$ 
+
+\end{itemize}
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{figure}
+	\includegraphics[width = .8\textwidth]{figure_man/covariance2D.png}
+\end{figure}
+
+\vspace{3mm}
+%\begin{footnotesize}
+For the first plot, we have chosen $\bm{M} = \id$: the function varies the same in all directions. The second plot is for $\bm{M} = \text{diag}(\bm{\ls})^{-2}$ and $\bm{\ls} = \left(1, 3 \right)$: The function varies less rapidly as a function of $x_2$ than $x_1$ as the length-scale for $x_1$ is less. In the third plot $\bm{M} = \Gamma \Gamma^T + \text{diag}(\bm{\ls})^{-2}$ for $\Gamma = (1, -1)^\top$ and $\bm{\ls} = (6, 6)^\top$. Here $\Gamma$ gives the direction of the most rapid variation. (Image from Rasmussen \& Williams, 2006)
+%\end{footnotesize}
+
 
 \end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \end{document}
