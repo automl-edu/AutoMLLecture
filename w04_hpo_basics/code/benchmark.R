@@ -23,14 +23,18 @@ set.seed(1)
 
 #define 1! leaners
 learner = lrn("classif.svm", predict_type = "prob", cost = 1, gamma = 1, type = "C-classification", kernel = "radial")
-#define 1! terminator
-n_evals = 100
-terminator = term("evals", n_evals = n_evals)
+
+n_evalss = c(25,100)
 #define n tuners
-tuners = tnrs(c("grid_search", "random_search", "cmaes"))
-tuners[[1]]$param_set$values$resolution = ceiling(sqrt(n_evals))
+tuner_terms = lapply(n_evalss, function(n_evals) {
+  tuners = tnrs(c("grid_search", "random_search", "cmaes"))
+  tuners[[1]]$param_set$values$resolution = ceiling(sqrt(n_evals))
+  lapply(tuners, function(x) list(tuner = x, term = term("evals", n_evals = n_evals)))
+})
+tuner_terms = unlist(tuner_terms, recursive = FALSE)
+
 #define m tasks
-tasks = tsks(c("spam", "sonar"))
+tasks = tsks(c("spam", "sonar")), #"german_credit"))
 
 ps = ParamSet$new(params = list(
     ParamDbl$new("cost", lower = -3, upper = 3),
@@ -47,9 +51,11 @@ rsmp_tuning =  rsmp("cv", folds = 5)
 rsmp_outer = rsmp("cv", folds = 10)
 #rsmp_outer = rsmp("cv", folds = 2)
 
-learners = Map(function(ps, tuner) {
-  AutoTuner$new(learner = learner, resampling = rsmp_tuning, measures = msr("classif.auc"), terminator = terminator, search_space = ps, tuner = tuner)  
-}, ps = list(ps), tuners)
+learners = Map(function(ps, tuner_terms) {
+  learner = AutoTuner$new(learner = learner, resampling = rsmp_tuning, measures = msr("classif.auc"), terminator = tuner_terms$term, search_space = ps, tuner = tuner_terms$tuner)  
+  learner$id = paste0(learner$id, ".", tuner_terms[[1]]$term$param_set$values$n_evals)
+  return(learner)
+}, ps = list(ps), tuner_terms)
 
 #add baseline
 learner_default = lrn(learner$id, predict_type = learner$predict_type)
@@ -94,7 +100,7 @@ if (!fs::file_exists("benchmark_res.rds")) {
   #testJob(1)
   submitJobs(resources = list(ncpus = rsmp_outer$param_set$values$folds %??% 10))
   waitForJobs()
-  res = reduceResultsList()
+  res = reduceResultsList(findDone())
   res_tune = res[[1]]
   res_baseline = NULL
   for (i in 2:length(res)) {
@@ -114,19 +120,23 @@ if (!fs::file_exists("benchmark_res.rds")) {
 res = readRDS("benchmark_res.rds")
 
 baseline_res = res$baseline$aggregate(measures = msr("classif.auc"))
-baseline_res$tuner = "untuned"
+
 
 #build dt for plotting
 res_compl = res$tune$data[, list(opt_path = {
   x = learner[[1]]
-  list(cbind(x$archive$data, tuner = class(x$tuner)[1], task_id = x$model$tuning_instance$objective$task$id, learner_id = x$learner$id, nr = seq_row(x$archive$data)))
+  list(cbind(x$archive$data, tuner = class(x$tuner)[1], task_id = x$model$tuning_instance$objective$task$id, learner_id = x$learner$id, nr = seq_row(x$archive$data), budget = x$model$tuning_instance$terminator$param_set$values$n_evals))
   }), by = .(uhash, iteration)]
 res_compl = setDT(tidyr::unnest(res_compl, "opt_path")) #tidyr::unnest can deal with data.frames to be unnested
 res_compl = unnest(res_compl, "opt_x", prefix = "opt.x.")
- 
-res_compl[, classif.auc.cummax := cummax(classif.auc), by = .(task_id, learner_id, tuner, uhash, iteration)]
+
+#randomize grid search order
+res_compl[tuner == "TunerGridSearch", nr := sample(x = nr), by = .(task_id, learner_id, uhash, iteration, budget)]
+setkey(res_compl, task_id, learner_id, uhash, iteration, budget, nr)
+
+res_compl[, classif.auc.cummax := cummax(classif.auc), by = .(task_id, learner_id, tuner, uhash, iteration, budget)]
 res_compl[, tuner := stri_replace_first_fixed(tuner, "Tuner", "")]
-res_compl = res_compl[nr <= 100,]
+res_compl = res_compl[nr <= budget,]
 
 theme_set(theme_bw())
 
@@ -134,6 +144,7 @@ tuner_names = c("GridSearch", "RandomSearch", "CMAES", "Untuned", "Heuristic")
 tuner_colors = set_names(RColorBrewer::brewer.pal(7, "Set1"), tuner_names)
 
 res_compl[, tuner := factor(tuner, levels = tuner_names)]
+res_compl = res_compl[budget == 100,]
 
 #tune curve for iter = 1
 g = ggplot(res_compl[iteration == 1,], aes(y = classif.auc.cummax, x = nr, color = tuner))
@@ -187,6 +198,7 @@ ggsave("../images/benchmark_curve_iter_all_median.png", g, height = 5, width = 1
 
 # outer performance
 res_outer = res$tune$score(measures = msr("classif.auc"))
+res_outer = res_outer[map_lgl(learner, function(x) x$model$tuning_instance$terminator$param_set$values$n_evals == 100), ]
 res_outer[, tuner := map_chr(learner, function(x) class(x$tuner)[[1]])]
 res_outer[, tuner := stri_replace_first_fixed(tuner, "Tuner", "")]
 res_baseline = res$baseline$score(measures = msr("classif.auc"))
@@ -216,7 +228,7 @@ gs = lapply(unique(res_compl$task_id), function(this_task_id) {
   g = g + geom_point()
   g = g + facet_grid(task_id~tuner)
   g = g + scale_radius() + scale_colour_viridis_c() + scale_y_log10() + scale_x_log10()
-  g = g + labs(color = "AUC", size = "AUC")
+  g = g + labs(color = "AUC", size = "AUC", x = "cost", y = "gamma")
   g + theme_bw()
 })
 g = marrangeGrob(gs, ncol = 2, nrow = 1, top = "Tuning eta and lambda for xgboost (nrounds = 100)")
