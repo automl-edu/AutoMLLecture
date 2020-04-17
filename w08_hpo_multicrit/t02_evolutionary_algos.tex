@@ -1,10 +1,15 @@
 
 \input{../latex_main/main.tex}
 
-\newcommand{\a}[0]{\mathbf{a}}
-\newcommand{\y}[0]{\mathbf{y}}
 \newcommand{\q}[0]{\mathbf{q}}
-\newcommand{\Xspace}[0]{\mathcal{X}}
+
+%The following might look confusing but allows us to switch the notation of the optimization problem independently from the notation of the hyper parameter optimization
+\newcommand{\xx}{\conf} %x of the optimizer
+\newcommand{\xxi}[1][i]{\lambda_{#1}} %i-th component of xx (not confuse with i-th individual)
+\newcommand{\XX}{\pcs} %search space / domain of f
+\newcommand{\f}{\cost} %objective function
+\newcommand{\y}{\cost} %outcome of objective function
+
 \title[AutoML: Overview]{Multi-criteria Optimization}
 \subtitle{Evolutionary Approaches}
 %TODO: change authors!
@@ -51,19 +56,18 @@ Image of the function (grey) and target function values $(\cost_1(\x), \cost_2(\
   \begin{center}
   \caption{Evolutionary algorithm}
       \begin{algorithmic}[1]
-      \STATE Initialize and rate population $P_0 \subset \Xspace$ with $|\mathcal{P}| = \mu$ %FIXME: JR: Das gleiche P?
+      \STATE Initialize and rate population $P_0 \subset \XX$ with $|\mathcal{P}| = \mu$ %FIXME: JR: Das gleiche P?
       \STATE $t \leftarrow 0$
       \REPEAT
         \STATE Variation: generate offspring $Q_t$ with $|Q_t| = \lambda$
-        \STATE Selection: select survivors $P_{t + 1}$ %FIXME: JR: select $\mu$ survivors?
-        %FIXME: JR: Rate Population?
+        \STATE Selection: select $\mu$ survivors $P_{t + 1}$ %FIXME: JR: I put $\mu$ here. Correct?
  		\STATE $t \leftarrow t + 1$
       \UNTIL{Stop criterion fulfilled}
      \end{algorithmic}
     \end{center}
 \end{algorithm}
 
-The population of solution candidates consists of $\x \in \Xspace$. %FIXME: JR: Write this in Return part of algorithm?
+The population of solution candidates consists of $\xx \in \XX$. %FIXME: JR: Write this in Return part of algorithm?
 
 \end{frame}
 
@@ -122,7 +126,7 @@ We subdivide $R_t = P_t \cup Q_t$ into fronts $F_1, F_2, F_3, ...$ such that
 
 \begin{itemize}
 \item the points in the fronts are equivalent to each other, and
-\item that any point $\x \in F_1$ dominates any point from $F_2, F_3, F_4...$; any point $\x \in F_2$ dominates all points from $F_3, F_4, ...$, etc. \\
+\item that any point $\xx \in F_1$ dominates any point from $F_2, F_3, F_4...$; any point $\xx \in F_2$ dominates all points from $F_3, F_4, ...$, etc. \\
 We write $F_1 \prec F_2 \prec F_4 \prec ... $
 \end{itemize}
 \end{footnotesize}
@@ -192,9 +196,9 @@ One point with high crowding distance (red) and one point with very small crowdi
         	\STATE $P_{t + 1} = P_{t + 1} \cup F_i$
         	\STATE $i \leftarrow i + 1$
     	\ENDWHILE
-        \STATE $\tilde F_i = (\x_1, \x_2, ..., \x_k)= \texttt{SortByCrowdingDistance}(F_i)$
+        \STATE $\tilde F_i = (\xx_1, \xx_2, ..., \xx_k)= \texttt{SortByCrowdingDistance}(F_i)$
         \WHILE {$P_{t + 1} < \mu$}
-        	\STATE $P_{t + 1} = P_{t + 1} \cup \x_j$
+        	\STATE $P_{t + 1} = P_{t + 1} \cup \xx_j$
         	\STATE $j \leftarrow j + 1$
         \ENDWHILE
         \STATE Generate $Q_{t + 1}$ by binary tournament selection, recombination and mutation %FIXME: JR: See above
@@ -259,9 +263,9 @@ One point with high crowding distance (red) and one point with very small crowdi
 \begin{frame}[allowframebreaks]{Selection criteria: contribution to the hypervolume}
 
 \begin{itemize}
-\item The SMS-EMOA (S-Metric-Selection-EMOA) evaluates the fitness of an individual $\x \in \mathcal{P} \subset \Xspace$ based on its contribution to the dominated hypervolume (S-Metric):
+\item The SMS-EMOA (S-Metric-Selection-EMOA) evaluates the fitness of an individual $\xx \in \mathcal{P} \subset \XX$ based on its contribution to the dominated hypervolume (S-Metric):
 $$
-\Delta s(\x, \mathcal{P}) = S(\mathcal{P}, R) - S(\mathcal{P} \setminus \{ \x\}, R).
+\Delta s(\xx, \mathcal{P}) = S(\mathcal{P}, R) - S(\mathcal{P} \setminus \{ \xx\}, R).
 $$
 \end{itemize}
 % \framebreak
@@ -325,7 +329,7 @@ hypervolume contribution in a 2-dimensional objective space:\\
     \STATE Generate start population $P_0$ of size $\mu$
     \STATE $t \leftarrow 0$
       \REPEAT
-        \STATE Generate \textbf{one} individual $\q \in \R^n$ by recombination and mutation of $\mathcal{P}_t$ %FIXME: JR: Mathcal P?
+        \STATE Generate \textbf{one} individual $\q \in \realnum^n$ by recombination and mutation of $\mathcal{P}_t$ %FIXME: JR: Mathcal P?
         \STATE $\{F_{1},..., F_k\} \leftarrow \text{fast-dominated-sort}(P_{t}\cup \q)$
         \STATE $\bm{a}^\star \leftarrow \text{argmin}_{\bm{a} \in F_{k}}\Delta s(\bm{a}, F_{k})$
         \STATE $P_{t+1} \leftarrow (P_t \cup \{\q\}) \setminus\{\bm{a}^\star\}$
@@ -346,6 +350,4 @@ hypervolume contribution in a 2-dimensional objective space:\\
 \end{itemize}
 \end{frame}
 
-
-\end{frame}
 \end{document}

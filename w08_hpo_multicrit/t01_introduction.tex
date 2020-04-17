@@ -1,8 +1,11 @@
 \input{../latex_main/main.tex}
 
-\newcommand{\a}[0]{\mathbf{a}}
-\newcommand{\cost}[0]{\mathbf{y}}
-\newcommand{\q}[0]{\mathbf{q}}
+%The following might look confusing but allows us to switch the notation of the optimization problem independently from the notation of the hyper parameter optimization
+\newcommand{\xx}{\conf} %x of the optimizer
+\newcommand{\xxi}[1][i]{\lambda_{#1}} %i-th component of xx (not confuse with i-th individual)
+\newcommand{\XX}{\pcs} %search space / domain of f
+\newcommand{\f}{\cost} %objective function
+\newcommand{\yy}{\cost} %outcome of objective function
 
 \title[AutoML: Overview]{Multi-criteria Optimization}
 \subtitle{Introduction}
@@ -152,7 +155,7 @@ $$
 \textbf{Definition:}
 
 Given a multi-criteria optimization problem
-    $$\min_{\conf \in \pcs} \cost(\conf) = \left(\cost_1(\conf), ..., \cost_m(\conf)\right), \quad \cost_i: \pcs \to \realnum.$$ %FIXME: JR: Looks not entirely right. min on right too?
+    $$\min_{\conf \in \pcs} \cost(\conf) = \left(\cost_1(\conf), ..., \cost_m(\conf)\right), \quad \cost_i: \pcs \to \realnum.$$
 
 \begin{itemize}
     \item A solution $\conf^{(1)}$ \textbf{(Pareto-) dominates} $\conf^{(2)}$, if $\cost(\conf^{(1)}) \prec \cost(\conf^{(2)})$, i.e.
@@ -216,7 +219,6 @@ We consider the minimization problem
 $$
 \min_{\conf} \cost(\conf) = (\conf - 1)^2, \qquad 0 \le \conf \le 3.
 $$
-%FIXME: JR: Again, min also on the right?
 
 The optimum is at $\optconf = 1$.
 
@@ -233,9 +235,8 @@ The optimum is at $\optconf = 1$.
 We extend the above problem to two objective functions $\cost_1(\conf) = (\conf - 1)^2$ and $\cost_2(\conf) = 3(\conf - 2)^2$, thus
 
 $$
-    \min_{\conf} \cost(\conf) := \left(\cost_1(\conf), \cost_2(\conf)\right), \qquad 0 \le \conf \le 3.
+    \min_{\conf} \cost(\conf) = \left(\cost_1(\conf), \cost_2(\conf)\right), \qquad 0 \le \conf \le 3.
 $$
-%FIXME: JR: Again, the notation. Also now `:=` ?
 
     \begin{center}
     \includegraphics[scale=0.2]{images/graph2}
@@ -254,7 +255,7 @@ We consider the functions in the objective function space $\cost(\pcs)$ by drawi
     \vspace*{-0.3cm}
 
 The Pareto front is shown in green.
-The Pareto front cannot be \enquote{left} without getting worse in at least one objective function.
+The Pareto front cannot be "left" without getting worse in at least one objective function.
 
 \end{frame}
 
@@ -298,12 +299,9 @@ $$
 
 \textbf{Example: Lexicographic method}
 
-\lz
-
 \textbf{Prior knowledge:} customer prioritizes rating over price. \\
 $\to$ optimize target functions one after the other.
 
-\lz
 
     \begin{center}
 \includegraphics[scale=1]{images/expedia-10-1}
@@ -314,9 +312,9 @@ $\to$ optimize target functions one after the other.
 A-priori approach: Lexicographic method
 
 \begin{eqnarray*}
-y_1^* &=& \min_{\conf \in \pcs} \cost_1(\conf)\\
-y_2^* &=& \min_{\conf \in \{\conf ~|~ \cost_1(\conf) = y_1^*\}} \cost_2(\conf) \\
-y_3^* &=& \min_{\conf \in \{\conf ~|~ \cost_1(\conf) = y_1^* \land \cost_2(\conf) = y_2^*\}} \cost_3(\conf) \\
+\yy_1^* &=& \min_{\conf \in \pcs} \cost_1(\conf)\\
+\yy_2^* &=& \min_{\conf \in \{\conf ~|~ \cost_1(\conf) = \yy_1^*\}} \cost_2(\conf) \\
+\yy_3^* &=& \min_{\conf \in \{\conf ~|~ \cost_1(\conf) = \yy_1^* \land \cost_2(\conf) = \yy_2^*\}} \cost_3(\conf) \\
 &\vdots&
 \end{eqnarray*}
 
@@ -329,7 +327,7 @@ But: different sequences provide different solutions.
 \item In a single application, only one solution is obtained, which depends on the a-priori selection of weights, order, etc.
 \item In case of repeated use, several solutions are obtained if weights, order, etc. are systematically varied.
 \item Usually there are solutions that remain hidden from these methods.
-\item Implicit assumption: single-criteria optimization is \enquote{simple}.
+\item Implicit assumption: single-criteria optimization is "simple".
 \end{itemize}
 
 \end{frame}
