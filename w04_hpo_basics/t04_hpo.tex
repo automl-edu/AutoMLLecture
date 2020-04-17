@@ -4,6 +4,12 @@
 \newcommand{\inducer}{\mathcal{I}}
 \newcommand{\R}{\mathds{R}}
 
+%The following might look confusing but allows us to switch the notation of the optimization problem independently from the notation of the hyper parameter optimization
+\newcommand{\xx}{\conf} %x of the optimizer
+\newcommand{\xxi}[1][i]{\lambda_{#1}} %i-th component of xx (not confuse with i-th individual)
+\newcommand{\XX}{\Lambda} %search space / domain of f
+\newcommand{\f}{\cost} %objective function
+
 \newenvironment{blocki}[1] % itemize block
 {
  \begin{block}{#1}\begin{itemize}
@@ -43,7 +49,7 @@
 \begin{itemize}
 \item Given a dataset, we want to train a classification tree.
 \item We feel that a maximum tree depth of $4$ has worked out well for us previously, so we decide to set this hyperparameter to $4$.
-\item The learner ("inducer") $\inducer$ takes the input data, internally performs \textbf{empirical risk minimization}, and returns a fitted tree model $\fh(\mathbf{x}) = f(\x, \hat{\theta})$ of at most depth $\lambda = 4$ that minimizes the empirical risk.
+\item The learner ("inducer") $\inducer$ takes the input data, internally performs \textbf{empirical risk minimization}, and returns a fitted tree model $\fh(\x) = f(\x, \hat{\theta})$ of at most depth $\lambda = 4$ that minimizes the empirical risk.
 \end{itemize}
 
 % FIGURE SOURCE: https://docs.google.com/presentation/d/14xwcs5zncTjFL4hIHAprjZMmyGIPqk5vs8DS32vEAvQ/edit?usp=sharing
@@ -58,7 +64,7 @@
 \begin{itemize}
 \item We are \textbf{actually} interested in the \textbf{generalization performance} $GE\left(\fh\right)$ of the estimated model on new, previously unseen data.
 \item We estimate the generalization performance by evaluating the model $\fh$ on a test set $\datasettest$: $$
-\widehat{GE}_{\datasettest}\left(\fh\right) = \frac{1}{|\datasettest|} \sum\limits_{(\x, y) \in \datasettest} L\left(y, \fh(\mathbf{x}) \right)
+\widehat{GE}_{\datasettest}\left(\fh\right) = \frac{1}{|\datasettest|} \sum\limits_{(\x, y) \in \datasettest} L\left(y, \fh(\x) \right)
 $$
 \end{itemize}
 \vspace*{-0.6cm}
@@ -571,14 +577,14 @@ HP combinations on a multi-dimensional discretized grid
 \begin{tabular}{ c | c }
 \textbf{Definition} & \textbf{Correspondence} \\[0.05cm]
 \hline \\[0.01cm]
-solution candidate $\x\in \mathcal{S}$ & Chromosome of an individual \\[0.1cm]
-$\x_i$& $i$-th gene of chromosome\\[0.1cm]
+solution candidate $\xx \in \XX$ & Chromosome of an individual \\[0.1cm]
+$\xxi$& $i$-th gene of chromosome\\[0.1cm]
 Set of solution candidates $\mathcal{P}$ & Population \\[0.1cm]
-Objective function $f: \mathcal{S} \to \R$ & Fitness function
+Objective function $\f: \XX \to \R$ & Fitness function
 \end{tabular}
 \end{center}
 
-For hyperparameter optimization a solution candidate is a hyperparmeter configuration $\conf$ and the objective function is $\widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \conf)\right)$
+For hyperparameter optimization a solution candidate is a hyperparmeter configuration $\conf$ and the objective function is $\f(\xx) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \xx)\right)$
 
 \end{frame}
 
@@ -640,9 +646,9 @@ These are demonstrated using the one-dimensional Ackley function, which we want 
 
 \vspace{0.5cm}
 
-In this case, each individual has exactly one chromosome. The chromosome is (obviously) encoded as a real number: $x_i \in \R$.
+In this case, each individual has exactly one chromosome. The chromosome is (obviously) encoded as a real number: $\xx_i \in \R$.
 
-Usually for the optimization of a function $f:\R^n \to \R$ individuals are coded as real vectors $\x_i \in \R^n$.
+Usually for the optimization of a function $\f:\R^n \to \R$ individuals are coded as real vectors $\xx_i \in \R^n$.
 
 
 \framebreak
@@ -659,7 +665,7 @@ Usually for the optimization of a function $f:\R^n \to \R$ individuals are coded
 
 \begin{frame}{Step 1: Initialize population}
 
-We start with a randomly selected population $\mathcal{P} = \{\x_1, ..., \x_\mu\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
+We start with a randomly selected population $\mathcal{P} = \{\xx_1, ..., \xx_\mu\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
 
 
 \begin{center}
@@ -674,18 +680,33 @@ We start with a randomly selected population $\mathcal{P} = \{\x_1, ..., \x_\mu\
 \begin{frame}[containsverbatim,allowframebreaks]{Step 2: Parent selection}
 
 
-In the first step of an iteration, $\lambda$ parents are chosen, who create offspring in the next step. %FIXME: JR: lambda is HP configuration! double notation
+In the first step of an iteration, $\lambda$ parents are chosen, who create offspring in the next step. 
 
-Possibilities for selection of parents:
-\begin{itemize}
-\item \textbf{Neutral selection: }choose individual with a probability $1/\mu$.
-\item \textbf{Fitness-proportional selection: }draw individuals with probability proportional to their fitness.
-\item \textbf{Tournament Selection: }randomly select $k$ individuals for a "Tournament Group". Of the drawn individuals, the best one (with the highest fitness value) is then chosen. In order to draw $\lambda$ individuals, the procedure must be performed $\lambda$-times.
-\end{itemize}
-\vspace*{-0.2cm}
-\begin{figure}
-\includegraphics[width = 7cm, height = 2.5cm ]{images/tournament_selection.png}
-\end{figure}
+\begin{footnotesize}
+    \textbf{Note:} Do not confuse the hyperparameters setting $\conf$ (bold) with the EA parameter $\lambda$.    
+\end{footnotesize}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+  
+  Possibilities for selection of parents:
+
+  \begin{itemize}
+    \item \textbf{Neutral selection: }choose individual with a probability $1/\mu$.
+    \item \textbf{Fitness-proportional selection: }draw individuals with probability proportional to their fitness.
+  \end{itemize}
+\end{column}%
+\begin{column}{0.5\textwidth}
+  \begin{itemize}
+    \item \textbf{Tournament Selection: }randomly select $k$ individuals for a "Tournament Group". Of the drawn individuals, the best one (with the highest fitness value) is then chosen. In order to draw $\lambda$ individuals, the procedure must be performed $\lambda$-times.
+  \end{itemize}
+
+  \begin{figure}
+    \includegraphics[width = \linewidth]{images/tournament_selection.png}
+  \end{figure}
+
+\end{column}
+\end{columns}
 
 \framebreak
 
@@ -714,25 +735,25 @@ Recombination and mutation are not always performed both, sometimes only recombi
 
 \begin{frame}{Recombination for numeric representations}
 
-Two individuals $\x, \tilde\x \in \R^n$ in numerical representation can be recombined as follows:
+Two individuals $\xx, \tilde\xx \in \R^n$ in numerical representation can be recombined as follows:
 
 \begin{itemize}
 \item \textbf{Uniform crossover}: choose gene $i$ with probability $p$ of 1st parent and probability $1-p$ of 2nd parent.
-\item \textbf{Intermediate recombination}: new individual is created from the mean value of two parents $\frac{1}{2}(\x + \tilde\x)$
+\item \textbf{Intermediate recombination}: new individual is created from the mean value of two parents $\frac{1}{2}(\xx + \tilde\xx)$
 \item \textbf{Simulated Binary Crossover (SBX)}: generate \textbf{two offspring} based on
 
 $$
-\bar\x \pm \frac{1}{2} \beta (\tilde\x - \x)
+\bar\xx \pm \frac{1}{2} \beta (\tilde\xx - \xx)
 $$
 
-with $\bar\x = \frac{1}{2} (\x + \tilde\x)$.
+with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$.
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}{Recombination for bit strings}
 
-  For example, two individuals $\x, \tilde\x \in \{0, 1\}^n$ encoded as bit strings can be recombined as follows:
+  For example, two individuals $\xx, \tilde\xx \in \{0, 1\}^n$ encoded as bit strings can be recombined as follows:
 
   \begin{itemize}
   \item \textbf{1-point crossover}: select crossover $k \in \{1, ..., n - 1\}$ randomly and select the first $k$ bits from 1st parent, the last $n-k$ bits from 2nd parent.
@@ -768,10 +789,10 @@ with $\bar\x = \frac{1}{2} (\x + \tilde\x)$.
 
   \end{frame}
 \begin{frame}[containsverbatim,allowframebreaks]{Mutation for numeric representations}
-  \textbf{Mutation:} individuals are changed, for example for $\x \in \R^n$
+  \textbf{Mutation:} individuals are changed, for example for $\xx \in \R^n$
   \begin{itemize}
-  \item \textbf{Uniform mutation:} choose a random gene $x_i$ and replace it with a value uniformly distributed (within the feasible range).
-  \item \textbf{Gauss mutation}: $\tilde\x = \x \pm \sigma \mathcal{N}(0, \boldsymbol{I})$
+  \item \textbf{Uniform mutation:} choose a random gene $\xxi$ and replace it with a value uniformly distributed (within the feasible range).
+  \item \textbf{Gauss mutation}: $\tilde\xx = \xx \pm \sigma \mathcal{N}(0, \boldsymbol{I})$
   \item \textbf{Polynomial mutation:} polynomial distribution instead of normal distribution
   \begin{center}
   \begin{figure}
@@ -782,9 +803,9 @@ with $\bar\x = \frac{1}{2} (\x + \tilde\x)$.
    \framebreak
   More exact:
   $$
-  {\tilde x_{i}} = x_{i} + (x_{i,upper} - x_{i,lower}) \delta_{i}
+  {\tilde \xxi} = \xxi + (\xxi[i,\text{upper}] - \xxi[i,\text{lower}]) \delta_{i}
   $$
-  with $x_{i,upper} (x_{i,lower})$ as upper (lower) bound for $x_{i}$.
+  with $\xxi[i,\text{upper}]$ ($\xxi[i,\text{lower}]$) as upper (lower) bound for $\xxi$.
   $\delta_{i}$ results as:
   \footnotesize
   $$
@@ -794,7 +815,7 @@ with $\bar\x = \frac{1}{2} (\x + \tilde\x)$.
   1 - [2(1-r_{i})+2(r_{i}-\frac{1}{2})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta_{m} +1}}, &  \text{else.}
   \end{cases}
   $$
-  with  $\delta = \frac{min\{(x_{i} - x_{i,lower}), (x_{i,upper}-x_{i})\}}{x_{i,upper} - x_{i,lower}}$.
+  with  $\delta = \frac{min\{(x_{i} - \xxi[i,\text{upper}]), (\xxi[i,\text{upper}]-\xxi)\}}{\xxi[i,\text{upper}] - \xxi[i,\text{upper}]}$.
   \normalsize
   \vspace{0.5cm}
   Here $r_{i} \in [0,1]$ is a uniformly distributed number, $\eta_{m}$ is the distribution index of the mutation and is chosen by the user.\\
@@ -810,7 +831,7 @@ with $\bar\x = \frac{1}{2} (\x + \tilde\x)$.
     \end{center}
   \end{frame}
   \begin{frame}{Mutation for bit strings}
-  For example, an individual $\x \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
+  For example, an individual $\xx \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
   \vspace{0.5cm}
   \textbf{Mutation:}
   \begin{itemize}
