@@ -1,0 +1,103 @@
+
+\input{../latex_main/main.tex}
+
+\newcommand{\a}[0]{\mathbf{a}}
+\newcommand{\y}[0]{\mathbf{y}}
+\newcommand{\q}[0]{\mathbf{q}}
+\newcommand{\Xspace}[0]{\mathcal{X}}
+
+\title[AutoML: Overview]{Multi-criteria Optimization}
+\subtitle{Bayesian Optimization}
+%TODO: change authors!
+\author[Bernd Bischl]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+
+	\maketitle
+
+
+
+\begin{frame}{Recap: Bayesian Optimization Loop}
+
+\begin{algorithm}[H]
+    \Input{Search Space $\pcs$,
+    		black box function $\func$,
+    		acquisition function $\acq$, \\
+    		maximal number of function evaluations $\bobudget$.
+    	}
+	\BlankLine
+	$\dataset_0$ $\leftarrow$ initial\_design($\pcs$);
+
+	\For{\bocount = $1, 2, \ldots \bobudget - |\dataset_0|$}{
+		%\While{$B$ not exhausted} {
+		$\surro$ $\leftarrow$ fit predictive model on $\dataset_{\bocount-1}$;
+
+		select $\bonextsample$ by optimizing $\bonextsample \in \argmax_{\conf \in \pcs} \acq(\conf; \dataset_{\bocount-1}, \surro)$;
+
+		Query $\bonextobs := \func(\bonextsample)$;
+
+		Add observation to data $\dataset_{\bocount} := \dataset_{\bocount-1} \cup \{\langle \bonextsample, \bonextobs \rangle \}$;\\
+	}
+	\Return{Best $\conf$ according to $\dataset_\bocount$ or $\surro$}
+	\caption{BO loop}
+\end{algorithm}
+
+\end{frame}
+
+\begin{frame}{Multi-Criteria Bayesian Optimization}
+
+\textbf{Goal}: Extend BO for multiple cost functions
+
+$$
+\min_{\conf \in \pcs}  \cost(\conf) \Leftrightarrow \min_{\conf \in \pcs} \left(\cost_1(\conf), \cost_2(\conf), ..., \cost_m(\conf)\right).
+$$
+
+Approaches:
+
+\begin{itemize}
+        \item Scalarization
+        \item Acquisition function based on hypervolume
+        \item Multi-criteria optimization of acquisition function
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}{Scalarization: ParEGO}
+
+    Scalarize the cost functions using the augmented Tchebycheff norm
+
+    $$
+    \max_{i=1,\dots,m}\left(w_i \cost_i(\conf)\right) + \rho \sum_{i=1}^m w_i\cost_i(\conf),
+    $$
+
+    \begin{itemize}
+        \item The weights $w \in W$ are drawn from
+            $$
+                W = \left\{ w = (w_1, \dots, w_m) | \sum_{i=1}^m w_i = 1, w_i = \frac{l}{s} \wedge, l \in 0,\dots,s\right\},
+            $$
+            with $|W| = {{s+m-1}\choose{k-1}}$.
+        \item New weights are drawn in every BO iteration.
+        \item $\rho$ is a small parameter suggested to be set to $0.05$.
+        \item $s$ selects the number of differents weights to draw from.
+        \item Simplifies multi-criteria optimization problem to single-criteria.
+    \end{itemize}
+
+
+\end{frame}
+
+
+\end{document}
