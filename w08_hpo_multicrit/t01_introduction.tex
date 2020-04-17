@@ -32,7 +32,7 @@
 \item Admissible set $\conf \subset \pcs$
 \item Target region $\realnum^m$
 \item Multi-criteria objective function $\cost: \pcs \to \realnum^m$
-\item Objective function vector $\cost(\conf) = \left(\cost(\conf)_1, ..., \cost(\conf)_m^\top \in \realnum^m$, which maps $\conf$ into the space $\realnum^m$.
+\item Objective function vector $\cost(\conf) = \left(\cost(\conf)_1, ..., \cost(\conf)_m\right)^\top \in \realnum^m$, which maps $\conf$ into the space $\realnum^m$.
 % \item $F:=f(\pcs) = \left\{f(\conf) ~|~ \conf \in \pcs\right\}$: Bild einer Funktion (Menge aller möglichen Funktionswerte)
 \end{itemize}
 
@@ -59,7 +59,7 @@ In machine learning:
 \item ...
 \end{itemize}
 
-A \textit{simple} approach would be to formulate all but one objective function simplified as a secondary condition.
+A \textit{simple} approach would be to formulate all but one objective function simplified as a secondary condition. %FIXME: JR: unclear to me
 
 \vspace*{0.2cm}
 
@@ -79,7 +79,7 @@ Maximize hotel rating subject to a maximum price per night.
 
 \vspace*{0.2cm}
 
-\textbf{Goal}: find a general approach to solving multi-criteria problems.
+\textbf{Goal}: Find a general approach to solving multi-criteria problems.
 
 
 \begin{center}
@@ -89,8 +89,8 @@ Maximize hotel rating subject to a maximum price per night.
 When booking a hotel: find the hotel with
 
 \begin{itemize}
-\item Minimum price per night (\textbf{costs}) and
-\item Maximum user rating (\textbf{performance}).
+\item minimum price per night (\textbf{costs}) and
+\item maximum user rating (\textbf{performance}).
 \end{itemize}
 
 \vfill
@@ -120,8 +120,8 @@ Example: (negative) average rating by hotel guests (1 - 5) vs. average price per
 In addition, targets are often not comparable because they have different units, for example:
 
 \begin{itemize}
-    \item Left: a hotel with rating $4$ for $89$ Euro ($\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$ would be preferred to a hotel $\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$)
-\item Right: how to decide if $\textcolor{orange}{\cost^{(1)}} = \left(89, - 4.0\right)$ and $\textcolor{orange}{\cost^{(1)}} = \left(95, - 4.5\right)$?
+    \item Left: a hotel with rating $4$ for $89$ Euro ($\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$) would be preferred to a hotel for 108 Euro with the same rating ($\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$).
+\item Right: how to decide if $\textcolor{orange}{\cost^{(1)}} = \left(89, - 4.0\right)$ or $\textcolor{orange}{\cost^{(1)}} = \left(95, - 4.5\right)$ is preferred?
 \item How much money is one \textit{rating point} worth?
 \end{itemize}
 
@@ -151,8 +151,8 @@ $$
 
 \textbf{Definition:}
 
-Given a multicriteria optimization problem
-    $$\min_{\conf \in \pcs} \cost(\conf) = \left(\cost_1(\conf), ..., \cost_m(\conf)\right), \quad \cost_i: \pcs \to \realnum.$$
+Given a multi-criteria optimization problem
+    $$\min_{\conf \in \pcs} \cost(\conf) = \left(\cost_1(\conf), ..., \cost_m(\conf)\right), \quad \cost_i: \pcs \to \realnum.$$ %FIXME: JR: Looks not entirely right. min on right too?
 
 \begin{itemize}
     \item A solution $\conf^{(1)}$ \textbf{(Pareto-) dominates} $\conf^{(2)}$, if $\cost(\conf^{(1)}) \prec \cost(\conf^{(2)})$, i.e.
@@ -175,7 +175,7 @@ Given a multicriteria optimization problem
 Let still $\cost = (\text{price}, - \text{rating})$. For some cases it is \textit{clear} which point is the better one:
 
 \begin{itemize}
-    \item The solution $\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$ dominates $\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$: $\textcolor{green}{\cost^{(1)}}$ is not worse in any dimension and is better in one dimension. $\textcolor{red}{\cost^{(2)}}$ gets \textbf{dominated} by $\textcolor{green}{\cost^{(1)}}$
+    \item The solution $\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$ dominates $\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$: $\textcolor{green}{\cost^{(1)}}$ is not worse in any dimension and is better in one dimension. Therefore, $\textcolor{red}{\cost^{(2)}}$ gets \textbf{dominated} by $\textcolor{green}{\cost^{(1)}}$
 $$
 \textcolor{red}{\cost^{(2)}} \prec \textcolor{green}{\cost^{(1)}}.
 $$
@@ -202,8 +202,7 @@ $$
 \vspace*{0.3cm}
 
 \centering \includegraphics[width=0.8\linewidth]{images/expedia-5-1}
-
-
+%FIXME: JR: I would prefer the pareto front as a step diagram, as this would be in accordance to the HV. Is the code to generate these plots checked in?
 
 \end{itemize}
 
@@ -217,6 +216,7 @@ We consider the minimization problem
 $$
 \min_{\conf} \cost(\conf) = (\conf - 1)^2, \qquad 0 \le \conf \le 3.
 $$
+%FIXME: JR: Again, min also on the right?
 
 The optimum is at $\optconf = 1$.
 
@@ -235,6 +235,7 @@ We extend the above problem to two objective functions $\cost_1(\conf) = (\conf 
 $$
     \min_{\conf} \cost(\conf) := \left(\cost_1(\conf), \cost_2(\conf)\right), \qquad 0 \le \conf \le 3.
 $$
+%FIXME: JR: Again, the notation. Also now `:=` ?
 
     \begin{center}
     \includegraphics[scale=0.2]{images/graph2}

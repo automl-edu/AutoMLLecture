@@ -43,7 +43,7 @@ Evolutionary algorithms return as a solution a \textbf{population} of solution c
 \vspace*{-0.4cm}
 
 \begin{footnotesize}
-Image of the function (grey) and target function values $(\cost_1(\x), \cost_2(\x))$ for $\x \in \mathcal{P}_i, i = 1, 3, 10$.
+Image of the function (grey) and target function values $(\cost_1(\x), \cost_2(\x))$ for $\x \in \mathcal{P}_i, i = 1, 3, 10$ (blue).
 \end{footnotesize}
 
 \framebreak
@@ -51,25 +51,26 @@ Image of the function (grey) and target function values $(\cost_1(\x), \cost_2(\
   \begin{center}
   \caption{Evolutionary algorithm}
       \begin{algorithmic}[1]
-      \STATE Initialize and rate population $P_0 \subset \Xspace$ with $|\mathcal{P}| = \mu$
+      \STATE Initialize and rate population $P_0 \subset \Xspace$ with $|\mathcal{P}| = \mu$ %FIXME: JR: Das gleiche P?
       \STATE $t \leftarrow 0$
       \REPEAT
         \STATE Variation: generate offspring $Q_t$ with $|Q_t| = \lambda$
-        \STATE Selection: select survivors $P_{t + 1}$
+        \STATE Selection: select survivors $P_{t + 1}$ %FIXME: JR: select $\mu$ survivors?
+        %FIXME: JR: Rate Population?
  		\STATE $t \leftarrow t + 1$
       \UNTIL{Stop criterion fulfilled}
      \end{algorithmic}
     \end{center}
 \end{algorithm}
 
-The population of solution candidates consists of $\x \in \Xspace$.
+The population of solution candidates consists of $\x \in \Xspace$. %FIXME: JR: Write this in Return part of algorithm?
 
 \end{frame}
 
 
 \begin{frame}{Objectives of an evolutionary strategy}
 
-The aim is to select the evolution strategy in such a way that the algorithm provides an approximation of the Pareto front, where
+The aim is to select the evolution strategy in such a way that the algorithm provides an approximation of the Pareto front, where:
 
 \begin{enumerate}
 \item The individuals of the population (or the corresponding functional values in the target function space) \textbf{converge} to the Pareto front.
@@ -85,7 +86,7 @@ The aim is to select the evolution strategy in such a way that the algorithm pro
 \vspace*{-0.5cm}
 
 \begin{footnotesize}
-\textbf{Caution}: in this graphic the objective function values are exceptionally \textbf{maximized}.
+\textbf{Caution}: in this graphic the objective function values are exceptionally \textbf{maximized}. %FIXME: JR: Multicolumn and fig on the right?
 \end{footnotesize}
 
 \end{frame}
@@ -103,6 +104,7 @@ The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by 
 \item \textbf{Crowding distance assignment}
 \end{itemize}
 \end{itemize}
+%FIXME: JR: Is the student supposed to know what all this means or is this an overview of what will come. Interrupts understanding.
 
 \end{frame}
 
@@ -115,6 +117,7 @@ The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by 
 % \framebreak
 
 \begin{footnotesize}
+%FIXME: JR: After offspring is generated.. ?
 We subdivide $R_t = P_t \cup Q_t$ into fronts $F_1, F_2, F_3, ...$ such that
 
 \begin{itemize}
@@ -127,6 +130,7 @@ We write $F_1 \prec F_2 \prec F_4 \prec ... $
 \begin{center}
 \includegraphics[width = 0.4\linewidth]{images/NSGA2_NDS.png}
 \end{center}
+%FIXME: JR: Two-colum here?
 
 \framebreak
 
@@ -180,7 +184,7 @@ One point with high crowding distance (red) and one point with very small crowdi
    	\begin{footnotesize}
     \STATE Initialize population $P_0$, $t \leftarrow 0$
     \STATE $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_0)$
-    \STATE Generate $Q_0$ by binary tournament selection, recombination and mutation
+    \STATE Generate $Q_0$ by binary tournament selection, recombination and mutation %FIXME: JR: We need F_1, F_2, ... for that right? Maybe we can write $Q_0 \leftarrow \texttt{offspring-generation(F_1, ...)}$ and add details on a extra slide? At least it should become clear what the parameters of the offspring generation are.
       \REPEAT
         \STATE $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_t \cup Q_t)$
         \STATE $i \leftarrow 1$
@@ -193,7 +197,7 @@ One point with high crowding distance (red) and one point with very small crowdi
         	\STATE $P_{t + 1} = P_{t + 1} \cup \x_j$
         	\STATE $j \leftarrow j + 1$
         \ENDWHILE
-        \STATE Generate $Q_{t + 1}$ by binary tournament selection, recombination and mutation
+        \STATE Generate $Q_{t + 1}$ by binary tournament selection, recombination and mutation %FIXME: JR: See above
       \UNTIL{Stop criterion fulfilled}
       \vspace*{-0.3cm}
       \end{footnotesize}
@@ -321,7 +325,7 @@ hypervolume contribution in a 2-dimensional objective space:\\
     \STATE Generate start population $P_0$ of size $\mu$
     \STATE $t \leftarrow 0$
       \REPEAT
-        \STATE Generate \textbf{one} individual $\q \in \R^n$ by recombination and mutation of $\mathcal{P}_t$
+        \STATE Generate \textbf{one} individual $\q \in \R^n$ by recombination and mutation of $\mathcal{P}_t$ %FIXME: JR: Mathcal P?
         \STATE $\{F_{1},..., F_k\} \leftarrow \text{fast-dominated-sort}(P_{t}\cup \q)$
         \STATE $\bm{a}^\star \leftarrow \text{argmin}_{\bm{a} \in F_{k}}\Delta s(\bm{a}, F_{k})$
         \STATE $P_{t+1} \leftarrow (P_t \cup \{\q\}) \setminus\{\bm{a}^\star\}$
@@ -335,7 +339,7 @@ hypervolume contribution in a 2-dimensional objective space:\\
     \vspace{-0.5cm}
 \scriptsize
 \begin{itemize}
-\item L5: the set of temporary $(\mu + 1)$ individuals is divided by \textbf{fast-dominated-sort} into $k$ fronts $F_{1},...,F_{k}$.
+\item L5: the set of temporary $(\mu + 1)$ individuals is divided by \textbf{fast-dominated-sort} into $k$ fronts $F_{1},...,F_{k}$. %FIXME: JR: fast-dominated-sort is something else then nondominated-sort? If yes what?
 \item L6: determine individual $\bm{a}^\star \in F_{k}$ with smallest hypervolume contribution.
 \item L7: the individual $\bm{a}^\star$ from the worst front with the smallest contribution to the dominated hypervolume does not survive.
 \item The fitness of an individual is therefore primarily the rank of its associated front and secondarily its contribution to hypervolume.
