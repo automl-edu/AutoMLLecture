@@ -68,9 +68,9 @@ $$
 Approaches:
 
 \begin{itemize}
-        \item Scalarization
-        \item Acquisition function based on hypervolume
-        \item Multi-criteria optimization of acquisition function
+        \item Scalarization of cost functions.
+        \item Direct optimization of multi-criteria performance indicator.
+        \item Multi-criteria optimization of acquisition functions.
 \end{itemize}
 
 
@@ -81,7 +81,7 @@ Approaches:
     Scalarize the cost functions using the augmented Tchebycheff norm
 
     $$
-    \max_{i=1,\dots,m}\left(w_i \cost_i(\conf)\right) + \rho \sum_{i=1}^m w_i\cost_i(\conf),
+    c = \max_{i=1,\dots,m}\left(w_i \cost_i(\conf)\right) + \rho \sum_{i=1}^m w_i\cost_i(\conf),
     $$
 
     \begin{itemize}
@@ -97,6 +97,108 @@ Approaches:
     \end{itemize}
 
 
+\end{frame}
+
+
+\begin{frame}{ParEGO Algorithm}
+
+\begin{algorithm}[H]
+    \Input{Search Space $\pcs$,
+    		black box function $\func$,
+    		acquisition function $\acq$, $\rho$, $s$, \\
+    		maximal number of function evaluations $\bobudget$.
+    	}
+	\BlankLine
+	$\dataset_0$ $\leftarrow$ initial\_design($\pcs$);
+
+	\For{\bocount = $1, 2, \ldots \bobudget - |\dataset_0|$}{
+		%\While{$B$ not exhausted} {
+
+        sample $w$ from  $\left\{ w = (w_1, \dots, w_m) | \sum_{i=1}^m w_i = 1, w_i = \frac{l}{s} \wedge, l \in 0,\dots,s\right\}$;
+
+        compute scalarization $c^{(t)} =     \max_{i=1,\dots,m}\left(w_i \cost_i(\conf)\right) + \rho \sum_{i=1}^m w_i\cost_i(\conf)$;
+
+		$\hat c^{(t)}$ $\leftarrow$ fit predictive model on $\dataset_{\bocount-1}$;
+
+		select $\bonextsample$ by optimizing $\bonextsample \in \argmax_{\conf \in \pcs} \acq(\conf; \dataset_{\bocount-1}, \hat c^{(t)})$;
+
+        Query $c_1(\bonextsample), \dots, c_m(\bonextsample) := \func_1(\bonextsample), \dots, \func_m(\bonextsample)$;
+
+		Add observation to data $\dataset_{\bocount} := \dataset_{\bocount-1} \cup \{\langle \bonextsample, c_1(\bonextsample), \dots, c_m(\bonextsample) \rangle \}$;\\
+	}
+	\Return{Best $\conf$ according to $\dataset_\bocount$ or $\surro$}
+	\caption{ParEGO loop}
+\end{algorithm}
+
+\end{frame}
+
+\begin{frame}{ParEgo Example}
+
+    \begin{center}
+        \includegraphics[scale=0.4]{images/parego_ex}
+    \end{center}
+    \vspace{-0.5cm}
+    \begin{scriptsize}
+    Example of 3 ParEGO iterations. Red circles are initial design points, blue triangles are proposed configurations and green squares proposed configurations of earlier iterations.
+    The solid line shows the current scalarization of the current iterations.
+    \end{scriptsize}
+\end{frame}
+
+
+\begin{frame}{Hypervolume based Acquisition Functions}
+
+    \textbf{Idea:} Use an acquisition function that directly models contribution to the dominated hypervolume.
+
+    \vspace{0.5cm}
+
+    \begin{itemize}
+        \item Separate surrogate model $\surro_1, \dots, \surro_m$ for each cost function.
+        \item Aggregate contribution of each $\conf$ in regards to the estimated hypervolume contribution
+            $$
+            \max(0, S(\mathcal{P} \cup \conf, R) - S(\mathcal{P}, R))
+            $$
+    \end{itemize}
+
+    \begin{center}
+        \includegraphics[scale=0.3]{images/hv_contribution}
+    \end{center}
+
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{S-Metric Selection-based EGO}
+    Using the Lower Confidence bound $u_1(\conf), \dots, u_m(\conf)$, an optimistic estimate of hypervolume contribution can be calculated.
+
+    \begin{center}
+        \includegraphics[scale=0.35]{images/hv_contribution_2}
+    \end{center}
+
+    \framebreak
+
+    As potential solution can be predicted beyond the real objective space, additive $\epsilon$-dominance ($\preceq_\epsilon$) is measured
+            $$
+                c_1(\conf^{(i)}) \le \epsilon+c_1(\conf^{(j)}), \dots, c_m(\conf^{(i)}) \le \epsilon+c_m(\conf^{(j)}),
+            $$
+            and a penalty is applied to these configurations
+            $$
+                \Psi(\conf) = -1 + \prod_{j=1}^m(1+u(\conf)_j - c_j).
+            $$
+
+    \begin{itemize}
+        \item This method is referred to as SMS-EGO.
+        \item Extension exist for more advanced indicators exist, e.g., $\epsilon$-EGO.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Multi-Criteria Optimization of Acquisition Functions}
+    \textbf{Goal:} Apply multi-criteria optimization methods on acquisition to approximate a pareto front.
+
+    \begin{itemize}
+       \item Separate surrogate model $\surro_1, \dots, \surro_m$ for each cost function.
+       \item Apply Multi-Criteria optimization (e.g. NSGA-II) to approximate pareto front over acquisition functions.
+       \item Select a single configuration from the estimated pareto front, e.g., by hypervolume contribution.
+    \end{itemize}
 \end{frame}
 
 
