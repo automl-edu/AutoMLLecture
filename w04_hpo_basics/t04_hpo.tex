@@ -6,8 +6,8 @@
 
 %The following might look confusing but allows us to switch the notation of the optimization problem independently from the notation of the hyper parameter optimization
 \newcommand{\xx}{\conf} %x of the optimizer
-\newcommand{\xxi}[1][i]{\lambda_{#1}} %i-th component of xx (not confuse with i-th individual)
-\newcommand{\XX}{\Lambda} %search space / domain of f
+\newcommand{\xxi}[1][i]{\conf_{#1}} %i-th component of xx (not confuse with i-th individual)
+\newcommand{\XX}{\pcs} %search space / domain of f
 \newcommand{\f}{\cost} %objective function
 
 \newenvironment{blocki}[1] % itemize block
@@ -49,7 +49,7 @@
 \begin{itemize}
 \item Given a dataset, we want to train a classification tree.
 \item We feel that a maximum tree depth of $4$ has worked out well for us previously, so we decide to set this hyperparameter to $4$.
-\item The learner ("inducer") $\inducer$ takes the input data, internally performs \textbf{empirical risk minimization}, and returns a fitted tree model $\fh(\x) = f(\x, \hat{\theta})$ of at most depth $\lambda = 4$ that minimizes the empirical risk.
+\item The learner ("inducer") $\inducer$ takes the input data, internally performs \textbf{empirical risk minimization}, and returns a fitted tree model $\fh(\x) = f(\x, \hat{\theta})$ of at most depth $\conf = 4$ that minimizes the empirical risk.
 \end{itemize}
 
 % FIGURE SOURCE: https://docs.google.com/presentation/d/14xwcs5zncTjFL4hIHAprjZMmyGIPqk5vs8DS32vEAvQ/edit?usp=sharing
@@ -84,7 +84,7 @@ and generalization performance might be bad, if we have chosen a suboptimal conf
 \item The data may be too complex to be modeled by a tree of depth $4$
 \item The data may be much simpler than we thought, and a tree of depth $4$ overfits
 \end{itemize}
-\item[$\implies$] algorithmically try out different values for the tree depth. For each maximal depth $\lambda$, we have to train the model \textbf{to completion} and evaluate its performance on the test set.
+\item[$\implies$] algorithmically try out different values for the tree depth. For each maximal depth $\conf$, we have to train the model \textbf{to completion} and evaluate its performance on the test set.
 \item We choose the tree depth $\conf$ that is \textbf{optimal} w.r.t. the generalization error of the model.
 \end{itemize}
 
@@ -138,7 +138,7 @@ Examples:
 
 \begin{frame}[containsverbatim,allowframebreaks]{Types of hyperparameters}
 
-We summarize all hyperparameters we want to tune over in a vector $\conf \in \Lambda$ of (possibly) mixed type. HPs can have different types:
+We summarize all hyperparameters we want to tune over in a vector $\conf \in \pcs$ of (possibly) mixed type. HPs can have different types:
 
 \begin{itemize}
 \item Real-valued parameters, e.g.:
@@ -211,17 +211,17 @@ We face a \textbf{bi-level} optimization problem: The well-known risk minimizati
 
 \begin{itemize}
 \item For a learning algorithm $\inducer$ (also inducer) with $d$ hyperparameters, the hyperparameter \textbf{configuration space} is:
-$$\Lambda=\Lambda_{1} \times \Lambda_{2} \times \ldots \times \Lambda_{d}$$
-where $\Lambda_{i}$ is the domain of the $i$-th hyperparameter.
+$$\pcs=\pcs_{1} \times \pcs_{2} \times \ldots \times \pcs_{d}$$
+where $\pcs_{i}$ is the domain of the $i$-th hyperparameter.
 \item The domains can be continuous, discrete or categorical.
 \item For practical reasons, the domain of a continuous or integer-valued hyperparameter is typically bounded.
-\item A vector in this configuration space is denoted as $\conf \in \Lambda$.
-\item A learning algorithm $\inducer$ takes a (training) dataset $\dataset$ and a hyperparameter configuration $\conf \in \Lambda$ and returns a trained model (through risk minimization).
+\item A vector in this configuration space is denoted as $\conf \in \pcs$.
+\item A learning algorithm $\inducer$ takes a (training) dataset $\dataset$ and a hyperparameter configuration $\conf \in \pcs$ and returns a trained model (through risk minimization).
 
 \vspace*{-0.2cm}
 \begin{eqnarray*}
-\inducer: \left(\mathcal{X} \times \mathcal{Y}\right)^n \times \Lambda &\to& \mathcal{H} \\
-(\dataset, \Lambda) &\mapsto& \inducer(\dataset, \Lambda) = \hat f_{\dataset, \Lambda}
+\inducer: \left(\mathcal{X} \times \mathcal{Y}\right)^n \times \pcs &\to& \mathcal{H} \\
+(\dataset, \pcs) &\mapsto& \inducer(\dataset, \pcs) = \hat f_{\dataset, \pcs}
 \end{eqnarray*}
 % \item Additionally, some hyperparameters may only need to be specified if another hyperparameter (or combination of hyperparameters) takes on a certain value.
 \end{itemize}
@@ -230,16 +230,16 @@ where $\Lambda_{i}$ is the domain of the $i$-th hyperparameter.
 
 % Note that
 
-% In contrast to the first-level (empirical) risk minimization problem, hyperparameter optimization is also referred to as \textbf{second-level} optimization. The first-level problem can be seen as a subroutine called by the second-level problem: Each evaluation of $\Lambda$ requires to solve the first-level optimization problem.
+% In contrast to the first-level (empirical) risk minimization problem, hyperparameter optimization is also referred to as \textbf{second-level} optimization. The first-level problem can be seen as a subroutine called by the second-level problem: Each evaluation of $\pcs$ requires to solve the first-level optimization problem.
 
 
 % \framebreak
 
 % \begin{itemize}
-% \item search for the \textbf{inducer} hyperparameter $\Lambda$
+% \item search for the \textbf{inducer} hyperparameter $\pcs$
 % \item that minimizes the \textbf{generalization error}
 % $$
-% \min_{\Lambda} \E_{\D_n \sim \Pxy, (\xv, y) \sim \Pxy} \left(V\left(y, \hat f_{\D, \Lambda}(\xv)\right)\right).
+% \min_{\pcs} \E_{\D_n \sim \Pxy, (\xv, y) \sim \Pxy} \left(V\left(y, \hat f_{\D, \pcs}(\xv)\right)\right).
 % $$
 % \end{itemize}
 
@@ -256,10 +256,10 @@ where $\Lambda_{i}$ is the domain of the $i$-th hyperparameter.
 % In hyperparameter optimization, we
 
 % \begin{itemize}
-% \item search for the \textbf{inducer} hyperparameter $\Lambda$
+% \item search for the \textbf{inducer} hyperparameter $\pcs$
 % \item that minimizes the \textbf{test error}
 % $$
-% \min_{\Lambda \in \Lambda} \sum_{(\xi, \yi) \in \datasettest} V\left(\inducer(\datasettrain, \Lambda)(\xi), \yi\right).
+% \min_{\pcs \in \pcs} \sum_{(\xi, \yi) \in \datasettest} V\left(\inducer(\datasettrain, \pcs)(\xi), \yi\right).
 % $$
 % \end{itemize}
 
@@ -274,11 +274,11 @@ where $\Lambda_{i}$ is the domain of the $i$-th hyperparameter.
 We formally state the nested hyperparameter tuning problem as:
 
 $$
-\min_{\conf \in \Lambda} \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \Lambda)\right)
+\min_{\conf \in \pcs} \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \pcs)\right)
 $$
 
 \begin{itemize}
-\item The learner $\inducer(\datasettrain, \conf)$ takes a training dataset as well as hyperparameter settings $\Lambda$ (e.g.\ the maximal depth of a classification tree) as an input.
+\item The learner $\inducer(\datasettrain, \conf)$ takes a training dataset as well as hyperparameter settings $\pcs$ (e.g.\ the maximal depth of a classification tree) as an input.
 \item $\inducer(\datasettrain, \conf)$ performs empirical risk minimization on the training data and returns the optimal model $\hat f$ for the given hyperparameters.
 \item Note that for the estimation of the generalization error, more sophisticated resampling strategies like cross-validation can be used.
 \end{itemize}
@@ -366,7 +366,7 @@ Simplest method to achieve this: a 3-way split
 \begin{itemize}
 \item During tuning, a learner is trained on the \textbf{training set},
   evaluated on the  \textbf{validation set}.
-\item After the best model configuration $\conf^\star$ is selected, we re-train on the joint (training+validation) set and evaluate the model's performance on the \textbf{test set}.
+\item After the best model configuration $\finconf$ is selected, we re-train on the joint (training+validation) set and evaluate the model's performance on the \textbf{test set}.
 \end{itemize}
 
 \column{0.5\textwidth}
@@ -459,7 +459,7 @@ In each iteration of the outer loop we:
 \item Split off the light green testing data
 \item Run the tuner on the dark green part of the data, e.g.,
   evaluate each $\conf_i$ through fourfold CV on the dark green part
-\item Return the winning $\conf^\star$ that performed best on the grey inner test sets
+\item Return the winning $\finconf$ that performed best on the grey inner test sets
 \item Re-train the model on the full outer dark green train set
 \item Evaluate it on the outer light green test set
 \end{itemize}
@@ -924,7 +924,7 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 100
 
 \begin{itemize}
 	\item The distance between $999.9$ and $1000.0$ should not be the same as between $0.1$ and $0.2$.
-  \item We might want to sample here from from a log-scale, e.g., $[10^{\lambda_l}, 10^{\lambda_u}]$ with $\lambda_l = -3$ and $\lambda_u = 3$.
+  \item We might want to sample here from from a log-scale, e.g., $[10^{\conf_l}, 10^{\conf_u}]$ with $\conf_l = -3$ and $\conf_u = 3$.
 \end{itemize}
 
 \begin{figure}[htb]
@@ -937,8 +937,8 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 100
       \draw [very thick] ({10^(\x)*0.012},-2cm+2pt) -- ++(0,-4pt) node[anchor=north]{$\xxtext$};
       \draw [->] ({\x*2+6},-2pt) .. controls ({\x*2+6},-0.5) and ({10^(\x)*0.012},-1.5) .. ({10^(\x)*0.012},-2cm+2pt);
     }
-    \node[] at (-0.7,-0.1) (t1) {$\lambda$};
-    \node[] at (-0.7,-1.9) (t2) {$10^{\lambda}$};
+    \node[] at (-0.7,-0.1) (t1) {$\conf$};
+    \node[] at (-0.7,-1.9) (t2) {$10^{\conf}$};
   \end{tikzpicture}
 \end{figure}
 
@@ -999,8 +999,8 @@ The \emph{optimization curve} shows the best found configuration until a given t
   }
   \only<4>{
     \begin{itemize}
-      \item Remember: The final model will be trained on the \emph{outer training set} with the configuration $\conf^\star$ that lead to the best performance on the \emph{inner test set}.
-      \item To compare the effectiveness of the tuning strategies we have to look at the performance that $\conf^\star$ gives us on the \emph{outer test set}.
+      \item Remember: The final model will be trained on the \emph{outer training set} with the configuration $\finconf$ that lead to the best performance on the \emph{inner test set}.
+      \item To compare the effectiveness of the tuning strategies we have to look at the performance that $\finconf$ gives us on the \emph{outer test set}.
     \end{itemize}
   }
 \end{column}
@@ -1084,7 +1084,7 @@ The \emph{optimization curve} shows the best found configuration until a given t
   \item Often the optimal hyperparameter setting correlates with the size of the training data. Therefore the optimal setting on the \emph{inner resampling} data does not have to be optimal for the \emph{outer resampling}.
   \item For small data sets the relative size of the \emph{inner training set} should not differ much from \emph{outer training set}. Example: $n = 200$, outer resampling: 5-fold CV, inner resampling: 3-fold CV: $n_{\text{inner train}} = \frac{4}{5} \cdot {2}{3} \cdot n = 0.53 * n = 107$ vs.\ inner and outer resampling: 10-fold CV: $\frac{9}{10} \cdot \frac{9}{10} \cdot n = 0.81 * n = 162$ 
   \item Feature selection and preprocessing should also be considered as tuning and has to be validated accordingly.
-  \item If $\conf^\star$ is close to the border of $\Lambda$, consider log-scales or widening the search space.
+  \item If $\finconf$ is close to the border of $\pcs$, consider log-scales or widening the search space.
   \item Resampling strategies depend on dataset sizes:
   \begin{itemize}
     \item Small datasets: More resampling iterations necessary to obtain reliable performance estimate.
@@ -1092,8 +1092,8 @@ The \emph{optimization curve} shows the best found configuration until a given t
     \item Very large datasets: Use special tuning algorithms that adapt training set size. (e.g.\ \emph{Hyperband})
   \end{itemize}
   \item For unbalanced and multi-class datasets $n$ has to be higher to obtain reliable performance estimates.
-  \item \emph{Grid search} might work well for $\Lambda \in \mathbb{R}^2$ but becomes infeasible for higher dimensions.
-  \item The objective function that results from resampling the learner with a given input hyperparameter setting $\conf$ can become stochastic if 1) the learner is stochastic (e.g.\ random forest) 2) each time different splits are generated. If the optimizer does not respect that you run the risk to select $\conf^\ast$ that performed best by chance.
+  \item \emph{Grid search} might work well for $\pcs \in \mathbb{R}^2$ but becomes infeasible for higher dimensions.
+  \item The objective function that results from resampling the learner with a given input hyperparameter setting $\conf$ can become stochastic if 1) the learner is stochastic (e.g.\ random forest) 2) each time different splits are generated. If the optimizer does not respect that you run the risk to select $\finconf$ that performed best by chance.
   \item The optimal tuning strategy also depends on the available hardware  resources: A random search parallelized on 64 cores is probably more efficient then a smart optimizer that does not parallelize.
   \item Some learners can crash for certain hyperparameter configurations. The tuning process should not fail and lose all progress due to the crash.
   \item For many real-world applications you want to optimize multiple criteria (e.g.\ sensitivity and specificity). This will be topic in a later lecture.
