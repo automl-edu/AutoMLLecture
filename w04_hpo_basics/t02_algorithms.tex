@@ -1,0 +1,447 @@
+\input{t00_template.tex}
+\subtitle{Tuning Algorithms}
+
+
+\begin{document}
+
+\maketitle
+
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
+\begin{frame}{Why is tuning so hard?}
+\begin{itemize}
+\item Tuning is derivative-free (black box problem): It is usually impossible to compute derivatives of the objective (i.e., the resampled performance measure) that we optimize with regard to the HPs. All we can do is evaluate the performance for a given hyperparameter configuration.
+\item Every evaluation requires one or multiple train and predict steps of the learner. I.e., every evaluation is very \textbf{expensive}.
+\item Even worse: the answer we get from that evaluation is \textbf{not exact, but stochastic} in most settings, as we use resampling (and often stochastic learners).
+\item Categorical and dependent hyperparameters aggravate our difficulties: the space of hyperparameters we optimize over has a non-metric, complicated structure.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[containsverbatim,allowframebreaks]{Grid search}
+
+\begin{columns}
+\begin{column}{0.49\textwidth}
+\begin{itemize}
+\item Simple technique which is still quite popular, tries all
+HP combinations on a multi-dimensional discretized grid
+\item For each hyperparameter a finite set of candidates is predefined
+\item Then, we simply search all possible combinations in arbitrary order
+\end{itemize}
+\end{column}
+\begin{column}{0.49\textwidth}
+\vspace*{-0.8cm}
+\begin{center}
+\begin{figure}
+\includegraphics[width=0.9\textwidth]{images/grid.png}
+\caption*{Grid search over 10x10 points}
+\end{figure}
+\end{center}
+\end{column}
+\end{columns}
+
+\framebreak
+
+\begin{blocki}{Advantages}
+\item Very easy to implement
+\item All parameter types possible
+\item Parallelizing computation is trivial
+\end{blocki}
+
+\begin{blocki}{Disadvantages}
+\item Scales badly: Combinatorial explosion
+\item Inefficient: Searches large irrelevant areas
+\item Low resolution in each dimension
+\item Arbitrary: Which values / discretization?
+\end{blocki}
+\end{frame}
+
+
+\begin{frame}[containsverbatim,allowframebreaks]{Random search}
+
+
+
+\begin{columns}
+\begin{column}{0.49\textwidth}
+\begin{itemize}
+\item Small variation of grid search
+\item Uniformly sample from the region-of-interest
+\end{itemize}
+\end{column}
+\begin{column}{0.49\textwidth}
+\vspace*{-0.8cm}
+\begin{center}
+\begin{figure}
+\includegraphics[width=0.9\textwidth]{images/random.png}
+\caption*{Random search over 100 points}
+\end{figure}
+\end{center}
+\end{column}
+\end{columns}
+
+\framebreak
+
+\begin{blocki}{Advantages}
+\item Like grid search: Very easy to implement, all parameter types possible, trivial parallelization
+\item Anytime algorithm: Can stop the search whenever our budget for computation is exhausted, or continue until we reach our performance goal.
+\item No discretization: each individual parameter is tried with a different value every time
+\end{blocki}
+
+\begin{blocki}{Disadvantages}
+\item Inefficient: many evaluations in areas with low likelihood for improvement
+\item Scales badly: high dimensional hyperparameter spaces need \emph{lots} of samples to cover.
+\end{blocki}
+\end{frame}
+
+
+
+
+
+\begin{frame}[containsverbatim,allowframebreaks]{Evolutionary algorithms}
+
+\textbf{Evolutionary algorithms} (EA) are a class of stochastic, metaheuristic optimization techniques whose mode of operation is inspired by the evolution of natural organisms.
+
+\vspace{0.5cm}
+
+\begin{center}
+\begin{tabular}{ c | c }
+\textbf{Definition} & \textbf{Correspondence} \\[0.05cm]
+\hline \\[0.01cm]
+solution candidate $\xx \in \XX$ & Chromosome of an individual \\[0.1cm]
+$\xxi$& $i$-th gene of chromosome\\[0.1cm]
+Set of solution candidates $\mathcal{P}$ & Population \\[0.1cm]
+Objective function $\f: \XX \to \R$ & Fitness function
+\end{tabular}
+\end{center}
+
+For hyperparameter optimization a solution candidate is a hyperparmeter configuration $\conf$ and the objective function is $\f(\xx) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \xx)\right)$
+
+\end{frame}
+
+\begin{frame}[containsverbatim,allowframebreaks]{History of evolutionary algorithms}
+
+Similar techniques differ in genetic representation:
+
+\begin{itemize}
+\item \textbf{Genetic algorithms}: uses binary problem representation, therefore closest to the biological model of evolution.
+\item \textbf{Evolution strategies}: uses direct problem representation, e.g. vector of real numbers.
+\item \textbf{Genetic programming}: create structures that convert an input into a fixed output (e.g. computer programs); solution candidates are represented as trees.
+\item \textbf{Evolutionary programming}: similar to GP, but solution candidates are not represented by trees, but by finite state machines.
+\end{itemize}
+
+The boundaries between the terms become increasingly blurred and are often used synonymously.
+
+\end{frame}
+
+
+\begin{frame}{Structure of an evolutionary algorithm}
+
+\begin{center}
+\begin{figure}
+\centering
+\begin{tikzpicture}[node distance=0.8cm, auto,]
+%nodes
+\node (init) {Initialize population};
+\node[below = 0.3cm of init](rating1) {Rate population};
+\node[below = 0.3cm of rating1](selection1) {Parent selection};
+\node[below = 0.3cm of selection1](variation) {Variation};
+\node[below = 0.3cm of variation](rating2) {Rate offspring};
+\node[below = 0.3cm of rating2](selection2) {Survival selection};
+\node[below = 0.3cm of selection2](stop) {Stop};
+\node[below = 1cm of stop](dummy2) {};
+\node[below = 0.2cm of stop](dummy3) {};
+\node[right = 0.01cm of dummy3](dummy4) {yes};
+\node[left = 1.1cm of rating2](dummy1) {no};
+\draw[->] (init) to (rating1) node[midway, above]{};
+\draw[->] (rating1) to (selection1) node[midway, above]{};
+\draw[->] (selection1) to (variation) node[midway, above]{};
+\draw[->] (variation) to (rating2) node[midway, above]{};
+\draw[->] (rating2) to (selection2) node[midway, above]{};
+\draw[->] (selection2) to (stop) node[midway, above]{};
+\draw[->] (stop) to (dummy2) node[midway, above]{};
+\draw[->] (stop) to [bend left=90, looseness=2](selection1) node[midway, above]{};
+\end{tikzpicture}
+\end{figure}
+\end{center}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example of an evolutionary algorithm}
+
+In the following, methods for the individual steps of an evolutionary algorithm are presented.
+
+\vspace{0.5cm}
+
+These are demonstrated using the one-dimensional Ackley function, which we want to optimize on the $[-30, 30]$ interval.
+
+\vspace{0.5cm}
+
+In this case, each individual has exactly one chromosome. The chromosome is (obviously) encoded as a real number: $\xx_i \in \R$.
+
+Usually for the optimization of a function $\f:\R^n \to \R$ individuals are coded as real vectors $\xx_i \in \R^n$.
+
+
+\framebreak
+
+
+\begin{center}
+\begin{figure}
+\includegraphics[width=\textwidth, height=6cm]{images/ea_ex1.png}
+\end{figure}
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}{Step 1: Initialize population}
+
+We start with a randomly selected population $\mathcal{P} = \{\xx_1, ..., \xx_\mu\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
+
+
+\begin{center}
+\begin{figure}
+\includegraphics[width=\textwidth, height=6cm]{images/ea_ex2.png}
+\end{figure}
+\end{center}
+
+
+\end{frame}
+
+\begin{frame}[containsverbatim,allowframebreaks]{Step 2: Parent selection}
+
+
+In the first step of an iteration, $\lambda$ parents are chosen, who create offspring in the next step. 
+
+\begin{footnotesize}
+    \textbf{Note:} Do not confuse the hyperparameters setting $\conf$ (bold) with the EA parameter $\lambda$.    
+\end{footnotesize}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+  
+  Possibilities for selection of parents:
+
+  \begin{itemize}
+    \item \textbf{Neutral selection: }choose individual with a probability $1/\mu$.
+    \item \textbf{Fitness-proportional selection: }draw individuals with probability proportional to their fitness.
+  \end{itemize}
+\end{column}%
+\begin{column}{0.5\textwidth}
+  \begin{itemize}
+    \item \textbf{Tournament Selection: }randomly select $k$ individuals for a "Tournament Group". Of the drawn individuals, the best one (with the highest fitness value) is then chosen. In order to draw $\lambda$ individuals, the procedure must be performed $\lambda$-times.
+  \end{itemize}
+
+  \begin{figure}
+    \includegraphics[width = \linewidth]{images/tournament_selection.png}
+  \end{figure}
+
+\end{column}
+\end{columns}
+
+\framebreak
+
+In our example we choose $\lambda = 5$ offspring by neutral selection (red individuals).
+
+\begin{center}
+\begin{figure}
+\includegraphics[width=\textwidth, height=5cm]{images/ea_ex3.png}
+\end{figure}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{Step 3: Variation}
+
+New individuals are now generated from the parent population. This is done by
+
+\begin{itemize}
+\item Recombination: combine two parents into one offspring.
+\item Mutation: change an individual.
+\end{itemize}
+
+Recombination and mutation are not always performed both, sometimes only recombination or mutation is performed.
+
+\end{frame}
+
+\begin{frame}{Recombination for numeric representations}
+
+Two individuals $\xx, \tilde\xx \in \R^n$ in numerical representation can be recombined as follows:
+
+\begin{itemize}
+\item \textbf{Uniform crossover}: choose gene $i$ with probability $p$ of 1st parent and probability $1-p$ of 2nd parent.
+\item \textbf{Intermediate recombination}: new individual is created from the mean value of two parents $\frac{1}{2}(\xx + \tilde\xx)$
+\item \textbf{Simulated Binary Crossover (SBX)}: generate \textbf{two offspring} based on
+
+$$
+\bar\xx \pm \frac{1}{2} \beta (\tilde\xx - \xx)
+$$
+
+with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Recombination for bit strings}
+
+  For example, two individuals $\xx, \tilde\xx \in \{0, 1\}^n$ encoded as bit strings can be recombined as follows:
+
+  \begin{itemize}
+  \item \textbf{1-point crossover}: select crossover $k \in \{1, ..., n - 1\}$ randomly and select the first $k$ bits from 1st parent, the last $n-k$ bits from 2nd parent.
+
+  \footnotesize
+  \begin{center}
+  \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
+   " " & \textcolor{red}{1} & \textcolor{blue}{1} & " " & " " & "  " & \textcolor{red}{1}  \\
+   " " & \textcolor{red}{0} & \textcolor{blue}{0} & " " & " " & "  " & \textcolor{red}{0}  \\ \cmidrule{2-3}
+   " " & \textcolor{red}{0} & \textcolor{blue}{1} & " " &$\Rightarrow$ & "  " & \textcolor{blue}{1}  \\
+   " " & \textcolor{red}{1} & \textcolor{blue}{1} & " " & " " & "  " & \textcolor{blue}{1}  \\
+   " " & \textcolor{red}{1} & \textcolor{blue}{0} & " " & " " & "  " & \textcolor{blue}{0}
+  \end{tabular}
+  \end{center}
+  \normalsize
+
+  \item \textbf{Uniform crossover}: select bit $i$ with probability $p$ of 1st parent and probability $1-p$ of 2nd parent.
+
+  \end{itemize}
+
+
+  % \footnotesize
+  % \begin{center}
+  % \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
+  %  " " & \textcolor{red}{1} & \textcolor{blue}{1} & " " & " " & "  " & \textcolor{red}{1}  \\
+  %  " " & \textcolor{red}{0} & \textcolor{blue}{0} & " " & " " & "  " & \textcolor{blue}{0}  \\
+  %  " " & \textcolor{red}{0} & \textcolor{blue}{1} & " " &$\Rightarrow$ & "  " & \textcolor{blue}{1}  \\
+  %  " " & \textcolor{red}{1} & \textcolor{blue}{1} & " " & " " & "  " & \textcolor{blue}{1}  \\
+  %  " " & \textcolor{red}{1} & \textcolor{blue}{0} & " " & " " & "  " & \textcolor{red}{1}
+  % \end{tabular}
+  % \end{center}
+  % \normalsize
+
+  \end{frame}
+\begin{frame}[containsverbatim,allowframebreaks]{Mutation for numeric representations}
+  \textbf{Mutation:} individuals are changed, for example for $\xx \in \R^n$
+  \begin{itemize}
+  \item \textbf{Uniform mutation:} choose a random gene $\xxi$ and replace it with a value uniformly distributed (within the feasible range).
+  \item \textbf{Gauss mutation}: $\tilde\xx = \xx \pm \sigma \mathcal{N}(0, \boldsymbol{I})$
+  \item \textbf{Polynomial mutation:} polynomial distribution instead of normal distribution
+  \begin{center}
+  \begin{figure}
+    \includegraphics[height = 3.5cm, width = 4cm]{images/polynomial_mutation.png}\\
+    \scriptsize{Source: K. Deb, Analysing mutation schemes for real-parameter genetic algorithms, 2014}
+  \end{figure}
+   \end{center}
+   \framebreak
+  More exact:
+  $$
+  {\tilde \xxi} = \xxi + (\xxi[i,\text{upper}] - \xxi[i,\text{lower}]) \delta_{i}
+  $$
+  with $\xxi[i,\text{upper}]$ ($\xxi[i,\text{lower}]$) as upper (lower) bound for $\xxi$.
+  $\delta_{i}$ results as:
+  \footnotesize
+  $$
+  \delta_{i} =
+  \begin{cases}
+  [2r_{i}+(1-2r_{i})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta +1}} -1, & r_{i} < 0.5 \\
+  1 - [2(1-r_{i})+2(r_{i}-\frac{1}{2})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta_{m} +1}}, &  \text{else.}
+  \end{cases}
+  $$
+  with  $\delta = \frac{min\{(x_{i} - \xxi[i,\text{upper}]), (\xxi[i,\text{upper}]-\xxi)\}}{\xxi[i,\text{upper}] - \xxi[i,\text{upper}]}$.
+  \normalsize
+  \vspace{0.5cm}
+  Here $r_{i} \in [0,1]$ is a uniformly distributed number, $\eta_{m}$ is the distribution index of the mutation and is chosen by the user.\\
+  % Remark: A $\eta_{m}$ of the order of $\eta_{m} \in [20,100]$ is common.
+  \normalsize
+  \end{itemize}
+  \vspace{0.5cm}
+  In our example, we have chosen a Gauss mutation with $\sigma = 2$, we do not apply a recombination.
+  \begin{center}
+    \begin{figure}
+    \includegraphics[width=\textwidth, height=5cm]{images/ea_ex4.png}
+    \end{figure}
+    \end{center}
+  \end{frame}
+  \begin{frame}{Mutation for bit strings}
+  For example, an individual $\xx \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
+  \vspace{0.5cm}
+  \textbf{Mutation:}
+  \begin{itemize}
+  \item \textbf{Bitflip}: for each index $k \in \{1, ..., n\}$: bit $k$ is flipped with probability $p \in (0,1)$.
+  \item If $(a)$ is an arbitrary bit sequence to which a bitflip mutation is applied, $(b)$ is obtained.
+  \end{itemize}
+  \footnotesize
+  \begin{center}
+  \begin{tabular}{c @{\hspace{2\tabcolsep}} *{5}{c}}
+    &
+    \itshape (a) &
+    \itshape " " &
+    \itshape " " &
+    \itshape " " &
+    \itshape (b)
+  \\[1ex]
+  " " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
+  " " & 0 & " " & " " & "  " & 0  \\
+  " " & 0 & " " & $\Rightarrow$ & "  " & \textcolor{red}{1}  \\
+  " " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
+  " " & 1 & " " & " " & "  " & 1
+  \end{tabular}
+  \end{center}
+  \normalsize
+  \end{frame}
+  \begin{frame}[allowframebreaks]{Step 4: Survival selection}
+  Now individuals are chosen who survive. Two common strategies are:
+  \begin{itemize}
+  \item \textbf{$(\mu, \lambda)$-selection}: we select from the $\lambda$ descendants the $\mu$ best ($\lambda \ge \mu$ necessary).
+  \textbf{But:} best overall individual can get lost!
+  \item \textbf{$(\mu + \lambda)$-selection}: $\mu$ parents and $\lambda$ offspring are lumped together and the $\mu$ best individuals are chosen.
+  Best individual safely survives.
+  \end{itemize}
+
+  \framebreak
+
+  In our example, a $(\mu + \lambda)$ selection was used. The selected points are green.
+
+  \begin{center}
+    \begin{figure}
+      \includegraphics[width=\textwidth, height=5cm]{images/ea_ex5.png}
+    \end{figure}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}{Evolutionary Algorithms}
+
+  \begin{blocki}{Advantages}
+    \item Can solve a variety of optimization problems (including HPO)
+    \item All parameter types possible
+    \item Highly parallelizable
+    \item Conceptually simple, yet powerful enough to solve complex problems
+    \end{blocki}
+
+    \begin{blocki}{Disadvantages}
+    \item Stagnation: Optimization process does not progress any more %FIXME: JR: Isn't that the same as the point below?
+    \item Premature Convergence: Algorithm converges to a single solution, which is not as good as expected
+    \item Diversity of population structures: Loss of population diversity for solving complex optimization problems
+    \item Lacks balance between exploration and exploitation
+    \end{blocki}
+
+\end{frame}
+
+\begin{frame}{More Tuning Algorithms}
+
+There are many more methods for hyperparmeter tuning, some of which will be discussed in later parts of this lecture:
+
+
+\begin{itemize}
+\item Stochastic local search, e.g. simulated annealing
+\item Bayesian optimization
+\item Hyperband
+\item Iterated F-Racing
+\item many more $\dots$
+\end{itemize}
+
+\end{frame}
+
+\end{document}

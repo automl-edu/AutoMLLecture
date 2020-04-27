@@ -34,7 +34,7 @@ tuner_terms = lapply(n_evalss, function(n_evals) {
 tuner_terms = unlist(tuner_terms, recursive = FALSE)
 
 #define m tasks
-tasks = tsks(c("spam", "sonar")), #"german_credit"))
+tasks = tsks(c("spam", "sonar")) #, "german_credit"))
 
 ps = ParamSet$new(params = list(
     ParamDbl$new("cost", lower = -3, upper = 3),
@@ -144,44 +144,44 @@ tuner_names = c("GridSearch", "RandomSearch", "CMAES", "Untuned", "Heuristic")
 tuner_colors = set_names(RColorBrewer::brewer.pal(7, "Set1"), tuner_names)
 
 res_compl[, tuner := factor(tuner, levels = tuner_names)]
-res_compl = res_compl[budget == 100,]
+res_compl = res_compl[budget == 100 & task_id == "spam",]
 
 #tune curve for iter = 1
 g = ggplot(res_compl[iteration == 1,], aes(y = classif.auc.cummax, x = nr, color = tuner))
 g = g + geom_line()
 g = g + geom_point(aes(y = classif.auc), alpha = 0.1)
 g = g + facet_wrap("task_id")
-g = g + coord_cartesian(ylim = c(0.5, 1))
+g = g + coord_cartesian(ylim = c(0.7, 1))
 g = g + scale_color_manual(values = tuner_colors)
-g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)")
+g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
 if (interactive()) {
   print(g)
 }
-ggsave("../images/benchmark_curve_iter_1.png", g, height = 5, width = 10)
+ggsave("../images/benchmark_curve_iter_1.png", g, height = 5, width = 7)
 
 #tune curve for all iters
 g = ggplot(res_compl, aes(y = classif.auc.cummax, x = nr, color = tuner, group = paste0(tuner, iteration)))
 g = g + geom_line()
 g = g + facet_wrap("task_id")
-g = g + coord_cartesian(ylim = c(0.5, 1))
+g = g + coord_cartesian(ylim = c(0.7, 1))
 g = g + scale_color_manual(values = tuner_colors)
-g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)")
+g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
 if (interactive()) {
   print(g)
 }
-ggsave("../images/benchmark_curve_iter_all.png", g, height = 5, width = 10)
+ggsave("../images/benchmark_curve_iter_all.png", g, height = 5, width = 7)
 
 #tune curve for all iters averaged
 g = ggplot(res_compl, aes(y = classif.auc.cummax, x = nr, color = tuner))
 g = g + stat_summary(geom = "line", fun = median)
 g = g + facet_wrap("task_id")
-g = g + coord_cartesian(ylim = c(0.9, 1))
+g = g + coord_cartesian(ylim = c(0.925, 0.99))
 g = g + scale_color_manual(values = tuner_colors)
-g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)")
+g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
 if (interactive()) {
   print(g)
 }
-ggsave("../images/benchmark_curve_median.png", g, height = 5, width = 10)
+ggsave("../images/benchmark_curve_median.png", g, height = 5, width = 7)
 
 #tune curve for all iters averaged + individual
 g = ggplot(res_compl, aes(y = classif.auc.cummax, x = nr, color = tuner))
@@ -190,49 +190,51 @@ g = g + stat_summary(geom = "line", fun = median)
 g = g + facet_wrap("task_id")
 g = g + coord_cartesian(ylim = c(0.9, 1))
 g = g + scale_color_manual(values = tuner_colors)
-g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)")
+g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
 if (interactive()) {
   print(g)
 }
-ggsave("../images/benchmark_curve_iter_all_median.png", g, height = 5, width = 10)
+ggsave("../images/benchmark_curve_iter_all_median.png", g, height = 5, width = 7)
 
 # outer performance
 res_outer = res$tune$score(measures = msr("classif.auc"))
-res_outer = res_outer[map_lgl(learner, function(x) x$model$tuning_instance$terminator$param_set$values$n_evals == 100), ]
+res_outer = res_outer[map_lgl(learner, function(x) x$model$tuning_instance$terminator$param_set$values$n_evals == 100) & task_id == "spam", ]
 res_outer[, tuner := map_chr(learner, function(x) class(x$tuner)[[1]])]
 res_outer[, tuner := stri_replace_first_fixed(tuner, "Tuner", "")]
-res_baseline = res$baseline$score(measures = msr("classif.auc"))
+res_baseline = res$baseline$score(measures = msr("classif.auc"))[task_id == "spam", ]
 res_baseline[, tuner := ifelse(stri_detect_fixed(learner_id, "default"), "Heuristic", "Untuned")]
 res_combined = rbind(res_baseline, res_outer)
 res_combined[, tuner:=factor(tuner, levels = tuner_names)]
 settings = list(
   tuners = list(name = "tuners", tuners = unique(res_outer$tuner)),
   untuned = list(name = "default", tuners = c(unique(res_outer$tuner), "Untuned")),
-  all = list(name = "all", tuners = unique(res_combined$tuner), ylim = c(0.8, 1))
+  all = list(name = "all", tuners = unique(res_combined$tuner))
 )
 for (s in settings) {
   g = ggplot(res_combined[tuner %in% s$tuners], aes(x = tuner, y = classif.auc, fill = tuner))
   g = g + geom_boxplot()
   g = g + scale_fill_manual(values = tuner_colors)
   g = g + facet_grid(task_id~.)
+  g = g + labs(y = "AUC", x = NULL, fill = "Tuner", title = "SVM performance on outer test set")
   g = g + coord_flip(ylim = s$ylim)
   if (interactive()) {
     print(g)
   }
-  ggsave(sprintf("../images/benchmark_boxplot_%s.png", s$name), g, height = 5, width = 10)
+  ggsave(sprintf("../images/benchmark_boxplot_%s.png", s$name), g, height = 5, width = 7)
 }
 
 #tune x space
-gs = lapply(unique(res_compl$task_id), function(this_task_id) {
+#gs = lapply(unique(res_compl$task_id), function(this_task_id) {
+  this_task_id = "spam"
   g = ggplot(res_compl[task_id == this_task_id & iteration == 1], aes(x = opt.x.cost, y = opt.x.gamma, size = classif.auc, color = classif.auc))
   g = g + geom_point()
   g = g + facet_grid(task_id~tuner)
   g = g + scale_radius() + scale_colour_viridis_c() + scale_y_log10() + scale_x_log10()
   g = g + labs(color = "AUC", size = "AUC", x = "cost", y = "gamma")
   g + theme_bw()
-})
-g = marrangeGrob(gs, ncol = 2, nrow = 1, top = "Tuning eta and lambda for xgboost (nrounds = 100)")
+#})
+#g = marrangeGrob(gs, ncol = 2, nrow = 1, top = "Tuning eta and lambda for xgboost (nrounds = 100)")
 if (interactive()) {
   print(g)
 }
-ggsave("../images/benchmark_scatter.png", g, height = 5, width = 10)
+ggsave("../images/benchmark_scatter.png", g, height = 5, width = 7)
