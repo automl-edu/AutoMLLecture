@@ -20,7 +20,7 @@ make_mbo_multi_control = function(multi_method) {
 tune_ctrls = list(
   grid = makeTuneMultiCritControlGrid(resolution = ceiling(sqrt(n_evals))),
   random = makeTuneMultiCritControlRandom(maxit = n_evals),
-  nsga2 = makeTuneMultiCritControlNSGA2(budget = n_evals, popsize = n_evals / 10, max.generations = 10),
+  nsga2 = makeTuneMultiCritControlNSGA2(budget = 12 * ceiling(n_evals / 12), popsize = 12, max.generations = ceiling(n_evals / 12)),
   mbo_parego = make_mbo_multi_control("parego"),
   mbo_dib = make_mbo_multi_control("dib")
 )
