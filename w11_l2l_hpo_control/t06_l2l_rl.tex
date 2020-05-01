@@ -1,10 +1,9 @@
+% !TeX spellcheck = en_US
 
 \input{../latex_main/main.tex}
 
-
-
-\title[AutoML: Learning to Control]{AutoML: Automated Machine Learning}
-\subtitle{Learning to Learn via Reinforcement Learning}
+\title[AutoML: L2L RL]{AutoML: Dynamic Configuration \& Learning}
+\subtitle{Learning to Learn: Reinforcement Learning}
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
@@ -27,7 +26,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \lit{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \litw{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
 
 \centering
 \includegraphics[width=0.4\textwidth]{images/l2o_comic}
@@ -38,15 +37,15 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \lit{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \litw{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
 
 \begin{block}{Reinforcement Learning for Learning to Optimize}
 \begin{description}
 \item[State] current location, objective values and gradients evaluated at the current and past locations
 \pause
-\item[Action] Step update $\Delta x$
+\item[Action] Step update $\Delta \x$
 \pause
-\item[Transition] $x_t \leftarrow x_{t-1} + \Delta x$
+\item[Transition] $\x^{(t)} \leftarrow \x^{(t-1)} + \Delta \x$
 \pause
 \item[Cost/Reward] Objective value at the current location
 \begin{itemize}
@@ -54,7 +53,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \item encourages the policy to reach the minimum of the objective function as quickly as possible
 \end{itemize}
 \pause
-\item[Policy] DNN predicting $\mu_d$ of Gaussian (with constant variance $\sigma^2$)\\ for dimension $d$; sample $\Delta x_d \sim \mathcal{N}(\mu_d, \sigma^2)$
+\item[Policy] DNN predicting $\mu_d$ of Gaussian (with constant variance $\sigma^2$)\\ for dimension $d$; sample $\Delta \x_d \sim \mathcal{N}(\mu_d, \sigma^2)$
 \pause
 \item[Training Set] randomly generated objective functions
 \end{description}
@@ -63,7 +62,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning Results \lit{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning Results \litw{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
 
 \centering
 \includegraphics[width=0.4\textwidth]{images/l2o_dnn}
@@ -79,7 +78,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c, fragile]{Learning Acquisition Functions \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c, fragile]{Learning Acquisition Functions \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \begin{itemize}
 \item Instead of learning everything, it might be sufficient to \alert{learn hand-design heuristics}
@@ -114,17 +113,17 @@ $\leadsto$ Replace acquisition function
 \Input{Search Space $\mathcal{X}$,
 black box function $f$, 
 \alert{acquisition function $\alpha$,}
-maximal number of function evaluations $m$
+maximal number of function evaluations $\bobudget$
 }
 \BlankLine
 $\mathcal{D}^{(0)}$ $\leftarrow$ initial\_design($\mathcal{X}$); \\
 \For{\bocount = $1, 2, \ldots \bobudget - |D_0|$}{
-$\surro: \conf \mapsto \cost(\conf)$ $\leftarrow$ fit predictive model on $\mathcal{D}_{n-1}$;\\
-select $x_{n}$ by optimizing $x_{n} \in \argmax_{x \in \mathcal{X}} \alert{\alpha(x; \mathcal{D}_{n-1}, \surro)}$;\\
-Query $y_{n} := f(x_{n})$;\\
-Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}$;
+$\surro: \x \mapsto \cost(\x)$ $\leftarrow$ fit predictive model on $\mathcal{D}^{(\bocount-1)}$;\\
+select $\x^{(\bocount)}$ by optimizing $\x^{(\bocount)} \in \argmax_{\x \in \mathcal{X}} \alert{\alpha(\x; \mathcal{D}^{(\bocount-1)}, \surro)}$;\\
+Query $y^{(\bocount)} := f(\x^{(\bocount)})$;\\
+Add observation to data $D^{(\bocount)} := D^{(\bocount-1)} \cup \{\langle \x^{(\bocount)}, y^{(\bocount)} \rangle \}$;
 }
-\Return{Best $x$ according to $D_m$ or $\surro$}
+\Return{Best $\x$ according to $D$ or $\surro$}
 \caption{Bayesian Optimization (BO)}
 \end{algorithm}
 
@@ -132,9 +131,9 @@ Add observation to data $D_{n} := D_{n-1} \cup \{\langle x_{n}, y_{n} \rangle \}
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Neural Acquisition Function  \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{Neural Acquisition Function  \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
-Although the \alert{acquisition function $\alpha$} depends on the history $\mathcal{D}_{n-1}$ and the predictive model $\surro$, $\alpha$ mainly makes use of the \alert{predictive mean $\mu$ and variance $\sigma^2$}.
+Although the \alert{acquisition function $\alpha$} depends on the history $\mathcal{D}^{(\bocount-1)}$ and the predictive model $\surro$, $\alpha$ mainly makes use of the \alert{predictive mean $\mu$ and variance $\sigma^2$}.
 
 \pause
 \bigskip
@@ -142,10 +141,10 @@ Although the \alert{acquisition function $\alpha$} depends on the history $\math
 Neural acquisition function (AF):
 
 \begin{eqnarray}
-\alpha_\weights(x) = \alpha_\weights(\mu_t(x), \sigma_t(x), x, t, T) \nonumber
+\alpha_\weights(\x) = \alpha_\weights(\mu^{(\bocount)}(\x), \sigma^{(\bocount)}(\x), \x, \bocount, \bobudget) \nonumber
 \end{eqnarray}
 
-where $\weights$ are the parameters of a neural network, and $\mu$, $\sigma$, $x$, $t$, $T$ are its inputs.
+where $\weights$ are the parameters of a neural network, and $\mu$, $\sigma$, $\x$, $\bocount$, $\bobudget$ are its inputs.
 
 %\pause 
 %\begin{itemize}
@@ -156,7 +155,7 @@ where $\weights$ are the parameters of a neural network, and $\mu$, $\sigma$, $x
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{RL to train Neural AF \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{RL to train Neural AF \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \begin{description}
 \item[Policy $\policy_\weights$:] Neural acquisition function $\alpha_\weights$
@@ -166,13 +165,13 @@ where $\weights$ are the parameters of a neural network, and $\mu$, $\sigma$, $x
 \item $\mathcal{F}$ is a set of functions we can sample functions from
 \end{itemize}
 \pause
-\item[State $\stateRL_t$:] $\mu_t$ and $\sigma_t$ on a set of points $\xi_t$, and $t$ and $T$
+\item[State $\stateRL^{(\bocount)} $:] $\mu^{(\bocount)} $ and $\sigma^{(\bocount)} $ on a set of points $\xi^{(\bocount)} $, and $t$ and $T$
 \pause
-\item[Action $\actionRL_t$:] Sampled point $x_t \in \xi_t$
+\item[Action $\actionRL^{(\bocount)} $:] Sampled point $\x^{(\bocount)}  \in \xi^{(\bocount)} $
 \pause
-\item[Reward $\rewardRL_t$:] negative simple regret: $r_t = f(x^*) - f(\hat{x})$
+\item[Reward $\rewardRL^{(\bocount)} $:] negative simple regret: $\rewardRL^{(\bocount)} = f(\x^*) - f(\hat{\x})$
 \begin{itemize}
-\item assumes that we can estimate the optimal $x^*$ for \emph{training} functions
+\item assumes that we can estimate the optimal $\x^*$ for \emph{training} functions
 \end{itemize}
 \pause
 \item[Transition probability]: Noisy evaluation of $f$ and the predictive model update
@@ -181,28 +180,28 @@ where $\weights$ are the parameters of a neural network, and $\mu$, $\sigma$, $x
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Policy \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{Policy \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \begin{itemize}
-\item The state is described by a discrete set of points $\xi_t = \{\xi_n\}^N_{n=1}$
+\item The state is described by a discrete set of points $\xi^{(\bocount)}  = \{\xi_n\}^N_{n=1}$
 \pause
-\item We feed these points through the predictive model and the neural AF to obtain $\alpha_\weights(\xi_n) = \alpha_\weights(\mu_t(\xi_n), \sigma_t(\xi_n), \xi_n, t, T),  $
+\item We feed these points through the predictive model and the neural AF to obtain $\alpha_\weights(\xi_n) = \alpha_\weights(\mu^{(\bocount)} (\xi_n), \sigma^{(\bocount)}(\xi_n), \xi_n, t, T),  $
 \pause
 \item $\alpha_\weights(\xi_i)$ are interpreted as the logits of categorical distribution, s.t.
-$$\pi_\alpha(\cdot \mid s_t) = \text{Cat}\left[\alpha_\weights(\xi_1), \ldots, \alpha_\weights(\xi_N) \right] $$
+$$\pi_\alpha(\cdot \mid s^{(\bocount)} ) = \text{Cat}\left[\alpha_\weights(\xi_1), \ldots, \alpha_\weights(\xi_N) \right] $$
 \pause
-\item Due to curse of dimensionality, we need a two step approach for~$\xi_t$
+\item Due to curse of dimensionality, we need a two step approach for~$\xi^{(\bocount)} $
 \begin{enumerate}
 \item sample $\xi_{\text{global}}$ using a coarse Sobol grid
 \item sample $\xi_{\text{local}}$ using local optimization starting from the best samples in $\xi_{\text{global}}$
 \end{enumerate}
-\item[$\leadsto$] $\xi_t = \xi_{\text{global}} \cup \xi_{\text{local}}$ 
+\item[$\leadsto$] $\xi^{(\bocount)} = \xi_{\text{global}} \cup \xi_{\text{local}}$ 
 \end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Learning Acquisition Functions: Overview \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c,fragile]{Learning Acquisition Functions: Overview \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \centering
 \includegraphics[width=0.8\textwidth]{images/l2acq.png}
@@ -211,7 +210,7 @@ $$\pi_\alpha(\cdot \mid s_t) = \text{Cat}\left[\alpha_\weights(\xi_1), \ldots, \
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Results on Artificial Functions \lit{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{Results on Artificial Functions \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
 
 \centering
 \includegraphics[width=0.9\textwidth]{images/l2acq_results.png}
@@ -220,7 +219,7 @@ $$\pi_\alpha(\cdot \mid s_t) = \text{Cat}\left[\alpha_\weights(\xi_1), \ldots, \
 
 \begin{itemize}
 \item Approach by \lit{Volpp et al. '19} called MetaBO
-\item MetaBO performs better than other acquisition functions\\ (EI, GP-UBC, PI) and other baselines (Random, TAF)
+\item MetaBO performs better than other acquisition functions\\ (EI, GP-UCB, PI) and other baselines (Random, TAF)
 \end{itemize}
 
 \pause

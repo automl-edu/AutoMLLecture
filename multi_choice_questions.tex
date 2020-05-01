@@ -1,0 +1,159 @@
+\documentclass{exam}
+\usepackage[utf8]{inputenc}
+\usepackage{multirow}
+
+%-------------------------------------------------------------
+\title{Collection of AutoML multiple Choice Questions}
+
+\begin{document}
+\maketitle
+%-------------------------------------------------------------------
+\section{Big Picture}
+%Here, the questions begin
+All questions require a single choice answer.
+\begin{questions}
+
+\question AutoML can help you to ...
+\begin{choices}
+ \choice replace the job of someone by a machine.
+ \choice enables efficient interdisciplinary projects.
+ \choice increase the time for finishing ML projects.
+ \choice apply ML without any knowledge about the risks of ML.
+\end{choices}
+
+\question AutoML is a hard problem because ... (among other reasons).
+\begin{choices}
+ \choice every function evaluation is super cheap
+ \choice we only have to tune a single hyperparameter
+ \choice we need the same ML pipeline for each dataset
+ \choice the search space can quite complex and large
+\end{choices}
+
+\question The CASH problem stands for ...
+\begin{choices}
+ \choice Combined Algorithm Solving and Hashing.
+ \choice Combined Algorithm Selection and Hyperparameter Optimization.
+ \choice Combined Automated Selection of Heuristics.
+ \choice Combined Automated Selection of Hyperparameters.
+\end{choices}
+
+\question  To apply AutoML to deep learning, we ...
+\begin{choices}
+ \choice want to ultimately optimize in the joint space of architectures and hyperparameters.
+ \choice first optimize the architectures and afterwards the hyperparameters.
+ \choice irst optimize the hyperparameters and afterwards the architecture.
+\end{choices}
+
+\question In dynamic algorithm configuration, we ...
+\begin{choices}
+ \choice select a configuration specifically to each instance at hand.
+ \choice predict which configuration an algorithm should use.
+ \choice search for fixed dynamic schedule of configurations.
+ \choice learn a policy that predicts a configuration for a given algorithm state.
+\end{choices}
+
+\question To mitigate the risks of AutoML, we ...
+\begin{choices}
+ \choice will build systems that will avoid all of these risks automatically.
+ \choice will blame ML and not AutoML.
+ \choice teach others about potential risks of ML and AutoML.
+ \choice will never publish our code as open-source.
+\end{choices}
+
+%-------------------------------------------------------------------------------
+\section{Evaluation}
+\question Training Machine Learning Models is ...
+\begin{choices}
+    \choice trivially easy.
+    \choice fundamentally an optimization problem. % Correct
+    \choice always cheap.
+\end{choices}
+
+\question Performance estimation of a model = performance estimation of an algorithm
+\begin{choices}
+    \choice True
+    \choice False % Correct
+\end{choices}
+
+\question Reason for bad learning curves include ...
+\begin{choices}
+    \choice underfitting % Correct
+    \choice overfitting % Correct
+    \choice optimal hyperparameter settings
+    \choice high bias   % Correct
+\end{choices}
+
+\question Choose all that apply:
+\begin{choices}
+    \choice underfitting $\mapsto$ high bias in model % Correct
+    \choice underfitting $\mapsto$ high variance in model
+    \choice overfitting $\mapsto$ high bias in model
+    \choice overfitting $\mapsto$ high variance in model % Correct
+\end{choices}
+
+\question In a statistical hypothesis test with $\alpha = 0.05$ and $p < \alpha$ we
+\begin{choices}
+    \choice Reject $H_0$ % Correct
+    \choice Accept $H_0$
+    \choice We cannot draw a conclusion.
+\end{choices}
+
+\question In a statistical hypothesis test with $\alpha = 0.05$ and $p > \alpha$ we
+\begin{choices}
+    \choice Reject $H_0$
+    \choice Accept $H_0$
+    \choice We cannot draw a conclusion. % Correct
+\end{choices}
+
+\question Is it permissible to first look at your $p$ value before choosing your $\alpha$?
+\begin{choices}
+    \choice Yes
+    \choice No % Correct
+\end{choices}
+
+\question For two algorithms X and Y we list their classification performance in the following table, with $0$ indicating a wrong classification and $1$ indicating correct classification.
+    \begin{center}
+      \begin{tabular}{cc|cc}
+          & & \multicolumn{2}{c}{X} \\
+          & & $0$ & $1$ \\
+          \hline
+          \multirow{2}{*}{Y} & $0$ & 30 & 90 \\
+          & $1$ & 75 & 5 \\
+      \end{tabular}
+    \end{center}
+    Use the McNemar Test where the \texttt{$H_0$: both models have the same performance} and \texttt{$H_1$: performances of the models are not equal}  with $\alpha = 0.05$\footnote{$\chi^2_1 = 3.841$}
+    % Chi^2 = 1.188
+\begin{choices}
+    \choice Reject $H_0$
+    \choice Accept $H_0$
+    \choice We cannot draw a conclusion. % Correct
+\end{choices}
+
+\question Instead consider now a different performance table with the rest being equal.
+    \begin{center}
+      \begin{tabular}{cc|cc}
+          & & \multicolumn{2}{c}{X} \\
+          & & $0$ & $1$ \\
+          \hline
+          \multirow{2}{*}{Y} & $0$ & 30 & 3 \\
+          & $1$ & 17 & 5 \\
+      \end{tabular}
+    \end{center}
+    % 17 + 3 <= 20 -> We shouldn't use McNemar
+\begin{choices}
+    \choice Reject $H_0$
+    \choice Accept $H_0$
+    \choice We cannot draw a conclusion.
+    \choice We shouldn't use McNemar % Correct
+\end{choices}
+
+\question The post-hoc Nemenyi test ...
+\begin{choices}
+    \choice should be used before the Friedman test.
+    \choice is used to determine if algorithms have the same ranks.
+    \choice compares all pairs of algorithms to find best-performing algorithm after $H_0$ of the
+Friedman-test was rejected. % Correct
+\choice can not be used with more than 2 algorithms.
+\end{choices}
+\end{questions}
+\end{document}

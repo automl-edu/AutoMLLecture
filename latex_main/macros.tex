@@ -8,9 +8,9 @@
 \newcommand{\hide}[1]{}
 \newcommand{\cemph}[2]{\emph{\textcolor{#1}{#2}}}
 
-\newcommand{\lit}[1]{{\footnotesize\color{black!70}[#1]}}
+\newcommand{\lit}[1]{{\footnotesize\color{black!60}[#1]}}
 
-\newcommand{\litw}[1]{{\footnotesize\color{black!20}[#1]}}
+\newcommand{\litw}[1]{{\footnotesize\color{blue!20}[#1]}}
 
 
 \newcommand{\myframe}[2]{\begin{frame}[c]{#1}#2\end{frame}}
@@ -92,11 +92,11 @@
 % BO loop counter max, the counter runs from 1 to this value
 \newcommand{\bobudget}{T}
 % BO loop observation
-\newcommand{\boobs}[1][\conf]{\cost({#1})}
+\newcommand{\obs}[1][\conf]{\cost({#1})}
 % BO loop observation space
-\newcommand{\boobsspace}{\mathcal{Y}}
+\newcommand{\obsspace}{\mathcal{Y}}
 % BO loop next observation
-\newcommand{\bonextobs}{\boobs[\iter{\conf}]}
+\newcommand{\bonextobs}{\obs[\iter{\conf}]}
 % Acquisition Function, no args
 \newcommand{\acq}{u}
 % Standard Normal PDF
@@ -138,6 +138,12 @@
 % Expectation as a math operator
 \DeclareMathOperator*{\E}{\mathbb{E}}
 
+% Citation 
+\newcommand{\source}[1]{
+    \begin{flushright}
+    	Source: \lit{#1}
+    \end{flushright}
+}
 %-------------------------------------------
 
 %Real numbers set

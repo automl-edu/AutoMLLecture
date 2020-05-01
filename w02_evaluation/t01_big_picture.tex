@@ -1,0 +1,89 @@
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Risks]{AutoML: Evaluation} % week title
+\subtitle{Overview and Motivation} % video title
+\author[Lars Kotthoff]{Bernd Bischl \and Frank Hutter \and \underline{Lars Kotthoff}\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+\newcommand\reffootnote[1]{%
+    \begingroup
+    \renewcommand\thefootnote{}\footnote{
+        \tiny #1
+    \vspace*{1em}}%
+    \addtocounter{footnote}{-1}%
+    \endgroup
+}
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+\begin{frame}[c]{Training Machine Learning Models}
+    \begin{itemize}
+        \item fundamentally an optimization problem
+        \item determine model parameters such that loss on data is minimized
+        \item quality of fit depends on model class (i.e.\ degrees of freedom)
+    \end{itemize}
+    \begin{center}
+    \includegraphics{fit}\\
+    Which model is best?
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[c]{Generalization}
+    \begin{itemize}
+        \item we want models that \emph{generalize} -- make ``reasonable''
+            predictions on new data
+            \begin{itemize}
+                \item ignore outliers
+                \item smooth
+                \item captures general trend
+            \end{itemize}
+    \end{itemize}
+    \begin{center}
+        \includegraphics[width=.5\textwidth]{overfitting}
+    \end{center}
+    Usually model performance gets better with more data/higher model complexity
+    and then worse, but see \url{https://openai.com/blog/deep-double-descent/}.
+    \reffootnote{\url{https://towardsdatascience.com/three-crazily-simple-recipes-to-fight-overfitting-in-deep-learning-models-314ae7660495}}
+\end{frame}
+
+\begin{frame}[c]{Overview}
+    \begin{itemize}
+        \item evaluating machine learning models and quantifying generalization
+            performance
+        \item learning curves
+        \item comparing multiple models/learners on multiple data sets
+        \item statistical tests
+        \item higher levels of optimization, higher levels of evaluation
+            \begin{itemize}
+                \item automated machine learning (meta-optimization) can lead to
+                    meta-overfitting
+                \item simple training/testing split(s) no longer sufficient
+                    $\rightarrow$ nested evaluation
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Evaluate Early, Evaluate Often}
+    \begin{center}
+        \includegraphics[width=.6\textwidth]{datasaurus}
+        \reffootnote{https://www.autodeskresearch.com/publications/samestats}
+    \end{center}
+\end{frame}
+
+\end{document}

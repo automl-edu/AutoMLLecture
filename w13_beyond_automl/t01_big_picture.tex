@@ -1,15 +1,12 @@
+% !TeX spellcheck = en_US
 
 \input{../latex_main/main.tex}
 
-
-
-\title[AutoML: Overview]{AutoML: Automated Machine Learning}
-\subtitle{Overview: Algorithm Configuration -- Beyond AutoML}
-%TODO: change authors!
-\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\title[AutoML: AC]{AutoML: Beyond AutoML}
+\subtitle{Overview: Algorithm Configuration}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
-
 
 
 % \AtBeginSection[] % Do nothing for \section*
@@ -44,14 +41,14 @@
 	\item a limitation of HPO is that we assume that we care only about a single task\\ (i.e., dataset or input to the algorithm)
 	\smallskip
 	\pause
-	\item[$\leadsto$] \alert{Can we find an algorithm's configuration that performs well and robustly across a set of tasks?}
+	\item[$\leadsto$] \alert{Can we find an algorithm's configuration that performs well and\\ robustly across a set of tasks?}
 	\begin{itemize}
 		\pause
-		\item An hyperparameter configuration for a set of datasets
+		\item A hyperparameter configuration for a set of datasets
 		\pause
 		\item A parameter configuration of a SAT solver for a set of SAT instances
 		\pause
-		\item A parameter configuration of a AI planning solver for a set of planning problems
+		\item A parameter configuration of an AI planning solver for a set of planning problems
 		\item \ldots
 	\end{itemize}
 	\pause
@@ -117,7 +114,7 @@ measures the observed cost of running $\algo(\conf)$ on an instance $\inst \in
 \pause
 The cost of a candidate solution $\conf\in\confs$ is
 %\begin{equation}
-%\hat{\conf} \in \argmin_{\conf \in \pcs}
+%\finconf \in \argmin_{\conf \in \pcs}
 \alert{$f(\conf) = \mathds{E}_{\inst \sim \instD} (c(\conf,\inst))$}.\\
 The goal is to find \alert{$\conf^* \in \argmin_{\conf \in \pcs} f(\conf)$}.
 %\end{equation}

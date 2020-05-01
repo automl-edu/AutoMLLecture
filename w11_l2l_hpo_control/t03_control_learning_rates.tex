@@ -1,10 +1,10 @@
+% !TeX spellcheck = en_US
 
 \input{../latex_main/main.tex}
 
 
-
-\title[AutoML: Learning to Configure]{AutoML: Automated Machine Learning}
-\subtitle{Learning to Control Learning Rates}
+\title[AutoML: Learned LRs]{AutoML: Dynamic Configuration \& Learning}
+\subtitle{Learning to Adjust Learning Rates}
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
@@ -27,15 +27,43 @@
 	
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning Step Size Policies \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
+\begin{frame}[c]{Learning Problem \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
+
 
 \begin{itemize}
-\item \alert{Idea:} Learn the hyperparameters of the weight update 
+	\item Optimization of a function:
 \end{itemize}
+\begin{equation}
+	\weights \in \argmin F(\mathbf{X}; \weights) \nonumber
+\end{equation}
+
+where $\mathbf{X}$ is an input matrix and f is parameterized by $\weights$.
+
+
+\pause
+\medskip
 
 \begin{equation}
-\weights_{t+1} = \weights_t - \alpha_t \nabla f(\weights_t) \nonumber
+F(\mathbf{X}; \weights) = \frac{1}{N} \sum_{i=1}^N f(\xI{i}; \weights) \nonumber
 \end{equation}
+
+
+
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning Step Size Policies \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
+
+\begin{itemize}
+\item \alert{Idea:} Learn the hyperparameters of the weight update (short notation)
+\end{itemize} 
+
+\begin{eqnarray}
+\weights^{(t+1)} = \weights^{(t)} - \alpha^{(t)} \nabla F(\weights^{(t)}) \nonumber\\
+\nabla F(\weights^{(t)}) = \frac{1}{N} \sum_{i=1}^N \nabla f_i(\weights^{(t)})\nonumber
+\end{eqnarray}
+
 
 \begin{itemize}
 \pause
@@ -59,8 +87,9 @@
 %----------------------------------------------------------------------
 \begin{frame}[c]{Recap: Reinforcement Learning for Dynamic Algorithm Configuration}
 
-\centering
+\begin{center}
 \input{tikz/control.tex}
+\end{center}
 
 \bigskip
 To apply that, we need to define:
@@ -74,18 +103,19 @@ To apply that, we need to define:
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Policies: State \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
+\begin{frame}[c]{RL for Step Size Policies: State \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
 
 \textbf{Predictive change in function value:}
 
 $$s_1 = \log \left( \text{Var}(\Delta \tilde{f}_i ) \right)$$
-$$\Delta \tilde{f}_i = \tilde{f}(x_i; \theta + \delta \theta) - f(x_i; \theta)$$
+$$\Delta \tilde{f}_i = \tilde{f}(\xI{i} ; \theta + \delta \theta) - f(\xI{i} ; \theta)$$
 
-where $\tilde{f}(x_i; \theta + \delta \theta)$ is done by a first order Taylor expansion
+where $\tilde{f}(\xI{i} ; \theta + \delta \theta)$ is done by a first order Taylor expansion
 
 \pause
+\smallskip
 \textbf{Disagreement of function values:}
-$$ s_2 = \log \left(\text{Var}(f(x_i; \theta)) \right)$$
+$$ s_2 = \log \left(\text{Var}(f(\xI{i} ; \theta)) \right)$$
 
 \pause
 
@@ -101,25 +131,20 @@ $$s_{K+i} \leftarrow \gamma s_{K+i} + (1-\gamma) (s_i - \hat{s}_i)^2$$
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Policies: Learning \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
+\begin{frame}[c]{RL for Step Size Policies: Learning \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
 
 Reward (average loss improvement over time):
 
-$$r = \frac{1}{T-1} \sum_{t=2}^T \left(\log(\loss_{t-1}) - \log(\loss_t)\right)$$
+$$\rewardRL = \frac{1}{T-1} \sum_{t=2}^T \left(\log(\loss^{(t-1)}) - \log(\loss^{(t)})\right)$$
 
 \pause
 
 Optimal Policy:
 
-$$\pi^*(\lambda \mid s) \in \argmax_{\pi} \int \int p(s) \pi(\lambda\mid s)r(\lambda,s) \texttt{d}s \texttt{d}\lambda $$
+$$\policy^*(\lambda \mid \stateRL) \in \argmax_{\policy} \int \int p(\stateRL) \policy(\conf \mid \stateRL)r(\conf,\stateRL) \diff\stateRL \diff\conf $$
 
 \pause
 
-The policy $\pi$ is learnt as a controller $\lambda = g(s, \phi)$; leading to
-
-$$\pi^*(\phi) \in \argmax_{\pi} \int \int p(s) \pi(\phi)r(g(s;\phi),s) \texttt{d}s \texttt{d}\lambda $$
-
-\pause
 
 \begin{itemize}
 \item can be learnt for example via Relative Entropy Policy Search (REPS) \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI10/paper/viewFile/1851/2264}{Peter et al. 2010}}
@@ -128,7 +153,7 @@ $$\pi^*(\phi) \in \argmax_{\pi} \int \int p(s) \pi(\phi)r(g(s;\phi),s) \texttt{d
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Policies: Training \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
+\begin{frame}[c]{RL for Step Size Policies: Training \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
 
 \begin{itemize}
 \item Goal: obtain robust policies,\\ i.e., good performance for many different DNN architectures

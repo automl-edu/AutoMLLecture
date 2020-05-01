@@ -1,7 +1,8 @@
 \section{Meta-Learning}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Introduction}
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Introduction}
 
 \begin{itemize}
 	\item Learning essentially never stops:
@@ -10,185 +11,244 @@
 		\item Many models are re-fit to perform well on new tasks
 	\end{itemize}
 	
-    \item Learning is often done from scratch
+    \item Machine Learning is often done from scratch
     
     \item We humans do not start from scratch all the time \\ - we learned how to learn!
 \end{itemize}
 
 \end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Introduction}
+% %----------------------------------------------------------------------
+% %----------------------------------------------------------------------
+% \begin{frame}[c]{Meta-Learning}
+% \framesubtitle{Introduction}
 
-\begin{columns}
-	\column{0.18\textwidth}
-	Ren\'e Magritte
-	\centering
-	\includegraphics[width=1.0\textwidth]{images/meta_learning/magritte_1.jpg}
-	\includegraphics[width=1.0\textwidth]{images/meta_learning/magritte_2.jpg}
-	\column{0.258\textwidth}
-	Francis Picabia
-	\centering
-	\includegraphics[width=.8\textwidth]{images/meta_learning/picabia_3.jpg}
-	\includegraphics[width=.7\textwidth]{images/meta_learning/picabia_1.jpg}
-	\column{0.3\textwidth}
-	\centering
-	Who painted that?
-	\includegraphics[width=.8\textwidth]{images/meta_learning/magritte_3.jpg}
+% \begin{columns}
+% 	\column{0.18\textwidth}
+% 	Ren\'e Magritte
+% 	\centering
+% 	\includegraphics[width=.9\textwidth]{w07_hpo_grey_box/images/meta_learning/magritte_1.jpg}
+% 	\includegraphics[width=.9\textwidth]{w07_hpo_grey_box/images/meta_learning/magritte_2.jpg}
+% 	\column{0.258\textwidth}
+% 	Francis Picabia
+% 	\centering
+% 	\includegraphics[width=.7\textwidth]{w07_hpo_grey_box/images/meta_learning/picabia_3.jpg}
+% 	\includegraphics[width=.6\textwidth]{w07_hpo_grey_box/images/meta_learning/picabia_1.jpg}
+% 	\column{0.3\textwidth}
+% 	\centering
+% 	Who painted that?
+% 	\includegraphics[width=.7\textwidth]{w07_hpo_grey_box/images/meta_learning/magritte_3.jpg}
 	
-	\pause
-	Most likely most of you can identify the painter correctly, 
-	although I presented only two pictures of each.
-\end{columns}
+% 	\pause
+% 	Most likely most of you can identify the painter correctly, 
+% 	although I presented only two pictures of each.
+% \end{columns}
 
-\end{frame}
+% \end{frame}
+% % %----------------------------------------------------------------------
+% % %----------------------------------------------------------------------
+
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Supervised Learning revisited}
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Learning from model evaluations}
 
-Dataset:
-\begin{equation*}
-\dataset = \{(x_1, y_1), \ldots, (x_k, y_k) \}
-\end{equation*}
-
-\bigskip
-\pause
-
-Learning a model $\phi$ (e.g., weights of a neural network):
-\begin{eqnarray*}
-\argmax_{\phi} \log p(\phi|\dataset)\\
-\pause
-= \argmax_{\phi} \log p(\dataset | \phi) + \log p(\phi) \\
-\pause
-= \argmax_{\phi} \sum_i \log p(y_i | x_i, \phi) + \log p(\phi)
-\end{eqnarray*}
-
-\pause
-
-Challenge:
 \begin{itemize}
-	\item Learning starts from scratch
-	\item We might only have very few examples in $\dataset$ 
+    \item Similarly, while building ML models for a specific task, we exploit our experience with related tasks
+    \item The challenge of meta-learning is to provide a systematic and data-driven approach to learn from experience 
+    \item Consider that we have an access to:
+        \begin{itemize}
+            \item set of prior tasks: $t_{j} \in \mathcal{T}$,
+            \item set of new tasks: $t_{\text{new}} \in \mathcal{T}$,
+            \item set of learning algorithms, fully defined by $\theta_{i} \in \Theta$
+            \item set of prior evaluations: $\dataset$, where $\dataset_{i, j} = \cost(\theta_{i}, t_{j})$
+            \begin{itemize}
+                \item $\dataset_{\text{new}}$ is the set of known evaluations $\cost_{i, \text{new}}$ on a new task $t_{\text{new}}$
+            \end{itemize}
+        \end{itemize}
+    \item \emph{Goal.} Train a meta-learner using meta-data $\dataset \cup \dataset_{\text{new}}$, such that it recommends configurations for a new task better than a black-box algorithm
 \end{itemize}
 
+\source{\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}}
+
 \end{frame}
+% %----------------------------------------------------------------------
+% %----------------------------------------------------------------------
+
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Problem formulation}
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Learning from task properties}
 
-Dataset:
-\begin{equation*}
-\dataset = \{(x_1, y_1), \ldots, (x_k, y_k) \}
-\end{equation*}
-Set of datasets (meta-datasets):
-\begin{equation*}
-\mdata = \{\mathcal{D}_1, \ldots, \mathcal{D}_n, \}
-\end{equation*}
+\begin{itemize}
+    \item Other than characterize the data by its performance, we can extract characterizations (called \alert{meta-features}) from data at hand 
+    \item Each task $t_j$ can be described by a vector of $K$ meta-features:
+        \begin{equation*}
+            m(t_j) = (m_{j, 1}, \dots, m_{j, K})
+        \end{equation*}
+    \item This vector can be used to define the similarity measure between two tasks, e.g. calculating the Euclidean distance between $m(t_i)$ and $m(t_j)$
+    \item Based on similarity, we can transfer information from the most similar tasks to the new task $t_{\text{new}}$
+    \end{itemize}
 
-\pause
-Can we include these meta-datasets to improve learning on $\dataset$?
-\begin{equation*}
-\argmax_{\phi} \log p(\phi|\dataset, \mdata)
-\end{equation*}
+\source{\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}}
 
-\pause
-\medskip
+\end{frame}
+% %----------------------------------------------------------------------
+% %----------------------------------------------------------------------
 
-\alert{Idea:} Instead of keeping $\mdata$ forever, we want to distill the knowledge into \alert{meta-parameters $\theta$}: $p(\theta|\mdata)$
+% \begin{frame}[c]{Meta-Learning}
+% \framesubtitle{Supervised Learning revisited}
+
+% Dataset:
+% \begin{equation*}
+% \dataset = \{(x_1, y_1), \ldots, (x_k, y_k) \}
+% \end{equation*}
+
+% \bigskip
+% \pause
+
+% Learning a model $\phi$ (e.g., weights of a neural network):
+% \begin{eqnarray*}
+% \argmax_{\phi} \log p(\phi|\dataset)\\
+% \pause
+% = \argmax_{\phi} \log p(\dataset | \phi) + \log p(\phi) \\
+% \pause
+% = \argmax_{\phi} \sum_i \log p(y_i | x_i, \phi) + \log p(\phi)
+% \end{eqnarray*}
+
+% \pause
+
+% Challenge:
+% \begin{itemize}
+% 	\item Learning starts from scratch
+% 	\item We might only have very few examples in $\dataset$ 
+% \end{itemize}
+
+% \end{frame}
+% %----------------------------------------------------------------------
+% %----------------------------------------------------------------------
+% \begin{frame}[c]{Meta-Learning}
+% \framesubtitle{Problem formulation}
+
+% Dataset:
+% \begin{equation*}
+% \dataset = \{(x_1, y_1), \ldots, (x_k, y_k) \}
+% \end{equation*}
+% Set of datasets (meta-datasets):
+% \begin{equation*}
+% \mdata = \{\mathcal{D}_1, \ldots, \mathcal{D}_n, \}
+% \end{equation*}
+
+% \pause
+% Can we include these meta-datasets to improve learning on $\dataset$?
+% \begin{equation*}
+% \argmax_{\phi} \log p(\phi|\dataset, \mdata)
+% \end{equation*}
+
+% \pause
+% \medskip
+
+% \alert{Idea:} Instead of keeping $\mdata$ forever, we want to distill the knowledge into \alert{meta-parameters $\theta$}: $p(\theta|\mdata)$
  
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Problem formulation}
+% \end{frame}
+% %----------------------------------------------------------------------
+% %----------------------------------------------------------------------
+% \begin{frame}[c]{Meta-Learning}
+% \framesubtitle{Problem formulation}
 
-In meta-learning, we want to learn:
-\begin{eqnarray*}
-\argmax_{\phi} \log p(\phi|\dataset, \mdata) \\
-\pause
-= \argmax_{\phi} \log \int_{\Theta} p(\phi \mid \dataset, \theta) p(\theta \mid \mdata) d\theta\\
-\pause
-\approx \argmax_{\phi} \log p(\phi | \dataset, \theta^*) + \log p(\theta^* | \mdata)\\
-\pause
-= \argmax_{\phi} \log p(\phi | \dataset, \theta^*)
-\end{eqnarray*}
+% In meta-learning, we want to learn:
+% \begin{eqnarray*}
+% \argmax_{\phi} \log p(\phi|\dataset, \mdata) \\
+% \pause
+% = \argmax_{\phi} \log \int_{\Theta} p(\phi \mid \dataset, \theta) p(\theta \mid \mdata) d\theta\\
+% \pause
+% \approx \argmax_{\phi} \log p(\phi | \dataset, \theta^*) + \log p(\theta^* | \mdata)\\
+% \pause
+% = \argmax_{\phi} \log p(\phi | \dataset, \theta^*)
+% \end{eqnarray*}
 
-\pause
+% \pause
 
-\begin{center}
-\begin{minipage}{0.5\textwidth}
-\begin{block}{Meta-learning problem}
-\begin{equation*}
-\theta^* \in \argmax_{\theta} \log p(\theta | \mdata)
-\end{equation*}
-\end{block}
-\end{minipage}
-\end{center}
+% \begin{center}
+% \begin{minipage}{0.5\textwidth}
+% \begin{block}{Meta-learning problem}
+% \begin{equation*}
+% \theta^* \in \argmax_{\theta} \log p(\theta | \mdata)
+% \end{equation*}
+% \end{block}
+% \end{minipage}
+% \end{center}
 
-\end{frame}
+% \end{frame}
+% %-----------------------------------------------------------------------
+% %-----------------------------------------------------------------------
+% \begin{frame}[c]{Meta-Learning}
+% \framesubtitle{AutoML $\subset$ Meta-Learning}
+
+% \begin{itemize}
+% 	\item AutoML can be seen as a special case of meta-learning \pause
+% 	\medskip
+% 	\item $\theta$ could be:
+% 	\begin{itemize}
+% 		\item a hyperparameter configuration ($\lambda$) 
+% 		\item a neural network architecture
+% 	\end{itemize}
+% 	\pause
+% 	\medskip
+% 	\item What would be $\mdata$ here? 
+% 	\pause
+% 	\begin{itemize}
+% 		\item A dataset on which we optimized $\lambda$ (e.g. CIFAR-10)\\ such that we can use it on another dataset (e.g. imagenet)
+% 	\end{itemize}
+% \end{itemize}	
+
+% \end{frame}
+% %-----------------------------------------------------------------------
+% %-----------------------------------------------------------------------
+% \begin{frame}[c]{Meta-Learning}
+% \framesubtitle{Meta-Learning $\subset$ AutoML}
+
+% \begin{itemize}
+% 	\item Meta-learning can be powerful to complement AutoML
+% 	\pause
+% 	\medskip
+% 	\item We can learn a lot of things from $\mdata$ to improve the performance on new datasets, e.g.:
+% 	\begin{itemize}
+% 		\item pre-initialization of networks weights
+% 		\item learning a meta-DNN to predict how to train another target-DNN	\end{itemize}
+% \end{itemize}	
+
+% \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: AutoML $\subset$ Meta-Learning}
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Meta-Features in Machine Learning}
 
 \begin{itemize}
-	\item AutoML can be seen as a special case of meta-learning \pause
-	\medskip
-	\item $\theta$ could be:
-	\begin{itemize}
-		\item a hyperparameter configuration ($\lambda$) 
-		\item a neural network architecture
-	\end{itemize}
-	\pause
-	\medskip
-	\item What would be $\mdata$ here? 
-	\pause
-	\begin{itemize}
-		\item A dataset on which we optimized $\lambda$ (e.g. CIFAR-10)\\ such that we can use it on another dataset (e.g. imagenet)
-	\end{itemize}
-\end{itemize}	
-
-\end{frame}
-%-----------------------------------------------------------------------
-%-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Meta-Learning $\subset$ AutoML}
-
-\begin{itemize}
-	\item Meta-learning can be powerful to complement AutoML
-	\pause
-	\medskip
-	\item We can learn a lot of things from $\mdata$ to improve the performance on new datasets, e.g.:
-	\begin{itemize}
-		\item pre-initialization of networks weights
-		\item learning a meta-DNN to predict how to train another target-DNN	\end{itemize}
-\end{itemize}	
-
-\end{frame}
-%-----------------------------------------------------------------------
-%-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Meta-Features in Machine Learning}
+	\item \alert{Simple} - easily extracted from the data, describe the basic dataset structure: e.g. number of features, patterns or classes. \pause
 	
-Based on their types and underlying assumptions, meta-features can be divided into at least five groups:
-\pause
-\begin{itemize}
-	\item \alert{Simple meta-features} - number of features, patterns or classes, describe the basic dataset structure. \pause
-	\item \alert{PCA meta-features} - compute various statistics of the datasets principal components. \pause
-	\item \alert{The information-theoretic meta-features} - measure the class
-entropy in the data. \pause
-	\item \alert{Statistical meta-features} - characterize the data via descriptive statistics (e.g. the kurtosis or the dispersion of the label distribution).\pause
-	\item \alert{Landmarking meta-features} - computed by running several
-fast machine learning algorithms on the dataset. Based on
-their learning scheme they can capture different properties
-of the dataset, like e.g. linear separability.
+	\item \alert{Statistical} - characterize the data via descriptive statistics: e.g. average, standard deviation, correlation, the kurtosis or the dispersion of the label distribution. \pause
+	
+	\item \alert{Information-theoretic} - measure the class entropy in the data, capturing the amount of information in the data and their complexity. \pause 
+    
+    \item \alert{Model-based} - extracted from a model induced using the training data, they are often based on properties of decision tree models: e.g. the number of leaves, the number of nodes, the shape of the tree. \pause
+		
+	\item \alert{Landmarking} - computed by running several fast machine learning algorithms on the dataset. Based on their learning scheme they can capture different properties of the dataset, like e.g. linear separability. \pause
+	
+	\item \alert{Others} - not included in the previous groups, such as standalone measures, time related measures, concept and case-based measures, clustering and distance-based measures.
+	
 \end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Warmstarting}
+\subsection{Warmstarting}
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Warmstarting}
 	
 \begin{itemize}
 	\item Recap: Instead of starting from a random configuration we often start from a expert-defined configuration for hyperparameter optimization (HPO)
 	\pause
-	\item We also know that the default configuration often does not perform well on a new dataset
+	\item We also know that such a default configuration often does not perform well on a new dataset
 	\begin{itemize}
 		\item Otherwise there would be no point in HPO
 	\end{itemize}
@@ -203,105 +263,57 @@ of the dataset, like e.g. linear separability.
 
 \end{frame}
 %-----------------------------------------------------------------------
-%-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Warmstarting}
-	
-\comment{Should we include some graphs for warmstarting?}
-
-\end{frame}
-%-----------------------------------------------------------------------
-%-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Learning Acquisition Functions}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Model-Warmstarting}
 
 \begin{itemize}
-	\item Instead of learning everything, it might be sufficient to \alert{learn hand-design heuristics}
-	\pause
-	\item In Bayesian Optimization (BO), the most critical hand-design heuristic is the acquisition function
+	\item Many HPO optimizers make use of some kind of a predictive model,\\
+	e.g., Bayesian optimization
+	\item By running HPO over and over again on different datasets,
+	we can actually learn something about the search landscape
 	\begin{itemize}
-		\item trade-off between exploitation and exploration
-		\item Depending on the problem at hand, you might need a different acquisition function
-		\pause
-		\item Choices:
-		\begin{itemize}
-			\item probability of improvement (PI)
-			\item expected improvement (EI)
-			\item upper confidence bounds (UCB)
-			\item entropy search (ES) 
-			\item knowledge gradient (KG)
-			\item ...
-		\end{itemize} 
+		\item E.g., what are bad regions of the configuration space in general
 	\end{itemize}
-	\pause
-	\item \alert{Idea:} Learn a \emph{neural acquisition function} from data
+	\smallskip
+	\item Given: $n$ predictive models $\surro_{\dataset_i}: \pcs \to \mathbb{R}$ from HPO on $\dataset_{\text{meta}}$	
+	\item \alert{How can we use these $\surro_{\dataset_i}$ to speed up HPO?}
 \end{itemize}
 
-$\leadsto$ Replace acquisition function 
-
-\source{Volpp et al.'19}
 
 \end{frame}
 %-----------------------------------------------------------------------
-%-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Learning Acquisition Functions}
-	
-Although the \alert{acquisition function $\alpha$} depends on the history $\mathcal{D}_{\bocount-1}$ and the predictive model $\surro$, $\alpha$ mainly makes use of the \alert{predictive mean $\mu$ and variance $\sigma^2$}.
-
-\pause
-\bigskip
-
-Neural acquisition function (AF):
-
-\begin{eqnarray}
-\acq_\theta(x) = \acq_\theta(\mu_t(x), \sigma_t(x)) \nonumber
-\end{eqnarray}
-
-where $\theta$ are the parameters of a neural network,\\ and $\mu$ and $\sigma$ are its inputs.
-
-\pause 
-\begin{itemize}
-	\item Since the input is not $x$, it allows to learn scalable acquisition function
-	\item No calibration of hyperparameter necessary, once the neural AF is learnt
-\end{itemize}
-
-\end{frame}
-%-----------------------------------------------------------------------
-%-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Learning Acquisition Functions}
-	
-\comment{Do you want to include this topic? (I did so we can easily delete it)}
-
-\end{frame}
-%-----------------------------------------------------------------------
-%-----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Task-independent recommendations}
-
-
+\subsection{Task-independent recommendations}
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Task-independent Recommendations}
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
 
+    \only<1-3>{
     \begin{itemize}
-        \item<1-7> \emph{Idea:} learn a sorted list of defaults
-        \item<2-7> \emph{Method:} mostly greedy 
-        \item<3-7> \emph{Results:} improves over Random Search and Bayesian Optimization
-    \end{itemize}
+        \item \emph{Idea:} learn a sorted list of defaults
+        \item \emph{Method:} mostly greedy 
+        \item \emph{Results:} improves over Random Search and Bayesian Optimization
+    \end{itemize}}
 
-    \only<4-7>{
+    \only<2-3>{
     \begin{block}{Advantages}
     \begin{itemize}
-    	\item<4-7> Easy to share and use
-    	\item<5-7> Strong anytime performance
-    	\item<6-7> Embarrassingly parallel
+    	\item Easy to share and use
+    	\item Strong anytime performance
+    	\item Embarrassingly parallel
     \end{itemize}
     \end{block}}
     
-    \only<7-7>{
+    \only<3-3>{
     \begin{block}{Disadvantages}
     \begin{itemize}
-    	\item<7-7> Not adaptive
+    	\item Not adaptive
     \end{itemize}
     \end{block}}
 
@@ -312,8 +324,8 @@ where $\theta$ are the parameters of a neural network,\\ and $\mu$ and $\sigma$ 
 \begin{column}{.48\textwidth}
 
     \centering
-    \only<1-2>{\includegraphics[width=.8\textwidth]{images/meta_learning/task_independent.jpg}}
-    \only<3-7>{\includegraphics[width=.9\textwidth]{images/meta_learning/task_independent_results.jpg}}
+    \only<1-1>{\includegraphics[width=.8\textwidth]{images/meta_learning/task_independent.jpg}}
+    \only<2-3>{\includegraphics[width=.9\textwidth]{images/meta_learning/task_independent_results.jpg}}
 
 
 \end{column}
@@ -325,11 +337,11 @@ where $\theta$ are the parameters of a neural network,\\ and $\mu$ and $\sigma$ 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
 
-
-
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Joint model for Bayesian optimization}
+\subsection{Joint model for Bayesian optimization}
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Joint model for Bayesian optimization}
 
 \begin{columns}[T] % align columns
 \begin{column}{.38\textwidth}
@@ -355,11 +367,100 @@ where $\theta$ are the parameters of a neural network,\\ and $\mu$ and $\sigma$ 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning: Joint model for Bayesian optimization}
-	
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Joint model for Bayesian optimization}
+
 \centering
 \includegraphics[width=0.7\textwidth]{images/meta_learning/perrone_res.jpg}
 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\subsection{Learning Black-box Optimization}
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Learning Black-box Optimization}
+
+Black Box Optimization Setting
+\begin{enumerate}
+    \item Given the current state of knowledge $\iter[\bocount]{h}$ propose a query point $\iter[\bocount]{x}$
+    \item Observe the response $\iter[\bocount]{y}$
+    \item Update any internal statistics to produce $\iter[\bocount+1]{h}$
+\end{enumerate}
+
+\pause
+
+Learning Black Box Optimization - essentially, same idea as before:
+\begin{eqnarray}
+\iter[\bocount]{h}, \iter[\bocount]{x} = \text{RNN}_\phi(\iter[\bocount-1]{h}, \iter[\bocount-1]{x}, \iter[\bocount-1]{y}) \nonumber \\
+\iter[\bocount]{y} \sim p(y|\iter[\bocount]{x})\nonumber
+\end{eqnarray}
+
+\begin{itemize}
+    \item Using recurrent neural network (RNN) to predict next $\iter[\bocount]{x}$
+    \item $\iter[\bocount]{h}$ is the internal hidden state 
+    \pause
+    \item \alert{Remark:} in a black-box setting, we don't have gradient information!
+\end{itemize}
+
+\source{Chen et al'17}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\subsection{Learning Acquisition Functions}
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Learning Acquisition Functions}
+
+\begin{itemize}
+	\item Instead of learning everything, it might be sufficient to \alert{learn hand-design heuristics}
+	\pause
+	\item In Bayesian optimization, the most critical hand-design heuristic is the acquisition function
+	\begin{itemize}
+		\item trade-off between exploitation and exploration
+		\item Depending on the problem at hand, you might need a different acquisition function
+		\pause
+		\item Choices:
+		\begin{itemize}
+			\item PI, EI, UCB, ES, KG, \dots
+		\end{itemize} 
+	\end{itemize}
+	\pause
+	\item \alert{Idea:} Learn a \emph{neural acquisition function} from data
+\end{itemize}
+
+$\leadsto$ Replace acquisition function 
+
+\source{Volpp et al.'19}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Meta-Learning}
+\framesubtitle{Learning Acquisition Functions}
+
+Although the \alert{acquisition function $\acq$} depends on the history $\mathcal{D}_{\bocount-1}$ and the predictive model $\surro$, $\acq$ mainly makes use of the \alert{predictive mean $\mu$ and variance $\sigma^2$}.
+
+\pause
+\bigskip
+
+Neural acquisition function (AF):
+
+\begin{eqnarray}
+\acq_\theta(x) = \acq_\theta(\mu_t(x), \sigma_t(x)) \nonumber
+\end{eqnarray}
+
+where $\theta$ are the parameters of a neural network,\\ and $\mu$ and $\sigma$ are its inputs.
+
+\pause 
+\begin{itemize}
+	\item Since the input is not $\pmb{x}$, it allows to learn scalable acquisition function
+	\item No calibration of hyperparameter necessary, once the neural AF is learnt
+\end{itemize}
+
+\end{frame}
+

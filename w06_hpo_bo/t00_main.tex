@@ -14,14 +14,12 @@
 %\setbeameroption{show notes on second screen=right} % Both
 
 %TODO: change titles
-\title[AutoML: Bayesian Optimization for HPO]{AutoML: Bayesian Optimization for HPO}
-\subtitle{Overview of the Bayesian optimization loop}
+\title[AutoML: Bayesian Optimization for HPO]{AutoML: Bayesian Optimization for HPO} % week title
+\subtitle{Overview of the Bayesian optimization loop} % video title
 %TODO: change authors!
-\author[Frank Hutter]{Frank Hutter}
-\institute{University of Freiburg}
-%TODO: change the date
-\date{??.??.??}
-
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
 
 \AtBeginSection[] % Do nothing for \section*
 {
@@ -29,6 +27,14 @@
     \bigskip
     \vfill
     \tableofcontents[currentsection]
+  \end{frame}
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
   \end{frame}
 }
 
@@ -38,13 +44,12 @@
 	
 	%TODO: change PATH for the github structure
     \input{t01_introduction.tex}
-    \input{t02_acq_functions_basic.tex}
-    \input{t03_acq_functions_advanced.tex}
+    \input{t03_acq_functions_1.tex}
+    \input{t03_acq_functions_2.tex}
     \input{t04_surrogate_models.tex}
-    \input{t05_categorical_conditional.tex}
-    \input{t06_high_dim.tex}
-%%    \input{t07_noisy.tex}
-%%    \input{t08_bo_parallel.tex}
-%%    \input{t99_bibliography}
+    \input{t05_extensions.tex}
+    \input{t06_tpe.tex}
+    \input{t07_success_stories.tex}
+    \input{t99_bibliography}
 
 \end{document}

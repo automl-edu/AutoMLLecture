@@ -1,0 +1,29 @@
+1. AutoML can help you to ... ( Single Choice)
+Answer 1: replace the job of someone by a machine.
+Answer 2: enables efficient interdisciplinary projects.
+Answer 3: increase the time for finishing ML projects.
+Answer 4: apply ML without any knowledge about the risks of ML.
+2. AutoML is a hard problem because ... (among other reasons). ( Single Choice)
+Answer 1: every function evaluation is super cheap.
+Answer 2: we only have to tune a single hyperparameter.
+Answer 3: we need the same ML pipeline for each dataset.
+Answer 4: the search space can quite complex and large.
+3. The CASH problem stands for... ( Single Choice)
+Answer 1: Combined Algorithm Solving and Hashing
+Answer 2: Combined Algorithm Selection and Hyperparameter Optimization
+Answer 3: Combined Automated Selection of Heuristics
+Answer 4: Combined Automated Selection of Hyperparameters
+4. To apply AutoML to deep learning, we ... ( Single Choice)
+Answer 1: want to ultimately optimize in the joint space of architectures and hyperparameters
+Answer 2: first optimize the architectures and afterwards the hyperparameters
+Answer 3: first optimize the hyperparameters and afterwards the architecture.
+5. In dynamic algorithm configuration, we ... ( Single Choice)
+Answer 1: select a configuration specifically to each instance at hand.
+Answer 2: predict which configuration an algorithm should use.
+Answer 3: search for fixed dynamic schedule of configurations.
+Answer 4: learn a policy that predicts a configuration for a given algorithm state.
+6. To mitigate the risks of AutoML, we ... ( Single Choice)
+Answer 1: will build systems that will avoid all of these risks automatically.
+Answer 2: will blame ML and not AutoML.
+Answer 3: teach others about potential risks of ML and AutoML.
+Answer 4: will never publish our code as open-source.

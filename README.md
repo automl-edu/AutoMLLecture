@@ -1,4 +1,4 @@
-# Lecture on Automated Machine Learning (AutoML)
+# Course on Automated Machine Learning (AutoML)
 
 ## AutoML?
 
@@ -27,20 +27,25 @@ The course is targeted at students and practitioners with solid background in ma
 * Basics in optimization, e.g., stochastic gradient descent
 * Hands-on experience with Python or R
 
-## Organizers
+## Organizers and Contributors
 
 * University of Hannover, Germany:
   * Marius Lindauer
-  * Theresa Eimer
   * Difan Deng
 * Ludwig Maximilian University of Munich:
   * Bernd Bischl
   * Janek Thomas (Fraunhofer)
+  * Jakob Richter
+  * Julia Moosbauer
+  * Omid Charrakh
 * University of Freiburg, Germany:
   * Frank Hutter
   * André Biedenkapp
   * Arber Zela
   * Matthias Feurer
+  * Guri Zabergja
+  * Maciej Janowski
+  * Archit Bansal
 * University of Wyoming, USA:
   * Lars Kotthoff
 * University of Eindhoven, Netherlands:

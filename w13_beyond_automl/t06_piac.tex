@@ -1,0 +1,323 @@
+% !TeX spellcheck = en_US
+
+\input{../latex_main/main.tex}
+
+\title[AutoML: Capping]{AutoML: Beyond AutoML}
+\subtitle{Per-Instance Algorithm Configuration}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Homogeneous vs. Heterogeneous Instances}
+
+\begin{block}{Assumption of AC: Homogeneous Instance Distribution}
+	\begin{itemize}
+		\item Algorithm configuration tools assume that the \alert{instance distribution is homogeneous}\\ (see video on "Best Practices for AC")
+		\smallskip
+		\item Important because
+		\begin{itemize}
+			\item there is a well-performing configuration for all (or most) instances
+			\item the racing algorithm can make educated decisions on subsets
+		\end{itemize}
+	\end{itemize}
+\end{block}
+
+\medskip
+\pause
+
+\begin{block}{Violated assumption of AC: Hetergeneous Instance Distribution}
+	\begin{itemize}
+		\item The racing algorithm will make inconsistent (or even wrong) decisions 
+		\item There is no single well-performing configuration for all instances
+	\end{itemize}
+\end{block}
+
+\pause
+\medskip
+$\leadsto$ What should we do with heterogeneous instance distributions?
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Why are systems for heterogeneous instance distributions important?}
+
+\begin{enumerate}
+	\item We cannot guarantee homogeneity in practice
+	\begin{enumerate}
+		\item Instances might get larger and harder
+		\item The underlying task or business case might change
+	\end{enumerate}
+	\medskip
+	\pause
+	\item We don't want to do algorithm configuration always from scratch
+	\medskip
+	\pause
+	\item An adaptive configuration system would be the holy grail 
+	\begin{itemize}
+		\item[$\leadsto$] hard to achieve
+ 	\end{itemize}
+\end{enumerate}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{PIAC: Per-Instance Algorithm Configuration}
+
+\centering
+\includegraphics[width=0.75\textwidth]{images/piac_full_comic}
+
+\pause
+\bigskip
+
+\begin{itemize}
+	\item You can use whichever kind of algorithm selection (wizard) you want
+	\item \alert{Challenge:} Building a portfolio
+	\item \alert{Use case:} Instances are heterogeneous
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{PIAC: Manual Expert Approach}
+
+\begin{block}{Basic Assumption}
+Heterogeneous instance set can be divided into homogeneous subsets
+\end{block}
+
+\pause
+\bigskip
+
+\begin{block}{Manual Expert}
+\begin{itemize}
+\item An expert knows the homogeneous subsets (e.g., origin of instances)
+\item Determine a well-performing configuration on each subset\\
+$\to$ portfolio of configurations
+\item Use Algorithm Selection to select a well-performing configuration on each instance 
+\end{itemize}
+
+\end{block}  
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}{Instance-Specific Algorithm Configuration: ISAC{} \litw{\href{http://ebooks.iospress.nl/publication/5873}{Kadioglu et al. 2010}}}
+
+
+\begin{block}{Idea}
+Training:
+\begin{enumerate}
+\item Cluster instances into homogeneous subsets\\ (using $g$-means in the instance feature space)
+\item Apply algorithm configuration (here GGA) on each instance set
+\end{enumerate}
+
+\pause
+Test:
+\begin{enumerate}
+\item Determine the nearest cluster ($k$-NN with $k=1$) in feature space
+\item Apply optimized configuration of this cluster 
+\end{enumerate}
+\end{block}
+
+\begin{center}
+\includegraphics[width=.3\textwidth]{images/isac}
+\end{center}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+%\begin{frame}[c]{EISAC{}~\litw{Y. Malitsky et al. 2013}}
+%
+%\begin{block}{Motivation}
+%\begin{itemize}
+%\item Over time, the underlying distribution of $\insts$ changes
+%\item All-encompassing training set does not exist
+%\item Selector should evolve over time
+%\end{itemize}
+%\end{block}
+%
+%\bigskip
+%\pause
+%
+%\begin{block}{Idea}
+%\begin{itemize}
+%\item Update cluster if we see instances that are not represented 
+%\item Update configuration selection for a cluster if a cluster gets more instances
+%\item Add and remove configurations, and update clusters
+%\end{itemize}
+%\end{block}
+%
+%\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+%\begin{frame}[c]{ISAC{}+ \litw{Y. Malitsky et al. 2014}}
+%
+%\begin{block}{Observations}
+%\begin{itemize}
+%\item Not important to apply the configuration found on a cluster
+%\item Arbitrary algorithm selection approach possible 
+%\end{itemize}
+%\end{block}
+%
+%\pause
+%\medskip
+%
+%\begin{block}{Idea}
+%\begin{enumerate}
+%\item Cluster instances
+%\item Apply algorithm configuration on each cluster
+%\item Assess the performance of all configurations on each instance
+%\item Use cost-sensitive hierarchical clustering (CSHC; see lecture on AS)
+%\end{enumerate}
+%\end{block}
+%
+%\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Hydra~\litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI10/paper/view/1929}{Lin et al. 2010}}}
+
+\begin{block}{Idea}
+\begin{itemize}
+\item Iteratively add configurations to a portfolio $\portfolio$, start with $\portfolio = \emptyset$
+\item In each iteration, determine configuration that is complementary to~$\portfolio$
+\begin{itemize}
+\item[$\leadsto$] Maximize marginal contribution to $\portfolio$
+\end{itemize}
+\end{itemize}
+
+\pause
+
+Marginal contribution of a configuration $\conf$ to a portfolio $\portfolio$:
+\begin{equation}
+c(\portfolio) -  c(\portfolio \cup \{\conf\})  \nonumber
+\end{equation}
+
+\end{block}
+
+\pause
+
+\scalebox{0.7}{
+%\begin{center}
+	\input{tikz/hydra}	
+%\end{center}
+
+}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\input{tikz/hydra_example}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Cedalion~\litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/view/10021}{ Seipp et al 2015}}}
+
+\begin{block}{Idea}
+\begin{itemize}
+\item Optimize a schedule of configurations with algorithm configuration 
+\end{itemize}
+\end{block}
+
+\medskip
+\pause
+
+\begin{block}{Approach}
+\begin{itemize}
+\item Iteratively add a configuration with a time slot $t$ to a schedule $\schedule \oplus \langle\conf,t\rangle$
+\pause
+\item In each iteration, only optimize on instances not solved so far
+\item The time slot is a further parameter in the configuration space
+\pause
+\item Optimize marginal contribution per time spent: 
+\end{itemize}
+
+\begin{equation}
+\frac{c(\schedule) - c(\schedule \oplus \langle\conf,t\rangle)}{t} \nonumber
+\end{equation}
+\end{block}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Submodularity}
+
+\begin{block}{Observation}
+\begin{itemize}
+\item Performance metrics of Hydra{} and Cedalion{} are submodular
+\begin{itemize}
+\item Family of functions
+\item Adding an element to a set reduces the function value
+\item Diminishing returns: decrease of the value reduction over time
+\end{itemize}
+\end{itemize}
+\end{block}
+
+\pause
+
+\begin{definition}[Submodularity of $f$]
+For every $X,Y \subseteq Z$ with $X \subseteq Y$ and every $x \in Z - Y$ we have that $f(X \cup \{x\}) - f(X) \geq f(Y \cup \{x\}) - f(Y)$
+\end{definition}
+
+\pause
+
+\begin{block}{Advantage}
+We can bound the error of the portfolio/schedule:\\ 
+At most away from optimum by factor of $0.63$ (see \lit{\href{http://papers.nips.cc/paper/3569-an-online-algorithm-for-maximizing-submodular-functions}{Streeter \& Golovin '08}})
+\end{block}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Dynamic Instance Grouping \litw{\href{https://aaai.org/ojs/index.php/AAAI/article/view/3970}{Liu et al. 2019}}}
+
+\begin{block}{Idea}
+\begin{itemize}
+\item Similar to ISAC: group instances into clusters
+\item Similar to Hydra: refine clusters and configurations over several iterations 
+\end{itemize}
+\end{block}
+
+\pause
+
+\begin{block}{Main Idea}
+\begin{enumerate}
+\item Group instances randomly into clusters
+\item run AC on each cluster
+\item Update clusters based on performance (estimates)
+\item Go to 2. if budget is not empty
+\item Consider all configurations ever found to create final portfolio
+\end{enumerate}
+
+\pause
+
+\begin{itemize}
+\item increase the configuration budget in each iteration
+\begin{itemize}
+\item first clusterings will have a poor quality $\to$ small configuration time
+\item later clusterings will be better $\to$ more configuration time
+\end{itemize}
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+%----------------------------------------------------------------------
+
+\end{document}

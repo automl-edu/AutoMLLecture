@@ -3,8 +3,8 @@
 
 
 
-\title[AutoML: Overview]{AutoML: Automated Machine Learning}
-\subtitle{Overview: Control \& Learning}
+\title[AutoML: Overview]{AutoML: Dynamic Configuration \& Learning}
+\subtitle{Overview}
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
 \date{}
@@ -99,38 +99,43 @@ Important Observations:
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning IOHs}
-	
-\begin{block}{Learning to Learn: L2L}
-	The goal of L2L is to learn a \alert{proposal mechanism} from data.
+\begin{frame}[c]{Learning for IOHs}
+
+\begin{block}{Dynamic Adaptation of Hyperparameters}
+	The goal is to dynamically adapt hyperparameters based on some feedback from the algorithm.
 \end{block}
 
-
 \bigskip
-\pause
+\pause	
 
 \begin{block}{Dynamic Algorithm Configuration: DAC}
 	The goal of DAC is to learn a policy from data\\ that adapts the \alert{hyperparameter settings} of an IOH.
 \end{block}
 
+\bigskip
+\pause
+
+\begin{block}{Learning to Learn: L2L}
+	The goal of L2L is to learn a \alert{proposal mechanism} from data.
+\end{block}
 	
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Main Idea \& Challenges}
-
-\begin{enumerate}
-	\item \alert{Training data}: Run algorithm over and over again
-	\pause
-	\smallskip
-	\item \alert{Learn} algorithm component from offline training data
-	\pause
-	\smallskip
-	\item Apply to many new problems (a.k.a. instances, tasks, datasets) and assess the \alert{generalization} performance 
-\end{enumerate}
-	
-	
-\end{frame}
+%\begin{frame}[c]{Main Idea \& Challenges}
+%
+%\begin{enumerate}
+%	\item \alert{Training data}: Run algorithm over and over again
+%	\pause
+%	\smallskip
+%	\item \alert{Learn} algorithm component from offline training data
+%	\pause
+%	\smallskip
+%	\item Apply to many new problems (a.k.a. instances, tasks, datasets) and assess the \alert{generalization} performance 
+%\end{enumerate}
+%	
+%	
+%\end{frame}
 %-----------------------------------------------------------------------
 
 \end{document}
