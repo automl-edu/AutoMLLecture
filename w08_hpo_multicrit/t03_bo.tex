@@ -30,7 +30,20 @@
 
 
 
-\begin{frame}{Recap: Bayesian Optimization Loop}
+\begin{frame}[allowframebreaks]{Recap: Bayesian Optimization}
+
+Remember the advantages of Bayesian optimization:
+
+    \begin{itemize}
+        \item Sample efficiency
+        \item Noise handling
+        \item Constraint handling
+        \item ...
+    \end{itemize}
+
+To get all these advantages also for multi-criteria problems, the classic Bayesian optimization loop has to be extended for multiple cost functions.
+
+\framebreak
 
 \begin{algorithm}[H]
     \Input{Search Space $\pcs$,
@@ -65,13 +78,15 @@ $$
 \min_{\conf \in \pcs}  \cost(\conf) \Leftrightarrow \min_{\conf \in \pcs} \left(\cost_1(\conf), \cost_2(\conf), ..., \cost_m(\conf)\right).
 $$
 
-Approaches:
 
-\begin{itemize}
+There are three general approaches:
+
+
+\begin{enumerate}
         \item Scalarization of cost functions.
         \item Direct optimization of multi-criteria performance indicator.
         \item Multi-criteria optimization of acquisition functions.
-\end{itemize}
+\end{enumerate}
 
 
 \end{frame}
@@ -96,9 +111,26 @@ Approaches:
         \item Simplifies multi-criteria optimization problem to single-criteria.
     \end{itemize}
 
-
 \end{frame}
 
+\begin{frame}{Why the Tchebycheff norm?}
+
+
+    $$
+    c = \max_{i=1,\dots,m}\left(w_i \cost_i(\conf)\right) + \rho \sum_{i=1}^m w_i\cost_i(\conf),
+    $$
+
+    \begin{itemize}
+        \item The norm consists of two components:
+            \begin{itemize}
+                    \item $\max_{i=1,\dots,m}\left(w_i \cost_i(\conf)\right)$ takes only the const function with maximum weight into account.
+                    \item $\sum_{i=1}^m w_i\cost_i(\conf)$ is the weighted sum of all cost functions.
+            \end{itemize}
+        \item $\rho$ describes the trade-off between these components.
+        \item By the randomized weights in each iteration and the usually small value of $\rho = 0.05$, this allows exploration of extreme points of single cost functions.
+    \end{itemize}
+
+\end{frame}
 
 \begin{frame}{ParEGO Algorithm}
 
