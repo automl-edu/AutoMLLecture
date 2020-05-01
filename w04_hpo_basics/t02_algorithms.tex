@@ -10,16 +10,6 @@
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-\begin{frame}{Why is tuning so hard?}
-\begin{itemize}
-\item Tuning is derivative-free (black box problem): It is usually impossible to compute derivatives of the objective (i.e., the resampled performance measure) that we optimize with regard to the HPs. All we can do is evaluate the performance for a given hyperparameter configuration.
-\item Every evaluation requires one or multiple train and predict steps of the learner. I.e., every evaluation is very \textbf{expensive}.
-\item Even worse: the answer we get from that evaluation is \textbf{not exact, but stochastic} in most settings, as we use resampling (and often stochastic learners).
-\item Categorical and dependent hyperparameters aggravate our difficulties: the space of hyperparameters we optimize over has a non-metric, complicated structure.
-\end{itemize}
-
-\end{frame}
-
 
 \begin{frame}[containsverbatim,allowframebreaks]{Grid search}
 
@@ -117,7 +107,7 @@ Objective function $\f: \XX \to \R$ & Fitness function
 \end{tabular}
 \end{center}
 
-For hyperparameter optimization a solution candidate is a hyperparmeter configuration $\conf$ and the objective function is $\f(\xx) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \xx)\right)$
+For hyperparameter optimization a solution candidate is a hyperparameter configuration $\conf$ and the objective function is the generalization error of a model $\f(\xx) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \xx)\right)$
 
 \end{frame}
 
@@ -126,10 +116,10 @@ For hyperparameter optimization a solution candidate is a hyperparmeter configur
 Similar techniques differ in genetic representation:
 
 \begin{itemize}
-\item \textbf{Genetic algorithms}: uses binary problem representation, therefore closest to the biological model of evolution.
-\item \textbf{Evolution strategies}: uses direct problem representation, e.g. vector of real numbers.
-\item \textbf{Genetic programming}: create structures that convert an input into a fixed output (e.g. computer programs); solution candidates are represented as trees.
-\item \textbf{Evolutionary programming}: similar to GP, but solution candidates are not represented by trees, but by finite state machines.
+\item \textbf{Genetic algorithms}: Use binary problem representation, therefore closest to the biological model of evolution.
+\item \textbf{Evolution strategies}: Use direct problem representation, e.g. vector of real numbers.
+\item \textbf{Genetic programming}: Create structures that convert an input into a fixed output (e.g. computer programs); solution candidates are represented as trees.
+\item \textbf{Evolutionary programming}: Similar to GP, but solution candidates are not represented by trees, but by finite state machines.
 \end{itemize}
 
 The boundaries between the terms become increasingly blurred and are often used synonymously.
@@ -181,7 +171,7 @@ These are demonstrated using the one-dimensional Ackley function, which we want 
 
 In this case, each individual has exactly one chromosome. The chromosome is (obviously) encoded as a real number: $\xx_i \in \R$.
 
-Usually for the optimization of a function $\f:\R^n \to \R$ individuals are coded as real vectors $\xx_i \in \R^n$.
+Usually for the optimization of a function $\f:\R^n \to \R$ individuals are coded as real vectors $\xx \in \R^n$.
 
 
 \framebreak
@@ -198,7 +188,7 @@ Usually for the optimization of a function $\f:\R^n \to \R$ individuals are code
 
 \begin{frame}{Step 1: Initialize population}
 
-We start with a randomly selected population $\mathcal{P} = \{\xx_1, ..., \xx_\mu\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
+    We start with a randomly selected population $\mathcal{P} = \{\xx^{(1)}, ..., \xx^{(\mu)}\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
 
 
 \begin{center}
@@ -213,15 +203,15 @@ We start with a randomly selected population $\mathcal{P} = \{\xx_1, ..., \xx_\m
 \begin{frame}[containsverbatim,allowframebreaks]{Step 2: Parent selection}
 
 
-In the first step of an iteration, $\lambda$ parents are chosen, who create offspring in the next step. 
+In the first step of an iteration, $\lambda$ parents are chosen, who create offspring in the next step.
 
 \begin{footnotesize}
-    \textbf{Note:} Do not confuse the hyperparameters setting $\conf$ (bold) with the EA parameter $\lambda$.    
+    \textbf{Note:} Do not confuse the hyperparameters config $\conf$ (bold) with the EA parameter $\lambda$.
 \end{footnotesize}
 
 \begin{columns}
 \begin{column}{0.5\textwidth}
-  
+
   Possibilities for selection of parents:
 
   \begin{itemize}
@@ -235,7 +225,7 @@ In the first step of an iteration, $\lambda$ parents are chosen, who create offs
   \end{itemize}
 
   \begin{figure}
-    \includegraphics[width = \linewidth]{images/tournament_selection.png}
+    \includegraphics[width = 0.9\linewidth]{images/tournament_selection.png}
   \end{figure}
 
 \end{column}
@@ -401,7 +391,7 @@ with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$.
 
   \framebreak
 
-  In our example, a $(\mu + \lambda)$ selection was used. The selected points are green.
+  In our example, a $(\mu + \lambda)$ selection was used. The selected individuals are green.
 
   \begin{center}
     \begin{figure}

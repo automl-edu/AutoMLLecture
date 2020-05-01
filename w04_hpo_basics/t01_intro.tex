@@ -1,5 +1,5 @@
 \input{t00_template.tex}
-\subtitle{Overview for this Week}
+\subtitle{Overview and Introduction}
 
 
 \begin{document}
@@ -21,7 +21,7 @@
 % FIGURE SOURCE: https://docs.google.com/presentation/d/14xwcs5zncTjFL4hIHAprjZMmyGIPqk5vs8DS32vEAvQ/edit?usp=sharing
 \begin{center}
 \begin{figure}
-\includegraphics[width=0.5\textwidth]{images/riskmin_bilevel1.png}
+\includegraphics[width=0.4\textwidth]{images/riskmin_bilevel1.png}
 \end{figure}
 \end{center}
 
@@ -44,13 +44,18 @@ $$
 \framebreak
 
 \begin{itemize}
+\vfill
 \item But many ML algorithms are sensitive w.r.t. a good setting of their hyperparameters,
 and generalization performance might be bad, if we have chosen a suboptimal configuration:
 \begin{itemize}
+\vfill
 \item The data may be too complex to be modeled by a tree of depth $4$
+\vfill
 \item The data may be much simpler than we thought, and a tree of depth $4$ overfits
 \end{itemize}
+\vfill
 \item[$\implies$] algorithmically try out different values for the tree depth. For each maximal depth $\conf$, we have to train the model \textbf{to completion} and evaluate its performance on the test set.
+\vfill
 \item We choose the tree depth $\conf$ that is \textbf{optimal} w.r.t. the generalization error of the model.
 \end{itemize}
 
@@ -169,7 +174,7 @@ We face a \textbf{bi-level} optimization problem: The well-known risk minimizati
 \begin{center}
 \begin{figure}
 % FIGURE SOURCE: https://docs.google.com/presentation/d/14xwcs5zncTjFL4hIHAprjZMmyGIPqk5vs8DS32vEAvQ/edit?usp=sharing
-\includegraphics[width=0.7\textwidth]{images/riskmin_bilevel3.png}
+\includegraphics[width=0.6\textwidth]{images/riskmin_bilevel3.png}
 \end{figure}
 \end{center}
 
@@ -275,8 +280,15 @@ The components of a tuning problem are:
 
 \end{frame}
 
+\begin{frame}{Why is tuning so hard?}
+\begin{itemize}
+\item Tuning is derivative-free (black box problem): It is usually impossible to compute derivatives of the objective (i.e., the resampled performance measure) that we optimize with regard to the HPs. All we can do is evaluate the performance for a given hyperparameter configuration.
+\item Every evaluation requires one or multiple train and predict steps of the learner. I.e., every evaluation is very \textbf{expensive}.
+\item Even worse: the answer we get from that evaluation is \textbf{not exact, but stochastic} in most settings, as we use resampling (and often stochastic learners).
+\item Categorical and dependent hyperparameters aggravate our difficulties: the space of hyperparameters we optimize over has a non-metric, complicated structure.
+\end{itemize}
 
-
+\end{frame}
 
 % \framebreak
 
