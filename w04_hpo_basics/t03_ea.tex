@@ -1,5 +1,5 @@
 \input{t00_template.tex}
-\subtitle{Tuning Algorithms}
+\subtitle{Evolutionary Algorithms}
 
 
 \begin{document}
@@ -10,87 +10,7 @@
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-
-\begin{frame}[containsverbatim,allowframebreaks]{Grid search}
-
-\begin{columns}
-\begin{column}{0.49\textwidth}
-\begin{itemize}
-\item Simple technique which is still quite popular, tries all
-HP combinations on a multi-dimensional discretized grid
-\item For each hyperparameter a finite set of candidates is predefined
-\item Then, we simply search all possible combinations in arbitrary order
-\end{itemize}
-\end{column}
-\begin{column}{0.49\textwidth}
-\vspace*{-0.8cm}
-\begin{center}
-\begin{figure}
-\includegraphics[width=0.9\textwidth]{images/grid.png}
-\caption*{Grid search over 10x10 points}
-\end{figure}
-\end{center}
-\end{column}
-\end{columns}
-
-\framebreak
-
-\begin{blocki}{Advantages}
-\item Very easy to implement
-\item All parameter types possible
-\item Parallelizing computation is trivial
-\end{blocki}
-
-\begin{blocki}{Disadvantages}
-\item Scales badly: Combinatorial explosion
-\item Inefficient: Searches large irrelevant areas
-\item Low resolution in each dimension
-\item Arbitrary: Which values / discretization?
-\end{blocki}
-\end{frame}
-
-
-\begin{frame}[containsverbatim,allowframebreaks]{Random search}
-
-
-
-\begin{columns}
-\begin{column}{0.49\textwidth}
-\begin{itemize}
-\item Small variation of grid search
-\item Uniformly sample from the region-of-interest
-\end{itemize}
-\end{column}
-\begin{column}{0.49\textwidth}
-\vspace*{-0.8cm}
-\begin{center}
-\begin{figure}
-\includegraphics[width=0.9\textwidth]{images/random.png}
-\caption*{Random search over 100 points}
-\end{figure}
-\end{center}
-\end{column}
-\end{columns}
-
-\framebreak
-
-\begin{blocki}{Advantages}
-\item Like grid search: Very easy to implement, all parameter types possible, trivial parallelization
-\item Anytime algorithm: Can stop the search whenever our budget for computation is exhausted, or continue until we reach our performance goal.
-\item No discretization: each individual parameter is tried with a different value every time
-\end{blocki}
-
-\begin{blocki}{Disadvantages}
-\item Inefficient: many evaluations in areas with low likelihood for improvement
-\item Scales badly: high dimensional hyperparameter spaces need \emph{lots} of samples to cover.
-\end{blocki}
-\end{frame}
-
-
-
-
-
-\begin{frame}[containsverbatim,allowframebreaks]{Evolutionary algorithms}
+\begin{frame}[containsverbatim]{Evolutionary algorithms}
 
 \textbf{Evolutionary algorithms} (EA) are a class of stochastic, metaheuristic optimization techniques whose mode of operation is inspired by the evolution of natural organisms.
 
@@ -100,16 +20,32 @@ HP combinations on a multi-dimensional discretized grid
 \begin{tabular}{ c | c }
 \textbf{Definition} & \textbf{Correspondence} \\[0.05cm]
 \hline \\[0.01cm]
-solution candidate $\xx \in \XX$ & Chromosome of an individual \\[0.1cm]
+Solution candidate $\xx \in \XX$ & Chromosome of an individual \\[0.1cm]
 $\xxi$& $i$-th gene of chromosome\\[0.1cm]
 Set of solution candidates $\mathcal{P}$ & Population \\[0.1cm]
+Number of solution candidates $\mu = |\mathcal{P}|$ & Population size \\[0.1cm]
+Number of offsprings $\lambda$ & Number of offsprings to generate new population\\[0.1cm]
 Objective function $\f: \XX \to \R$ & Fitness function
 \end{tabular}
 \end{center}
+\end{frame}
 
-For hyperparameter optimization a solution candidate is a hyperparameter configuration $\conf$ and the objective function is the generalization error of a model $\f(\xx) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \xx)\right)$
+\begin{frame}{Notation}
+
+\begin{itemize}
+    \item Some other common notations in EAs:
+    \begin{itemize}
+        \item The objective function in EAs is also often denoted $f(x)$.
+        \item Solution candates are commenly denoted $x$.
+    \end{itemize}
+    \item As these symbols are used in other context in our lecture we use $\cost(\conf)$ and $\conf$ instead of $f$ and $x$.
+    \item For hyperparameter optimization a solution candidate is a hyperparameter configuration $\conf$ and the objective function is the generalization error of a model $\f(\xx) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \xx)\right)$.
+    \item Be careful: The offspring parameter $\lambda$ is different from the solution candidate $\xx$ (bold symbol!).
+\end{itemize}
 
 \end{frame}
+
+
 
 \begin{frame}[containsverbatim,allowframebreaks]{History of evolutionary algorithms}
 
@@ -159,44 +95,16 @@ The boundaries between the terms become increasingly blurred and are often used 
 
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Example of an evolutionary algorithm}
-
-In the following, methods for the individual steps of an evolutionary algorithm are presented.
-
-\vspace{0.5cm}
-
-These are demonstrated using the one-dimensional Ackley function, which we want to optimize on the $[-30, 30]$ interval.
-
-\vspace{0.5cm}
-
-In this case, each individual has exactly one chromosome. The chromosome is (obviously) encoded as a real number: $\xx_i \in \R$.
-
-Usually for the optimization of a function $\f:\R^n \to \R$ individuals are coded as real vectors $\xx \in \R^n$.
-
-
-\framebreak
-
-
-\begin{center}
-\begin{figure}
-\includegraphics[width=\textwidth, height=6cm]{images/ea_ex1.png}
-\end{figure}
-\end{center}
-
-\end{frame}
-
 
 \begin{frame}{Step 1: Initialize population}
 
-    We start with a randomly selected population $\mathcal{P} = \{\xx^{(1)}, ..., \xx^{(\mu)}\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
 
-
-\begin{center}
-\begin{figure}
-\includegraphics[width=\textwidth, height=6cm]{images/ea_ex2.png}
-\end{figure}
-\end{center}
-
+    \begin{itemize}
+            \item A evolutionary algorithm is started by generating a initial population $\mathcal{P} = \{\xx^{(1)}, ..., \xx^{(\mu)}\}$ of the size $\mu$.
+            \item Most commonly this population is sampled completely at random but in general other ways are possible.
+            \item This population is rated, i.e., the objective function is computed for every individual in the initial population.
+            \item The initializaion can have a large influence on the quality of the found solution, so many EAs employ \texit{restarts} with new randomly generated populations.
+    \end{itemize}
 
 \end{frame}
 
@@ -205,9 +113,6 @@ Usually for the optimization of a function $\f:\R^n \to \R$ individuals are code
 
 In the first step of an iteration, $\lambda$ parents are chosen, who create offspring in the next step.
 
-\begin{footnotesize}
-    \textbf{Note:} Do not confuse the hyperparameters config $\conf$ (bold) with the EA parameter $\lambda$.
-\end{footnotesize}
 
 \begin{columns}
 \begin{column}{0.5\textwidth}
@@ -225,21 +130,11 @@ In the first step of an iteration, $\lambda$ parents are chosen, who create offs
   \end{itemize}
 
   \begin{figure}
-    \includegraphics[width = 0.9\linewidth]{images/tournament_selection.png}
+    \includegraphics[width = 0.9\linewidth]{images/tournament_selection_c.pdf}
   \end{figure}
 
 \end{column}
 \end{columns}
-
-\framebreak
-
-In our example we choose $\lambda = 5$ offspring by neutral selection (red individuals).
-
-\begin{center}
-\begin{figure}
-\includegraphics[width=\textwidth, height=5cm]{images/ea_ex3.png}
-\end{figure}
-\end{center}
 
 \end{frame}
 
@@ -346,12 +241,7 @@ with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$.
   \normalsize
   \end{itemize}
   \vspace{0.5cm}
-  In our example, we have chosen a Gauss mutation with $\sigma = 2$, we do not apply a recombination.
-  \begin{center}
-    \begin{figure}
-    \includegraphics[width=\textwidth, height=5cm]{images/ea_ex4.png}
-    \end{figure}
-    \end{center}
+
   \end{frame}
   \begin{frame}{Mutation for bit strings}
   For example, an individual $\xx \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
@@ -380,7 +270,7 @@ with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$.
   \end{center}
   \normalsize
   \end{frame}
-  \begin{frame}[allowframebreaks]{Step 4: Survival selection}
+  \begin{frame}{Step 4: Survival selection}
   Now individuals are chosen who survive. Two common strategies are:
   \begin{itemize}
   \item \textbf{$(\mu, \lambda)$-selection}: we select from the $\lambda$ descendants the $\mu$ best ($\lambda \ge \mu$ necessary).
@@ -389,9 +279,65 @@ with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$.
   Best individual safely survives.
   \end{itemize}
 
+\end{frame}
+
+
+\begin{frame}[allowframebreaks]{Example of an evolutionary algorithm}
+
+In the following, methods for the individual steps of an evolutionary algorithm are presented.
+
+\vspace{0.5cm}
+
+These are demonstrated using the one-dimensional Ackley function, which we want to optimize on the $[-30, 30]$ interval.
+
+\vspace{0.5cm}
+
+In this case, each individual has exactly one chromosome. The chromosome is (obviously) encoded as a real number: $\xx_i \in \R$.
+
+Usually for the optimization of a function $\f:\R^n \to \R$ individuals are coded as real vectors $\xx \in \R^n$.
+
+
+\framebreak
+
+
+\begin{center}
+\begin{figure}
+\includegraphics[width=\textwidth, height=6cm]{images/ea_ex1.png}
+\end{figure}
+\end{center}
+
+\framebreak
+We start with a randomly selected population $\mathcal{P} = \{\xx^{(1)}, ..., \xx^{(\mu)}\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
+
+\begin{center}
+\begin{figure}
+\includegraphics[width=\textwidth, height=5cm]{images/ea_ex2.png}
+\end{figure}
+\end{center}
+
+
+\framebreak
+
+We choose $\lambda = 5$ offspring by neutral selection (red individuals).
+
+\begin{center}
+\begin{figure}
+\includegraphics[width=\textwidth, height=5cm]{images/ea_ex3.png}
+\end{figure}
+\end{center}
+
+\framebreak
+
+We use a Gauss mutation with $\sigma = 2$ and do not apply a recombination.
+ \begin{center}
+    \begin{figure}
+    \includegraphics[width=\textwidth, height=5cm]{images/ea_ex4.png}
+    \end{figure}
+    \end{center}
+
   \framebreak
 
-  In our example, a $(\mu + \lambda)$ selection was used. The selected individuals are green.
+We use a $(\mu + \lambda)$ selection. The selected individuals are green.
 
   \begin{center}
     \begin{figure}
@@ -399,7 +345,9 @@ with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$.
     \end{figure}
   \end{center}
 
+
 \end{frame}
+
 
 \begin{frame}{Evolutionary Algorithms}
 

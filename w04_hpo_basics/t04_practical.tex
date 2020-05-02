@@ -11,14 +11,14 @@
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-\begin{frame}{Expert Knowledge}
+\begin{frame}[allowframebreaks]{Tuning Ranges}
 
 \begin{itemize}
 	\item Knowledge about hyperparameters can help to guide the optimization
-	\item For example, some hyperparameters might not be sampled uniformly
+	\item For example, it can be benificial to sample hyperparameters on a non-uniform scale.
 \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.2cm}
 Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 1000.0]$
 
 \begin{itemize}
@@ -41,10 +41,50 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 100
   \end{tikzpicture}
 \end{figure}
 
+\framebreak
+
+    \begin{itemize}
+        \item Similar to the scale, e.g., linear or logarithmic, the ranges in which to search have to be specified.
+        \item Deep knowledge about the inner working of the machine learning algorithm can help to choose better bounds.
+        \item If $\finconf$ is close to the border of $\pcs$ the ranges should be increased (or a different scale should be selected).
+        \item Meta-Learning can help to decide which hyperparameters should be tuned in which ranges.
+    \end{itemize}
+    \vspace{0.5cm}
+    Example:
+    \begin{itemize}
+            \item The ranges for $\text{cost} \in [10^{-3}, 10^3]$ and $\gamma \in [10^{-3}, 10^3]$ are rather small.
+            \item More common would be ranges like $\text{cost} \in [2^{-15}, 2^{15}]$ and $\gamma \in [2^{-15}, 2^{15}]$.
+    \end{itemize}
 
 \end{frame}
+
+
+
+
+\begin{frame}{Tuning Example - Setup}
+
+    We want to train a \textit{spam detector} on the popular Spam dataset\footnote{\url{https://archive.ics.uci.edu/ml/datasets/spambase}}.
+
+    \begin{itemize}
+        \item The learning algorithm is a support vector machine (SVM) with RBF kernel.
+        \item The hyperparmeters we optimize are
+            \begin{itemize}
+                \item Cost parameter $\text{cost} \in [10^{-3}, 10^3]$.
+                \item Kernel parameter $\gamma \in [10^{-3}, 10^3]$.
+            \end{itemize}
+        \item We compare three different optimizer
+            \begin{itemize}
+                \item Random search
+                \item Grid search
+                \item \textit{CMAES} - an evolutionary algorithm, that generates offsprings from a multivariate normal distribution (We didn't cover this algorithm).
+            \end{itemize}
+        \item We use a 5-fold cross-validation and optimize the area under the ROC curve (AUC).
+    \end{itemize}
+
+\end{frame}
+
 \begin{frame}{Tuning Example}
-Tuning $(\text{cost},\gamma) \in [10^{-3},10^{3}]^2$ for the \emph{SVM} with \emph{random search}, \emph{grid search} and \emph{CMAES}\footnote{A popular EA that samples offspring from a multi-variate normal distribution} using a 5-fold CV on the \texttt{spam} data set for AUC:
+
 \begin{columns}
 \begin{column}{0.45\textwidth}
   \vspace{1em}
@@ -60,8 +100,7 @@ Tuning $(\text{cost},\gamma) \in [10^{-3},10^{3}]^2$ for the \emph{SVM} with \em
   We notice here:
 
   \begin{itemize}
-    \item \emph{Grid search} has many evaluations with bad performance ($\gamma>1$).
-    \item \emph{Random search} can lead to underexplored areas even in promising regions.
+      \item Both \emph{Grid search} and \emph{random search} have many evaluations in regions with bad performance ($\gamma>1$).
     \item \emph{CMAES} only explores a small region.
   \end{itemize}
 \end{column}%
@@ -72,9 +111,10 @@ Tuning $(\text{cost},\gamma) \in [10^{-3},10^{3}]^2$ for the \emph{SVM} with \em
   \end{figure}
 \end{column}
 \end{columns}
-\end{frame}
 
-\begin{frame}{Tuning Example (cont.)}
+\end{frame}
+\begin{frame}{Tuning Example cont.}
+
 The \emph{optimization curve} shows the best found configuration until a given time point.
 \begin{columns}
 \begin{column}{0.4\textwidth}
@@ -157,22 +197,52 @@ The \emph{optimization curve} shows the best found configuration until a given t
   \footnotesize
 
   \begin{itemize}
-    \item<1-> Comparison of \textit{self-tuning} \emph{SVMs} with an SVM that was configured with $\conf = (\text{cost},\gamma) = (1,1)$ shows that tuning is necessary.
-    \item<2-> However, some \emph{SVM} implementations have \emph{clever} heuristics:
-        \begin{itemize}
-            \item $\gamma = \frac{1}{p*var(X)}$
-        \end{itemize}
+    \item Comparison with an SVM that was configured with $\conf = (\text{cost},\gamma) = (1,1)$ shows that tuning is necessary.
   \end{itemize}
 \end{column}
 \begin{column}{0.6\textwidth}
   \begin{figure}
-  \only<1>{\includegraphics[width=\textwidth]{images/benchmark_boxplot_default.png}}
-  \only<2>{\includegraphics[width=\textwidth]{images/benchmark_boxplot_all.png}}
+  \includegraphics[width=\textwidth]{images/benchmark_boxplot_default.png}
   \end{figure}
 \end{column}
 \end{columns}
 \end{frame}
 
+\begin{frame}{Data Dependent Defaults}
+
+    \begin{itemize}
+            \item Static defaults of hyperparameters, e.g., $\conf = (\text{cost},\gamma) = (1,1)$ are rarely a good choice.
+            \item A simple extension is to compute defaults based on some simple dataset characteristics.
+            \item The best know example is the formular for the size of the random subset of features to consider as a split in a random forest: $\sqrt{p}$, where $p$ is the number of features.
+            \item For the RBF-SVM a data dependent default for the $\gamma$ parameter can be computed by
+                \begin{itemize}
+                     \item The pairwise distances $\|\x - \tilde \x \|$ between points of a random subset containing $50\%$ of the data points are calculated.
+                     \item The estimate is based upon the $0.1$ and $0.9$ quantile of these distances.
+                     \item Basically any value between those two bounds will produce good results.
+                     \item Take the mean of the $0.1$ and $0.9$ quantile of these distances as an estimate for $\sigma$ and compute $\gamma = \tfrac{1}{2\sigma^2}$.
+                \end{itemize}
+            \item These simple defaults can work well and don't require expensive tuning procedures.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Tuning Example: Validation}
+
+\begin{columns}
+\begin{column}{0.4\textwidth}
+  \footnotesize
+
+  \begin{itemize}
+      \item With the previously discussed data dependet default of $\gamma$ and $\text{cost} = 1$.
+  \end{itemize}
+\end{column}
+\begin{column}{0.6\textwidth}
+  \begin{figure}
+  \includegraphics[width=\textwidth]{images/benchmark_boxplot_all.png}
+  \end{figure}
+\end{column}
+\end{columns}
+\end{frame}
 %\begin{frame}{Practical Hints: Nested Resampling}
 %\begin{itemize}
 %   \item For small data sets the relative size of the \emph{inner training set} should not differ much from \emph{outer training set}. Example: \\$n = 200$,
@@ -189,33 +259,5 @@ The \emph{optimization curve} shows the best found configuration until a given t
 %\end{itemize}
 %\end{frame}
 
-\begin{frame}[allowframebreaks]{More Practical Hints}
-\begin{itemize}
-  % \item Tuning can lead to overfitting.
-  \item The optimal hyperparameter setting can depent on the size of the training data. This can be a reason why the optimal configuration determined on the \emph{inner resampling} data does not have to be optimal for the \emph{outer resampling}.
-
-  \item If $\finconf$ is close to the border of $\pcs$, consider log-scales or widening the search space.
-
-  \item \begin{minipage}[t]{.55\linewidth}\raggedright
-          \emph{Grid search} worked well on our example because $\pcs \in \mathbb{R}^2$ and the search space was defined with expert knowledge. In general grid search is ineffective as unimportant hyperparameters are explored while other parameters are kept constant.
-        \end{minipage}%
-        \begin{minipage}[t]{.4\linewidth}
-        \raisebox{-\height}{\includegraphics[width = 0.8\linewidth]{images/grid_search_im.png}}
-        \end{minipage}
-
-\frambreak
-
-  \item Tuning algorithm and implementation differ in the type of hyperparameters they support, e.g., real-valued, integer, categorical, mixed, hierarchical.
-
-  \item The selection of $\finconf$ should consider the stochastic characteristic of the objective.
-
-  \item Use parallelization right:
-  \begin{itemize}
-    \item An embarrassingly parallel tuner (e.g.\ random search) can be more efficient then an \emph{smart} optimizer that is purely sequential if many cores are available.
-    \item Make use of the internal parallelization of the learner before using parallel tuning (unless it is embarrassingly parallel).
-  \end{itemize}
-
-\end{itemize}
-\end{frame}
 
 \end{document}

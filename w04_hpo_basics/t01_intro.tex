@@ -245,7 +245,7 @@ where $\pcs_{i}$ is the domain of the $i$-th hyperparameter.
 We formally state the nested hyperparameter tuning problem as:
 
 $$
-\min_{\conf \in \pcs} \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \pcs)\right)
+    \min_{\conf \in \pcs} \cost(\conf) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \conf)\right)
 $$
 
 \begin{itemize}
