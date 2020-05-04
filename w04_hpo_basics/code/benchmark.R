@@ -120,7 +120,13 @@ design = benchmark_grid(tasks = tasks, learners = c(learners, learner, learner_d
 if (!fs::file_exists("benchmark_res.rds")) {
   reg_dir = if (fs::file_exists("~/nobackup/")) "~/nobackup/w04_hpo_benchmark" else "w04_hpo_basics/code/benchmark_bt"
   unlink(reg_dir, recursive = TRUE)
-  reg = makeRegistry(file.dir = reg_dir, seed = 1, packages = c("mlr3", "mlr3tuning", "mlr3misc", "stringi", "future", "adagio", "ecr", "kernlab", "e1071"))
+  reg = makeRegistry(
+    file.dir = reg_dir, 
+    seed = 1, 
+    packages = c("mlr3", "mlr3tuning", "mlr3misc", "stringi", "future", "adagio", "ecr", "kernlab", "e1071", "R6"), #R6 needed so source (below) works correctly
+    source = c(fs::path_join(c(mlr3tuningdir, "attic", "TunerCMAES.R")), #can contain functions that are not in the created object
+               fs::path_join(c(mlr3tuningdir, "attic", "TunerECRSimpleEA.R"))) #see above
+  )
   
   batchMap(function(design, ...) {
     #makes inner resampling folds the same if the outer resampling is the same?
