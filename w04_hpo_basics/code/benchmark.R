@@ -1,48 +1,70 @@
 # if (!exists("TunerCMAES", where = "package:mlr3tuning")) {
 #   remotes::install_github("mlr-org/bbotk")
 #   remotes::install_github("mlr-org/mlr3tuning@bbotk_cmaes")
+#   remotes::install_github("mlr-org/mlr3oml")
 # }
 
 library(mlr3)
 library(mlr3misc)
 library(mlr3learners)
 library(mlr3tuning)
-library(cmaes)
-library(xgboost)
+library(adagio)
+library(ecr)
 library(paradox)
 library(future)
-library(future.batchtools)
 library(batchtools)
 library(ggplot2)
 library(stringi)
 library(gridExtra)
 library(data.table)
 library(checkmate)
+library(R6)
+library(mlr3oml)
+library(kernlab)
+
+# mlr3tuning has to be present in ~/gits/mlr3tuning
+mlr3tuningdir = "~/gits/mlr3tuning"
+if (!fs::dir_exists(mlr3tuningdir)) {
+  system(paste0("git clone --depth 1 git@github.com:mlr-org/mlr3tuning.git ", mlr3tuningdir))
+}
 
 set.seed(1)
 
 #define 1! leaners
 learner = lrn("classif.svm", predict_type = "prob", cost = 1, gamma = 1, type = "C-classification", kernel = "radial")
+measure = msr("classif.acc")
 
 n_evalss = c(25,100)
 #define n tuners
 tuner_terms = lapply(n_evalss, function(n_evals) {
-  tuners = tnrs(c("grid_search", "random_search", "cmaes"))
+  tuners = tnrs(c("grid_search", "random_search"))
   tuners[[1]]$param_set$values$resolution = ceiling(sqrt(n_evals))
+  
+  source(file = fs::path_join(c(mlr3tuningdir, "attic", "TunerCMAES.R")))
+  tuners$TunerCMAES = TunerCMAES$new()
+
+  source(file = fs::path_join(c(mlr3tuningdir, "attic", "TunerECRSimpleEA.R")))
+  tuners$TunerECRSimpleEA = TunerECRSimpleEA$new()
+  tuners$TunerECRSimpleEA$param_set$values$sdev = 0.5
+  
   lapply(tuners, function(x) list(tuner = x, term = term("evals", n_evals = n_evals)))
 })
 tuner_terms = unlist(tuner_terms, recursive = FALSE)
 
 #define m tasks
 tasks = tsks(c("spam", "sonar")) #, "german_credit"))
+tasks = c(tasks, 
+  lapply(c(optdigits = 28,  ionosphere = 59), function(id) {
+    tsk("oml", data_id = id)
+}))
 
 ps = ParamSet$new(params = list(
-    ParamDbl$new("cost", lower = -3, upper = 3),
-    ParamDbl$new("gamma", lower = -3, upper = 3)
+    ParamDbl$new("cost", lower = -5, upper = 5),
+    ParamDbl$new("gamma", lower = -5, upper = 5)
 ))
 
 ps$trafo = function(x, param_set) {
-  lapply(x, function(x) 10^x)
+  lapply(x, function(x) 2^x)
 }
 
 rsmp_tuning =  rsmp("cv", folds = 5)
@@ -52,13 +74,29 @@ rsmp_outer = rsmp("cv", folds = 10)
 #rsmp_outer = rsmp("cv", folds = 2)
 
 learners = Map(function(ps, tuner_terms) {
-  learner = AutoTuner$new(learner = learner, resampling = rsmp_tuning, measures = msr("classif.auc"), terminator = tuner_terms$term, search_space = ps, tuner = tuner_terms$tuner)  
+  learner = AutoTuner$new(learner = learner, resampling = rsmp_tuning, measures = measure, terminator = tuner_terms$term, search_space = ps, tuner = tuner_terms$tuner)  
   learner$id = paste0(learner$id, ".", tuner_terms[[1]]$term$param_set$values$n_evals)
   return(learner)
 }, ps = list(ps), tuner_terms)
 
 #add baseline
-learner_default = lrn(learner$id, predict_type = learner$predict_type)
+LearnerClassifSVMdef = R6Class("LearnerClassifSVMdef",
+  inherit = LearnerClassifSVM,
+  private = list(
+    .train = function(task){
+    self$param_set$values$kernel = "radial"
+    self$param_set$values$gamma = kernlab::sigest(x = as.matrix(task$data(cols = task$feature_names)))[[2]] # why is this stochastic? 
+    # also in kernlab they say that sigma is inverse kernel width but formula is 
+    # exp(sigma * (2 * crossprod(x, y) - crossprod(x) - crossprod(y))). 
+    # this crossprod stuff calculates the distance but negative
+    # in e1071 the say gamma is normal kernel width and formula is
+    # exp(-gamma*|u-v|^2), )
+    # so sigma = gamma
+    # also checked manually that the result with this gamma works well
+    super$.train(task)
+  })
+)
+learner_default = LearnerClassifSVMdef$new()
 learner_default$id = paste0(learner_default$id, ".default")
 
 #build design
@@ -82,7 +120,7 @@ design = benchmark_grid(tasks = tasks, learners = c(learners, learner, learner_d
 if (!fs::file_exists("benchmark_res.rds")) {
   reg_dir = if (fs::file_exists("~/nobackup/")) "~/nobackup/w04_hpo_benchmark" else "w04_hpo_basics/code/benchmark_bt"
   unlink(reg_dir, recursive = TRUE)
-  reg = makeRegistry(file.dir = reg_dir, seed = 1, packages = c("mlr3", "mlr3tuning", "mlr3misc", "stringi", "future"))
+  reg = makeRegistry(file.dir = reg_dir, seed = 1, packages = c("mlr3", "mlr3tuning", "mlr3misc", "stringi", "future", "adagio", "ecr", "kernlab", "e1071"))
   
   batchMap(function(design, ...) {
     #makes inner resampling folds the same if the outer resampling is the same?
@@ -119,7 +157,7 @@ if (!fs::file_exists("benchmark_res.rds")) {
 
 res = readRDS("benchmark_res.rds")
 
-baseline_res = res$baseline$aggregate(measures = msr("classif.auc"))
+baseline_res = res$baseline$aggregate(measures = measure)
 
 
 #build dt for plotting
@@ -197,11 +235,11 @@ if (interactive()) {
 ggsave("../images/benchmark_curve_iter_all_median.png", g, height = 5, width = 7)
 
 # outer performance
-res_outer = res$tune$score(measures = msr("classif.auc"))
+res_outer = res$tune$score(measures = measure)
 res_outer = res_outer[map_lgl(learner, function(x) x$model$tuning_instance$terminator$param_set$values$n_evals == 100) & task_id == "spam", ]
 res_outer[, tuner := map_chr(learner, function(x) class(x$tuner)[[1]])]
 res_outer[, tuner := stri_replace_first_fixed(tuner, "Tuner", "")]
-res_baseline = res$baseline$score(measures = msr("classif.auc"))[task_id == "spam", ]
+res_baseline = res$baseline$score(measures = measure)[task_id == "spam", ]
 res_baseline[, tuner := ifelse(stri_detect_fixed(learner_id, "default"), "Heuristic", "Untuned")]
 res_combined = rbind(res_baseline, res_outer)
 res_combined[, tuner:=factor(tuner, levels = tuner_names)]
