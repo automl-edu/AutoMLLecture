@@ -114,10 +114,10 @@
     \end{minipage}
     \begin{minipage}{0.74\textwidth}
     \begin{itemize}
-    \item A: $\#$obs.\ misclassified by both.
+    \item A: $\#$obs.\ correctly classified by both
     \item B: $\#$obs.\ misclassified by model 1 but not by model 2
     \item C: $\#$obs.\ misclassified by model 2 but not by model 1
-    \item D: $\#$obs.\ correctly classified by both
+    \item D: $\#$obs.\ misclassified by both
     \end{itemize}
     \end{minipage}
 
@@ -269,7 +269,7 @@
     \textbf{Post-hoc Nemenyi test}:
     \begin{itemize}
     \item compares all pairs of algorithms to find best-performing algorithm after $H_0$ of the Friedman-test was rejected
-    \item for $n$ data sets and $k$ algorithms, $\frac{n(n-1)}{2}$ comparisons
+    \item for $n$ data sets and $k$ algorithms, $\frac{k(k-1)}{2}$ comparisons
     \item calculate average rank of algorithm $j$ on all $n$ data sets: $\bar{R}_{.j} =\frac{1}{n} \sum_{i=1}^n R_{ij}$
     \end{itemize}
 
