@@ -60,30 +60,24 @@ The boundaries between the terms become increasingly blurred and are often used 
 \end{frame}
 
 
-\begin{frame}[allowframebreaks]{Notation and Terminology}
-
+\begin{frame}{Notation and Terminology}
 \begin{center}
 \begin{tabular}{ c | c }
-\textbf{Symbols} & \textbf{EA Terminology} \\[0.05cm]
-\hline \\[0.01cm]
-Solution candidate $\xx \in \XX$ & Chromosome of an individual \\[0.1cm]
-$\xxi$& $i$-th gene of chromosome\\[0.1cm]
-Set of solution candidates $\mathcal{P}$ & Population \\[0.1cm]
-$\mu = |\mathcal{P}|$ & Population size \\[0.1cm]
-$\lambda$ & Number of generated offsprings\\[0.1cm]
+\textbf{Symbols} & \textbf{EA Terminology} \\
+\hline \\
+Solution candidate $\xx \in \XX$ & Chromosome of an individual \\
+$\xxi$& $i$-th gene of chromosome\\
+Set of candidates $\mathcal{P}$ with $\mu = |\mathcal{P}|$ & Population and size\\
+$\lambda$ & Number of generated offsprings\\
 $\f: \XX \to \R$ & Fitness function
 \end{tabular}
 \end{center}
 
-\framebreak
+$$\f(\xx) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \xx)\right)$$
 
+Notation clash:
 \begin{itemize}
-    \item For hyperparameter optimization a solution candidate is a hyperparameter configuration $\conf$ and the objective function is the generalization error of a model $\f(\xx) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \xx)\right)$.
-    \item Some other common notations in EAs:
-    \begin{itemize}
-        \item The objective function in EAs is also often denoted $f(x)$.
-        \item Solution candidates are commonly denoted $x$.
-    \end{itemize}
+    \item In EAs the objective function is often denoted $f(x)$.
     \item As these symbols are used for ML already we use $\cost(\conf)$ and $\conf$ instead of $f$ and $x$.
     \item Be careful: The offspring size $\lambda$ is different from the candidate $\xx$ (bold symbol!).
 \end{itemize}
@@ -91,8 +85,6 @@ $\f: \XX \to \R$ & Fitness function
 
 
 \begin{frame}{Step 1: Initialize population}
-
-
     \begin{itemize}
             \item A evolutionary algorithm is started by generating a initial population $\mathcal{P} = \{\xx^{(1)}, ..., \xx^{(\mu)}\}$.
             \item Usually we sample this uniformly at random.
