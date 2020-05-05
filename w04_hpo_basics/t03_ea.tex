@@ -82,7 +82,7 @@ $\f: \XX \to \R$ & Fitness function
     \item Some other common notations in EAs:
     \begin{itemize}
         \item The objective function in EAs is also often denoted $f(x)$.
-        \item Solution candates are commenly denoted $x$.
+        \item Solution candidates are commonly denoted $x$.
     \end{itemize}
     \item As these symbols are used for ML already we use $\cost(\conf)$ and $\conf$ instead of $f$ and $x$.
     \item Be careful: The offspring size $\lambda$ is different from the candidate $\xx$ (bold symbol!).
@@ -96,9 +96,9 @@ $\f: \XX \to \R$ & Fitness function
     \begin{itemize}
             \item A evolutionary algorithm is started by generating a initial population $\mathcal{P} = \{\xx^{(1)}, ..., \xx^{(\mu)}\}$.
             \item Usually we sample this uniformly at random.
-            \item We could introduce propblem prior knowledge via a smarter init procedure.
+            \item We could introduce problem prior knowledge via a smarter init procedure.
             \item This population is evaluated, i.e., the objective function is computed for every individual in the initial population.
-            \item The initializaion can have a large influence on the quality of the found solution, so many EAs employ \textit{restarts} with new randomly generated populations.
+            \item The initialization can have a large influence on the quality of the found solution, so many EAs employ \textit{restarts} with new randomly generated populations.
     \end{itemize}
 
 \end{frame}
@@ -121,7 +121,7 @@ In the first step of an iteration, $\lambda$ parents are chosen, who create offs
 \end{column}%
 \begin{column}{0.5\textwidth}
   \begin{itemize}
-    \item \textbf{Tournament Selection: }randomly select $k$ individuals for a "Tournament Group". Of the drawn individuals, the best one (with the highest fitness value) is then chosen. In order to draw $\lambda$ individuals, the procedure must be performed $\lambda$-times.
+    \item \textbf{Tournament Selection: }randomly select $k$ individuals for a "Tournament Group". Of the drawn individuals, the best one (with the highest fitness value) is then chosen. Procedure is performed $\lambda$-times.
   \end{itemize}
 
   \begin{figure}
@@ -139,10 +139,10 @@ New individuals are now generated from the parent population. This is done by
 
 \begin{itemize}
 \item Recombination/Crossover: combine two parents into one offspring.
-\item Mutation: change an individual.
+\item Mutation: (locally) change an individual.
 \end{itemize}
 
-Recombination and mutation are not always performed both, sometimes only recombination or mutation is performed.
+Sometimes only one operation is performed.
 
 \end{frame}
 
@@ -355,7 +355,7 @@ We use a $(\mu + \lambda)$ selection. The selected individuals are green.
         \item Customization necessary for complex problems
         \item Not perfectly suited for expensive problems like HPO, 
             as quite a higher number of evaluations is usually
-            needed for approriate convergence / progress
+            needed for appropriate convergence / progress
     % \item Stagnation: Optimization process does not progress any more %FIXME: JR: Isn't that the same as the point below?
     % \item Premature Convergence: Algorithm converges to a single solution, which is not as good as expected
     % \item Diversity of population structures: Loss of population diversity for solving complex optimization problems
