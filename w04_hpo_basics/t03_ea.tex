@@ -16,65 +16,29 @@
 
 \vspace{0.5cm}
 
-\begin{center}
-\begin{tabular}{ c | c }
-\textbf{Definition} & \textbf{Correspondence} \\[0.05cm]
-\hline \\[0.01cm]
-Solution candidate $\xx \in \XX$ & Chromosome of an individual \\[0.1cm]
-$\xxi$& $i$-th gene of chromosome\\[0.1cm]
-Set of solution candidates $\mathcal{P}$ & Population \\[0.1cm]
-Number of solution candidates $\mu = |\mathcal{P}|$ & Population size \\[0.1cm]
-Number of offsprings $\lambda$ & Number of offsprings to generate new population\\[0.1cm]
-Objective function $\f: \XX \to \R$ & Fitness function
-\end{tabular}
-\end{center}
-\end{frame}
-
-\begin{frame}{Notation}
-
-\begin{itemize}
-    \item Some other common notations in EAs:
-    \begin{itemize}
-        \item The objective function in EAs is also often denoted $f(x)$.
-        \item Solution candates are commenly denoted $x$.
-    \end{itemize}
-    \item As these symbols are used in other context in our lecture we use $\cost(\conf)$ and $\conf$ instead of $f$ and $x$.
-    \item For hyperparameter optimization a solution candidate is a hyperparameter configuration $\conf$ and the objective function is the generalization error of a model $\f(\xx) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \xx)\right)$.
-    \item Be careful: The offspring parameter $\lambda$ is different from the solution candidate $\xx$ (bold symbol!).
-\end{itemize}
-
-\end{frame}
-
-
-
-\begin{frame}[containsverbatim,allowframebreaks]{History of evolutionary algorithms}
-
-Similar techniques differ in genetic representation:
+History of evolutionary algorithms:
 
 \begin{itemize}
 \item \textbf{Genetic algorithms}: Use binary problem representation, therefore closest to the biological model of evolution.
-\item \textbf{Evolution strategies}: Use direct problem representation, e.g. vector of real numbers.
+\item \textbf{Evolution strategies}: Use direct problem representation, e.g., vector of real numbers.
 \item \textbf{Genetic programming}: Create structures that convert an input into a fixed output (e.g. computer programs); solution candidates are represented as trees.
 \item \textbf{Evolutionary programming}: Similar to GP, but solution candidates are not represented by trees, but by finite state machines.
 \end{itemize}
 
 The boundaries between the terms become increasingly blurred and are often used synonymously.
-
 \end{frame}
 
-
 \begin{frame}{Structure of an evolutionary algorithm}
-
 \begin{center}
 \begin{figure}
 \centering
 \begin{tikzpicture}[node distance=0.8cm, auto,]
 %nodes
 \node (init) {Initialize population};
-\node[below = 0.3cm of init](rating1) {Rate population};
+\node[below = 0.3cm of init](rating1) {Eval population};
 \node[below = 0.3cm of rating1](selection1) {Parent selection};
 \node[below = 0.3cm of selection1](variation) {Variation};
-\node[below = 0.3cm of variation](rating2) {Rate offspring};
+\node[below = 0.3cm of variation](rating2) {Eval offspring};
 \node[below = 0.3cm of rating2](selection2) {Survival selection};
 \node[below = 0.3cm of selection2](stop) {Stop};
 \node[below = 1cm of stop](dummy2) {};
@@ -96,14 +60,45 @@ The boundaries between the terms become increasingly blurred and are often used 
 \end{frame}
 
 
+\begin{frame}[allowframebreaks]{Notation and Terminology}
+
+\begin{center}
+\begin{tabular}{ c | c }
+\textbf{Symbols} & \textbf{EA Terminology} \\[0.05cm]
+\hline \\[0.01cm]
+Solution candidate $\xx \in \XX$ & Chromosome of an individual \\[0.1cm]
+$\xxi$& $i$-th gene of chromosome\\[0.1cm]
+Set of solution candidates $\mathcal{P}$ & Population \\[0.1cm]
+$\mu = |\mathcal{P}|$ & Population size \\[0.1cm]
+$\lambda$ & Number of generated offsprings\\[0.1cm]
+$\f: \XX \to \R$ & Fitness function
+\end{tabular}
+\end{center}
+
+\framebreak
+
+\begin{itemize}
+    \item For hyperparameter optimization a solution candidate is a hyperparameter configuration $\conf$ and the objective function is the generalization error of a model $\f(\xx) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \xx)\right)$.
+    \item Some other common notations in EAs:
+    \begin{itemize}
+        \item The objective function in EAs is also often denoted $f(x)$.
+        \item Solution candates are commenly denoted $x$.
+    \end{itemize}
+    \item As these symbols are used for ML already we use $\cost(\conf)$ and $\conf$ instead of $f$ and $x$.
+    \item Be careful: The offspring size $\lambda$ is different from the candidate $\xx$ (bold symbol!).
+\end{itemize}
+\end{frame}
+
+
 \begin{frame}{Step 1: Initialize population}
 
 
     \begin{itemize}
-            \item A evolutionary algorithm is started by generating a initial population $\mathcal{P} = \{\xx^{(1)}, ..., \xx^{(\mu)}\}$ of the size $\mu$.
-            \item Most commonly this population is sampled completely at random but in general other ways are possible.
-            \item This population is rated, i.e., the objective function is computed for every individual in the initial population.
-            \item The initializaion can have a large influence on the quality of the found solution, so many EAs employ \texit{restarts} with new randomly generated populations.
+            \item A evolutionary algorithm is started by generating a initial population $\mathcal{P} = \{\xx^{(1)}, ..., \xx^{(\mu)}\}$.
+            \item Usually we sample this uniformly at random.
+            \item We could introduce propblem prior knowledge via a smarter init procedure.
+            \item This population is evaluated, i.e., the objective function is computed for every individual in the initial population.
+            \item The initializaion can have a large influence on the quality of the found solution, so many EAs employ \textit{restarts} with new randomly generated populations.
     \end{itemize}
 
 \end{frame}
@@ -143,7 +138,7 @@ In the first step of an iteration, $\lambda$ parents are chosen, who create offs
 New individuals are now generated from the parent population. This is done by
 
 \begin{itemize}
-\item Recombination: combine two parents into one offspring.
+\item Recombination/Crossover: combine two parents into one offspring.
 \item Mutation: change an individual.
 \end{itemize}
 
@@ -164,14 +159,52 @@ $$
 \bar\xx \pm \frac{1}{2} \beta (\tilde\xx - \xx)
 $$
 
-with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$.
+with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$ and $\beta$ randomly sampled from a certain distribution.
 \end{itemize}
 
 \end{frame}
 
+\begin{frame}[containsverbatim]{Mutation for numeric representations}
+  \textbf{Mutation:} individuals are changed, for example for $\xx \in \R^n$
+  \begin{itemize}
+  \item \textbf{Uniform mutation:} choose a random gene $\xxi$ and replace it with a value uniformly distributed (within the feasible range).
+  \item \textbf{Gauss mutation}: $\tilde\xx = \xx \pm \sigma \mathcal{N}(0, \boldsymbol{I})$
+  \item \textbf{Polynomial mutation:} polynomial distribution instead of normal distribution
+  \begin{center}
+  \begin{figure}
+    \includegraphics[height = 3.5cm, width = 4cm]{images/polynomial_mutation.png}\\
+    \scriptsize{Source: K. Deb, Analysing mutation schemes for real-parameter genetic algorithms, 2014}
+  \end{figure}
+   \end{center}
+   % \framebreak
+  % More exact:
+  % $$
+  % {\tilde \xxi} = \xxi + (\xxi[i,\text{upper}] - \xxi[i,\text{lower}]) \delta_{i}
+  % $$
+  % with $\xxi[i,\text{upper}]$ ($\xxi[i,\text{lower}]$) as upper (lower) bound for $\xxi$.
+  % $\delta_{i}$ results as:
+  % \footnotesize
+  % $$
+  % \delta_{i} =
+  % \begin{cases}
+  % [2r_{i}+(1-2r_{i})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta +1}} -1, & r_{i} < 0.5 \\
+  % 1 - [2(1-r_{i})+2(r_{i}-\frac{1}{2})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta_{m} +1}}, &  \text{else.}
+  % \end{cases}
+  % $$
+  % with  $\delta = \frac{min\{(x_{i} - \xxi[i,\text{upper}]), (\xxi[i,\text{upper}]-\xxi)\}}{\xxi[i,\text{upper}] - \xxi[i,\text{upper}]}$.
+  % \normalsize
+  % \vspace{0.5cm}
+  % Here $r_{i} \in [0,1]$ is a uniformly distributed number, $\eta_{m}$ is the distribution index of the mutation and is chosen by the user.\\
+  % % Remark: A $\eta_{m}$ of the order of $\eta_{m} \in [20,100]$ is common.
+  % \normalsize
+  \end{itemize}
+  % \vspace{0.5cm}
+
+  \end{frame}
+
 \begin{frame}{Recombination for bit strings}
 
-  For example, two individuals $\xx, \tilde\xx \in \{0, 1\}^n$ encoded as bit strings can be recombined as follows:
+  Two individuals $\xx, \tilde\xx \in \{0, 1\}^n$ encoded as bit strings can be recombined as follows:
 
   \begin{itemize}
   \item \textbf{1-point crossover}: select crossover $k \in \{1, ..., n - 1\}$ randomly and select the first $k$ bits from 1st parent, the last $n-k$ bits from 2nd parent.
@@ -179,16 +212,28 @@ with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$.
   \footnotesize
   \begin{center}
   \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
-   " " & \textcolor{red}{1} & \textcolor{blue}{1} & " " & " " & "  " & \textcolor{red}{1}  \\
-   " " & \textcolor{red}{0} & \textcolor{blue}{0} & " " & " " & "  " & \textcolor{red}{0}  \\ \cmidrule{2-3}
-   " " & \textcolor{red}{0} & \textcolor{blue}{1} & " " &$\Rightarrow$ & "  " & \textcolor{blue}{1}  \\
-   " " & \textcolor{red}{1} & \textcolor{blue}{1} & " " & " " & "  " & \textcolor{blue}{1}  \\
-   " " & \textcolor{red}{1} & \textcolor{blue}{0} & " " & " " & "  " & \textcolor{blue}{0}
+      \textcolor{red}{1} & \textcolor{blue}{1}  & & \textcolor{red}{1}  \\
+      \textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{red}{0}  \\ \cmidrule{1-4}
+    \textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
+    \textcolor{red}{1} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
+    \textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{blue}{0}
   \end{tabular}
   \end{center}
   \normalsize
 
-  \item \textbf{Uniform crossover}: select bit $i$ with probability $p$ of 1st parent and probability $1-p$ of 2nd parent.
+  \item \textbf{Uniform crossover}: select bit $i$ with probability $p$ of 1st parent and $1-p$ of 2nd parent.
+  
+      \footnotesize
+  \begin{center}
+  \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
+      \textcolor{red}{1} & \textcolor{blue}{0}  & & \textcolor{red}{1}  \\
+      \textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{blue}{0}  \\ 
+    \textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
+    \textcolor{red}{0} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
+    \textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{red}{1}
+  \end{tabular}
+  \end{center}
+  \normalsize
 
   \end{itemize}
 
@@ -206,69 +251,24 @@ with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$.
   % \normalsize
 
   \end{frame}
-\begin{frame}[containsverbatim,allowframebreaks]{Mutation for numeric representations}
-  \textbf{Mutation:} individuals are changed, for example for $\xx \in \R^n$
-  \begin{itemize}
-  \item \textbf{Uniform mutation:} choose a random gene $\xxi$ and replace it with a value uniformly distributed (within the feasible range).
-  \item \textbf{Gauss mutation}: $\tilde\xx = \xx \pm \sigma \mathcal{N}(0, \boldsymbol{I})$
-  \item \textbf{Polynomial mutation:} polynomial distribution instead of normal distribution
-  \begin{center}
-  \begin{figure}
-    \includegraphics[height = 3.5cm, width = 4cm]{images/polynomial_mutation.png}\\
-    \scriptsize{Source: K. Deb, Analysing mutation schemes for real-parameter genetic algorithms, 2014}
-  \end{figure}
-   \end{center}
-   \framebreak
-  More exact:
-  $$
-  {\tilde \xxi} = \xxi + (\xxi[i,\text{upper}] - \xxi[i,\text{lower}]) \delta_{i}
-  $$
-  with $\xxi[i,\text{upper}]$ ($\xxi[i,\text{lower}]$) as upper (lower) bound for $\xxi$.
-  $\delta_{i}$ results as:
-  \footnotesize
-  $$
-  \delta_{i} =
-  \begin{cases}
-  [2r_{i}+(1-2r_{i})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta +1}} -1, & r_{i} < 0.5 \\
-  1 - [2(1-r_{i})+2(r_{i}-\frac{1}{2})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta_{m} +1}}, &  \text{else.}
-  \end{cases}
-  $$
-  with  $\delta = \frac{min\{(x_{i} - \xxi[i,\text{upper}]), (\xxi[i,\text{upper}]-\xxi)\}}{\xxi[i,\text{upper}] - \xxi[i,\text{upper}]}$.
-  \normalsize
-  \vspace{0.5cm}
-  Here $r_{i} \in [0,1]$ is a uniformly distributed number, $\eta_{m}$ is the distribution index of the mutation and is chosen by the user.\\
-  % Remark: A $\eta_{m}$ of the order of $\eta_{m} \in [20,100]$ is common.
-  \normalsize
-  \end{itemize}
-  \vspace{0.5cm}
 
-  \end{frame}
   \begin{frame}{Mutation for bit strings}
-  For example, an individual $\xx \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
+  An individual $\xx \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
   \vspace{0.5cm}
-  \textbf{Mutation:}
+  % \textbf{Mutation:}
   \begin{itemize}
   \item \textbf{Bitflip}: for each index $k \in \{1, ..., n\}$: bit $k$ is flipped with probability $p \in (0,1)$.
-  \item If $(a)$ is an arbitrary bit sequence to which a bitflip mutation is applied, $(b)$ is obtained.
   \end{itemize}
-  \footnotesize
   \begin{center}
   \begin{tabular}{c @{\hspace{2\tabcolsep}} *{5}{c}}
-    &
-    \itshape (a) &
-    \itshape " " &
-    \itshape " " &
-    \itshape " " &
-    \itshape (b)
   \\[1ex]
-  " " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
-  " " & 0 & " " & " " & "  " & 0  \\
-  " " & 0 & " " & $\Rightarrow$ & "  " & \textcolor{red}{1}  \\
-  " " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
-  " " & 1 & " " & " " & "  " & 1
+   1  &               & \textcolor{red}{0}  \\
+   0  &               & 0  \\
+   0  & $\Rightarrow$ & 0  \\
+   0  &               & \textcolor{red}{1}  \\
+   1  &               & 1
   \end{tabular}
   \end{center}
-  \normalsize
   \end{frame}
   \begin{frame}{Step 4: Survival selection}
   Now individuals are chosen who survive. Two common strategies are:
@@ -284,34 +284,24 @@ with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$.
 
 \begin{frame}[allowframebreaks]{Example of an evolutionary algorithm}
 
-In the following, methods for the individual steps of an evolutionary algorithm are presented.
+    In the following, a (simple) EA is shown on the 1-dim Ackley function, optimized on $[-30, 30]$.
 
 \vspace{0.5cm}
 
-These are demonstrated using the one-dimensional Ackley function, which we want to optimize on the $[-30, 30]$ interval.
-
-\vspace{0.5cm}
-
-In this case, each individual has exactly one chromosome. The chromosome is (obviously) encoded as a real number: $\xx_i \in \R$.
-
-Usually for the optimization of a function $\f:\R^n \to \R$ individuals are coded as real vectors $\xx \in \R^n$.
-
-
-\framebreak
-
+Usually for the optimization of a function $\f:\R^n \to \R$ individuals are coded as real vectors $\xx \in \R^n$, so here we use simply one real number as chromosome.
 
 \begin{center}
 \begin{figure}
-\includegraphics[width=\textwidth, height=6cm]{images/ea_ex1.png}
+\includegraphics[height=4cm]{images/ea_ex1.png}
 \end{figure}
 \end{center}
 
 \framebreak
-We start with a randomly selected population $\mathcal{P} = \{\xx^{(1)}, ..., \xx^{(\mu)}\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
+Randomly init population with size $\mu = 20$.
 
 \begin{center}
 \begin{figure}
-\includegraphics[width=\textwidth, height=5cm]{images/ea_ex2.png}
+\includegraphics[height=6cm]{images/ea_ex2.png}
 \end{figure}
 \end{center}
 
@@ -322,7 +312,7 @@ We choose $\lambda = 5$ offspring by neutral selection (red individuals).
 
 \begin{center}
 \begin{figure}
-\includegraphics[width=\textwidth, height=5cm]{images/ea_ex3.png}
+\includegraphics[height=6cm]{images/ea_ex3.png}
 \end{figure}
 \end{center}
 
@@ -331,7 +321,7 @@ We choose $\lambda = 5$ offspring by neutral selection (red individuals).
 We use a Gauss mutation with $\sigma = 2$ and do not apply a recombination.
  \begin{center}
     \begin{figure}
-    \includegraphics[width=\textwidth, height=5cm]{images/ea_ex4.png}
+    \includegraphics[height=6cm]{images/ea_ex4.png}
     \end{figure}
     \end{center}
 
@@ -341,7 +331,7 @@ We use a $(\mu + \lambda)$ selection. The selected individuals are green.
 
   \begin{center}
     \begin{figure}
-      \includegraphics[width=\textwidth, height=5cm]{images/ea_ex5.png}
+      \includegraphics[height=6cm]{images/ea_ex5.png}
     \end{figure}
   \end{center}
 
@@ -352,34 +342,40 @@ We use a $(\mu + \lambda)$ selection. The selected individuals are green.
 \begin{frame}{Evolutionary Algorithms}
 
   \begin{blocki}{Advantages}
-    \item Can solve a variety of optimization problems (including HPO)
-    \item All parameter types possible
-    \item Highly parallelizable
-    \item Conceptually simple, yet powerful enough to solve complex problems
+    \item Conceptually simple, yet powerful enough to solve complex problems (including HPO)
+    \item All parameter types possible in general
+    \item Highly parallelizable (depends on $\mu$)
+    \item Allows customization via specific variation operators
     \end{blocki}
 
     \begin{blocki}{Disadvantages}
-    \item Stagnation: Optimization process does not progress any more %FIXME: JR: Isn't that the same as the point below?
-    \item Premature Convergence: Algorithm converges to a single solution, which is not as good as expected
-    \item Diversity of population structures: Loss of population diversity for solving complex optimization problems
-    \item Lacks balance between exploration and exploitation
+      \item Less theory available (for realistic, complex EAs)
+    \item Can be hard to get balance between exploration and exploitation right
+        \item Can have quite a few control parameters, hard to set them correctly\\
+        \item Customization necessary for complex problems
+        \item Not perfectly suited for expensive problems like HPO, 
+            as quite a higher number of evaluations is usually
+            needed for approriate convergence / progress
+    % \item Stagnation: Optimization process does not progress any more %FIXME: JR: Isn't that the same as the point below?
+    % \item Premature Convergence: Algorithm converges to a single solution, which is not as good as expected
+    % \item Diversity of population structures: Loss of population diversity for solving complex optimization problems
     \end{blocki}
 
 \end{frame}
 
-\begin{frame}{More Tuning Algorithms}
+% \begin{frame}{More Tuning Algorithms}
 
-There are many more methods for hyperparmeter tuning, some of which will be discussed in later parts of this lecture:
+% There are many more methods for hyperparmeter tuning, some of which will be discussed in later parts of this lecture:
 
 
-\begin{itemize}
-\item Stochastic local search, e.g. simulated annealing
-\item Bayesian optimization
-\item Hyperband
-\item Iterated F-Racing
-\item many more $\dots$
-\end{itemize}
+% \begin{itemize}
+% \item Stochastic local search, e.g. simulated annealing
+% \item Bayesian optimization
+% \item Hyperband
+% \item Iterated F-Racing
+% \item many more $\dots$
+% \end{itemize}
 
-\end{frame}
+% \end{frame}
 
 \end{document}
