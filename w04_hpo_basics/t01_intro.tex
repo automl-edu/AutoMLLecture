@@ -1,0 +1,308 @@
+\input{t00_template.tex}
+\subtitle{Overview and Introduction}
+
+
+\begin{document}
+
+\maketitle
+
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
+\begin{frame}[containsverbatim,allowframebreaks]{Motivating Example}
+
+\begin{itemize}
+\item Given a dataset, we want to train a classification tree.
+\item We feel that a maximum tree depth of $4$ has worked out well for us previously, so we decide to set this hyperparameter to $4$.
+\item The learner ("inducer") $\inducer$ takes the input data, internally performs \textbf{empirical risk minimization}, and returns a fitted tree model $\fh(\x) = f(\x, \hat{\theta})$ of at most depth $\conf = 4$ that minimizes the empirical risk.
+\end{itemize}
+
+% FIGURE SOURCE: https://docs.google.com/presentation/d/14xwcs5zncTjFL4hIHAprjZMmyGIPqk5vs8DS32vEAvQ/edit?usp=sharing
+\begin{center}
+\begin{figure}
+\includegraphics[width=0.4\textwidth]{images/riskmin_bilevel1.png}
+\end{figure}
+\end{center}
+
+\framebreak
+
+\begin{itemize}
+\item We are \textbf{actually} interested in the \textbf{generalization performance} $GE\left(\fh\right)$ of the estimated model on new, previously unseen data.
+\item We estimate the generalization performance by evaluating the model $\fh$ on a test set $\datasettest$: $$
+\widehat{GE}_{\datasettest}\left(\fh\right) = \frac{1}{|\datasettest|} \sum\limits_{(\x, y) \in \datasettest} L\left(y, \fh(\x) \right)
+$$
+\end{itemize}
+\vspace*{-0.6cm}
+% FIGURE SOURCE: https://docs.google.com/presentation/d/14xwcs5zncTjFL4hIHAprjZMmyGIPqk5vs8DS32vEAvQ/edit?usp=sharing
+\begin{center}
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{images/riskmin_bilevel2.png}
+\end{figure}
+\end{center}
+
+\framebreak
+
+\begin{itemize}
+\vfill
+\item But many ML algorithms are sensitive w.r.t. a good setting of their hyperparameters,
+and generalization performance might be bad, if we have chosen a suboptimal configuration:
+\begin{itemize}
+\vfill
+\item The data may be too complex to be modeled by a tree of depth $4$
+\vfill
+\item The data may be much simpler than we thought, and a tree of depth $4$ overfits
+\end{itemize}
+\vfill
+\item[$\implies$] algorithmically try out different values for the tree depth. For each maximal depth $\conf$, we have to train the model \textbf{to completion} and evaluate its performance on the test set.
+\vfill
+\item We choose the tree depth $\conf$ that is \textbf{optimal} w.r.t. the generalization error of the model.
+\end{itemize}
+
+% $\to$ Finding the hyperparameter $\lambda$ that is optimal w.r.t. the generalization performance constitutes an optimization problem.
+
+\end{frame}
+
+% \begin{frame}[containsverbatim,allowframebreaks]{The role of hyperparameters}
+
+% \begin{itemize}
+% \item Hyperparameters often control the complexity of a model, i.e., how flexible the model is.
+% \item But they can in principle influence any structural property of a model or computational part of the training process.
+% \item If a model is not flexible enough, it cannot approximate the relationship between the features and the output well and will underfit.
+% \item If a model is too flexible so that it simply \textit{memorizes} the training data, we will face the dreaded problem of overfitting.
+% \item[$\implies$] Hence, controlling the model's capacity, i.e., finding suitable hyperparameters,
+% can prevent overfitting the model on the training set.
+% \end{itemize}
+
+% \end{frame}
+
+\begin{frame}[containsverbatim,allowframebreaks]{Model Parameters vs. Hyperparameters}
+
+It is critical to understand the difference between model parameters and hyperparameters.
+
+\vspace{0.5cm}
+
+\textbf{Model parameters} are optimized during training, typically via loss minimization. They are an \textbf{output} of the training. Examples:
+\begin{itemize}
+\item The splits and terminal node constants of a tree learner
+\item Coefficients $\theta$ of a linear model $\fx = \theta^\top\x$
+\end{itemize}
+
+\framebreak
+
+In contrast, \textbf{hyperparameters} (HPs) are not decided during training. They must be specified before the training, they are an \textbf{input} of the training.
+Hyperparameters often control the complexity of a model, i.e., how flexible the model is.
+But they can in principle influence any structural property of a model or computational part of the training process.
+
+\vspace{0.5cm}
+
+Examples:
+
+\begin{itemize}
+\item Tree: The maximum depth of a tree
+\item $k$ Nearest Neighbours: Number of neighbours $k$ and distance measure
+\item Linear regression: Number and maximal order of interactions
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[containsverbatim,allowframebreaks]{Types of hyperparameters}
+
+We summarize all hyperparameters we want to tune over in a vector $\conf \in \pcs$ of (possibly) mixed type. HPs can have different types:
+
+\begin{itemize}
+\item Real-valued parameters, e.g.:
+\begin{itemize}
+\item Minimal error improvement in a tree to accept a split
+\item Bandwidths of the kernel density estimates for Naive Bayes
+\end{itemize}
+\item Integer parameters, e.g.:
+\begin{itemize}
+\item Neighbourhood size $k$ for $k$-NN
+\item Minimum number of samples for a split in a random forest
+\end{itemize}
+\item Categorical parameters, e.g.:
+\begin{itemize}
+\item Which split criterion for classification trees?
+\item Which distance measure for $k$-NN?
+\end{itemize}
+\end{itemize}
+
+Hyperparameters are often \textbf{hierarchically dependent} on each other, e.g., \emph{if} we use
+a kernel-density estimate for Naive Bayes, what is its width?
+% with polynomials of the features up to a certain maximal degree $d$, then
+% we must specify whether to also include polynomial interaction terms like e.g. $x_j^{d-d'}x_m^{d'}$ or not
+% and up to which degree $d' \leq d$.
+\end{frame}
+
+\begin{frame}{Tuning}
+
+\vskip 3em
+Recall: \textbf{Hyperparameters} $\conf$ are parameters that are \emph{inputs} to the
+training problem, in which a learner $\inducer$ minimizes the empirical risk on a training data set in order
+to find optimal \textbf{model parameters} $\theta$ which define the fitted model $\fh$.
+\vskip 2em
+
+\textbf{(Hyperparameter) Tuning} is the process of finding good model hyperparameters $\conf$.
+
+% \begin{frame}[containsverbatim,allowframebreaks]{{Hyperparameter Tuning}
+% \begin{itemize}
+% \item Optimize hyperparameters for learner w.r.t. prediction error
+% Tuner proposes configuration, eval by resampling, tuner receives performance, iterate
+% \end{itemize}
+% \begin{columns}[c, onlytextwidth]
+% \column{0.45\textwidth}
+% FIGURE SOURCE: No source
+% \includegraphics[trim={0cm 0cm 0cm 0cm}, clip, width=1.2\textwidth]{images/chain.jpg}
+% \column{0.45\textwidth}
+% FIGURE SOURCE: https://drive.google.com/open?id=1wY3aUZxIMZPje3vR0t2yWiDMx_osXRCi
+% \includegraphics[trim={1cm 0cm 1cm 0cm}, clip, width=1.2\textwidth]{images/tuning_process.jpg}
+% \end{columns}
+
+% \end{frame}
+
+\end{frame}
+
+
+\begin{frame}[containsverbatim,allowframebreaks]{Tuning: A bi-level optimization problem}
+
+\vspace{0.2cm}
+
+We face a \textbf{bi-level} optimization problem: The well-known risk minimization problem to find $\hat f$ is \textbf{nested} within the outer hyperparameter optimization (also called second-level problem):
+
+\begin{center}
+\begin{figure}
+% FIGURE SOURCE: https://docs.google.com/presentation/d/14xwcs5zncTjFL4hIHAprjZMmyGIPqk5vs8DS32vEAvQ/edit?usp=sharing
+\includegraphics[width=0.6\textwidth]{images/riskmin_bilevel3.png}
+\end{figure}
+\end{center}
+
+\framebreak
+
+\begin{itemize}
+\item For a learning algorithm $\inducer$ (also inducer) with $d$ hyperparameters, the hyperparameter \textbf{configuration space} is:
+$$\pcs=\pcs_{1} \times \pcs_{2} \times \ldots \times \pcs_{d}$$
+where $\pcs_{i}$ is the domain of the $i$-th hyperparameter.
+\item The domains can be continuous, discrete or categorical.
+\item For practical reasons, the domain of a continuous or integer-valued hyperparameter is typically bounded.
+\item A vector in this configuration space is denoted as $\conf \in \pcs$.
+\item A learning algorithm $\inducer$ takes a (training) dataset $\dataset$ and a hyperparameter configuration $\conf \in \pcs$ and returns a trained model (through risk minimization).
+
+\vspace*{-0.2cm}
+\begin{eqnarray*}
+\inducer: \left(\mathcal{X} \times \mathcal{Y}\right)^n \times \pcs &\to& \mathcal{H} \\
+(\dataset, \pcs) &\mapsto& \inducer(\dataset, \pcs) = \hat f_{\dataset, \pcs}
+\end{eqnarray*}
+% \item Additionally, some hyperparameters may only need to be specified if another hyperparameter (or combination of hyperparameters) takes on a certain value.
+\end{itemize}
+
+% \vspace{0.5cm}
+
+% Note that
+
+% In contrast to the first-level (empirical) risk minimization problem, hyperparameter optimization is also referred to as \textbf{second-level} optimization. The first-level problem can be seen as a subroutine called by the second-level problem: Each evaluation of $\pcs$ requires to solve the first-level optimization problem.
+
+
+% \framebreak
+
+% \begin{itemize}
+% \item search for the \textbf{inducer} hyperparameter $\pcs$
+% \item that minimizes the \textbf{generalization error}
+% $$
+% \min_{\pcs} \E_{\D_n \sim \Pxy, (\xv, y) \sim \Pxy} \left(V\left(y, \hat f_{\D, \pcs}(\xv)\right)\right).
+% $$
+% \end{itemize}
+
+% We compare: In empirical risk minimization, we
+
+% \begin{itemize}
+% \item search for the \textbf{model} parameter $\thetab$
+% \item that minimizes the \textbf{empirical risk}
+% $$
+% \min_{\thetab} \sum_{(\xi, \yi) \in \datasettrain} L\left(\yi, \fxi\right).
+% $$
+% \end{itemize}
+
+% In hyperparameter optimization, we
+
+% \begin{itemize}
+% \item search for the \textbf{inducer} hyperparameter $\pcs$
+% \item that minimizes the \textbf{test error}
+% $$
+% \min_{\pcs \in \pcs} \sum_{(\xi, \yi) \in \datasettest} V\left(\inducer(\datasettrain, \pcs)(\xi), \yi\right).
+% $$
+% \end{itemize}
+
+% \framebreak
+
+% \framebreak
+
+% The hyperparameter optimization problem is difficult in many ways:
+
+\framebreak
+
+We formally state the nested hyperparameter tuning problem as:
+
+$$
+    \min_{\conf \in \pcs} \cost(\conf) = \widehat{GE}_{\datasettest}\left(\inducer(\datasettrain, \conf)\right)
+$$
+
+\begin{itemize}
+\item The learner $\inducer(\datasettrain, \conf)$ takes a training dataset as well as hyperparameter settings $\pcs$ (e.g.\ the maximal depth of a classification tree) as an input.
+\item $\inducer(\datasettrain, \conf)$ performs empirical risk minimization on the training data and returns the optimal model $\hat f$ for the given hyperparameters.
+\item Note that for the estimation of the generalization error, more sophisticated resampling strategies like cross-validation can be used.
+\end{itemize}
+
+\framebreak
+
+The components of a tuning problem are:
+
+\begin{itemize}
+\item The dataset
+\item The learner (possibly: several competing learners?) that is tuned %(e.g. a decision tree classifier)
+\item The learner's hyperparameters and their respective regions-of-interest over which we optimize % (e.g. $\texttt{tree depth} \in \{1, 2, ..., 20\}$)
+\item The performance measure, as determined by the application.\\ Not necessarily identical to the loss function that defines the risk minimization problem for the learner!\\
+% We could even be interested in multiple measures simultaneously, e.g., accuracy and computation time of our model, TPR and PPV, etc.
+\item A (resampling) procedure for estimating the predictive performance according to the performance measure.
+ % The expected performance on unseen data can be estimated by holdout (i.e., a single train-test-split) or more advanced techniques like cross-validation.
+% More on this later.
+\end{itemize}
+
+% \framebreak
+
+% \begin{center}
+% \begin{figure}
+% FIGURE SOURCE: https://docs.google.com/presentation/d/1JUtguuVBgidcqD0IdFFIiKH9zqYzM6YRjCqC53V90dA/edit?usp=sharing
+% \includegraphics[width=1.2\textwidth]{images/autotune_in_model_fit.pdf}
+% \end{figure}
+% \end{center}
+
+\end{frame}
+
+\begin{frame}{Why is tuning so hard?}
+\begin{itemize}
+\item Tuning is derivative-free (black box problem): It is usually impossible to compute derivatives of the objective (i.e., the resampled performance measure) that we optimize with regard to the HPs. All we can do is evaluate the performance for a given hyperparameter configuration.
+\item Every evaluation requires one or multiple train and predict steps of the learner. I.e., every evaluation is very \textbf{expensive}.
+\item Even worse: the answer we get from that evaluation is \textbf{not exact, but stochastic} in most settings, as we use resampling (and often stochastic learners).
+\item Categorical and dependent hyperparameters aggravate our difficulties: the space of hyperparameters we optimize over has a non-metric, complicated structure.
+\end{itemize}
+
+\end{frame}
+
+% \framebreak
+
+% Possible scenarios for finding default hyperparameters:
+
+% \begin{itemize}
+% \item If the learner's performance is fairly insensitive to changes of a hyperparameter, we don't really have to worry as long as we remain within the range of reasonable values.
+% \item Constant default: we can benchmark the learner across a broad range of data sets and scenarios and try to find hyperparameter values that work well in many different situations. Quite optimistic?
+% \item Dynamic (heuristic) default: We can benchmark the learner across a broad range of data sets and scenarios and try to find an easily computable function that sets the hyperparameter in a data dependent way,
+% e.g. using \texttt{mtry}$ = p/3$ for RF.\\
+% How to construct or learn that heuristic function, though...?
+% \item In some cases, can try to set hyperparameters optimally by extracting more info from the fitted model. E.g. \texttt{ntrees} for a random forest (does OOB error increase or decrease if you remove trees from the ensemble?).
+% \end{itemize}
+% \end{frame}
+
+
+\end{document}

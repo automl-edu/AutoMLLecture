@@ -1,0 +1,25 @@
+\input{../latex_main/main.tex}
+
+\newcommand{\inducer}{\mathcal{I}}
+\newcommand{\R}{\mathds{R}}
+
+%The following might look confusing but allows us to switch the notation of the optimization problem independently from the notation of the hyper parameter optimization
+\newcommand{\xx}{\conf} %x of the optimizer
+\newcommand{\xxi}[1][i]{\conf_{#1}} %i-th component of xx (not confuse with i-th individual)
+\newcommand{\XX}{\pcs} %search space / domain of f
+\newcommand{\f}{\cost} %objective function
+
+\newenvironment{blocki}[1] % itemize block
+{
+ \begin{block}{#1}\begin{itemize}
+}
+{
+\end{itemize}\end{block}
+}
+
+\title[AutoML: Hyperparameter Optimization]{AutoML: Hyperparameter Optimization}
+%\subtitle{Overview for this Week} %To be defined in source!
+%TODO: change authors!
+\author[Marius Lindauer]{\underline{Bernd Bischl} \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
