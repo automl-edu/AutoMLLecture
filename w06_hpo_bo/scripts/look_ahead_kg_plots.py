@@ -2,10 +2,7 @@ import warnings
 warnings.filterwarnings('ignore')
 import argparse
 import logging
-from functools import partial
-
-import numpy as np
-from scipy.optimize import minimize
+import os.path
 from sklearn.gaussian_process import GaussianProcessRegressor as GPR
 from sklearn.gaussian_process.kernels import Matern
 
@@ -18,9 +15,11 @@ from bo_configurations import *
 SEED = None
 TOGGLE_PRINT = False
 INIT_X_PRESENTATION = [2.5, 4, 6, 7, 8]
+OUTPUT_DIR = os.path.abspath("./outputs/lookahead_kg")
 
-labels["xlabel"] = "$\lambda'$"
-labels["gp_ylabel"] = "$c(\lambda')$"
+labels["xlabel"] = "$\lambda$"
+# colors['highlighted_observations'] = 'red'
+# labels["gp_ylabel"] = "$c(\lambda')$"
 
 def initialize_dataset(initial_design, init=None):
     """
@@ -88,8 +87,6 @@ def visualize_look_ahead(initial_design, init=None):
                   "Predicted Means: {2}\nPredicted STDs: {3}".format(x, y, *(gp.predict(x, return_std=True))))
 
     # Assume next evaluation location
-    # x_ = np.mean(x, keepdims=True)
-    #x_ = np.array([[5.8]])
     x_ = np.array([[5.0]])
     print(x_)
     y_ = f(x_[0])
@@ -108,136 +105,104 @@ def visualize_look_ahead(initial_design, init=None):
     logging.info("Mu-star at time t+1: {}".format(mu_star_t1_xy))
 
     # -------------------------Plotting madness begins---------------------------
-    # Draw Figure 1.
 
-    # fig.tight_layout()
-    labels['gp_mean'] = r'Mean - $\mu^{(t)}(\cdot)$'
-    # labels['incumbent'] = r'Incumbent - ${(\mu^*)}^t$'
+    def draw_basic_figure(tgp=gp, tx=x, tX_=x, tY_=y, title='', highlight_datapoint=None, highlight_label="", ax=None):
+        if ax is None:
+            fig, ax = plt.subplots(1, 1, squeeze=True)
+            plt.subplots_adjust(0.05, 0.15, 0.95, 0.85)
+            figflag = True
+        else:
+            figflag = False
 
-    def draw_figure_1(ax):
         ax.set_xlim(bounds["x"])
         ax.set_ylim(bounds["gp_y"])
+        if title:
+            ax.set_title(title, loc='left')
         ax.grid()
         boplot.plot_objective_function(ax=ax)
-        boplot.plot_gp(model=gp, confidence_intervals=[1.0], ax=ax, custom_x=x)
-        boplot.mark_observations(X_=x, Y_=y, mark_incumbent=False, ax=ax)
+        boplot.plot_gp(model=tgp, confidence_intervals=[1.0, 2.0, 3.0], ax=ax, custom_x=tx)
+        if highlight_datapoint:
+            boplot.mark_observations(X_=tX_, Y_=tY_, mark_incumbent=False, ax=ax,
+                                     highlight_datapoint=highlight_datapoint, highlight_label=highlight_label)
+        else:
+            boplot.mark_observations(X_=tX_, Y_=tY_, mark_incumbent=False, ax=ax)
 
-        ax.legend()
+        if figflag:
+            return fig, ax
+        else:
+            return ax
+
+
+    def perform_finishing_tasks(ax, filename="", remove_legend=True):
+        ax.legend().set_zorder(zorders['legend'])
         ax.set_xlabel(labels['xlabel'])
-        ax.set_ylabel(labels['gp_ylabel'])
-        ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
 
-    if TOGGLE_PRINT:
-        fig, ax = plt.subplots(1, 1, squeeze=True)
-        draw_figure_1(ax)
-        plt.tight_layout()
-        plt.savefig("look_ahead_1.pdf")
+        if remove_legend:
+            ax.legend().remove()
 
-    fig, ax = plt.subplots(1, 1, squeeze=True)
-    draw_figure_1(ax)
-    boplot.highlight_configuration(mu_star_t_xy[0], lloc='bottom', ax=ax)
-    boplot.highlight_output(mu_star_t_xy[1], label='', lloc='right', ax=ax, fontsize=30)
-    boplot.annotate_y_edge(label=r'${(\mu^*)}^{(t)}$', xy=mu_star_t_xy, align='right', ax=ax)
-    ax.legend().remove()
+        # plt.tight_layout()
+        if TOGGLE_PRINT:
+            # plt.savefig(f"{OUTPUT_DIR}/{filename}", bbox_inches='tight')
+            plt.savefig(f"{OUTPUT_DIR}/{filename}")
+        else:
+            plt.show()
 
-    plt.tight_layout()
-    if TOGGLE_PRINT:
-        plt.savefig("look_ahead_KG_2.pdf")
-    else:
-        plt.show()
-
-    # End of figure 1.
     # ---------------------------------------
-    # Draw figure 1-2 transition animation A
+    # Draw look ahead 1.
 
-    fig, ax = plt.subplots(1, 1, squeeze=True)
-    draw_figure_1(ax)
-    logging.debug("Placing vertical on configuration: {}".format(x_))
-    boplot.highlight_configuration(x=x_, label='', lloc='bottom', ax=ax, ha='center')
-    boplot.annotate_x_edge(label=r'$\lambda$',xy=(x_, y_), align='bottom', ax=ax)
+    labels['gp_mean'] = r'Mean: $\mu^{(t)}(\cdot)$'
 
-    plt.tight_layout()
-    plt.legend().remove()
-    if TOGGLE_PRINT:
-        plt.savefig("look_ahead_1a.pdf")
-    else:
-        plt.show()
+    fig, ax = draw_basic_figure(title="")
+    perform_finishing_tasks(ax=ax, filename="look_ahead_1.pdf", remove_legend=False)
 
-    # End of figure 1-2 transition animation A
     # ---------------------------------------
-    # Draw figure 1-2 transition animation B
+    # Draw look ahead 2
+    fig, ax = draw_basic_figure(title="")
 
-    fig, ax = plt.subplots(1, 1, squeeze=True)
-    draw_figure_1(ax)
     logging.debug("Placing vertical on configuration: {}".format(x_))
+    # boplot.highlight_configuration(x=x_, label='', lloc='bottom', ax=ax, ha='center')
+    boplot.highlight_configuration(x=x_, label='', lloc='bottom', ax=ax, disable_ticks=True)
+    boplot.annotate_x_edge(label=r'$\lambda$', xy=(x_, y_), align='bottom', ax=ax)
+
+    perform_finishing_tasks(ax=ax, filename="look_ahead_2.pdf", remove_legend=True)
+
+    # ---------------------------------------
+    # Draw look ahead 3
+
+    fig, ax = draw_basic_figure(title="")
+
     boplot.highlight_configuration(x=x_, label='', lloc='bottom', ax=ax, ha='right')
-    boplot.annotate_x_edge(label=r'$\lambda$',xy=(x_, y_), align='bottom', ax=ax)
+    boplot.annotate_x_edge(label=r'$\lambda$', xy=(x_, y_), align='bottom', ax=ax)
+
     boplot.highlight_output(y_, label='', lloc='right', ax=ax, fontsize=28)
     boplot.annotate_y_edge(label=r'$c(\lambda)$', xy=(x_, y_), align='right', ax=ax)
+
     ax.scatter(
         x_,
         y_,
         color=colors['highlighted_observations'],
         marker='X',
         label=r"Hypothetical Observation $<\lambda, c(\lambda)>$",
-        zorder=11
+        zorder=zorders['annotations_normal']
     )
 
-    plt.tight_layout()
-    plt.legend().remove()
-    if TOGGLE_PRINT:
-        plt.savefig("look_ahead_1b.pdf")
-    else:
-        plt.show()
+    perform_finishing_tasks(ax=ax, filename="look_ahead_3.pdf", remove_legend=True)
 
-    # End of figure 1-2 transition animation B
     # ---------------------------------------
-    # Draw Figure 2.
+    # Draw look ahead 4.
 
-    labels['gp_mean'] = r'Mean - $\mu^{t+1}(\cdot)|_\lambda$'
-    # labels['incumbent'] = r'Incumbent - ${(\mu^*)}^{t+1}|_\lambda$'
+    labels['gp_mean'] = r'Mean: $\mu^{(t+1)}(\cdot)|_\lambda$'
 
-    def draw_figure_2(ax):
-        ax.set_xlim(bounds["x"])
-        ax.set_ylim(bounds["gp_y"])
-        ax.grid()
-        boplot.plot_objective_function(ax=ax)
-        boplot.plot_gp(model=gp2, confidence_intervals=[1.0], ax=ax, custom_x=X2_)
-        boplot.mark_observations(X_=X2_, Y_=Y2_, highlight_datapoint=np.where(np.isclose(X2_, x_))[0],
-                                 mark_incumbent=False,
-                                 highlight_label=r"Hypothetical Observation $<\lambda, c(\lambda)>$", ax=ax)
+    fig, ax = draw_basic_figure(tgp=gp2, tx=x, tX_=X2_, tY_=Y2_, title='',
+                                highlight_datapoint=np.where(np.isclose(X2_, x_))[0],
+                                highlight_label=r"Hypothetical Observation $<\lambda, c(\lambda)>$")
 
-        ax.legend()
-        ax.set_xlabel(labels['xlabel'])
-        ax.set_ylabel(labels['gp_ylabel'])
-        ax.set_title(r"Visualization of $\mathcal{G}^{(t+1)}|_\lambda$", loc='left')
+    perform_finishing_tasks(ax=ax, filename="look_ahead_4.pdf", remove_legend=False)
 
-    if TOGGLE_PRINT:
-        fig, ax = plt.subplots(1, 1, squeeze=True)
-        draw_figure_2(ax)
-        plt.tight_layout()
-        plt.savefig("look_ahead_3.pdf")
-
-    fig, ax = plt.subplots(1, 1, squeeze=True)
-    draw_figure_2(ax)
-    boplot.highlight_configuration(mu_star_t1_xy[0], lloc='bottom', ax=ax, ha='right')
-    boplot.highlight_output(mu_star_t1_xy[1], label='', lloc='right', ax=ax, fontsize=28)
-    boplot.annotate_y_edge(label=r'${(\mu^*)}^{(t+1)}|_\lambda$', xy=mu_star_t1_xy, align='right', ax=ax)
-    ax.legend().remove()
-
-    plt.tight_layout()
-    if TOGGLE_PRINT:
-        plt.savefig("look_ahead_KG_4.pdf")
-    else:
-        plt.show()
-
-
-    # End of figure 2.
     # ---------------------------------------
-    # Draw figure 2-3 transition animation A
-
     # Vertical comparison of look-ahead at any given x
-    def draw_2_3_transition(imaginary_lambda, ax1, ax2):
+
+    def draw_vertical_comparison(imaginary_lambda, ax1, ax2):
         tx_ = np.array([[imaginary_lambda]])
         ty_ = f(tx_[0])
 
@@ -253,7 +218,9 @@ def visualize_look_ahead(initial_design, init=None):
         tgp.fit(tX_, tY_)  # fit the model
         tmu_star_t1_xy = get_mu_star(tgp)
 
-        draw_figure_1(ax1)
+
+        # Draw the left hand figure using the old gp on ax1
+        draw_basic_figure(tgp=gp, title=r"$\hat{c}^{(t)}$", ax=ax1)
 
         logging.debug("Placing vertical on configuration: {}".format(tx_))
 
@@ -263,100 +230,110 @@ def visualize_look_ahead(initial_design, init=None):
             color=colors['highlighted_observations'],
             marker='X',
             label=r"Hypothetical Observation $<\lambda, c(\lambda)>$",
-            zorder=11
+            zorder=zorders["annotations_normal"]
         )
 
         ax1.legend().remove()
 
-        ax2.set_xlim(bounds["x"])
-        ax2.set_ylim(bounds["gp_y"])
-        ax2.grid()
-        boplot.plot_objective_function(ax=ax2)
-        boplot.plot_gp(model=tgp, confidence_intervals=[1.0], ax=ax2, custom_x=tX_)
-        boplot.mark_observations(X_=tX_, Y_=tY_, highlight_datapoint=np.where(np.isclose(tX_, tx_))[0],
-                                 mark_incumbent=False,
-                                 highlight_label=r"Hypothetical Observation $<\lambda, c(\lambda)>$", ax=ax2)
+        # Draw the right hand figure using the hypothetical gp tgp on ax2
+        draw_basic_figure(tgp=tgp, tx=tX_, tX_=tX_, tY_=tY_, title=r"$\hat{c}^{(t+1)}|_\lambda$",
+                          highlight_datapoint=np.where(np.isclose(tX_, tx_))[0],
+                          highlight_label=r"Hypothetical Observation $<\lambda, c(\lambda)>$", ax=ax2)
 
-        ax2.legend()
+
+    def finishing_touches_parallel(ax1, ax2, filename=""):
+        ax1.set_xlabel(labels['xlabel'])
         ax2.set_xlabel(labels['xlabel'])
-        ax2.set_ylabel(labels['gp_ylabel'])
-        ax2.set_title(r"Visualization of $\mathcal{G}^{(t+1)}|_\lambda$", loc='left')
 
-        ax2.legend().remove()
+        plt.tight_layout()
+        if TOGGLE_PRINT:
+            plt.savefig(f"{OUTPUT_DIR}/{filename}")
+        else:
+            plt.show()
 
-    # Actual 2-3 transition A
-    if TOGGLE_PRINT:
-        fig, (ax1, ax2) = plt.subplots(1, 2, squeeze=True, figsize=(18,9))
-    else:
-        fig, (ax1, ax2) = plt.subplots(1, 2, squeeze=True)
-    draw_2_3_transition(imaginary_lambda=5.0, ax1=ax1, ax2=ax2)
 
-    plt.tight_layout()
-
-    if TOGGLE_PRINT:
-        plt.savefig("look_ahead_3a.pdf")
-    else:
-        plt.show()
-
-    # End of figure 2-3 transition animation A
     # ---------------------------------------
-    # Draw figure 2-3 transition animation B
+    # Draw look ahead 5
 
-    if TOGGLE_PRINT:
-        fig, (ax1, ax2) = plt.subplots(1, 2, squeeze=True, figsize=(18,9))
-    else:
-        fig, (ax1, ax2) = plt.subplots(1, 2, squeeze=True)
+    fig, (ax1, ax2) = plt.subplots(1, 2, squeeze=True, figsize=(22, 9))
+    draw_vertical_comparison(imaginary_lambda=5.0, ax1=ax1, ax2=ax2)
+    finishing_touches_parallel(ax1=ax1, ax2=ax2, filename="look_ahead_5.pdf")
 
-    draw_2_3_transition(imaginary_lambda=5.5, ax1=ax1, ax2=ax2)
-
-    plt.tight_layout()
-
-    if TOGGLE_PRINT:
-        plt.savefig("look_ahead_3b.pdf")
-    else:
-        plt.show()
-
-    # End of figure 2-3 transition animation B
     # ---------------------------------------
-    # Draw figure 2-3 transition animation C
+    # Draw look ahead 6
 
-    if TOGGLE_PRINT:
-        fig, (ax1, ax2) = plt.subplots(1, 2, squeeze=True, figsize=(18,9))
-    else:
-        fig, (ax1, ax2) = plt.subplots(1, 2, squeeze=True)
+    fig, (ax1, ax2) = plt.subplots(1, 2, squeeze=True, figsize=(22, 9))
+    draw_vertical_comparison(imaginary_lambda=5.5, ax1=ax1, ax2=ax2)
+    finishing_touches_parallel(ax1=ax1, ax2=ax2, filename="look_ahead_6.pdf")
 
-    draw_2_3_transition(imaginary_lambda=3.5, ax1=ax1, ax2=ax2)
 
-    plt.tight_layout()
-
-    if TOGGLE_PRINT:
-        plt.savefig("look_ahead_3c.pdf")
-    else:
-        plt.show()
-
-    # End of figure 2-3 transition animation C
     # ---------------------------------------
+    # Draw look ahead 5
 
-    # Draw Figure 3 for KG
-    fig, (ax1, ax2) = plt.subplots(1, 2, squeeze=True)
-    # fig.tight_layout()
-    labels['gp_mean'] = r'Mean - $\mu^(t)(\cdot)$'
-    draw_figure_1(ax1)
+    fig, (ax1, ax2) = plt.subplots(1, 2, squeeze=True, figsize=(22, 9))
+    draw_vertical_comparison(imaginary_lambda=3.5, ax1=ax1, ax2=ax2)
+    finishing_touches_parallel(ax1=ax1, ax2=ax2, filename="look_ahead_7.pdf")
+
+
+    # ---------------------------------------
+    # Draw KG 1
+
+    labels['gp_mean'] = r'Mean: $\mu^{(t)}(\cdot)$'
+
+    fig, ax = draw_basic_figure(title="")
+    perform_finishing_tasks(ax=ax, filename="kg_1.pdf", remove_legend=False)
+
+    # ---------------------------------------
+    # Draw kg 2
+    fig, ax = draw_basic_figure(title="")
+
+    boplot.highlight_configuration(mu_star_t_xy[0], lloc='bottom', ax=ax, disable_ticks=True)
+    boplot.annotate_x_edge(label="%.2f" % mu_star_t_xy[0], xy=mu_star_t_xy, ax=ax, align='bottom',offset_param=1.5)
+    boplot.highlight_output(mu_star_t_xy[1], label='', lloc='right', ax=ax, fontsize=30, disable_ticks=True)
+    boplot.annotate_y_edge(label=r'${(\mu^*)}^{(t)}$', xy=mu_star_t_xy, align='right', ax=ax, yoffset=1.5)
+
+    perform_finishing_tasks(ax=ax, filename="kg_2.pdf", remove_legend=True)
+
+    # ---------------------------------------
+    # Draw kg 3
+
+    fig, ax = draw_basic_figure(tgp=gp2, tx=x, tX_=X2_, tY_=Y2_, title='',
+                                highlight_datapoint=np.where(np.isclose(X2_, x_))[0],
+                                highlight_label=r"Hypothetical Observation $<\lambda, c(\lambda)>$")
+
+    perform_finishing_tasks(ax=ax, filename="kg_3.pdf", remove_legend=True)
+
+    # ---------------------------------------
+    # Draw kg 4
+
+
+    fig, ax = draw_basic_figure(tgp=gp2, tx=x, tX_=X2_, tY_=Y2_, title='',
+                                highlight_datapoint=np.where(np.isclose(X2_, x_))[0],
+                                highlight_label=r"Hypothetical Observation $<\lambda, c(\lambda)>$")
+
+    boplot.highlight_configuration(mu_star_t1_xy[0], lloc='bottom', ax=ax, disable_ticks=True)
+    boplot.annotate_x_edge(label="%.2f" % mu_star_t1_xy[0], xy=mu_star_t1_xy, ax=ax, align='bottom', offset_param=1.5)
+
+    boplot.highlight_output(mu_star_t1_xy[1], label='', lloc='right', ax=ax, fontsize=28)
+    boplot.annotate_y_edge(label=r'${(\mu^*)}^{(t+1)}|_\lambda$', xy=mu_star_t1_xy, align='right', ax=ax, yoffset=1.5)
+
+    perform_finishing_tasks(ax=ax, filename="kg_4.pdf", remove_legend=True)
+
+    # ---------------------------------------
+    # Draw kg 5
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, squeeze=True, figsize=(22, 9))
+    draw_vertical_comparison(imaginary_lambda=x_.squeeze(), ax1=ax1, ax2=ax2)
+
     boplot.highlight_output(mu_star_t_xy[1], label='', lloc='right', ax=ax1, fontsize=30)
-    boplot.annotate_y_edge(label='${(\mu^*)}^{(t)}$', xy=mu_star_t_xy, align='right', ax=ax1)
-    ax1.get_legend().remove()
-    labels['gp_mean'] = r'Mean - $\mu^{(t+1)}(\cdot)|_\lambda$'
-    draw_figure_2(ax2)
+    boplot.annotate_y_edge(label='${(\mu^*)}^{(t)}$', xy=mu_star_t_xy, align='right', ax=ax1, yoffset=1.5)
+
     boplot.highlight_output(mu_star_t1_xy[1], label='', lloc='right', ax=ax2, fontsize=28)
-    boplot.annotate_y_edge(label='${(\mu^*)}^{(t+1)}|_\lambda$', xy=mu_star_t1_xy, align='left', ax=ax2)
-    ax2.get_legend().remove()
+    boplot.annotate_y_edge(label='${(\mu^*)}^{(t+1)}|_\lambda$', xy=mu_star_t1_xy, align='left', ax=ax2, yoffset=1.5)
 
-    plt.tight_layout()
-    if TOGGLE_PRINT:
-        plt.savefig("look_ahead_KG_5.pdf")
-    else:
-        plt.show()
+    finishing_touches_parallel(ax1=ax1, ax2=ax2, filename="kg_5.pdf")
 
+    return
 
 
 def main(init_size, initial_design):

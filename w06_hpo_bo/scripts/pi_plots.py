@@ -2,10 +2,7 @@ import warnings
 warnings.filterwarnings('ignore')
 import argparse
 import logging
-from functools import partial
-
-import numpy as np
-from scipy.optimize import minimize
+import os.path
 from sklearn.gaussian_process import GaussianProcessRegressor as GPR
 from sklearn.gaussian_process.kernels import Matern
 
@@ -18,12 +15,15 @@ from bo_configurations import *
 SEED = None
 TOGGLE_PRINT = False
 INIT_X_PRESENTATION = [2.5, 3.5, 5.5, 7, 9]
+OUTPUT_DIR = os.path.abspath("./outputs/pi")
 bounds["x"] = (2, 13)
 bounds["gp_y"] = (-5, 5)
-# boplot.set_rcparams(**{"legend.loc": "lower left"})
 
-labels["xlabel"] = "$\lambda'$"
-labels["gp_ylabel"] = "$c(\lambda')$"
+boplot.set_rc("savefig", directory=OUTPUT_DIR)
+
+labels["xlabel"] = "$\lambda$"
+labels["gp_ylabel"] = ""
+
 
 def initialize_dataset(initial_design, init=None):
     """
@@ -78,7 +78,6 @@ def visualize_pi(initial_design, init=None):
     # 4. Draw Vertical Normal at a good candidate for improvement
     # 5. Draw Vertical Normal at a bad candidate for improvement
 
-    # boplot.set_rcparams(**{'legend.loc': 'lower left'})
 
     logging.debug("Visualizing PI with initial design {} and init {}".format(initial_design, init))
     # Initialize dummy dataset
@@ -98,179 +97,150 @@ def visualize_pi(initial_design, init=None):
     logging.debug("Model fit to dataset.\nOriginal Inputs: {0}\nOriginal Observations: {1}\n"
                   "Predicted Means: {2}\nPredicted STDs: {3}".format(x, y, *(gp.predict(x, return_std=True))))
 
+    def draw_basic_plot(mark_incumbent=True, show_objective=False):
+        fig, ax = plt.subplots(1, 1, squeeze=True)
+        ax.set_xlim(bounds["x"])
+        ax.set_ylim(bounds["gp_y"])
+        ax.grid()
+        boplot.plot_gp(model=gp, confidence_intervals=[1.0, 2.0, 3.0], custom_x=x, ax=ax)
+        if show_objective:
+            boplot.plot_objective_function(ax=ax)
+        boplot.mark_observations(X_=x, Y_=y, mark_incumbent=mark_incumbent,
+                                 highlight_datapoint=None, highlight_label=None, ax=ax)
+
+        if mark_incumbent:
+            boplot.highlight_output(
+                y=np.array([ymin]),
+                label=['$c_{inc}$'],
+                lloc='left',
+                ax=ax,
+                disable_ticks=True
+            )
+            boplot.annotate_y_edge(
+                label='$c_{inc}$',
+                xy=(x[ymin_arg], ymin),
+                ax=ax,
+                align='left',
+                yoffset=0.8
+            )
+
+        return fig, ax
+
+
+    def finishing_touches(ax, show_legend=True, figname='pi.pdf'):
+        ax.set_xlabel(labels['xlabel'])
+        # ax.set_ylabel(labels['gp_ylabel'])
+        # ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
+
+        if show_legend:
+            ax.legend().set_zorder(zorders['legend'])
+        else:
+            ax.legend().remove()
+
+        plt.tight_layout()
+        if TOGGLE_PRINT:
+            plt.savefig(f"{OUTPUT_DIR}/{figname}")
+        else:
+            plt.show()
+
     # 1. Plot GP fit on initial dataset
     # -------------Plotting code -----------------
-    fig, ax = plt.subplots(1, 1, squeeze=True)
-    ax.set_xlim(bounds["x"])
-    ax.set_ylim(bounds["gp_y"])
-    ax.grid()
-    boplot.plot_gp(model=gp, confidence_intervals=[2.0], custom_x=x, ax=ax)
-    boplot.plot_objective_function(ax=ax)
-    boplot.mark_observations(X_=x, Y_=y, mark_incumbent=False, highlight_datapoint=None, highlight_label=None, ax=ax)
 
-    ax.legend().set_zorder(20)
-    ax.set_xlabel(labels['xlabel'])
-    ax.set_ylabel(labels['gp_ylabel'])
-    ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
+    fig, ax = draw_basic_plot(mark_incumbent=False, show_objective=True)
 
-    plt.tight_layout()
-    if TOGGLE_PRINT:
-        plt.savefig("pi_1.pdf")
-    else:
-        plt.show()
+    finishing_touches(ax, show_legend=True, figname="pi_1.pdf")
+
     # -------------------------------------------
-
     # 2. Mark current incumbent
     # -------------Plotting code -----------------
-    fig, ax = plt.subplots(1, 1, squeeze=True)
-    ax.set_xlim(bounds["x"])
-    ax.set_ylim(bounds["gp_y"])
-    ax.grid()
-    boplot.plot_gp(model=gp, confidence_intervals=[2.0], custom_x=x, ax=ax)
-    boplot.plot_objective_function(ax=ax)
-    boplot.mark_observations(X_=x, Y_=y, mark_incumbent=True, highlight_datapoint=None, highlight_label=None, ax=ax)
 
-    ax.legend().set_zorder(20)
-    ax.set_xlabel(labels['xlabel'])
-    ax.set_ylabel(labels['gp_ylabel'])
-    ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
+    fig, ax = draw_basic_plot(mark_incumbent=True, show_objective=True)
 
-    plt.tight_layout()
-    if TOGGLE_PRINT:
-        plt.savefig("pi_2.pdf")
-    else:
-        plt.show()
+    finishing_touches(ax, show_legend=True, figname="pi_2.pdf")
+
     # -------------------------------------------
 
-    # 3. Mark Zone of Probable Improvement
+    def draw_final_graph(show_objective=False, show_vertical_normals=True, candidates=None, normal_labels=None):
+        if candidates is None and show_vertical_normals:
+            raise RuntimeError("In order to show vertical normal distributions, candidates at which the PDF is sampled "
+                               "must be specified as a list of floats.")
+
+        fig, ax = draw_basic_plot(show_objective=show_objective)
+        boplot.darken_graph(y=ymin, ax=ax)
+
+        if show_vertical_normals:
+            if normal_labels is None:
+                normal_labels = [r"$P(\lambda_{%d})$" % (i + 1) for i in range(len(candidates))]
+            elif type(normal_labels) is str:
+                normal_labels = [normal_labels] * len(candidates)
+
+            for idx in range(len(candidates)):
+                candidate = candidates[idx]
+                label = normal_labels[idx]
+                vcurve_x, vcurve_y, mu = boplot.draw_vertical_normal(
+                    gp=gp, incumbenty=ymin, ax=ax, xtest=candidate,
+                    xscale=2.0, yscale=1.0
+                )
+
+                # ann_x = candidate + 0.5 * (np.max(vcurve_x) - candidate) / 2
+                ann_x = candidate
+                # ann_y = ymin - 0.25
+                ann_y = ymin - 3.0
+
+                arrow_x = candidate + 0.5 * (np.max(vcurve_x) - candidate) / 2
+                arrow_x = ann_x + 0.1
+                # arrow_y = ann_y - 3.0
+                arrow_y = ymin - 3.0
+
+                # prob = "{:.2f}".format(candidate)
+
+                ax.annotate(
+                    s=label, xy=(ann_x, ann_y), xytext=(arrow_x, arrow_y),
+                    # arrowprops={'arrowstyle': 'fancy', 'shrinkA': 20.0},
+                    # weight='heavy', color='darkgreen', zorder=zorders['annotations_high']
+                )
+        return fig, ax
+
+
+    # 3. Remove objective function.
     # -------------Plotting code -----------------
-    fig, ax = plt.subplots(1, 1, squeeze=True)
-    ax.set_xlim(bounds["x"])
-    ax.set_ylim(bounds["gp_y"])
-    ax.grid()
-    boplot.plot_gp(model=gp, confidence_intervals=[2.0], custom_x=x, ax=ax)
-    boplot.plot_objective_function(ax=ax)
-    boplot.mark_observations(X_=x, Y_=y, mark_incumbent=True, highlight_datapoint=None, highlight_label=None, ax=ax)
-    boplot.darken_graph(y=ymin, ax=ax)
 
-    ax.legend().set_zorder(20)
-    ax.set_xlabel(labels['xlabel'])
-    ax.set_ylabel(labels['gp_ylabel'])
-    ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
+    fig, ax = draw_basic_plot(mark_incumbent=True, show_objective=False)
 
-    ax.legend().remove()
+    finishing_touches(ax, show_legend=True, figname="pi_3.pdf")
 
-    plt.tight_layout()
-    if TOGGLE_PRINT:
-        plt.savefig("pi_3.pdf")
-    else:
-        plt.show()
     # -------------------------------------------
 
-    # 4. Draw Vertical Normal at a good candidate for improvement
+    # 4. Mark Zone of Probable Improvement (without legend and objective)
     # -------------Plotting code -----------------
-    candidate = 5.0
-    fig, ax = plt.subplots(1, 1, squeeze=True)
-    ax.set_xlim(bounds["x"])
-    ax.set_ylim(bounds["gp_y"])
-    ax.grid()
-    boplot.plot_gp(model=gp, confidence_intervals=[2.0], custom_x=x, ax=ax)
-    boplot.plot_objective_function(ax=ax)
-    boplot.mark_observations(X_=x, Y_=y, mark_incumbent=True, highlight_datapoint=None, highlight_label=None, ax=ax)
-    boplot.darken_graph(y=ymin, ax=ax)
 
-    vcurve_x, vcurve_y, mu = boplot.draw_vertical_normal(gp=gp, incumbenty=ymin, ax=ax, xtest=candidate, xscale=2.0, yscale=1.0)
+    fig, ax = draw_final_graph(show_objective=False, show_vertical_normals=False)
 
-    ann_x = candidate + 0.5 * (np.max(vcurve_x) - candidate) / 2
-    ann_y = mu - 0.25
+    finishing_touches(ax, show_legend=False, figname="pi_4.pdf")
 
-    arrow_x = ann_x
-    arrow_y = ann_y - 3.0
-
-    label = "{:.2f}".format(candidate)
-
-    ax.annotate(
-        s=r'$PI^{(t)}(%s)$' % label, xy=(ann_x, ann_y), xytext=(arrow_x, arrow_y),
-        arrowprops={'arrowstyle': 'fancy'},
-        weight='heavy', color='darkgreen', zorder=15
-    )
-
-    ax.legend().set_zorder(20)
-    ax.set_xlabel(labels['xlabel'])
-    ax.set_ylabel(labels['gp_ylabel'])
-    ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
-
-    ax.legend().remove()
-
-    plt.tight_layout()
-    if TOGGLE_PRINT:
-        plt.savefig("pi_4.pdf")
-    else:
-        plt.show()
     # -------------------------------------------
 
-    # 5. Draw Vertical Normal at a bad candidate for improvement
+    # 5. Draw Vertical Normal at a good candidate for improvement
+    # -------------Plotting code -----------------
+    fig, ax = draw_final_graph(
+        show_vertical_normals=True,
+        candidates=[5.0],
+        normal_labels=r'$PI^{(t)} \approx 0.5$'
+    )
+
+    finishing_touches(ax, show_legend=False, figname="pi_5.pdf")
+    # -------------------------------------------
+
+    # 6. Draw Vertical Normal at a bad candidate for improvement
     # -------------Plotting code -----------------
 
-    fig, ax = plt.subplots(1, 1, squeeze=True)
-    ax.set_xlim(bounds["x"])
-    ax.set_ylim(bounds["gp_y"])
-    ax.grid()
-    boplot.plot_gp(model=gp, confidence_intervals=[2.0], custom_x=x, ax=ax)
-    boplot.plot_objective_function(ax=ax)
-    boplot.mark_observations(X_=x, Y_=y, mark_incumbent=True, highlight_datapoint=None, highlight_label=None, ax=ax)
-    boplot.darken_graph(y=ymin, ax=ax)
-
-    candidate = 5.0
-    vcurve_x, vcurve_y, mu = boplot.draw_vertical_normal(
-        gp=gp, incumbenty=ymin, ax=ax, xtest=candidate,
-        xscale=2.0, yscale=1.0
+    fig, ax = draw_final_graph(
+        show_vertical_normals=True,
+        candidates=[5.0, 8.0],
+        normal_labels=[r'$PI^{(t)} \approx 0.5$', r'$PI^{(t)} \approx 0.0$']
     )
 
-    ann_x = candidate + 0.5 * (np.max(vcurve_x) - candidate) / 2
-    ann_y = mu - 0.25
-
-    arrow_x = ann_x
-    arrow_y = ann_y - 3.0
-
-    label = "{:.2f}".format(candidate)
-
-    ax.annotate(
-        s=r'$PI^{(t)}(%s)$' % label, xy=(ann_x, ann_y), xytext=(arrow_x, arrow_y),
-        arrowprops={'arrowstyle': 'fancy'},
-        weight='heavy', color='darkgreen', zorder=15
-    )
-
-    candidate = 8.0
-    vcurve_x, vcurve_y, mu = boplot.draw_vertical_normal(
-        gp=gp, incumbenty=ymin, ax=ax, xtest=candidate,
-        xscale=2.0, yscale=1.0
-    )
-
-    ann_x = candidate + 0.5 * (np.max(vcurve_x) - candidate) / 2
-    ann_y = mu
-
-    arrow_x = ann_x
-    arrow_y = ann_y - 3.0
-
-    label = "{:.2f}".format(candidate)
-
-    ax.annotate(s=r'$PI^{(t)}(%s)$' % label, xy=(ann_x, ann_y), xytext=(arrow_x, arrow_y),
-                arrowprops={'arrowstyle': 'fancy'},
-                weight='heavy', color='darkgreen', zorder=15)
-
-    ax.legend().set_zorder(20)
-    ax.set_xlabel(labels['xlabel'])
-    ax.set_ylabel(labels['gp_ylabel'])
-    ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
-
-    ax.legend().remove()
-
-    plt.tight_layout()
-    if TOGGLE_PRINT:
-        plt.savefig("pi_5.pdf")
-    else:
-        plt.show()
+    finishing_touches(ax, show_legend=False, figname="pi_6.pdf")
     # -------------------------------------------
 
 

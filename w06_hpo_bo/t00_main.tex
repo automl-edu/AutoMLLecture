@@ -3,53 +3,40 @@
 \input{../latex_main/main.tex}
 
 % Bayesian Optimization SS 2020 macros
-%\input{../latex_main/macros_bo.tex}
+% \input{../latex_main/macros_bo.tex}
+% there is no need to include macros_bo.tex unless new macros are added to it. This file is just a temporary holder of new macros until they are pushed upstream into the main macros.tex file on git, and will never be pushed to git.
 
 % allowing to align images inside a figure
 \usepackage[export]{adjustbox}
 % setting notes visibility
-\usepackage{pgfpages}
-\setbeameroption{hide notes} % Only slides
-%\setbeameroption{show only notes} % Only notes
-%\setbeameroption{show notes on second screen=right} % Both
+%\usepackage{pgfpages}
+%\setbeameroption{hide notes} % Only slides
 
-%TODO: change titles
-\title[AutoML: Bayesian Optimization for HPO]{AutoML: Bayesian Optimization for HPO} % week title
-\subtitle{Overview of the Bayesian optimization loop} % video title
-%TODO: change authors!
+
+\title[Bayesian Optimization for HPO]{Bayesian Optimization for Hyperparameter Optimization} % week title
 \author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
+
+
 \AtBeginSection[] % Do nothing for \section*
 {
-  \begin{frame}{Outline}
-    \bigskip
-    \vfill
-    \tableofcontents[currentsection]
-  \end{frame}
-  \begin{frame}
-  \vfill
-  \centering
-  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-    \usebeamerfont{title}\insertsectionhead\par%
-  \end{beamercolorbox}
-  \vfill
-  \end{frame}
+  %\begin{frame}{Outline}
+  %  \bigskip
+  %  \vfill
+  %  \tableofcontents[currentsection]
+  %\end{frame}
 }
 
-\begin{document}
-	
-	\maketitle
-	
-	%TODO: change PATH for the github structure
     \input{t01_introduction.tex}
-    \input{t03_acq_functions_1.tex}
-    \input{t03_acq_functions_2.tex}
-    \input{t04_surrogate_models.tex}
-    \input{t05_extensions.tex}
-    \input{t06_tpe.tex}
-    \input{t07_success_stories.tex}
-    \input{t99_bibliography}
+    %\input{t02_acq_functions_1.tex}
+    %\input{t03_acq_functions_2.tex}
+    %\input{t04_surrogate_models.tex}
+    %\input{t05_high_dim_BO.tex}
+    %\input{t06_extensions.tex}
+    %\input{t07_tpe.tex}
+    %\input{t08_success_stories.tex}
+    %\input{t99_bibliography}
 
 \end{document}

@@ -2,8 +2,7 @@ import warnings
 warnings.filterwarnings('ignore')
 import argparse
 import logging
-from functools import partial
-
+import os.path
 import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor as GPR
 from sklearn.gaussian_process.kernels import Matern
@@ -17,12 +16,13 @@ from bo_configurations import *
 SEED = None
 TOGGLE_PRINT = False
 INIT_X_PRESENTATION = [2.5, 3.5, 5.5, 7, 9]
+OUTPUT_DIR = os.path.abspath("./outputs/lcb")
 bounds["x"] = (2, 13)
 bounds["gp_y"] = (-5, 5)
 # boplot.set_rcparams(**{"legend.loc": "lower left"})
 
-labels["xlabel"] = "$\lambda'$"
-labels["gp_ylabel"] = "$c(\lambda')$"
+labels["xlabel"] = "$\lambda$"
+labels["gp_ylabel"] = ""
 
 def initialize_dataset(initial_design, init=None):
     """
@@ -104,14 +104,12 @@ def visualize_lcb(initial_design, init=None):
     boplot.plot_objective_function(ax=ax)
     boplot.mark_observations(X_=x, Y_=y, mark_incumbent=False, highlight_datapoint=None, highlight_label=None, ax=ax)
 
-    ax.legend().set_zorder(20)
+    ax.legend().set_zorder(zorders['legend'])
     ax.set_xlabel(labels['xlabel'])
-    ax.set_ylabel(labels['gp_ylabel'])
-    ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
 
     plt.tight_layout()
     if TOGGLE_PRINT:
-        plt.savefig("lcb_1.pdf")
+        plt.savefig(f"{OUTPUT_DIR}/lcb_1.pdf")
     else:
         plt.show()
     # -------------------------------------------
@@ -130,85 +128,81 @@ def visualize_lcb(initial_design, init=None):
     boplot.plot_objective_function(ax=ax)
     boplot.mark_observations(X_=x, Y_=y, mark_incumbent=True, highlight_datapoint=None, highlight_label=None, ax=ax)
 
-    ax.legend().set_zorder(20)
+    ax.legend().set_zorder(zorders['legend'])
     ax.set_xlabel(labels['xlabel'])
-    ax.set_ylabel(labels['gp_ylabel'])
-    ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
 
     plt.tight_layout()
     if TOGGLE_PRINT:
-        plt.savefig("lcb_2.pdf")
+        plt.savefig(f"{OUTPUT_DIR}/lcb_2.pdf")
     else:
         plt.show()
     # -------------------------------------------
 
-    # 3. Show LCB in parallel
-    # -------------Plotting code -----------------
-
-    if TOGGLE_PRINT:
-        fig, (ax1, ax2) = plt.subplots(2, 1, squeeze=True, figsize=(18, 9))
-    else:
-        fig, (ax1, ax2) = plt.subplots(2, 1, squeeze=True)
-
-    ax1.set_xlim(bounds["x"])
-    ax1.set_ylim(bounds["gp_y"])
-    ax1.grid()
-    boplot.plot_gp(model=gp, confidence_intervals=[kappa], type='lower', custom_x=x, ax=ax1)
-    boplot.plot_objective_function(ax=ax1)
-    boplot.mark_observations(X_=x, Y_=y, mark_incumbent=True, highlight_datapoint=None, highlight_label=None, ax=ax1)
-
-    lcb_max = get_lcb_maximum(gp, kappa)
-    logging.info("LCB Maximum at:{}".format(lcb_max))
-    boplot.highlight_configuration(x=lcb_max[0], label=None, lloc='bottom', ax=ax1)
-    ax1.set_xlabel(labels['xlabel'])
-    ax1.set_ylabel(labels['gp_ylabel'])
-    ax1.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
-
-    ax2.set_xlim(bounds["x"])
-    ax2.set_ylim(bounds["acq_y"])
-    ax2.grid()
-    ax2.set_xlabel(labels['xlabel'])
-    ax2.set_ylabel(labels['acq_ylabel'])
-    ax2.set_title(r"Visualization of $LCB$", loc='left')
-
-    boplot.highlight_configuration(x=lcb_max[0], label=None, lloc='bottom', ax=ax2)
-    boplot.plot_acquisition_function(acquisition_functions['LCB'], 0.0, gp, kappa, ax=ax2)
-
-    plt.tight_layout()
-    if TOGGLE_PRINT:
-        plt.savefig("lcb_3.pdf")
-    else:
-        plt.show()
-    # -------------------------------------------
-
-    # 4. Mark next sample
-    # -------------Plotting code -----------------
-    fig, ax = plt.subplots(1, 1, squeeze=True)
-    ax.set_xlim(bounds["x"])
-    ax.set_ylim(bounds["gp_y"])
-    ax.grid()
-    boplot.plot_gp(model=gp, confidence_intervals=[3.0], type='lower', custom_x=x, ax=ax)
-    boplot.plot_objective_function(ax=ax)
-    boplot.mark_observations(X_=x, Y_=y, mark_incumbent=True, highlight_datapoint=None, highlight_label=None, ax=ax)
-
-    lcb_max = get_lcb_maximum(gp, 3.0)
-    logging.info("LCB Maximum at:{}".format(lcb_max))
-    boplot.highlight_configuration(x=lcb_max[0], label=None, lloc='bottom', ax=ax)
-    boplot.highlight_output(y=lcb_max[1], label='', lloc='left', ax=ax)
-    boplot.annotate_y_edge(label=r'${\hat{c}}^{(t)}(%.2f)$' % lcb_max[0], xy=lcb_max, align='left', ax=ax)
-
-    ax.legend().set_zorder(20)
-    ax.set_xlabel(labels['xlabel'])
-    ax.set_ylabel(labels['gp_ylabel'])
-    ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
-
-    ax.legend().remove()
-
-    plt.tight_layout()
-    if TOGGLE_PRINT:
-        plt.savefig("lcb_4.pdf")
-    else:
-        plt.show()
+    # # 3. Show LCB in parallel
+    # # -------------Plotting code -----------------
+    #
+    # if TOGGLE_PRINT:
+    #     fig, (ax1, ax2) = plt.subplots(2, 1, squeeze=True, figsize=(18, 9))
+    # else:
+    #     fig, (ax1, ax2) = plt.subplots(2, 1, squeeze=True)
+    #
+    # ax1.set_xlim(bounds["x"])
+    # ax1.set_ylim(bounds["gp_y"])
+    # ax1.grid()
+    # boplot.plot_gp(model=gp, confidence_intervals=[kappa], type='lower', custom_x=x, ax=ax1)
+    # boplot.plot_objective_function(ax=ax1)
+    # boplot.mark_observations(X_=x, Y_=y, mark_incumbent=True, highlight_datapoint=None, highlight_label=None, ax=ax1)
+    #
+    # lcb_max = get_lcb_maximum(gp, kappa)
+    # logging.info("LCB Maximum at:{}".format(lcb_max))
+    # boplot.highlight_configuration(x=lcb_max[0], label=None, lloc='bottom', ax=ax1)
+    # ax1.set_xlabel(labels['xlabel'])
+    #
+    # ax2.set_xlim(bounds["x"])
+    # ax2.set_ylim(bounds["acq_y"])
+    # ax2.grid()
+    # ax2.set_xlabel(labels['xlabel'])
+    # ax2.set_ylabel(labels['acq_ylabel'])
+    # ax2.set_title(r"Visualization of $LCB$", loc='left')
+    #
+    # boplot.highlight_configuration(x=lcb_max[0], label=None, lloc='bottom', ax=ax2)
+    # boplot.plot_acquisition_function(acquisition_functions['LCB'], 0.0, gp, kappa, ax=ax2)
+    #
+    # plt.tight_layout()
+    # if TOGGLE_PRINT:
+    #     plt.savefig(f"{OUTPUT_DIR}/lcb_3.pdf")
+    # else:
+    #     plt.show()
+    # # -------------------------------------------
+    #
+    # # 4. Mark next sample
+    # # -------------Plotting code -----------------
+    # fig, ax = plt.subplots(1, 1, squeeze=True)
+    # ax.set_xlim(bounds["x"])
+    # ax.set_ylim(bounds["gp_y"])
+    # ax.grid()
+    # boplot.plot_gp(model=gp, confidence_intervals=[3.0], type='lower', custom_x=x, ax=ax)
+    # boplot.plot_objective_function(ax=ax)
+    # boplot.mark_observations(X_=x, Y_=y, mark_incumbent=True, highlight_datapoint=None, highlight_label=None, ax=ax)
+    #
+    # lcb_max = get_lcb_maximum(gp, 3.0)
+    # logging.info("LCB Maximum at:{}".format(lcb_max))
+    # boplot.highlight_configuration(x=lcb_max[0], label=None, lloc='bottom', ax=ax)
+    # boplot.highlight_output(y=lcb_max[1], label='', lloc='left', ax=ax)
+    # boplot.annotate_y_edge(label=r'${\hat{c}}^{(t)}(%.2f)$' % lcb_max[0], xy=lcb_max, align='left', ax=ax)
+    #
+    # ax.legend().set_zorder(zorders['legend'])
+    # ax.set_xlabel(labels['xlabel'])
+    # ax.set_ylabel(labels['gp_ylabel'])
+    # ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
+    #
+    # ax.legend().remove()
+    #
+    # plt.tight_layout()
+    # if TOGGLE_PRINT:
+    #     plt.savefig(f"{OUTPUT_DIR}/lcb_4.pdf")
+    # else:
+    #     plt.show()
     # -------------------------------------------
 
 

@@ -1,36 +1,59 @@
-\section{Introduction to Bayesian Optimization}
-%----------------------------------------------------------------------
-\begin{frame}[c]{Introduction to Bayesian Optimization}
-\framesubtitle{Global Optimization}
+\subtitle{Introduction to Bayesian Optimization}
+\begin{document}
+\maketitle
 
-Consider a \emph{well behaved} function $\func$ : $\pcs \rightarrow \realnum$ where $\pcs \subseteq \realnum^D$ is a bounded domain. Our goal is to find
-%
-\begin{equation*}
-  \optconf=\argmin_{\conf\in\pcs} \func(\conf).
-\end{equation*}
-\vspace{-0.6cm}
 
-\begin{columns}[T]
-\column{0.4\textwidth}
-\begin{itemize}
-    \item Function $\func$ is explicitly unknown - this is called a black box function
-    \item and can be multimodal
-    \item Only mode of interaction: Query $\conf$ to obtain a potentially noisy observation $\cost(\conf) = \func(\conf) + \epsilon$
-    \item Evaluations are expensive
-    \item There is no gradient information available
-\end{itemize}
-$\rightarrow$ For the remainder of this lecture we will \emph{minimize} $\cost$
-%
-\column{0.6\textwidth}
-\begin{figure}
-   \begin{multicols}{2}
-    \includegraphics[width=0.4\textwidth, right]{images/intro_images/branin.png}
-    \includegraphics[width=0.4\textwidth,left]{images/intro_images/branin_countour.png}
- \end{multicols}
-\end{figure}
-\source{\href{https://uqworld.org/t/branin-function/53}{Branin}}
-\end{columns}
-\end{frame}
+%\title[AutoML: Bayesian Optimization for Hyperparameter Optimization]{AutoML: Bayesian Optimization for Hyperparameter Optimization} % week title
+%\subtitle{Introduction to Bayesian Optimization} % video title
+%\author[Frank Hutter]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+%\institute{}
+%\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+%\begin{document}
+%	
+%	\maketitle
+
+%-----------------------------------------------------------------------
+\myframetop{Blackbox Optimization for Hyperparameter Optimization}{
+  
+    \myit{
+        \item Consider the \alert{global optimization problem} of finding: 
+        \[\conf^* \in \argmin_{\conf \in \confs} f(\conf)\]
+        
+        \item In the most general form, function $f$ is a \alert{blackbox function}:
+    	\begin{center}
+\scalebox{0.5}{\input{images/intro_images/blackbox_HPO.tex}}
+    	\end{center}
+    	\myit{
+    		\item Only mode of interaction with $f$: querying $f$'s value at a given $\conf$ 
+            \item Function $f$ may not be available in closed form, not differentiable, noisy, etc. 
+    	}   
+\medskip
+\pause
+
+        \item Today, we'll discuss a \alert{Bayesian} approach for solving such blackbox optimization problems
+\medskip
+\pause
+        \item Blackbox optimization can be used for hyperparameter optimization (HPO)
+        \myit{
+            \item Define \alert{$f(\conf) := \mathcal{L}( \mathcal{A}_{\conf}, \mathcal{D}_{train}, \mathcal{D}_{valid} )$}
+    \pause
+            \item Note: for formulations of HPO that go beyond blackbox optimization, see next lecture
+        }
+    }
+}
+
 %----------------------------------------------------------------------
 %\begin{frame}[c]{Optimization problem example}
 
@@ -149,40 +172,70 @@ $\rightarrow$ For the remainder of this lecture we will \emph{minimize} $\cost$
 
 %\end{frame}
 %----------------------------------------------------------------------
-\begin{frame}[c]{Introduction to Bayesian Optimization}
-\framesubtitle{In a nutshell}
+\myframetop{Bayesian Optimization of a blackbox function in a nutshell}{
+
+\bigskip
+\bigskip
+\bigskip
+
+    \onslide<1->
+    \begin{figure}
+        \vspace{-1em}
+        \centering
+        \only<1>{
+            \includegraphics[width=0.95\textwidth]{images/intro_images/IntroPlots_Obs.pdf}
+        }\only<2>{
+            \includegraphics[width=0.95\textwidth]{images/intro_images/IntroPlots_GP.pdf}
+        }\only<3>{
+            \includegraphics[width=0.95\textwidth]{images/intro_images/IntroPlots_Acqui.pdf}
+        }\only<4->{
+            \includegraphics[width=0.95\textwidth]{images/intro_images/IntroPlots_Complete.pdf}
+        }
+    \end{figure}
+    
+% \vspace*{-0.5cm}\notefh{Can you please increase the plotted values of the acquisition function, so that it is more clearly visible? Also on the next slide. You could, e.g., normalize it to have a certain maximum (a bit larger than that of the third plot on the next slide). Also, on the next slide, can you please plot the new observation red, not green?}
+}
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Bayesian Optimization of a blackbox function in a nutshell}
 
 \begin{columns}[T]
 \column{0.45\textwidth}
 General approach
 \begin{itemize}
-    \item <2-> Fit a \emph{probabilistic model} to the collected function samples $\langle{}\conf, \cost(\conf)\rangle{}$
-    \item <3-> Use the model to guide optimization, trading off \emph{exploration \vs{} exploitation}
+    \item Fit a \alert{probabilistic model} to the collected function samples $\langle{}\conf, \cost(\conf)\rangle{}$
+    \item Use the model to guide optimization, trading off \alert{exploration \vs{} exploitation}
 %    \item Acquisition function for exploration-exploitation tradeoff
 %    \item Optimize on acquisition function\\ to get next $x$ $\conf$ ($x$)
 \end{itemize}
 
-\onslide<11-> Popular approach in the statistics literature since \lit{\href{http://link.springer.com/chapter/10.1007\%2F3-540-07165-2_55}{Mockus et al. 1978}}
-\begin{itemize}
-    \item <12-> Efficient in \emph{\#function evaluations}
-    \item <13-> Works when objective is \emph{nonconvex, noisy, has unknown derivatives, etc.}
-    \item <14-> Recent \emph{convergence} results\\ \lit{\href{https://arxiv.org/abs/0912.3995}{Srinivas et al. 2009}; \href{http://www.jmlr.org/papers/v12/bull11a.html}{Bull et al. 2011}; \href{https://www.cs.ubc.ca/~nando/papers/BayesBandits.pdf}{de Freitas et al. 2012}; \href{http://papers.nips.cc/paper/5715-bayesian-optimization-with-exponential-convergence}{Kawaguchi et al. 2015}}
-%    \item Popular \alert{Bayesian optimization workshop} at NIPS (the premiere machine learning conference)
-\end{itemize}
+\bigskip
+
+\onslide<4->{
+    \alert{Popular approach in the statistics literature} since
+    \href{http://link.springer.com/chapter/10.1007\%2F3-540-07165-2_55}{\footnotesize\color{black!70} Mockus et al. [1978]}
+    \begin{itemize}
+        \item Efficient in \#function evaluations
+        \item Works when objective is \alert{nonconvex, noisy, has unknown derivatives, etc.}
+        \item Recent \alert{convergence} results\\ \lit{\href{https://arxiv.org/abs/0912.3995}{Srinivas et al. 2009}; \href{http://www.jmlr.org/papers/v12/bull11a.html}{Bull et al. 2011}; \href{https://www.cs.ubc.ca/~nando/papers/BayesBandits.pdf}{de Freitas et al. 2012}; \href{http://papers.nips.cc/paper/5715-bayesian-optimization-with-exponential-convergence}{Kawaguchi et al. 2015}}
+    %    \item Popular \alert{Bayesian optimization workshop} at NIPS (the premiere machine learning conference)
+    \end{itemize}
+}
 
 \column{0.55\textwidth}
 \onslide<1->
 \begin{figure}
+    \vspace{-1em}
     \centering
-    \only<1>{\includegraphics[width=\textwidth]{images/intro_images/BOLoop_Initial_Points.pdf}}
-    \only<2>{\includegraphics[width=\textwidth]{images/intro_images/BOLoop_Initial_Points_and_GP.pdf}}
-    \only<3>{\includegraphics[width=\textwidth]{images/intro_images/plot_1.pdf}}
-    \only<4>{\includegraphics[width=\textwidth]{images/intro_images/plot_2.pdf}}
-    \only<5>{\includegraphics[width=\textwidth]{images/intro_images/plot_3.pdf}}
-    \only<6>{\includegraphics[width=\textwidth]{images/intro_images/plot_4.pdf}}
-    \only<7>{\includegraphics[width=\textwidth]{images/intro_images/plot_5.pdf}}
-    \only<8>{\includegraphics[width=\textwidth]{images/intro_images/plot_6.pdf}}
-    \only<9->{\includegraphics[width=\textwidth]{images/intro_images/plot_7.pdf}}
+    \onslide<1->{\includegraphics[width=0.8\textwidth]{images/intro_images/IntroPlots_Iter2.pdf}}
+    \onslide<2->{\includegraphics[width=0.8\textwidth]{images/intro_images/IntroPlots_Iter3.pdf}}
+    \onslide<3->{\includegraphics[width=0.8\textwidth]{images/intro_images/IntroPlots_Iter4.pdf}}
+    %\only<4>{\includegraphics[width=\textwidth]{images/intro_images/plot_2.pdf}}
+    %\only<5>{\includegraphics[width=\textwidth]{images/intro_images/plot_3.pdf}}
+    %\only<6>{\includegraphics[width=\textwidth]{images/intro_images/plot_4.pdf}}
+    %\only<7>{\includegraphics[width=\textwidth]{images/intro_images/plot_5.pdf}}
+    %\only<8>{\includegraphics[width=\textwidth]{images/intro_images/plot_6.pdf}}
+    %\only<9->{\includegraphics[width=\textwidth]{images/intro_images/plot_7.pdf}}
 \end{figure}
 \end{columns}
 
@@ -230,7 +283,7 @@ General approach
 %\column{0.4\textwidth}
 %\vspace*{0.5cm}
 %\onslide<2->{
-%	%\includegraphics[width=1\textwidth]{../images/bo.png}
+%	%\includegraphics[width=1\textwidth]{images/bo.png}
 %	\includegraphics[width=0.9\textwidth]{plots_and_scripts/plots/bo_pic1.png}\\
 %	\pause
 %	\includegraphics[width=0.9\textwidth]{plots_and_scripts/plots//bo_pic2.png}\\
@@ -256,14 +309,13 @@ General approach
 %\end{frame}
 %----------------------------------------------------------------------
 
-\begin{frame}[c]{Introduction to Bayesian Optimization}
-\framesubtitle{Pseudocode}
+\begin{frame}[c]{Bayesian Optimization: Pseudocode}
 
 \begin{center}
 \begin{minipage}{0.75\textwidth}
 \begin{algorithm}[H]
     %\DontPrintSemicolon
-    \SetAlgoLined
+%    \SetAlgoLined
     \setcounter{AlgoLine}{0}
     \SetKwInOut{Require}{Require}
     \SetKwInOut{Result}{Result}
@@ -272,53 +324,53 @@ General approach
     		cost function $\cost$, 
     		acquisition function $\acq$, predictive model $\surro$,
     		maximal number of function evaluations $\bobudget$}
-    \Result{Best observed configuration $\finconf$ according to $\iter[\bobudget]{\dataset}$ or $\surro$}
+    \Result{Best configuration $\finconf$
+    (according to $\dataset$ or 
+    $\surro$)}
     
-	$\iter[0]{\dataset} \leftarrow \varnothing$\; 
+	Initialize data $\iter[0]{\dataset}$ with initial observations\;% \leftarrow \varnothing$\; 
 	 
     \For{$\bocount=1$ \KwTo $\bobudget$}{
 		%\While{$B$ not exhausted} {
-		$\iter[\bocount]{\surro}$ $\leftarrow$ fit predictive model on $\iter[\bocount-1]{\dataset}$\;
+		Fit predictive model $\iter[\bocount]{\surro}$ on $\iter[\bocount-1]{\dataset}$\;
 		
-		$\bonextsample \leftarrow \bonextsample \in \argmax_{\conf \in \pcs} \acq(\conf; \iter[\bocount-1]{\dataset}, \iter[\bocount]{\surro})$\;
+		Select next query point: $\bonextsample \in \argmax_{\conf \in \pcs} \acq(\conf; \iter[\bocount-1]{\dataset}, \iter[\bocount]{\surro})$\;
 		
 		Query $\bonextobs$\;
 		
-		$\iter[\bocount]{\dataset} \leftarrow \iter[\bocount-1]{\dataset} \cup \{\langle \bonextsample, \bonextobs \rangle \}$\;
+		Update data: $\iter[\bocount]{\dataset} \leftarrow \iter[\bocount-1]{\dataset} \cup \{\langle \bonextsample, \bonextobs \rangle \}$\;
 	}
-	\caption{BO loop}
+	\caption*{BO loop}
 \end{algorithm}
 \end{minipage}
 \end{center}
 \end{frame}
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Introduction to Bayesian Optimization}
-\framesubtitle{Where does the name come from?}
+\begin{frame}[c]{Bayesian Optimization: Origin of the Name}
 
 \begin{itemize}
-    \item <+-> Bayesian optimization uses Bayes' theorem: 
+    \item Bayesian optimization uses \alert{Bayes' theorem}: 
     	\begin{equation*}
-    	    P(A \vert B) = \frac{P(B \wedge A) \times  P(A)}{P(B)}
+    	    P(A \vert B) = \frac{P(B \vert A) \times  P(A)}{P(B)}
     	    \propto P(B \vert A) \times  P(A)
     	\end{equation*} 
-    \item <+-> We refer to:
-        \begin{itemize}
-            \item $A$ as a model (or hypothesis, theory), 
-            \item $B$ as a data (or observations, evidence),
-            \item $P(A \vert B)$ as a \emph{posterior} probability of a model given a data,
-            \item $P(B \vert A)$ as a \emph{likelihood} of a data given a model, 
-            \item $P(A)$ as a \emph{prior} probability of a model, which represents our belief about the space of possible objective functions. 
-        \end{itemize}
-    \item <+-> In our application:
+    \item Bayesian optimization uses this to compute a posterior over functions: 
         \begin{equation*}
-            P(\func \vert \dataset_{1:\bocount}) \propto P(\dataset_{1:\bocount} \vert \func) \times P(\func)
+            P(\func \vert \dataset_{1:\bocount}) \propto P(\dataset_{1:\bocount} \vert \func) \times P(\func), \text{~~~~ where } \dataset_{1:\bocount} = \left \{ \conf_{1:\bocount}, \cost(\conf_{1:\bocount}) \right\}
         \end{equation*} 
-        where $\dataset_{1:\bocount} = \left \{ \conf_{1:\bocount}, \cost(\conf_{1:\bocount}) \right \}$.
-\end{itemize}
+\pause
+\vspace*{-0.5cm}
+    \item Meaning of the individual terms:
+        \begin{itemize}
+            \item $P(f)$ is the \alert{prior} over functions, which represents our belief about the space of possible objective functions \alert{before} we see any data
+            \item $\dataset_{1:\bocount}$ is the \alert{data} (or observations, evidence)
+            \item $P(\dataset_{1:\bocount} \vert \func)$ is the likelihood of the data given a function
+            \item $P(\func \vert \dataset_{1:\bocount})$ is the \alert{posterior} probability over functions given the data
+        \end{itemize}
+    \end{itemize}
 \end{frame}
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Introduction to Bayesian Optimization}
-\framesubtitle{Advantages and Disadvantages}
+\begin{frame}[c]{Bayesian Optimization: Advantages and Disadvantages}
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
@@ -343,7 +395,7 @@ General approach
 \begin{block}{Disadvantages}
 \begin{itemize}
   \item Overhead because of model training in each iteration 
-  \item Open design choices: surrogate model, acquisition function
+  \item Crucially relies on robust surrogate model
   \item Inherently sequential (in its basic form)
 \end{itemize}
 \end{block}
@@ -354,13 +406,17 @@ General approach
 \end{frame}
 %-----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals of this Lecture}
+\framesubtitle{After this lecture, students can ...}
 
-\begin{enumerate}
-    \item Learn how Bayesian optimization works and can be used for HPO.
-    \item Learn about the two main ingredients of Bayesian optimization: Acquisition Functions and Surrogate Models.
-    \item Learn the limits of Bayesian optimization and the extensions which tackle these.
-    \item Know success stories of Bayesian optimization.
-\end{enumerate}
+\begin{itemize}
+    \item Explain the basics of Bayesian optimization
+    \item Derive \alert{simple acquisition functions}
+    \item Describe \alert{advanced acquisition functions}
+    \item Describe possible \alert{surrogate models} and their pros and cons 
+    \item Discuss the \alert{limits of Bayesian optimization} and extensions to tackle these
+    \item Describe the \alert{alternative Bayesian optimization approach of TPE}
+    \item Discuss \alert{success stories} of Bayesian optimization
+\end{itemize}
 
 \end{frame}
 
@@ -382,3 +438,5 @@ General approach
 %\end{frame}
 
 %-----------------------------------------------------------------------
+
+%\end{document}
