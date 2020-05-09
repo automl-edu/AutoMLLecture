@@ -1,7 +1,7 @@
-\videotitle{Introduction to Bayesian Optimization}
+\videotitle{Overview of Bayesian Optimization}
     
 %-----------------------------------------------------------------------
-\myframetop{Global Blackbox Optimization for Hyperparameter Optimization}{
+\myframetop{Global Blackbox Optimization}{
   
     \myit{
         \item Consider the \alert{global optimization problem} of finding: 
@@ -14,7 +14,7 @@
     	\end{center}
     	\myit{
     		\item Only mode of interaction with $f$: querying $f$'s value at a given $\conf$ 
-            \item Function $f$ may not be available in closed form, not differentiable, noisy, etc. 
+            \item Function $f$ may not be available in closed form, not convex, not differentiable, noisy, etc. 
     	}   
 \medskip
 \pause
@@ -25,7 +25,6 @@
         \item Blackbox optimization can be used for hyperparameter optimization (HPO)
         \myit{
             \item Define \alert{$f(\conf) := \mathcal{L}( \mathcal{A}_{\conf}, \mathcal{D}_{train}, \mathcal{D}_{valid} )$}
-    \pause
             \item Note: for formulations of HPO that go beyond blackbox optimization, see next lecture
         }
     }
@@ -381,6 +380,20 @@ General approach
 \end{columns}
 
 \end{frame}
+
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+
+\begin{itemize}
+    \item \alert{Repetition.} What is Bayesian about Bayesian optimization?
+\medskip
+    \item \alert{Repetition.} Write down the steps of the BO loop.
+\medskip
+    \item \alert{Discussion.} Can you think of an expensive blackbox optimization problem other than hyperparameter optimization?
+\end{itemize}
+
+\end{frame}
+
 %-----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals of this Lecture}
 \framesubtitle{After this lecture, students can ...}
@@ -388,7 +401,7 @@ General approach
 \begin{itemize}
     \item Explain the basics of Bayesian optimization
     \item Derive \alert{simple acquisition functions}
-    \item Describe \alert{advanced acquisition functions}
+    \item Describe \alert{complex lookahead acquisition functions}
     \item Describe possible \alert{surrogate models} and their pros and cons 
     \item Discuss the \alert{limits of Bayesian optimization} and extensions to tackle these
 %    \item Describe the \alert{alternative Bayesian optimization approach of TPE}
