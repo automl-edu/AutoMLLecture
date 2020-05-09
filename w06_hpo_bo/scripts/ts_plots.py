@@ -3,7 +3,7 @@ warnings.filterwarnings('ignore')
 import argparse
 import logging
 from functools import partial
-
+import os.path
 import numpy as np
 from scipy.optimize import minimize
 from sklearn.gaussian_process import GaussianProcessRegressor as GPR
@@ -14,15 +14,15 @@ from matplotlib import pyplot as plt
 import bo_plot_utils as boplot
 from bo_configurations import *
 
-
 SEED = None
 TOGGLE_PRINT = False
 INIT_X_PRESENTATION = [2.5, 3.5, 5.5, 7, 9]
+OUTPUT_DIR = os.path.abspath("./outputs/ts")
 bounds["x"] = (2, 13)
 bounds["gp_y"] = (-5, 5)
 
-labels["xlabel"] = "$\lambda'$"
-labels["gp_ylabel"] = "$c(\lambda')$"
+labels["xlabel"] = "$\lambda$"
+labels["gp_ylabel"] = ""
 
 def initialize_dataset(initial_design, init=None):
     """
@@ -93,24 +93,24 @@ def visualize_ts(initial_design, init=None):
     logging.debug("Model fit to dataset.\nOriginal Inputs: {0}\nOriginal Observations: {1}\n"
                   "Predicted Means: {2}\nPredicted STDs: {3}".format(x, y, *(gp.predict(x, return_std=True))))
 
+
+
     # 1. Plot GP fit on initial dataset
     # -------------Plotting code -----------------
     fig, ax = plt.subplots(1, 1, squeeze=True)
     ax.set_xlim(bounds["x"])
     ax.set_ylim(bounds["gp_y"])
     ax.grid()
-    boplot.plot_gp(model=gp, confidence_intervals=[2.0], custom_x=x, ax=ax)
+    boplot.plot_gp(model=gp, confidence_intervals=[1.0, 2.0, 3.0], custom_x=x, ax=ax)
     boplot.plot_objective_function(ax=ax)
     boplot.mark_observations(X_=x, Y_=y, mark_incumbent=False, highlight_datapoint=None, highlight_label=None, ax=ax)
 
-    ax.legend().set_zorder(20)
+    ax.legend().set_zorder(zorders['legend'])
     ax.set_xlabel(labels['xlabel'])
-    ax.set_ylabel(labels['gp_ylabel'])
-    ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
 
     plt.tight_layout()
     if TOGGLE_PRINT:
-        plt.savefig("ts_1.pdf")
+        plt.savefig(f"{OUTPUT_DIR}/ts_1.pdf")
     else:
         plt.show()
     # -------------------------------------------
@@ -121,14 +121,14 @@ def visualize_ts(initial_design, init=None):
     ax.set_xlim(bounds["x"])
     ax.set_ylim(bounds["gp_y"])
     ax.grid()
-    boplot.plot_gp(model=gp, confidence_intervals=[2.0], custom_x=x, ax=ax)
+    boplot.plot_gp(model=gp, confidence_intervals=[1.0, 2.0, 3.0], custom_x=x, ax=ax)
     boplot.plot_objective_function(ax=ax)
     boplot.mark_observations(X_=x, Y_=y, mark_incumbent=False, highlight_datapoint=None, highlight_label=None, ax=ax)
 
     # Sample from the GP
     nsamples = 1
-    seed2 = 1256
-    seed3 = 65
+    seed2 = 2
+    seed3 = 1375
     X_ = boplot.get_plot_domain(precision=None)
     mu = gp.sample_y(X=X_, n_samples=nsamples, random_state=seed3)
     boplot.plot_gp_samples(
@@ -141,14 +141,12 @@ def visualize_ts(initial_design, init=None):
         seed=seed2
     )
 
-    ax.legend().set_zorder(20)
+    ax.legend().set_zorder(zorders['legend'])
     ax.set_xlabel(labels['xlabel'])
-    ax.set_ylabel(labels['gp_ylabel'])
-    ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
 
     plt.tight_layout()
     if TOGGLE_PRINT:
-        plt.savefig("ts_2.pdf")
+        plt.savefig(f"{OUTPUT_DIR}/ts_2.pdf")
     else:
         plt.show()
     # -------------------------------------------
@@ -167,6 +165,7 @@ def visualize_ts(initial_design, init=None):
     nsamples = 1
     X_ = boplot.get_plot_domain(precision=None)
     mu = gp.sample_y(X=X_, n_samples=nsamples, random_state=seed3)
+    colors['highlighted_observations'] = 'red'  # Special for Thompson Sampling
     boplot.plot_gp_samples(
         mu=mu,
         nsamples=nsamples,
@@ -182,18 +181,16 @@ def visualize_ts(initial_design, init=None):
     cost = mu[min_idx]
 
     boplot.highlight_configuration(x=np.array([candidate]), label='', lloc='bottom', disable_ticks=True, ax=ax)
-    boplot.annotate_x_edge(label=r'$\lambda^{(t)}$',xy=(candidate, cost), align='bottom', ax=ax)
+    boplot.annotate_x_edge(label=r'$\lambda^{(t)}$',xy=(candidate, cost), align='top', ax=ax)
     boplot.highlight_output(y=np.array([cost]), label='', lloc='left', disable_ticks=True, ax=ax)
-    boplot.annotate_y_edge(label=r'${\hat{c}}^{(t)}(\lambda^{(t)})$', xy=(candidate, cost), align='left', ax=ax)
+    boplot.annotate_y_edge(label=r'$g(\lambda^{(t)})$', xy=(candidate, cost), align='left', ax=ax)
 
-    ax.legend().set_zorder(20)
+    ax.legend().set_zorder(zorders['legend'])
     ax.set_xlabel(labels['xlabel'])
-    ax.set_ylabel(labels['gp_ylabel'])
-    ax.set_title(r"Visualization of $\mathcal{G}^{(t)}$", loc='left')
 
     plt.tight_layout()
     if TOGGLE_PRINT:
-        plt.savefig("ts_3.pdf")
+        plt.savefig(f"{OUTPUT_DIR}/ts_3.pdf")
     else:
         plt.show()
     # -------------------------------------------

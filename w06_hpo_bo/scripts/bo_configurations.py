@@ -60,3 +60,13 @@ bounds = {
     "gp_y": (-3, 3),
     "acq_y": (0, 5),
 }
+
+zorders = {
+    'annotations_low': 20,
+    'zone_of_imp': 30,
+    'annotations_normal': 40,
+    'datapoints': 41,
+    'incumbent': 42,
+    'annotations_high': 60,
+    'legend': 100
+}
