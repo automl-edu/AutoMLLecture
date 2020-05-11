@@ -9,19 +9,19 @@
 \newcommand{\ydat}{\mathbf{y}}
 \newcommand{\id}{\boldsymbol{I}}
 \newcommand{\Amat}{\mathbf{A}}
-\newcommand{\Xspace}{\mathcal{X}}                                           
+\newcommand{\Xspace}{\mathcal{X}}
 \newcommand{\Yspace}{\mathcal{Y}}
 \newcommand{\ls}{\ell}
 \newcommand{\natnum}{\mathbb{N}}
 \newcommand{\intnum}{\mathbb{Z}}
-\newcommand{\order}{\mathcal{O}}  
+\newcommand{\order}{\mathcal{O}}
 
 \usepackage{fontawesome}
 \usepackage{dirtytalk}
 \usepackage{csquotes}
 
 
-\def\argmin{\mathop{\sf arg\,min}} 
+\def\argmin{\mathop{\sf arg\,min}}
 
 %\begin{frame}[c]{}
 %\centering
@@ -42,7 +42,7 @@
 
 \begin{document}
 \maketitle
-	
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,9 +50,9 @@
 
 \begin{itemize}
 \vspace{.5cm}
-\item To make predictions for a regression task by a Gaussian process, one needs to perform matrix computations. 
+\item To make predictions for a regression task by a Gaussian process, one needs to perform matrix computations.
 \vspace{.5cm}
-\item Here, the main difficulty is how to do \textbf{model selection}, i.e., how to choose the best covariance function and how to tune the hyperparameters. 
+\item Here, the main difficulty is how to do \textbf{model selection}, i.e., how to choose the best covariance function and how to tune the hyperparameters.
 \vspace{.5cm}
 \item There is a multitude of possible families of covariance functions, each coming with a number of hyperparameters to be chosen.
 \vspace{.5cm}
@@ -77,7 +77,7 @@
 
 \begin{eqnarray*}
 log\, p(\bm{y} ~\mid~ \bm{X}, \thetab) &=& log \left[\left(2 \pi\right)^{-n / 2} |\bm{K}_y|^{-1 / 2} \exp\left(- \frac{1}{2} \bm{y}^\top \bm{K}_y^{-1} \bm{y}\right) \right]\\
-&=& -\frac{1}{2}\bm{y}^\top\bm{K}_y^{-1} \bm{y} - \frac{1}{2}\, log \left| \bm{K}_y \right| - \frac{n}{2} log\,2\pi. 
+&=& -\frac{1}{2}\bm{y}^\top\bm{K}_y^{-1} \bm{y} - \frac{1}{2}\, log \left| \bm{K}_y \right| - \frac{n}{2} log\,2\pi.
 \end{eqnarray*}
 
 with $\bm{K}_y:=\bm{K} + \variance \id$ and $\thetab$ denoting the parameters of the covariance function (i.e., the hyperparameters).
@@ -196,7 +196,7 @@ To choose the hyperparameters by maximizing the marginal likelihood, we need to 
 
 \begin{footnotesize}
 \begin{eqnarray*}
-\frac{\partial}{\partial\theta_j} \, log\,p(\bm{y} \mid \bm{X}, \thetab) &=& \frac{\partial}{\partial\theta_j}  \left(-\frac{1}{2}\bm{y}^\top\bm{K}_y^{-1} \bm{y} - \frac{1}{2}\,log\, \left| \bm{K}_y \right| - \frac{n}{2} \,log\, 2\pi\right) \\ 
+\frac{\partial}{\partial\theta_j} \, log\,p(\bm{y} \mid \bm{X}, \thetab) &=& \frac{\partial}{\partial\theta_j}  \left(-\frac{1}{2}\bm{y}^\top\bm{K}_y^{-1} \bm{y} - \frac{1}{2}\,log\, \left| \bm{K}_y \right| - \frac{n}{2} \,log\, 2\pi\right) \\
 &=&\frac{1}{2} \bm{y}^\top \bm{K}^{-1} \frac{\partial \bm{K}}{\partial \theta_j}\bm{K}^{-1} \bm{y} - \frac{1}{2} \text{tr}\left(\bm{K}^{-1} \frac{\partial \bm{K}}{\partial \thetab} \right) \\
 &=& \frac{1}{2} \text{tr}\left((\bm{K}^{-1}\bm{y}\bm{y}^\top\bm{K}^{-1} - \bm{K}^{-1})\frac{\partial\bm{K}}{\partial\theta_j}\right)
 \end{eqnarray*}
@@ -217,7 +217,7 @@ $$\frac{\partial}{\partial \theta_j} \bm{K}^{-1} = - \bm{K}^{-1} \frac{\partial 
   \lz
   \item Once $\bm{K}^{-1}$ is known, the computation of the partial derivatives requires only $\order(n^2)$ time per hyperparameter.
   \lz
-  \item[\faLightbulbO] Thus, the computational overhead of computing derivatives is small, and using a gradient based optimizer is advantageous. 
+  \item[\faLightbulbO] Thus, the computational overhead of computing derivatives is small, and using a gradient based optimizer is advantageous.
 \end{itemize}
 
 
@@ -232,7 +232,7 @@ Workarounds to make GP estimation feasible for big data include:
 \vspace{3mm}
 \item Combining estimates on different subsets of size $m$: \textbf{Bayesian committee}; $\order(n m^2)$.
 \vspace{3mm}
-\item Exploiting low-rank approximations of $\bm{K}$ by using only a representative subset (enducing points) of $m$ training data $\bm X_m$:\textbf{Nyström approximation} $\bm K\approx\bm K_{nm} \bm K_{mm}^{-} \bm K_{mn}$, with $\order(nmk + m^3)$ for a rank-k-approximate inverse of $\bm K_{mm}$.
+\item Exploiting low-rank approximations of $\bm{K}$ by using only a representative subset (inducing points) of $m$ training data $\bm X_m$:\textbf{Nyström approximation} $\bm K\approx\bm K_{nm} \bm K_{mm}^{-} \bm K_{mn}$, with $\order(nmk + m^3)$ for a rank-k-approximate inverse of $\bm K_{mm}$.
 \vspace{3mm}
 \item Utilizing structure in $\bm{K}$ induced by the kernel: exact solutions but complicated maths, not applicable for all kernels.
 \end{itemize}
