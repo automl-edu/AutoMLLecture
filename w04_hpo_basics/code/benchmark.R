@@ -46,7 +46,6 @@ tuner_terms = lapply(n_evalss, function(n_evals) {
 
   source(file = fs::path_join(c(mlr3tuningdir, "attic", "TunerECRSimpleEA.R")))
   tuners$TunerECRSimpleEA = TunerECRSimpleEA$new()
-  tuners$TunerECRSimpleEA$param_set$values$sdev = 0.5
   
   lapply(tuners, function(x) list(tuner = x, term = term("evals", n_evals = n_evals)))
 })
@@ -197,7 +196,7 @@ theme_set(theme_bw())
 
 EVAL_ITERS = 100
 DATASET = "spam"
-tuners_select = c("GridSearch", "RandomSearch", "CMAES", "Gauss(1+1) EA" = "ECRSimpleEA", "Untuned", "Heuristic")
+tuners_select = c("GridSearch", "RandomSearch", "CMAES", "(1+1) EA" = "ECRSimpleEA", "Untuned", "Heuristic")
 names(tuners_select) = ifelse(nzchar(names(tuners_select)), names(tuners_select), tuners_select)
 tuner_colors = set_names(RColorBrewer::brewer.pal(length(tuners_select), "Set1"), names(tuners_select))
 
