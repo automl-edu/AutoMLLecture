@@ -131,6 +131,7 @@ if (!fs::file_exists("benchmark_res.rds")) {
   batchMap(function(design, ...) {
     #makes inner resampling folds the same if the outer resampling is the same?
     set.seed(as.integer(substr(stri_replace_all_regex(design$resampling[[1]]$hash, "[a-z]", ""),0,9)))
+    options(mc.cores = design$resampling[[1]]$param_set$values$folds %??% 10)
     future::plan(multiprocess)
     res = benchmark(design = design, ...)
     for (i in seq_row(res$data)) {
@@ -163,7 +164,7 @@ if (!fs::file_exists("benchmark_res.rds")) {
 
 res = readRDS("benchmark_res.rds")
 
-baseline_res = res$baseline$aggregate(measures = measure)
+res_baseline = res$baseline$aggregate(measures = measure)
 
 
 #build dt for plotting
@@ -178,76 +179,80 @@ res_compl = unnest(res_compl, "opt_x", prefix = "opt.x.")
 res_compl[tuner == "TunerGridSearch", nr := sample(x = nr), by = .(task_id, learner_id, uhash, iteration, budget)]
 setkey(res_compl, task_id, learner_id, uhash, iteration, budget, nr)
 
-res_compl[, classif.auc.cummax := cummax(classif.auc), by = .(task_id, learner_id, tuner, uhash, iteration, budget)]
+res_compl[, classif.acc.cummax := cummax(classif.acc), by = .(task_id, learner_id, tuner, uhash, iteration, budget)]
 res_compl[, tuner := stri_replace_first_fixed(tuner, "Tuner", "")]
 res_compl = res_compl[nr <= budget,]
 
+res_outer = res$tune$score(measures = measure)
+
+#reduce size
+rm(res)
+res_baseline$resample_result = NULL
+gc()
+
+
 theme_set(theme_bw())
 
-tuner_names = c("GridSearch", "RandomSearch", "CMAES", "Untuned", "Heuristic")
-tuner_colors = set_names(RColorBrewer::brewer.pal(7, "Set1"), tuner_names)
+EVAL_ITERS = 25
+tuner_names = c("GridSearch", "RandomSearch", "CMAES", "ECRSimpleEA", "Untuned", "Heuristic")
+tuner_colors = set_names(RColorBrewer::brewer.pal(length(tuner_names), "Set1"), tuner_names)
 
 res_compl[, tuner := factor(tuner, levels = tuner_names)]
-res_compl = res_compl[budget == 100 & task_id == "spam",]
+res_compl = res_compl[budget == EVAL_ITERS,]
 
 #tune curve for iter = 1
-g = ggplot(res_compl[iteration == 1,], aes(y = classif.auc.cummax, x = nr, color = tuner))
+g = ggplot(res_compl[iteration == 1,], aes(y = classif.acc.cummax, x = nr, color = tuner))
 g = g + geom_line()
-g = g + geom_point(aes(y = classif.auc), alpha = 0.1)
-g = g + facet_wrap("task_id")
-g = g + coord_cartesian(ylim = c(0.7, 1))
+g = g + geom_point(aes(y = classif.acc), alpha = 0.1)
+g = g + facet_wrap("task_id", scales = "free")
+#g = g + coord_cartesian(ylim = c(0.7, 1))
 g = g + scale_color_manual(values = tuner_colors)
-g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
+g = g + labs(y = "ACC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
 if (interactive()) {
   print(g)
 }
 ggsave("../images/benchmark_curve_iter_1.png", g, height = 5, width = 7)
 
 #tune curve for all iters
-g = ggplot(res_compl, aes(y = classif.auc.cummax, x = nr, color = tuner, group = paste0(tuner, iteration)))
-g = g + geom_line()
-g = g + facet_wrap("task_id")
-g = g + coord_cartesian(ylim = c(0.7, 1))
+g = ggplot(res_compl, aes(y = classif.acc.cummax, x = nr, color = tuner, group = paste0(tuner, iteration)))
+g = g + geom_line(alpha = 0.5)
+g = g + facet_wrap("task_id", scales = "free")
 g = g + scale_color_manual(values = tuner_colors)
-g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
+g = g + labs(y = "ACC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
 if (interactive()) {
   print(g)
 }
 ggsave("../images/benchmark_curve_iter_all.png", g, height = 5, width = 7)
 
 #tune curve for all iters averaged
-g = ggplot(res_compl, aes(y = classif.auc.cummax, x = nr, color = tuner))
+g = ggplot(res_compl, aes(y = classif.acc.cummax, x = nr, color = tuner))
 g = g + stat_summary(geom = "line", fun = median)
-g = g + facet_wrap("task_id")
-g = g + coord_cartesian(ylim = c(0.925, 0.99))
+g = g + facet_wrap("task_id", scales = "free")
 g = g + scale_color_manual(values = tuner_colors)
-g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
+g = g + labs(y = "ACC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
 if (interactive()) {
   print(g)
 }
 ggsave("../images/benchmark_curve_median.png", g, height = 5, width = 7)
 
 #tune curve for all iters averaged + individual
-g = ggplot(res_compl, aes(y = classif.auc.cummax, x = nr, color = tuner))
+g = ggplot(res_compl, aes(y = classif.acc.cummax, x = nr, color = tuner))
 g = g + geom_line(alpha = 0.2, mapping = aes(group = paste0(tuner, iteration)))
 g = g + stat_summary(geom = "line", fun = median)
-g = g + facet_wrap("task_id")
-g = g + coord_cartesian(ylim = c(0.9, 1))
+g = g + facet_wrap("task_id", scales = "free")
 g = g + scale_color_manual(values = tuner_colors)
-g = g + labs(y = "AUC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
+g = g + labs(y = "ACC", x = "eval", title = "Tuning cost and gamma for SVM (kernel = radial)", fill = "Tuner")
 if (interactive()) {
   print(g)
 }
 ggsave("../images/benchmark_curve_iter_all_median.png", g, height = 5, width = 7)
 
 # outer performance
-res_outer = res$tune$score(measures = measure)
-res_outer = res_outer[map_lgl(learner, function(x) x$model$tuning_instance$terminator$param_set$values$n_evals == 100) & task_id == "spam", ]
+res_outer = res_outer[map_lgl(learner, function(x) x$model$tuning_instance$terminator$param_set$values$n_evals == EVAL_ITERS), ]
 res_outer[, tuner := map_chr(learner, function(x) class(x$tuner)[[1]])]
 res_outer[, tuner := stri_replace_first_fixed(tuner, "Tuner", "")]
-res_baseline = res$baseline$score(measures = measure)[task_id == "spam", ]
 res_baseline[, tuner := ifelse(stri_detect_fixed(learner_id, "default"), "Heuristic", "Untuned")]
-res_combined = rbind(res_baseline, res_outer)
+res_combined = rbind(res_baseline, res_outer, fill = TRUE)
 res_combined[, tuner:=factor(tuner, levels = tuner_names)]
 settings = list(
   tuners = list(name = "tuners", tuners = unique(res_outer$tuner)),
@@ -255,11 +260,11 @@ settings = list(
   all = list(name = "all", tuners = unique(res_combined$tuner))
 )
 for (s in settings) {
-  g = ggplot(res_combined[tuner %in% s$tuners], aes(x = tuner, y = classif.auc, fill = tuner))
+  g = ggplot(res_combined[tuner %in% s$tuners], aes(x = tuner, y = classif.acc, fill = tuner))
   g = g + geom_boxplot()
   g = g + scale_fill_manual(values = tuner_colors)
   g = g + facet_grid(task_id~.)
-  g = g + labs(y = "AUC", x = NULL, fill = "Tuner", title = "SVM performance on outer test set")
+  g = g + labs(y = "ACC", x = NULL, fill = "Tuner", title = "SVM performance on outer test set")
   g = g + coord_flip(ylim = s$ylim)
   if (interactive()) {
     print(g)
@@ -268,16 +273,16 @@ for (s in settings) {
 }
 
 #tune x space
-#gs = lapply(unique(res_compl$task_id), function(this_task_id) {
-  this_task_id = "spam"
-  g = ggplot(res_compl[task_id == this_task_id & iteration == 1], aes(x = opt.x.cost, y = opt.x.gamma, size = classif.auc, color = classif.auc))
+gs = lapply(unique(res_compl$task_id), function(this_task_id) {
+  #this_task_id = "spam"
+  g = ggplot(res_compl[task_id == this_task_id & iteration == 1], aes(x = opt.x.cost, y = opt.x.gamma, size = classif.acc, color = classif.acc))
   g = g + geom_point()
   g = g + facet_grid(task_id~tuner)
   g = g + scale_radius() + scale_colour_viridis_c() + scale_y_log10() + scale_x_log10()
-  g = g + labs(color = "AUC", size = "AUC", x = "cost", y = "gamma")
+  g = g + labs(color = "ACC", size = "ACC", x = "cost", y = "gamma")
   g + theme_bw()
-#})
-#g = marrangeGrob(gs, ncol = 2, nrow = 1, top = "Tuning eta and lambda for xgboost (nrounds = 100)")
+})
+g = marrangeGrob(gs, ncol = 2, nrow = 2, top = "Tuning cost and gamma for SVM (kernel = radial)")
 if (interactive()) {
   print(g)
 }
