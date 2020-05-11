@@ -6,6 +6,7 @@ from bo_loop_acq_functions import *
 colors = dict({
     'observations': 'black',
     'highlighted_observations': 'green',
+    'new_observation': 'red',
     'current_incumbent': 'red',
     'highlighted_point': 'red',
     'gp_mean': '#0F028A',
@@ -16,6 +17,8 @@ colors = dict({
     'envelope_max_opacity': 0.8,
     'minor_tick_highlight': 'red',
     'acq_func_fill': 'lightblue',
+    'acq_func_intro': 'seagreen',
+    'acq_func_intro_fill': 'mediumaquamarine'
 })
 
 # Various parameters for plotting required by our own code
@@ -59,6 +62,9 @@ bounds = {
     "x": (2, 9),
     "gp_y": (-3, 3),
     "acq_y": (0, 5),
+    "x_intro": (2, 13),
+    "y_intro": (0, 15)
+
 }
 
 zorders = {
