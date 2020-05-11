@@ -34,7 +34,8 @@ set.seed(1)
 learner = lrn("classif.svm", predict_type = "prob", cost = 1, gamma = 1, type = "C-classification", kernel = "radial")
 measure = msr("classif.acc")
 
-n_evalss = c(25,100)
+#n_evalss = c(25,100)
+n_evalss = c(100)
 #define n tuners
 tuner_terms = lapply(n_evalss, function(n_evals) {
   tuners = tnrs(c("grid_search", "random_search"))
@@ -52,15 +53,16 @@ tuner_terms = lapply(n_evalss, function(n_evals) {
 tuner_terms = unlist(tuner_terms, recursive = FALSE)
 
 #define m tasks
-tasks = tsks(c("spam", "sonar")) #, "german_credit"))
-tasks = c(tasks, 
-  lapply(c(optdigits = 28,  ionosphere = 59), function(id) {
-    tsk("oml", data_id = id)
-}))
+# tasks = tsks(c("spam", "sonar")) #, "german_credit"))
+# tasks = c(tasks, 
+#   lapply(c(optdigits = 28,  ionosphere = 59), function(id) {
+#     tsk("oml", data_id = id)
+# }))
+tasks = tsks(c("spam"))
 
 ps = ParamSet$new(params = list(
-    ParamDbl$new("cost", lower = -5, upper = 5),
-    ParamDbl$new("gamma", lower = -5, upper = 5)
+    ParamDbl$new("cost", lower = -15, upper = 15),
+    ParamDbl$new("gamma", lower = -15, upper = 15)
 ))
 
 ps$trafo = function(x, param_set) {
@@ -188,17 +190,20 @@ res_outer = res$tune$score(measures = measure)
 #reduce size
 rm(res)
 res_baseline$resample_result = NULL
-gc()
+#gc()
 
 
 theme_set(theme_bw())
 
-EVAL_ITERS = 25
-tuner_names = c("GridSearch", "RandomSearch", "CMAES", "ECRSimpleEA", "Untuned", "Heuristic")
-tuner_colors = set_names(RColorBrewer::brewer.pal(length(tuner_names), "Set1"), tuner_names)
+EVAL_ITERS = 100
+DATASET = "spam"
+tuners_select = c("GridSearch", "RandomSearch", "CMAES", "Gauss(1+1) EA" = "ECRSimpleEA", "Untuned", "Heuristic")
+names(tuners_select) = ifelse(nzchar(names(tuners_select)), names(tuners_select), tuners_select)
+tuner_colors = set_names(RColorBrewer::brewer.pal(length(tuners_select), "Set1"), names(tuners_select))
 
-res_compl[, tuner := factor(tuner, levels = tuner_names)]
-res_compl = res_compl[budget == EVAL_ITERS,]
+# reduce data
+res_compl[, tuner := factor(tuner, levels = tuners_select, labels = names(tuners_select))]
+res_compl = res_compl[budget == EVAL_ITERS & task_id %in% DATASET,]
 
 #tune curve for iter = 1
 g = ggplot(res_compl[iteration == 1,], aes(y = classif.acc.cummax, x = nr, color = tuner))
@@ -248,19 +253,19 @@ if (interactive()) {
 ggsave("../images/benchmark_curve_iter_all_median.png", g, height = 5, width = 7)
 
 # outer performance
-res_outer = res_outer[map_lgl(learner, function(x) x$model$tuning_instance$terminator$param_set$values$n_evals == EVAL_ITERS), ]
+res_outer = res_outer[map_lgl(learner, function(x) x$model$tuning_instance$terminator$param_set$values$n_evals == EVAL_ITERS) & task_id %in% DATASET, ]
 res_outer[, tuner := map_chr(learner, function(x) class(x$tuner)[[1]])]
 res_outer[, tuner := stri_replace_first_fixed(tuner, "Tuner", "")]
 res_baseline[, tuner := ifelse(stri_detect_fixed(learner_id, "default"), "Heuristic", "Untuned")]
-res_combined = rbind(res_baseline, res_outer, fill = TRUE)
-res_combined[, tuner:=factor(tuner, levels = tuner_names)]
+res_combined = rbind(res_baseline[task_id %in% DATASET,], res_outer, fill = TRUE)
+res_combined[, tuner:=factor(tuner, levels = tuners_select, labels = names(tuners_select))]
 settings = list(
   tuners = list(name = "tuners", tuners = unique(res_outer$tuner)),
   untuned = list(name = "default", tuners = c(unique(res_outer$tuner), "Untuned")),
   all = list(name = "all", tuners = unique(res_combined$tuner))
 )
 for (s in settings) {
-  g = ggplot(res_combined[tuner %in% s$tuners], aes(x = tuner, y = classif.acc, fill = tuner))
+  g = ggplot(res_combined[tuner %in% s$tuners,], aes(x = tuner, y = classif.acc, fill = tuner))
   g = g + geom_boxplot()
   g = g + scale_fill_manual(values = tuner_colors)
   g = g + facet_grid(task_id~.)
@@ -282,7 +287,12 @@ gs = lapply(unique(res_compl$task_id), function(this_task_id) {
   g = g + labs(color = "ACC", size = "ACC", x = "cost", y = "gamma")
   g + theme_bw()
 })
-g = marrangeGrob(gs, ncol = 2, nrow = 2, top = "Tuning cost and gamma for SVM (kernel = radial)")
+if (length(DATASET) > 1) {
+  g = marrangeGrob(gs, ncol = 2, top = "Tuning cost and gamma for SVM (kernel = radial)")  
+} else {
+  g = gs[[1]]
+}
+
 if (interactive()) {
   print(g)
 }

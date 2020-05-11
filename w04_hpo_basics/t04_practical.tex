@@ -19,26 +19,44 @@
 \end{itemize}
 
     \vspace{0.2cm}
-Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 1000.0]$
+Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2^{15}] \approx [0.000031, 32768]$
 
 \begin{itemize}
-	\item The distance between $999.9$ and $1000.0$ should not be the same as between $0.1$ and $0.2$.
-  \item We might want to sample here from from a log-scale, e.g., $[10^{\conf_l}, 10^{\conf_u}]$ with $\conf_l = -3$ and $\conf_u = 3$.
+	\item The distance between $100$ and $200$ should not be the same as between $0.1$ and $0.2$.
+  \item We might want to sample here from from a log-scale, e.g., $[2^{\conf_l}, 2^{\conf_u}]$ with $\conf_l = -15$ and $\conf_u = 15$.
 \end{itemize}
 
 \begin{figure}[htb]
 \centering
+  % \begin{tikzpicture}[auto]%[scale=1.5]
+  %   \draw [->](-0.3,0)-- (12.3,0) coordinate;
+  %   \draw [->](-0.3,-2)-- (12.3,-2) coordinate;
+  %   \foreach \x/\xtext/\xxtext in {-3/-3/0.001, -2/-2/ , -1/-1/, 0/0/, 1/1/, 2/2/100, 3/3/1000} {
+  %     \draw [very thick] ({\x*2+6},-2pt) -- ++(0, 4pt) node[xshift = -6pt, yshift=-3pt,anchor=south west,baseline]{\strut$\xtext$};
+  %     \draw [very thick] ({10^(\x)*0.012},-2cm+2pt) -- ++(0,-4pt) node[anchor=north]{$\xxtext$};
+  %     \draw [->] ({\x*2+6},-2pt) .. controls ({\x*2+6},-0.5) and ({10^(\x)*0.012},-1.5) .. ({10^(\x)*0.012},-2cm+2pt);
+  %   }
+  %   \node[] at (-0.7,-0.1) (t1) {$\conf$};
+  %   \node[] at (-0.7,-1.9) (t2) {$10^{\conf}$};
+  % \end{tikzpicture}
+
   \begin{tikzpicture}[auto]%[scale=1.5]
     \draw [->](-0.3,0)-- (12.3,0) coordinate;
     \draw [->](-0.3,-2)-- (12.3,-2) coordinate;
-    \foreach \x/\xtext/\xxtext in {-3/-3/0.001, -2/-2/ , -1/-1/, 0/0/, 1/1/, 2/2/100, 3/3/1000} {
-      \draw [very thick] ({\x*2+6},-2pt) -- ++(0, 4pt) node[xshift = -6pt, yshift=-3pt,anchor=south west,baseline]{\strut$\xtext$};
-      \draw [very thick] ({10^(\x)*0.012},-2cm+2pt) -- ++(0,-4pt) node[anchor=north]{$\xxtext$};
-      \draw [->] ({\x*2+6},-2pt) .. controls ({\x*2+6},-0.5) and ({10^(\x)*0.012},-1.5) .. ({10^(\x)*0.012},-2cm+2pt);
+    % \foreach \x/\xtext/\xxtext in {-15/-15/0.000031, -10/-10/ , -5/-5/, 0/0/1, 5/5/32, 10/10/1024, 15/15/32768} {
+    \def\xM{15} % max exponent
+    \def\xW{12} % max width in cm
+    \foreach \x/\xtext/\xxtext in {-15/-15/0, -10/-10/ , -5/-5/, 0/0/, 5/5/, 10/10/1024, 15/15/32768} {
+      \def\xA{{(\x + \xM) * (\xW / (2 * \xM))}} %untrafoed val in cm (0 to 12)
+      \def\xB{{\xW * 2^(\x-\xM)}} %trafoed val in cm
+      \draw [very thick] (\xA,-2pt) -- ++(0, 4pt) node[xshift = -6pt, yshift=-3pt,anchor=south west,baseline]{\strut$\xtext$};
+      \draw [very thick] (\xB,-2cm+2pt) -- ++(0,-4pt) node[anchor=north]{\scriptsize $\xxtext$};
+      \draw [->] (\xA,-2pt) .. controls (\xA,-0.5) and (\xB,-1.5) .. (\xB,-2cm+2pt);
     }
-    \node[] at (-0.7,-0.1) (t1) {$\conf$};
-    \node[] at (-0.7,-1.9) (t2) {$10^{\conf}$};
+    \node[] at (-0.7,-0.1) (t1) {$\tilde{\theta}_l$};
+    \node[] at (-0.7,-1.9) (t2) {$2^{\tilde{\theta}_l}$};
   \end{tikzpicture}
+
 \end{figure}
 
 \framebreak
@@ -49,12 +67,12 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 100
         \item If $\finconf$ is close to the border of $\pcs$ the ranges should be increased (or a different scale should be selected).
         \item Meta-Learning can help to decide which hyperparameters should be tuned in which ranges.
     \end{itemize}
-    \vspace{0.5cm}
-    Example:
-    \begin{itemize}
-            \item The ranges for $\text{cost} \in [10^{-3}, 10^3]$ and $\gamma \in [10^{-3}, 10^3]$ are rather small.
-            \item More common would be ranges like $\text{cost} \in [2^{-15}, 2^{15}]$ and $\gamma \in [2^{-15}, 2^{15}]$.
-    \end{itemize}
+    % \vspace{0.5cm}
+    % Example:
+    % \begin{itemize}
+    %         \item The ranges for $\text{cost} \in [10^{-3}, 10^3]$ and $\gamma \in [10^{-3}, 10^3]$ are rather small.
+    %         \item More common would be ranges like $\text{cost} \in [2^{-15}, 2^{15}]$ and $\gamma \in [2^{-15}, 2^{15}]$.
+    % \end{itemize}
 
 \end{frame}
 
@@ -69,8 +87,8 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 100
         \item The learning algorithm is a support vector machine (SVM) with RBF kernel.
         \item The hyperparmeters we optimize are
             \begin{itemize}
-                \item Cost parameter $\text{cost} \in [10^{-3}, 10^3]$.
-                \item Kernel parameter $\gamma \in [10^{-3}, 10^3]$.
+                \item Cost parameter $\text{cost} \in [2^{-5}, 2^5]$.
+                \item Kernel parameter $\gamma \in [2^{-5}, 2^5]$.
             \end{itemize}
         \item We compare three different optimizer
             \begin{itemize}
@@ -101,7 +119,10 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 100
 
   \begin{itemize}
       \item Both \emph{Grid search} and \emph{random search} have many evaluations in regions with bad performance ($\gamma>1$).
-    \item \emph{CMAES} only explores a small region.
+      \item \emph{CMAES} only explores a small region.
+      \item \emph{Gauss(1+1) EA} does not converge.
+      \item The ranges for $\text{cost} \in [2^{-5}, 2^5]$ and $\gamma \in [2^{-5}, 2^5]$ are rather small.
+      \item More common would be ranges like $\text{cost} \in [2^{-15}, 2^{15}]$ and $\gamma \in [2^{-15}, 2^{15}]$.
   \end{itemize}
 \end{column}%
 \begin{column}{0.5\textwidth}
