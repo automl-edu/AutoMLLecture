@@ -76,8 +76,8 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2
         \item The learning algorithm is a support vector machine (SVM) with RBF kernel.
         \item The hyperparameters we optimize are
             \begin{itemize}
-                \item Cost parameter $\text{cost} \in [2^{-15}, 2^15]$.
-                \item Kernel parameter $\gamma \in [2^{-15}, 2^15]$.
+                \item Cost parameter $\text{cost} \in [2^{-15}, 2^{15}]$.
+                \item Kernel parameter $\gamma \in [2^{-15}, 2^{15}]$.
             \end{itemize}
         \item We compare four different optimizer
             \begin{itemize}
@@ -87,7 +87,7 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2
                 \item \textit{CMAES} - an evolutionary algorithm that generates offspring from a multivariate normal distribution (We didn't cover this algorithm).
             \end{itemize}
         \item We use a 5-fold cross-validation and optimize the accuracy (ACC).
-        \item All methods are allowed a budget of $25$ evaluations.
+        \item All methods are allowed a budget of $100$ evaluations.
     \end{itemize}
 
 \end{frame}

@@ -196,7 +196,7 @@ rm(res)
 
 theme_set(theme_bw())
 
-EVAL_ITERS = 25
+EVAL_ITERS = 100
 DATASET = "spam"
 tuners_select = c("GridSearch", "RandomSearch", "CMAES", "(1+1)-EA" = "ECRSimpleEA", "Untuned", "Heuristic")
 names(tuners_select) = ifelse(nzchar(names(tuners_select)), names(tuners_select), tuners_select)
