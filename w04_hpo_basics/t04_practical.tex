@@ -19,11 +19,11 @@
 \end{itemize}
 
     \vspace{0.2cm}
-Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2^{15}] \approx [0.000031, 32768]$
+Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-5}, 2^{5}] \approx [0.03, 32]$
 
 \begin{itemize}
-	\item The distance between $100$ and $200$ should be the same as between $0.1$ and $0.2$.
-  \item We might want to sample here from from a log-scale, e.g., $[2^{\conf_l}, 2^{\conf_u}]$ with $\conf_l = -15$ and $\conf_u = 15$.
+	\item The distance between $10$ and $20$ should be the same as between $0.1$ and $0.2$.
+  \item We might want to sample here from from a log-scale, e.g., $[2^{\conf_l}, 2^{\conf_u}]$ with $\conf_l = -5$ and $\conf_u = 5$.
 \end{itemize}
 
 \begin{figure}[htb]
@@ -33,9 +33,9 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2
     \draw [->](-0.3,0)-- (12.3,0) coordinate;
     \draw [->](-0.3,-2)-- (12.3,-2) coordinate;
     % \foreach \x/\xtext/\xxtext in {-15/-15/0.000031, -10/-10/ , -5/-5/, 0/0/1, 5/5/32, 10/10/1024, 15/15/32768} {
-    \def\xM{15} % max exponent
+    \def\xM{5} % max exponent
     \def\xW{12} % max width in cm
-    \foreach \x/\xtext/\xxtext in {-15/-15/0, -10/-10/ , -5/-5/, 0/0/, 5/5/, 10/10/1024, 15/15/32768} {
+    \foreach \x/\xtext/\xxtext in {-5/-5/.03, -2.5/-2.5/, 0/0/1, 2.5/2.5/5.66, 5/5/32} {
       \def\xA{{(\x + \xM) * (\xW / (2 * \xM))}} %untrafoed val in cm (0 to 12)
       \def\xB{{\xW * 2^(\x-\xM)}} %trafoed val in cm
       \draw [very thick] (\xA,-2pt) -- ++(0, 4pt) node[xshift = -6pt, yshift=-3pt,anchor=south west,baseline]{\strut$\xtext$};
