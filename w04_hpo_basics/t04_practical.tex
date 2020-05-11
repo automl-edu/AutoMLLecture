@@ -22,7 +22,7 @@
 Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2^{15}] \approx [0.000031, 32768]$
 
 \begin{itemize}
-	\item The distance between $100$ and $200$ should not be the same as between $0.1$ and $0.2$.
+	\item The distance between $100$ and $200$ should be the same as between $0.1$ and $0.2$.
   \item We might want to sample here from from a log-scale, e.g., $[2^{\conf_l}, 2^{\conf_u}]$ with $\conf_l = -15$ and $\conf_u = 15$.
 \end{itemize}
 
@@ -95,8 +95,10 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2
                 \item Random search
                 \item Grid search
                 \item \textit{CMAES} - an evolutionary algorithm, that generates offsprings from a multivariate normal distribution (We didn't cover this algorithm).
+                \item Evolutionary Algorithm with $\mu = 1$, $\lambda = 1$ and Gauss mutation.
             \end{itemize}
-        \item We use a 5-fold cross-validation and optimize the area under the ROC curve (AUC).
+        \item We use a 5-fold cross-validation and optimize the accuracy (ACC).
+        \item All methods are allowed a budget of 100 evaluations.
     \end{itemize}
 
 \end{frame}
@@ -121,8 +123,8 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2
       \item Both \emph{Grid search} and \emph{random search} have many evaluations in regions with bad performance ($\gamma>1$).
       \item \emph{CMAES} only explores a small region.
       \item \emph{Gauss(1+1) EA} does not converge.
-      \item The ranges for $\text{cost} \in [2^{-5}, 2^5]$ and $\gamma \in [2^{-5}, 2^5]$ are rather small.
-      \item More common would be ranges like $\text{cost} \in [2^{-15}, 2^{15}]$ and $\gamma \in [2^{-15}, 2^{15}]$.
+      \item The ranges for $\text{cost} \in [2^{-5}, 2^5]$ and $\gamma \in [2^{-5}, 2^5]$ are rather small. \\
+      More common would be ranges like $\text{cost} \in [2^{-15}, 2^{15}]$ and $\gamma \in [2^{-15}, 2^{15}]$.
   \end{itemize}
 \end{column}%
 \begin{column}{0.5\textwidth}
