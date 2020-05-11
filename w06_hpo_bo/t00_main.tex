@@ -1,55 +1,41 @@
-%TODO change PATH for the github structure
-% \input{../latex_main/main} 
 \input{../latex_main/main.tex}
 
-% Bayesian Optimization SS 2020 macros
-%\input{../latex_main/macros_bo.tex}
+% FH: I created this command videotitle (and file title_slide.tex) to show a new title slide for each video without the need of any repeating boiler plate code. Please do not change this anymore.
+\newcommand{\videotitle}[1]{\subtitle{#1}\section{#1}\input{title_slide}}
 
-% allowing to align images inside a figure
-\usepackage[export]{adjustbox}
-% setting notes visibility
-\usepackage{pgfpages}
-\setbeameroption{hide notes} % Only slides
-%\setbeameroption{show only notes} % Only notes
-%\setbeameroption{show notes on second screen=right} % Both
 
-%TODO: change titles
-\title[AutoML: Bayesian Optimization for HPO]{AutoML: Bayesian Optimization for HPO} % week title
-\subtitle{Overview of the Bayesian optimization loop} % video title
-%TODO: change authors!
+\title[AutoML: Bayesian Optimization for HPO]{AutoML: Bayesian Optimization for Hyperparameter Optimization} % week title
 \author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
-\AtBeginSection[] % Do nothing for \section*
+
+\AtBeginSection[] % Show a table of contents between videos for easier navigation and making available a single PDF per lecture. 
 {
   \begin{frame}{Outline}
     \bigskip
     \vfill
     \tableofcontents[currentsection]
   \end{frame}
-  \begin{frame}
-  \vfill
-  \centering
-  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-    \usebeamerfont{title}\insertsectionhead\par%
-  \end{beamercolorbox}
-  \vfill
-  \end{frame}
 }
 
+
 \begin{document}
+
+  \begin{frame}{Outline}
+    \bigskip
+    \vfill
+    \tableofcontents
+  \end{frame}
 	
-	\maketitle
-	
-	%TODO: change PATH for the github structure
     \input{t01_introduction.tex}
-    \input{t03_acq_functions_1.tex}
+    \input{t02_acq_functions_1.tex}
     \input{t03_acq_functions_2.tex}
     \input{t04_surrogate_models.tex}
-    \input{t05_extensions.tex}
-    \input{t06_tpe.tex}
-    \input{t07_success_stories.tex}
+    \input{t05_high_dim_BO.tex}
+    \input{t06_extensions.tex}
+    \input{t07_tpe.tex}
+    \input{t08_success_stories.tex}
     \input{t99_bibliography}
-
+    
 \end{document}

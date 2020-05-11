@@ -1,99 +1,92 @@
-\section{Surrogate Models}
-%-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Desiderata}
+\videotitle{Surrogate Models}
 
-\begin{columns}[T] % align columns
-\begin{column}{.48\textwidth}
-\only<1-2>{
-    \begin{block}{Mandatory}
-    \begin{itemize}
-    	\item Regression model
-    	\item Uncertainty estimates
-    	\item Accurate predictions
-    \end{itemize}
-    \end{block}
+%-----------------------------------------------------------------------
+\myframetop{Desiderata for Surrogate Models in Bayesian Optimization}{
+
+    \begin{columns}[T] % align columns
+    \begin{column}{.48\textwidth}
+    \only<1-2>{
+        \begin{block}{In all cases}
+        \begin{itemize}
+        	\item Regression model with uncertainty estimates
+        	\item Accurate predictions
+        \end{itemize}
+        \end{block}
+    }
+    \only<2-2>{
+        \begin{block}{Depending on the application}
+        \begin{itemize}
+        	\item Is cheap to train
+        	\item Scales well in the number of data points
+        	\item Scales well in the number of dimensions
+        	\item Can handle different types of inputs (categorical and continuous)
+        \end{itemize}
+        \end{block}
+    }
+    \end{column}%
+    
+    \hfill%
+    
+    \begin{column}{.48\textwidth}
+    \bigskip
+    \bigskip
+    %\only<1-1>{\includegraphics[width=1.\textwidth]{images/bo_loop_overview/03_mean.png}}
+    %\only<2-6>{
+    \includegraphics[width=\textwidth]{images/bo_loop_overview/Uncertainty.pdf}
+    %}
+    
+    \end{column}%
+    \end{columns}
 }
-\only<2-2>{
-    \begin{block}{Depending on the application}
-    \begin{itemize}
-    	\item Cheap-to-train
-    	\item Scales with the complexity of the data
-    	\note[item]{(number of features and observations)}
-    	\item Can handle different types of inputs
-    	\note[item]{(categorical and continuous)}
-    \end{itemize}
-    \end{block}
-}
-\end{column}%
-
-\hfill%
-
-\begin{column}{.48\textwidth}
-
-%\only<1-1>{\includegraphics[width=1.\textwidth]{images/bo_loop_overview/03_mean.png}}
-%\only<2-6>{
-\includegraphics[width=\textwidth]{w06_hpo_bo/images/bo_loop_overview/Uncertainty.pdf}
-%}
-
-\end{column}%
-\end{columns}
-
-\end{frame}
 %-----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Overview}
+\begin{frame}[c]{Overview of the Surrogate Models We'll Discuss}
 
-\begin{columns}[T] % align columns
-\begin{column}{.38\textwidth}
-\begin{minipage}[c][.6\textheight][c]{\linewidth}
+%\begin{columns}[T] % align columns
+%\begin{column}{.38\textwidth}
+%\begin{minipage}[c][.6\textheight][c]{\linewidth}
 \begin{itemize}
 	\item Gaussian Processes \note[item]{(quite common)}
 	\item Random Forests \note[item]{(our default choice)}
 	\item Bayesian Neural Networks \note[item]{(recent trend)}
 
 \end{itemize}
-\end{minipage}
-\end{column}%
+%\end{minipage}
+%\end{column}%
 
-\hfill%
+%\hfill%
+%\begin{column}{.58\textwidth}
+%
+%\begin{columns}[T] % align columns
+%\begin{column}{.48\textwidth}
+%    \includegraphics[width=1.\textwidth]{images/surrogate_models/uncertainty_gp.jpg}
+%\end{column}%
+%
+%\hfill%
+%
+%\begin{column}{.48\textwidth}
+%    \includegraphics[width=1.\textwidth]{images/surrogate_models/uncertainty_forest.jpg}
+%\end{column}%
+%\end{columns}
+%
+%\vspace*{\fill}
+%\begin{center}
+%  \includegraphics[width=.6\textwidth]{images/surrogate_models/uncertainty_dngo.jpg}
+%  
+%\end{center}
+%\vspace*{\fill}
+%
+%\end{column}%
+%\end{columns}
+%
+%\hspace{5.5cm}\footnotesize{Image source: \lit{\href{}{A. Klein: Introduction Automated Machine Learning}}}
 
-\begin{column}{.58\textwidth}
-
-\begin{columns}[T] % align columns
-\begin{column}{.48\textwidth}
-    \includegraphics[width=1.\textwidth]{images/surrogate_models/uncertainty_gp.jpg}
-\end{column}%
-
-\hfill%
-
-\begin{column}{.48\textwidth}
-    \includegraphics[width=1.\textwidth]{images/surrogate_models/uncertainty_forest.jpg}
-\end{column}%
-\end{columns}
-
-\vspace*{\fill}
-\begin{center}
-  \includegraphics[width=.6\textwidth]{images/surrogate_models/uncertainty_dngo.jpg}
-\end{center}
-\vspace*{\fill}
-
-\end{column}%
-\end{columns}
-
-\source{A. Klein: Introduction Automated Machine Learning}
-
-%% TODO
-\comment{adjust those plots
-FH: best to have plots stay on the slide, e.g., next to each other.}
 
 \end{frame}
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Gaussian Processes - Reminder}
+\begin{frame}[c]{Gaussian Processes (GPs): Reminder of Pros and Cons}
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
@@ -101,10 +94,16 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
     \begin{block}{Advantages}
     \begin{itemize}
     	\item Smooth and reliable uncertainty estimates 
-		\item Sample efficiency
+		\item Strong sample efficiency
     	\item We can encode expert knowledge about the design space in the kernel 
     \end{itemize}
     \end{block}
+\bigskip
+\pause
+\hspace*{0.5cm}These advantages make GPs the\\
+\hspace*{0.5cm}\alert{most commonly-used model\\
+\hspace*{0.5cm}in Bayesian optimization}
+
 \end{column}%
 
 \hfill%
@@ -113,9 +112,10 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
 \begin{column}{.48\textwidth}
     \begin{block}{Disadvantages}
     \begin{itemize}
-    	\item We have to define a good kernel for each application 
+    	\item Performance can be quite sensitive to the choice of kernel
     	\note[item]{(if we don't optimize small-dimensional, continuous functions)}
     	\item Cost scales cubically with the number of observations 
+    	\item Weak performance for high dimensionality
     	\note[item]{(because of inverting the kernel)}
     	\item Not easily applicable in discrete or conditional spaces 
     	\item Sensitive to its own hyperparameters
@@ -185,48 +185,50 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Gaussian Processes - Kernel Hyperparameters}
-
-\begin{itemize}
-    \item We can use \emph{Maximum A Posteriori} (MAP) or \emph{Maximum Likelihood Estimation} (MLE) to optimize hyperparameters of the Gaussian process.
-    \item However, it is not realistic to assume that the hyperparameters distribution can be represented by a single point estimate
-\end{itemize}
-
-\end{frame}
-%-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Gaussian Processes - Kernel Hyperparameters}
+\begin{frame}[c]{Gaussian Processes (GPs): Kernel Hyperparameters}
 
 \begin{columns}[T] % align columns
 \begin{column}{.6\textwidth}
 \begin{itemize}
-    \item<+-> \emph{Markov-Chain Monte-Carlo} (MCMC) samples hyperparameters from the posterior distribution
-    \item<+-> \emph{Marginalize} over hyperparameters and compute an \emph{integrated acquisition function}:
+    \item We could optimize GP hyperparameters (maximum likelihood, MLE, or maximum a posteriori, MAP)
+
+
+    \item<+-> But \alert{sampling} GP  hyperparameters from the posterior distribution performs better; e.g., via \alert{Markov-Chain Monte-Carlo (MCMC)}
+
+
+    \item<+-> \alert{Marginalize} over GP hyperparameters $\theta$ and compute an \alert{integrated acquisition function}:
         \begin{equation*}
         \begin{aligned}
             \Bar{\acq}(\conf) = \int \acq (\conf, \surro_\theta)p(\theta)d\theta
         \end{aligned}
         \end{equation*}
-    \item<+-> But, MCMC is computationally more expensive since the acquisition function now needs to be calculated more than once.
+
+ 
+    \item<+-> Downside: computational expense
+    \myit{
+        \item MCMC is computationally expensive
+        \item Acquisition function now has to be calculated for each sample
+    }
 \end{itemize}
 \end{column}
 %
 \begin{column}{.4\textwidth}
 \only<2->{
-\begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{images/surrogate_models/kernel_hp_mcmc.jpg}
-\end{figure}}
+    
+    \footnotesize{Image source: \lit{\href{https://arxiv.org/pdf/1502.05700.pdf}{Snoek et al. 2015}}}
+}
+
+
+   
 \end{column}
 
 \end{columns}
 
-\source{Snoek et al. 2015}
 \end{frame}
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Random Forests}
+\begin{frame}[c]{Random Forests (RFs): Reminder \& How To Compute Uncertainties}
 
 \centering
     \includegraphics[width=0.5\textwidth]{images/surrogate_models/random_forest_pic}
@@ -234,11 +236,11 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
 
-\begin{block}{Train}
+\begin{block}{RF Training}
 \begin{itemize}
-	\item $n$ randomized regression trees
-	\item Subsampled training data for each tree (with bootstrapping)
-	\item Each tree gives us a possible explanation for the observations
+	\item Fit a set of \alert{randomized} regression trees
+	\item Randomization via bootstrapping \& random selection of split variables / split points
+	\item Each tree yields a possible explanation for the observations
 \end{itemize}
 \end{block}
 \end{column}
@@ -247,11 +249,11 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
 \hfill
 
 \begin{column}{.48\textwidth}
-    \begin{block}{Predict}
+    \begin{block}{RF Prediction}
     \begin{itemize}
-    	\item Obtain prediction of each tree
+    	\item Predict with each tree
     	\item Aggregate predictions (e.g., average)
-    	\item Uncertainty of predictions: stdev across tree predictions
+    	\item Uncertainty estimate:\\ \alert{empirical variance across tree predictions}
     \end{itemize}
     \end{block}
 \end{column}
@@ -259,31 +261,51 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
 
 \end{frame}
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Random Forests - Hyperparameters}
+\begin{frame}[c]{Random Forests (RFs): Impact of Basic Model Choices}
+\vspace{-25pt}
 
 \begin{columns}
-	\column{0.5\textwidth}
-	\centering
-	w bootstrapping and\\ w/o random splits
-	\includegraphics[width=0.5\textwidth]{images/surrogate_models/rf_boot_middle_split.png}
+\column{0.5\textwidth}
 
-	w bootstrapping and\\ w/ random splits
-	\includegraphics[width=0.5\textwidth]{images/surrogate_models/rf_boot_rand_split.png}
+\begin{figure}[h]
+\captionsetup[subfigure]{position=top}
+\centering
 
-	\column{0.5\textwidth}
-	\centering
-	w/o bootstrapping and\\ w/o random splits
-	\includegraphics[width=0.5\textwidth]{images/surrogate_models/rf_noboot_middle_split.png}
-	
-	w/o bootstrapping and\\ w/ random splits
-	\includegraphics[width=0.5\textwidth]{images/surrogate_models/rf_noboot_rand_split.png}
+\renewcommand{\thesubfigure}{a}
+\subfloat[][no bootstrapping, \\ no random splits]{
+\includegraphics[width=0.55\textwidth, clip]{images/surrogate_models/rf_noboot_middle_split.png}
+
+}
+\qquad
+\renewcommand{\thesubfigure}{b}
+\subfloat[][with bootstrapping, \\ no random splits]{
+\includegraphics[width=0.55\textwidth, clip]{images/surrogate_models/rf_boot_middle_split.png}
+}
+\end{figure}
+
+\column{0.5\textwidth}
+\begin{figure}[h]
+\captionsetup[subfigure]{position=top}
+\centering
+
+\pause
+\renewcommand{\thesubfigure}{c}
+\subfloat[][no bootstrapping, \\ with random splits]{
+\includegraphics[width=0.55\textwidth, clip]{images/surrogate_models/rf_noboot_rand_split.png}
+
+}
+\qquad
+\renewcommand{\thesubfigure}{d}
+\subfloat[][with bootstrapping, \\ with random splits]{
+\includegraphics[width=0.55\textwidth, clip]{images/surrogate_models/rf_boot_rand_split.png}
+}
+
+\end{figure}
 \end{columns}
 
 \end{frame}
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Random Forests - Summary}
+\begin{frame}[c]{Random Forests (RFs): Overview of Pros and Cons}
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
@@ -291,10 +313,12 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
     \begin{block}{Advantages}
     \begin{itemize}
         \item Cheap to train 
-        \item Scales well with \#observations: 
+        \item Scales well with \#observations $n$: 
         \begin{itemize}
-        	\item Worst-case complexity for $T$ tress with $n$ data points of dimensionality $p$: $\mathcal O(T\cdot p \cdot n^2 \log{n})$. 
+        	\item Fitting: $O(n \log n)$ 
+        	\item Prediction: $O(\log n)$
         \end{itemize}
+        \item Scales well with \#dimensions
         \item Training can be parallelized 
         \item Can easily handle conditional, categorical, continuous and discrete spaces 
         \item Quite robust against its own hyperparameters
@@ -314,28 +338,38 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
     \end{itemize}
     \end{block}
 
+\pause
+\bigskip
+\bigskip
+\hspace*{0.5cm}These qualities make RFs a \alert{robust} \\
+\hspace*{0.5cm}\alert{option} for Bayesian optimization in \\ \hspace*{0.5cm}\alert{high dimensions}, for \alert{categorical spaces},\\
+\hspace*{0.5cm}or when function evaluations are quite fast
+
 \end{column}
 \end{columns}
 
 \end{frame}
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Bayesian Neural Networks}
+\begin{frame}[c]{Bayesian Neural Networks: Overview}
 
 \begin{itemize}
-    \item Extend regression NNs to model uncertainty
-    \item Deal with all sources of parameter uncertainty: \pause
+    \item Neural networks are more flexible \& scalable than Gaussian processes 
+    \item But for use in Bayesian optimization, neural networks need to be made probabilistic
+    
+\pause
+    \item Bayesian deep learning aims to deal with all sources of uncertainty \pause
     \begin{itemize}
-        \item More than one weight vector can explain the observed data 
-        \item Take into account all possible explanations 
+        \item E.g., we don't have a single weight vector anymore, but a distribution over weights
     \end{itemize}
 
 \centering
 \includegraphics[width=0.6\textwidth]{images/surrogate_models/bnn.jpg}
 
+\footnotesize{Image source: \lit{\href{http://proceedings.mlr.press/v37/blundell15.pdf}{Blundell et al. 2015}}}
+
 \end{itemize}
 
-\source{\href{http://proceedings.mlr.press/v37/blundell15.pdf}{Blundell et al. 2015}}
+
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -353,54 +387,50 @@ FH: best to have plots stay on the slide, e.g., next to each other.}
 %\end{itemize}
 %
 %\end{frame}
+
 %-----------------------------------------------------------------------
 
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Bayesian Neural Networks - Approaches}
+\begin{frame}[c]{Simplest Way of Incorporating Uncertainty in Neural Networks: DNGO}
+
 
 \begin{itemize}
-	\item Standard Bayesian optimization model Gaussian process scales badly to a large number of data points
-	\item Bayesian Neural Networks can be used as a more scalable model\pause
-	\bigskip
-	\item Overview of Bayesian Neural Networks for BO:
-	\begin{itemize}
-	    \item \lit{\href{https://arxiv.org/pdf/1502.05700.pdf}{Snoek et al. 2015}} Scalable Bayesian Optimization Using Deep Neural Networks
-	    \item \lit{\href{https://www.ismll.uni-hildesheim.de/pub/pdfs/schilling2015-ecml.pdf}{Schilling et al. 2015}} Hyperparameter Optimization with Factorized Multilayer Perceptrons
-	    \item \lit{\href{https://papers.nips.cc/paper/6117-bayesian-optimization-with-robust-bayesian-neural-networks.pdf}{Springenberg et al. 2016}} Bayesian Optimization with Robust Bayesian Neural Networks
-	    \item \lit{\href{https://arxiv.org/abs/1706.01825}{Hern\'andez-Lobato et al. 2017}} Parallel and Distributed Thompson Sampling for Large-scale Accelerated Exploration of Chemical Space
-        \item \lit{\href{https://papers.nips.cc/paper/7917-scalable-hyperparameter-transfer-learning}{Perrone et al. 2018}} Scalable Hyperparameter Transfer Learning
-
-	\end{itemize}
-\end{itemize}
-
-\end{frame}
-%-----------------------------------------------------------------------
-
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Bayesian Neural Networks - DNGO}
-
-First approach: \href{https://arxiv.org/pdf/1502.05700.pdf}{Scalable Bayesian Optimization Using Deep Neural Networks}
-
-\begin{itemize}
-    \item Fit a standard neural network to the data 
-    \item Use the representation in the last hidden layer as basis \\ functions $\phi(x)$ of the input $x$ 
-    \item Use Bayesian linear regression for the output layer \pause
+    \item Fit a standard regression neural network to the data (with a linear output layer)
+    \item Use the representation in the last hidden layer as \alert{basis functions $\phi(x)$} of the input $x$ 
+    \item \alert{Use Bayesian linear regression with these basis functions} \pause
     \begin{itemize}
         \item The last layer is linear in its parameters $\theta$  
         \item Therefore, the Bayesian linear regression formulas work directly 
-        \item Feasible in closed form, in time $O(N d^3)$, \\ where $N$ is the number of data points and $d$ is the number of \\ hidden units in the last layer 
+        \item Feasible in closed form, in time $O(N d^3)$, where $N$ is the number of data points\\ and $d$ is the number of hidden units in the last layer 
     \end{itemize}
-    \item Not fully Bayesian yet
+    \item Not fully Bayesian yet, but already allows scalable Bayesian optimization \lit{\href{https://arxiv.org/pdf/1502.05700.pdf}{Snoek et al. 2015}}
+
 \end{itemize}
 
-\vspace{1cm}
-\hspace{12cm}
-\lit{\href{https://arxiv.org/pdf/1502.05700.pdf}{Snoek et al. 2015}}
+%\vspace{1cm}
+%\hspace{12cm}
+%\lit{\href{https://arxiv.org/pdf/1502.05700.pdf}{Snoek et al. 2015}}
+
+\end{frame}
+
+
+%-----------------------------------------------------------------------
+
+\begin{frame}[c]{Bayesian Optimization with BNNs: Overview of Existing Approaches}
+
+\begin{itemize}
+	    \item \lit{\href{https://arxiv.org/pdf/1502.05700.pdf}{Snoek et al. 2015}} Scalable Bayesian Optimization Using Deep Neural Networks (DNGO)
+	    \item \lit{\href{https://papers.nips.cc/paper/6117-bayesian-optimization-with-robust-bayesian-neural-networks.pdf}{Springenberg et al. 2016}} Bayesian Optimization with Robust Bayesian Neural Networks
+	    \item \lit{\href{https://arxiv.org/abs/1706.01825}{Hern\'andez-Lobato et al. 2017}} Parallel and Distributed Thompson Sampling for Large-scale Accelerated Exploration of Chemical Space
+\bigskip
+\pause
+        \item \lit{\href{https://www.ismll.uni-hildesheim.de/pub/pdfs/schilling2015-ecml.pdf}{Schilling et al. 2015}} Hyperparameter Optimization with Factorized Multilayer Perceptrons
+        \item \lit{\href{https://papers.nips.cc/paper/7917-scalable-hyperparameter-transfer-learning}{Perrone et al. 2018}} Scalable Hyperparameter Transfer Learning
+
+\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Bayesian Neural Networks}
+\begin{frame}[c]{Bayesian Neural Networks (BNNs): Overview of Pros and Cons}
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
@@ -408,56 +438,71 @@ First approach: \href{https://arxiv.org/pdf/1502.05700.pdf}{Scalable Bayesian Op
     \begin{block}{Advantages}
     \begin{itemize}
         \item Scales linearly with \#observations 
-        \item Given enough network samples obtain nice and smooth uncertainty estimates 
-        \item Can handle categorical, continuous and discrete spaces
+        \item Can obtain nice and smooth uncertainty estimates 
+        \item Flexibility: handling of categorical, continuous and discrete spaces
     \end{itemize}
     \end{block}
+
+\onslide<3->{
+\bigskip
+\bigskip
+\hspace*{0.5cm}These qualities make BNNs an \\
+\hspace*{0.5cm}\alert{ever-more promising alternative}
+%\hspace*{0.5cm}Needed: robust auto-tuned(?) implementation
+}
 \end{column}%
 
 \hfill%
-\pause
 
 \begin{column}{.48\textwidth}
+\onslide<2->{
     \begin{block}{Disadvantages}
     \begin{itemize}
-        \item Poorer uncertainty estimates 
+    	\item Usually needs more data than Gaussian processes
+    	\item Uncertainty estimates often worse than for Gaussian processes 
         \item Many meta-design decisions 
     	\item No robust off-the-shelf implementation 
-    	\item Usually needs more data than Gaussian processes
     \end{itemize}
     \end{block}
-
+}
 \end{column}
 \end{columns}
 
 \end{frame}
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Surrogate Models}
-\framesubtitle{Bayesian Neural Networks - Further Reading}
+\begin{frame}[c]{Bayesian Neural Networks (BNNs): Further Reading}
 
-There's a lot more which hasn't been applied to Bayesian optimization yet
+There is a lot more work on BNNs that hasn't been applied to Bayesian optimization yet:
 \begin{itemize}
-        \item \lit{\href{https://www.cs.utoronto.ca/~radford/bnn.book.html}{Neal 1995}} Bayesian Learning for Neural Networks
-        \item \lit{\href{https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf}{Bishop 2006}} Pattern Recognition and Machine Learning
-        \item \lit{\href{https://papers.nips.cc/paper/7219-simple-and-scalable-predictive-uncertainty-estimation-using-deep-ensembles.pdf}{Lakshminarayanan et al. 2017}}: Simple and Scalable Predictive Uncertainty Estimation using Deep Ensembles
-        \item \lit{\href{https://arxiv.org/abs/1506.02142}{Gal et al. 2016}} Dropout as a Bayesian Approximation:
+%        \item \lit{\href{https://www.cs.utoronto.ca/~radford/bnn.book.html}{Neal 1995}} Bayesian Learning for Neural Networks
+%        \item \lit{\href{https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf}{Bishop 2006}} Pattern Recognition and Machine Learning
+        \item Ensembles obtained simply by running SGD several times \lit{\href{https://arxiv.org/abs/1612.01474}{Lakshminarayanan et al. 2017}}
+        %: Simple and Scalable Predictive Uncertainty Estimation using Deep Ensembles
+        \item Dropout \lit{\href{https://arxiv.org/abs/1506.02142}{Gal et al. 2016}} 
+        %Dropout as a Bayesian Approximation:
         Representing Model Uncertainty in Deep Learning
-        \item \lit{\href{https://arxiv.org/abs/1802.06455}{Teye et al. 2018}} Bayesian Uncertainty Estimation for Batch Normalized Deep Networks
-        \item \lit{\href{https://arxiv.org/abs/1704.00109}{Gao Huang et al. 2017}} Snapshot Ensembles: Train 1, get M for free
+        \item Monte Carlo Batch Normalization \lit{\href{https://arxiv.org/abs/1802.06455}{Teye et al. 2018}} %Bayesian Uncertainty Estimation for Batch Normalized Deep Networks
+        \item Snapshot Ensembles \lit{\href{https://arxiv.org/abs/1704.00109}{Gao Huang et al. 2017}} 
+        %Snapshot Ensembles: Train 1, get M for free
 \end{itemize}
-or maybe doesn't work and hasn't been published
+
+
 \end{frame}
 %-----------------------------------------------------------------------
 \begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
 
 \begin{itemize}
     %GP
-    \item \emph{Repetition.} What are the most important hyperparameters of a GP that you would want to optimize for Bayesian Optimization? 
+%    \item \alert{Repetition.} What are the most important hyperparameters of a GP that you would want to optimize for Bayesian Optimization? 
     %RF
-    \item \emph{Discussion.} For which optimization problems would you rather use a RF than a GP?
-    %BNN
-    \item \emph{Discussion.} Can a BNN be trained with standard MCMC in theory and in practice?
+    \item \alert{Discussion.} For which optimization problems would you rather use a RF than a GP? When would you use a BNN?
+\medskip
+%BNN
+%    \item \alert{Discussion.} Can a BNN be trained with standard MCMC in theory and in practice?
     %DNGO
-    \item \emph{Discussion.} Why can't you use a Bayesian Linear Regression for all layers in a Deep Neural Network?
+    \item \alert{Discussion.} Why can DNGO's Bayesian Linear Regression approach only be applied to the last layer of a Deep Neural Network, not to all layers?
+\medskip    
+    \item \alert{Open Research Project.} All of the surrogate models we saw have pros and cons. It would be interesting to select the best model (and its hyperparameters) dependent on the data at hand. 
+
 \end{itemize}
 \end{frame}

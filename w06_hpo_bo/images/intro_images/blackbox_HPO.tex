@@ -1,0 +1,21 @@
+\newcommand{\myblackbox}{\fcolorbox{black}{black}{
+    \minipage[t]{\dimexpr0.111\linewidth-2\fboxsep-2\fboxrule\relax}
+        ~~~\\
+        ~~~\\
+        ~~~\\
+    \endminipage}}
+    
+    
+    	\begin{tikzpicture}
+\tikzstyle{every node}=[draw,fill=white,minimum width=0cm,thin]
+\tikzstyle{every path}=[-latex,ultra thick]
+\node (A) [draw=white]{{\Huge{$\conf$}}};
+\node (B) [right=14mm of A,draw=white] {\myblackbox{}};
+\node (C) [right=14mm of B,draw=white] {{\Huge{$f(\conf)$}}};
+%\node (D) [below=7mm of B, align=center, fill=black!10] {\large{Bayesian}\\\large{optimization}};
+
+\draw ($(A.east)+(0.2,0.0)$) -- ($(B.west)+(-0.2,0.0)$);
+\draw ($(B.east)+(0.2,0.0)$) -- ($(C.west)+(-0.2,0.0)$);
+%\draw ($(C.south)+(0.0,-0.2)$) -| ++(0.0,0.0) |- ($(D.east)+(0.2,0.0)$);
+%\draw ($(D.west)+(-0.2,0.0)$) |- ++(0.0,0.0) -| ($(A.south)+(0.0,-0.2)$);
+\end{tikzpicture}

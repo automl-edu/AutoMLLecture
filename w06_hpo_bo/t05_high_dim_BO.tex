@@ -1,0 +1,387 @@
+\videotitle{High-Dimensional Bayesian Optimization}
+
+%-----------------------------------------------------------------------
+\begin{frame}[c]{High-Dimensional Bayesian Optimization: Motivation}
+
+\begin{itemize}
+%    \item Bayesian Optimization success stories:
+%    \begin{itemize}
+%        \item robotics, planning, recommendation, automatic algorithm configuration etc.
+%    \end{itemize}
+%    \pause
+    \item Issue: Standard BO works best on problems of moderate dimensions $d\leq20$
+%    \pause
+    \begin{itemize}
+        \item Standard Gaussian processes do not tend to fit well in high dimensions
+        \item Maximizing the acquisition function is also computationally challenging
+    \end{itemize}
+\medskip
+\pause
+
+    \item Possible solutions we will discuss:
+    \begin{itemize}
+        \item Different models, in particular random forests \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011}}
+        \item Embedding into a low-dimensional space (REMBO) \lit{\href{https://ml.informatik.uni-freiburg.de/papers/16-JAIR-REMBO.pdf}{Wang et al. 2016}}
+        \item Additive models \lit{\href{http://proceedings.mlr.press/v37/kandasamy15.pdf}{Kandasamy et al. 2015}}
+    \end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+
+%----------------------------------------------------------------------
+
+\begin{frame}[c]{Low Effective Dimensionality}
+
+\begin{itemize}
+%    \item Good coverage of $\pcs$ is required to ensure that the global optimum is found
+%    \item The number of evaluations needed to cover $\pcs$ increases exponentially with dimensionality
+    \item Many optimization problems in practice have \alert{low effective dimensionality}
+    \begin{itemize}
+        \item E.g., HPO for deep neural networks
+        \lit{\href{http://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf}{Bergstra et al. 2012}}
+        \item E.g., algorithm configuration for combinatorial optimization solvers \lit{\href{http://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf}{Hutter et al. 2014}}
+    \end{itemize}
+\pause
+\medskip
+    \item \alert{Idea: Exploit low effective dimensionality to cover a lower-dimensional space well}
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+
+%---------------------------------------------------------------------
+\begin{frame}[c]{Using Random Forests for High Dimensions / Low Effective Dimensionality}
+
+    \myit{
+        \item Random forests are \alert{automatic feature detectors}
+        \myit{
+            \item They automatically select the important (axis-aligned) inputs
+        }
+        \medskip
+        \item Random forests have indeed be used effectively on spaces of more than 700 hyperparameters
+        \myit{
+            \item In terms of computational efficiency, they do not pose a bottleneck
+            \item In terms of statistical efficiency, they scale more gracefully to high dimensions than GPs
+        }
+    }
+\end{frame}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Random Embeddings for Exploiting Low Effective Dimensionality: Overview}
+
+Given a $D=2$ dimensional black-box function $\cost(x_{1},x_{2})$:
+\begin{itemize}
+\begin{columns}[T]
+\begin{column}{0.45\linewidth}
+
+
+    \item Assume we know $\cost$ has only $d=1$ important dimensions, but we don't know which one it is.
+    \end{column}
+    \begin{column}{0.5\linewidth}
+        \begin{figure}
+    \includegraphics[width=0.5\textwidth]{images/highdim_images/Random_embeddings_in_a_nutshell1.png}
+    \end{figure}
+    \end{column}
+\end{columns}
+    \pause
+    \begin{columns}[T]
+    \begin{column}{0.45\linewidth}
+    \vspace{-1em}
+    \item Subspace $x_1=x_2$ is guaranteed to include the optimum.
+        \end{column}
+        \begin{column}{0.5\linewidth}
+    \begin{figure}
+    \includegraphics[width=0.5\textwidth]{images/highdim_images/Random_embeddings_in_a_nutshell2.png}
+    \end{figure}
+    \end{column}
+\end{columns}
+    \pause
+\begin{columns}
+\begin{column}{0.45\linewidth}
+    \vspace{-8em}
+    \item This idea applies to any $d$-dimensional linear subspace; allows scaling to arbitrary $D$ (e.g., $D=1$ billion)
+\end{column}
+\begin{column}{0.5\linewidth}
+
+\end{column}
+\end{columns}
+\end{itemize}
+
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Random Embedding Bayesian Optimization (REMBO)}
+\begin{columns}[T]
+\begin{column}{0.01\textwidth}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+    \item Generate a \alert{random matrix $A \in \realnum^{D \times d}$}
+%    \item Choose a bounded region set $\obsspace\subset\realnum^d$
+    \item \alert{Use BO to optimize $g(\conf)=\cost(\pmb{Ay})$} instead of high dimensional $\cost(\conf)$
+\end{itemize}
+
+\onslide<2->{   
+\bigskip
+\myblock{Theorem}{
+If the effective dimensionality of $c$ is at most d, then with probability 1, for any $\conf\in \realnum^{D}$, there exists a $\pmb{y}\in\realnum^d$ such that $c(\conf) = c(\pmb{Ay})$.}
+}
+\end{column}
+\onslide<1->{
+\begin{column}{0.49\textwidth}
+\begin{figure}
+\includegraphics[width=0.8\textwidth]{images/highdim_images/Embedding.png}
+\end{figure}
+\end{column}
+}
+
+\end{columns} 
+\end{frame}
+
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{High Dimensional Bayesian Optimization: REMBO Pseudocode}
+
+\begin{center}
+\begin{minipage}{0.85\textwidth}
+
+\begin{algorithm}[H]
+%    \SetAlgoLined
+    \setcounter{AlgoLine}{0}
+    \SetKwInOut{Require}{Require}
+    \SetKwInOut{Result}{Result}
+    
+    \Require{Search space $\pcs$, cost function $\cost$, acquisition function $\acq$, predictive model $\surro$, maximal number of function evaluations $\bobudget$}
+    \Result{Best observed configuration $\finconf$ according to $\iter[\bobudget]{\dataset}$ or $\surro$}
+    
+    \textcolor{blue}{Generate a random matrix $\pmb{A} \in \realnum^{D\times d}$}\;
+    
+%    \textcolor{blue}{Choose the bounded region set $\obsspace\subset\realnum^d$}\;
+    
+    $\iter[0]{\dataset} \leftarrow \varnothing$\; 
+	 
+    \For{$\bocount=1$ \KwTo $\bobudget$}{
+		$\iter[\bocount]{\surro} \leftarrow$ fit predictive model on $\iter[\bocount-1]{\dataset}$\;
+		
+		\textcolor{blue}{$\pmb{y} \leftarrow \pmb{y} \in \argmax_{\pmb{y}\in\obsspace} \acq(\pmb{y}|\iter[\bocount-1]{\dataset}, \iter[\bocount]{\surro})$}\;
+		
+		Query $\cost(\textcolor{blue}{\pmb{A}\pmb{y}})$;
+		
+		$\iter[\bocount]{\dataset} \leftarrow \iter[\bocount-1]{\dataset} \cup \{\langle \textcolor{blue}{\pmb{A}\pmb{y}}, \cost(\textcolor{blue}{\pmb{A}\pmb{y}}) \rangle \}$\;
+	}
+    \caption*{REMBO: Bayesian Optimization with Random Embedding}
+\end{algorithm}
+
+\end{minipage}
+\end{center}
+
+\end{frame}
+%----------------------------------------------------------------------
+\begin{frame}[c]{High Dimensional Bayesian Optimization}
+\framesubtitle{Random Embedding Bayesian Optimization - Summary}
+\begin{columns}[T] % align columns
+\begin{column}{.48\textwidth}
+
+
+    \begin{block}{Advantages}
+    \begin{itemize}
+    	\item Exploits low effective dimensionality 
+    	\item Allows scaling to arbitrarily high extrinsic dimensions
+    	\item Applies to both continuous and categorical variables
+    	\item Trivial modification of BO algorithm
+    	\item Coordinate independent (invariant under rotations)
+    \end{itemize}
+    \end{block}
+\pause
+\end{column}%
+
+\hfill%
+
+\begin{column}{.48\textwidth}
+
+    \begin{block}{Disadvantages}
+    \begin{itemize}
+    	\item Sensitive to the definition of the bounded low dimensional constrained space $\obsspace$
+    	\item Assumes truly unimportant dimensions
+    	%Limits a high dimensional function in a low dimensional embedding
+    	%\item Sensitive to the effective dimension
+    \end{itemize}
+\end{block}
+
+\end{column}
+\end{columns}   
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{High Dimensional Bayesian Optimization via Additive Models}
+
+\medskip
+\begin{itemize}
+    \item Recall:
+
+    \begin{itemize}
+        \item Standard GPs do not tend to fit well in high dimensions
+        \item Maximizing the acquisition function is also computationally challenging
+    \end{itemize}
+\medskip
+\pause
+    \item Idea:
+    \begin{itemize}
+        \item Assume additive structure of the objective function \lit{\href{http://proceedings.mlr.press/v37/kandasamy15.pdf}{Kandasamy et al. 2015}}:
+        \begin{equation*}
+            \alert{f(\conf)=f^{(1)}(\conf^{(1)})+f^{(2)}(\conf^{(2)})+...+f^{(M)}(\conf^{(M)})}
+        \end{equation*}
+        \item Model each $f^{(i)}$ by an individual GP
+\medskip
+\pause
+        \item If the decomposition does not overlap:\\
+        can maximize acquisition function separately for each of the $f^{(i)}$
+\medskip
+\pause
+        \item Best results for known decomposition, but also possible to learn decomposition from the data
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\iffalse
+%----------------------------------------------------------------------
+\begin{frame}[c]{High Dimensional Bayesian Optimization}
+\framesubtitle{Additive GP Models in a nutshell}
+        \begin{equation*}
+            f(\conf)=f^{(1)}(\conf^{(1)})+f^{(2)}(\conf^{(2)})+...+f^{(M)}(\conf^{(M)})
+        \end{equation*}
+\begin{itemize}
+\begin{columns}[T]
+\begin{column}{0.45\linewidth}
+
+\hspace{2em}
+    \item Key assumption: $f$ decomposes into lower-dimensional additive components $\conf^{(j)} \in \pcs^{(j)}, j \in \{1,..,M\}$
+    \item The decompositions are disjoint $\conf^{(i)} \cap \conf^{(j)} = \varnothing$
+    \pause
+    \item Each decomposition $f^{(j)}(\conf^{(j)})$ is modelled by an individual GP
+    \pause
+    \end{column}
+    \begin{column}{0.45\linewidth}
+        \begin{figure}
+    \includegraphics[width=0.7\textwidth]{images/highdim_images/additive-models.png}
+    \caption{Decomposition in two additive components (M=2)} 
+    \end{figure}
+    \end{column}
+\end{columns}
+\end{itemize}
+\end{frame}
+
+%----------------------------------------------------------------------
+
+\begin{frame}[c]{High Dimensional Bayesian Optimization}
+\framesubtitle{Additive GP-UCB}
+\begin{itemize}
+
+    \item Idea: Represent acquisition function as sum of functions on decompositions:
+    \begin{equation*}
+        \acq_{t}(\conf) = \sum_{j}\acq_{t}^{(j)}(\conf^{(j)})
+    \end{equation*}
+\pause
+\medskip    
+    \item $\acq_{t}$ is maximized by maximizing each $\acq_{t}^{(j)}$ separately:
+    \begin{equation*}
+        \hat{\varphi}_{t}^{(j)}(\conf^{(j)}) = \mean_{t-1}^{(j)}(\conf^{(j)}) + \beta_{t}^{1/2}\stddev_{t-1}^{(j)}(\conf^{(j)})
+    \end{equation*}
+    \item Authors have used UCB for this work, but other acquisition functions are possible, too.
+\end{itemize}
+\source{\href{http://proceedings.mlr.press/v37/kandasamy15.pdf}{Kandasamy et al. 2015}}
+\end{frame}
+%----------------------------------------------------------------------
+
+\fi
+% \begin{frame}[c]{High Dimensional Bayesian Optimization}
+% \framesubtitle{Additive GP-UCB- Pseudocode}
+% \begin{algorithm}[H]
+%     %\DontPrintSemicolon
+%     \LinesNumbered
+%     \SetAlgoLined
+%     \setcounter{AlgoLine}{0}
+%     \SetKwInOut{Input}{Input}
+    
+%     %\Input{Kernels $\kernel^{(1)},...,\kernel^{(M)}$, Decomposition $(\pcs^{(j)})_{j=1}^{M}$}\\
+%     \Input{ Kernels $\kernel^{(1)},...,\kernel^{(M)}$, Decomposition $(\pcs^{(j)})_{j=1}^{M}$
+%     $\dataset_{0}\leftarrow\varnothing$}
+%     \For{$j=1,...,M$, $(\mean_0^{(j)},\kernel_0^{(j)})\leftarrow(0,\kernel^{(j)})$.}{
+%         \For{$j=1,...,M$,}{
+%             $\confI{t}_{(j)}\leftarrow\argmax_{z\in\pcs^{(j)}}\mean_{t-1}^{(j)}(z) +\sqrt{\beta_{t}}\stddev_{t-1}^{(j)}(z)$;\
+            
+%             $\confI{t}\leftarrow\bigcup_{j=1}^{M} \confI{t}_{(j)}$;\
+            
+%             $\obs\leftarrow$ Query $\cost$ at $\confI{t}$;\
+            
+%             $\dataset_{t}=\dataset_{t-1}\cup\{(\confI{t},\obs)\}$;\
+            
+%             Perform Bayesian Optimization posterior updates conditioned on $\dataset_{t}$ to obtain $\mean_{t}^{(j)},\stddev_{t}^{(j)}$ for $j=1,...,M$;\
+%         }
+%     }
+%     \caption{Add-GP-UCB}
+% \end{algorithm}
+% \end{frame}
+
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{High Dimensional Bayesian Optimization via Additive Models}
+\begin{columns}[T] % align columns
+\begin{column}{.48\textwidth}
+
+
+    \begin{block}{Advantages}
+    \begin{itemize}
+    	\item Exploits low effective dimensionality
+    	\item Scales GPs to high-dimensional parameter spaces
+    	\item Regret is linearly dependent on the dimension D when $\cost$ is additive
+%    	\item Add-GP-UCB applies to an additive kernel
+    \end{itemize}
+    \end{block}
+\pause
+\end{column}%
+
+\hfill%
+
+\begin{column}{.48\textwidth}
+
+    \begin{block}{Disadvantages}
+    \begin{itemize}
+    	\item Sensitive to the number of additive components
+    	\item Restricted to an axis-aligned representation
+        \item Relies on assumption of additivity
+        %structural assumptions about the objective function
+    \end{itemize}
+\end{block}
+
+\end{column}
+\end{columns}   
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+
+\begin{itemize}
+
+\item \alert{Repetition.} What is the main assumption behind REMBO?
+\medskip
+
+\item \alert{Repetition.} What is the main assumption behind additive modelling? 
+\medskip
+
+\item \alert{Discussion.} Are these assumptions likely satisfied for tuning deep neural networks?
+\medskip
+
+\item \alert{Discussion.} How do random forests help deal with high dimensions and low effective dimensionality? Can they also model additive structure?
+
+
+\end{itemize}
+\end{frame}
