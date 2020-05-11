@@ -15,30 +15,37 @@
 
 \begin{itemize}
 	\item Knowledge about hyperparameters can help to guide the optimization
-	\item For example, it can be benificial to sample hyperparameters on a non-uniform scale.
+	\item For example, it can be beneficial to sample hyperparameters on a non-uniform scale.
 \end{itemize}
 
     \vspace{0.2cm}
-Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 1000.0]$
+Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-5}, 2^{5}] \approx [0.03, 32]$
 
 \begin{itemize}
-	\item The distance between $999.9$ and $1000.0$ should not be the same as between $0.1$ and $0.2$.
-  \item We might want to sample here from from a log-scale, e.g., $[10^{\conf_l}, 10^{\conf_u}]$ with $\conf_l = -3$ and $\conf_u = 3$.
+	\item The distance between $10$ and $20$ should be the same as between $0.1$ and $0.2$.
+  \item We might want to sample here from from a log-scale, e.g., $[2^{\conf_l}, 2^{\conf_u}]$ with $\conf_l = -5$ and $\conf_u = 5$.
 \end{itemize}
 
 \begin{figure}[htb]
 \centering
+
   \begin{tikzpicture}[auto]%[scale=1.5]
     \draw [->](-0.3,0)-- (12.3,0) coordinate;
     \draw [->](-0.3,-2)-- (12.3,-2) coordinate;
-    \foreach \x/\xtext/\xxtext in {-3/-3/0.001, -2/-2/ , -1/-1/, 0/0/, 1/1/, 2/2/100, 3/3/1000} {
-      \draw [very thick] ({\x*2+6},-2pt) -- ++(0, 4pt) node[xshift = -6pt, yshift=-3pt,anchor=south west,baseline]{\strut$\xtext$};
-      \draw [very thick] ({10^(\x)*0.012},-2cm+2pt) -- ++(0,-4pt) node[anchor=north]{$\xxtext$};
-      \draw [->] ({\x*2+6},-2pt) .. controls ({\x*2+6},-0.5) and ({10^(\x)*0.012},-1.5) .. ({10^(\x)*0.012},-2cm+2pt);
+    % \foreach \x/\xtext/\xxtext in {-15/-15/0.000031, -10/-10/ , -5/-5/, 0/0/1, 5/5/32, 10/10/1024, 15/15/32768} {
+    \def\xM{5} % max exponent
+    \def\xW{12} % max width in cm
+    \foreach \x/\xtext/\xxtext in {-5/-5/.03, -2.5/-2.5/, 0/0/1, 2.5/2.5/5.66, 5/5/32} {
+      \def\xA{{(\x + \xM) * (\xW / (2 * \xM))}} %untrafoed val in cm (0 to 12)
+      \def\xB{{\xW * 2^(\x-\xM)}} %trafoed val in cm
+      \draw [very thick] (\xA,-2pt) -- ++(0, 4pt) node[xshift = -6pt, yshift=-3pt,anchor=south west,baseline]{\strut$\xtext$};
+      \draw [very thick] (\xB,-2cm+2pt) -- ++(0,-4pt) node[anchor=north]{\scriptsize $\xxtext$};
+      \draw [->] (\xA,-2pt) .. controls (\xA,-0.5) and (\xB,-1.5) .. (\xB,-2cm+2pt);
     }
     \node[] at (-0.7,-0.1) (t1) {$\conf$};
-    \node[] at (-0.7,-1.9) (t2) {$10^{\conf}$};
+    \node[] at (-0.7,-1.9) (t2) {$2^{\conf}$};
   \end{tikzpicture}
+
 \end{figure}
 
 \framebreak
@@ -49,12 +56,12 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 100
         \item If $\finconf$ is close to the border of $\pcs$ the ranges should be increased (or a different scale should be selected).
         \item Meta-Learning can help to decide which hyperparameters should be tuned in which ranges.
     \end{itemize}
-    \vspace{0.5cm}
-    Example:
-    \begin{itemize}
-            \item The ranges for $\text{cost} \in [10^{-3}, 10^3]$ and $\gamma \in [10^{-3}, 10^3]$ are rather small.
-            \item More common would be ranges like $\text{cost} \in [2^{-15}, 2^{15}]$ and $\gamma \in [2^{-15}, 2^{15}]$.
-    \end{itemize}
+    % \vspace{0.5cm}
+    % Example:
+    % \begin{itemize}
+    %         \item The ranges for $\text{cost} \in [10^{-3}, 10^3]$ and $\gamma \in [10^{-3}, 10^3]$ are rather small.
+    %         \item More common would be ranges like $\text{cost} \in [2^{-15}, 2^{15}]$ and $\gamma \in [2^{-15}, 2^{15}]$.
+    % \end{itemize}
 
 \end{frame}
 
@@ -67,18 +74,20 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 100
 
     \begin{itemize}
         \item The learning algorithm is a support vector machine (SVM) with RBF kernel.
-        \item The hyperparmeters we optimize are
+        \item The hyperparameters we optimize are
             \begin{itemize}
-                \item Cost parameter $\text{cost} \in [10^{-3}, 10^3]$.
-                \item Kernel parameter $\gamma \in [10^{-3}, 10^3]$.
+                \item Cost parameter $\text{cost} \in [2^{-15}, 2^{15}]$.
+                \item Kernel parameter $\gamma \in [2^{-15}, 2^{15}]$.
             \end{itemize}
-        \item We compare three different optimizer
+        \item We compare four different optimizer
             \begin{itemize}
                 \item Random search
                 \item Grid search
-                \item \textit{CMAES} - an evolutionary algorithm, that generates offsprings from a multivariate normal distribution (We didn't cover this algorithm).
+                \item A $(\mu+\lambda)$-selection evolutionary algorithm with $\mu = 1$, $\lambda = 1$ and Gauss mutation with $\sigma = 1$.
+                \item \textit{CMAES} - an evolutionary algorithm that generates offspring from a multivariate normal distribution (We didn't cover this algorithm).
             \end{itemize}
-        \item We use a 5-fold cross-validation and optimize the area under the ROC curve (AUC).
+        \item We use a 5-fold cross-validation and optimize the accuracy (ACC).
+        \item All methods are allowed a budget of $100$ evaluations.
     \end{itemize}
 
 \end{frame}
@@ -101,7 +110,8 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[0.001, 100
 
   \begin{itemize}
       \item Both \emph{Grid search} and \emph{random search} have many evaluations in regions with bad performance ($\gamma>1$).
-    \item \emph{CMAES} only explores a small region.
+      \item \emph{CMAES} only explores a small region.
+      \item \emph{(1+1)-EA} does not converge.
   \end{itemize}
 \end{column}%
 \begin{column}{0.5\textwidth}
@@ -171,7 +181,7 @@ The \emph{optimization curve} shows the best found configuration until a given t
 \begin{column}{0.4\textwidth}
   \footnotesize
 
-  The box plots show the distribution of the AUC-values that were measured on the \emph{outer test set} with a 10-fold CV.
+  The box plots show the distribution of the ACC-values that were measured on the \emph{outer test set} with a 10-fold CV.
 
   Note:
 
@@ -213,13 +223,13 @@ The \emph{optimization curve} shows the best found configuration until a given t
     \begin{itemize}
             \item Static defaults of hyperparameters, e.g., $\conf = (\text{cost},\gamma) = (1,1)$ are rarely a good choice.
             \item A simple extension is to compute defaults based on some simple dataset characteristics.
-            \item The best know example is the formular for the size of the random subset of features to consider as a split in a random forest: $\sqrt{p}$, where $p$ is the number of features.
+            \item The best know example is the formula for the size of the random subset of features to consider as a split in a random forest: $\sqrt{p}$, where $p$ is the number of features.
             \item For the RBF-SVM a data dependent default for the $\gamma$ parameter can be computed by
                 \begin{itemize}
                      \item The pairwise distances $\|\x - \tilde \x \|$ between points of a random subset containing $50\%$ of the data points are calculated.
                      \item The estimate is based upon the $0.1$ and $0.9$ quantile of these distances.
                      \item Basically any value between those two bounds will produce good results.
-                     \item Take the mean of the $0.1$ and $0.9$ quantile of these distances as an estimate for $\sigma$ and compute $\gamma = \tfrac{1}{2\sigma^2}$.
+                     \item Take the mean of the $0.1$ and $0.9$ quantile of these distances as an estimate for $\gamma$.
                 \end{itemize}
             \item These simple defaults can work well and don't require expensive tuning procedures.
     \end{itemize}
@@ -233,7 +243,7 @@ The \emph{optimization curve} shows the best found configuration until a given t
   \footnotesize
 
   \begin{itemize}
-      \item With the previously discussed data dependet default of $\gamma$ and $\text{cost} = 1$.
+      \item With the previously discussed data depended default of $\gamma$ and $\text{cost} = 1$.
   \end{itemize}
 \end{column}
 \begin{column}{0.6\textwidth}
