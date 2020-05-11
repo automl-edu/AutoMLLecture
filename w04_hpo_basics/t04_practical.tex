@@ -76,18 +76,18 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2
         \item The learning algorithm is a support vector machine (SVM) with RBF kernel.
         \item The hyperparameters we optimize are
             \begin{itemize}
-                \item Cost parameter $\text{cost} \in [2^{-5}, 2^5]$.
-                \item Kernel parameter $\gamma \in [2^{-5}, 2^5]$.
+                \item Cost parameter $\text{cost} \in [2^{-15}, 2^15]$.
+                \item Kernel parameter $\gamma \in [2^{-15}, 2^15]$.
             \end{itemize}
         \item We compare four different optimizer
             \begin{itemize}
                 \item Random search
                 \item Grid search
-                \item A $(\mu+\lambda)$-selection evolutionary algorithm with $\mu = 1$, $\lambda = 1$ and Gauss mutation with $\sigma = 0.5$.
+                \item A $(\mu+\lambda)$-selection evolutionary algorithm with $\mu = 1$, $\lambda = 1$ and Gauss mutation with $\sigma = 1$.
                 \item \textit{CMAES} - an evolutionary algorithm that generates offspring from a multivariate normal distribution (We didn't cover this algorithm).
             \end{itemize}
         \item We use a 5-fold cross-validation and optimize the accuracy (ACC).
-        \item All methods are allowed a budget of $100$ evaluations.
+        \item All methods are allowed a budget of $25$ evaluations.
     \end{itemize}
 
 \end{frame}
@@ -112,8 +112,6 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2
       \item Both \emph{Grid search} and \emph{random search} have many evaluations in regions with bad performance ($\gamma>1$).
       \item \emph{CMAES} only explores a small region.
       \item \emph{(1+1)-EA} does not converge.
-      \item The ranges for $\text{cost} \in [2^{-5}, 2^5]$ and $\gamma \in [2^{-5}, 2^5]$ are rather small. \\
-      More common would be ranges like $\text{cost} \in [2^{-15}, 2^{15}]$ and $\gamma \in [2^{-15}, 2^{15}]$.
   \end{itemize}
 \end{column}%
 \begin{column}{0.5\textwidth}
