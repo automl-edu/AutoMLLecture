@@ -15,7 +15,7 @@
 
 \begin{itemize}
 	\item Knowledge about hyperparameters can help to guide the optimization
-	\item For example, it can be benificial to sample hyperparameters on a non-uniform scale.
+	\item For example, it can be beneficial to sample hyperparameters on a non-uniform scale.
 \end{itemize}
 
     \vspace{0.2cm}
@@ -85,20 +85,20 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2
 
     \begin{itemize}
         \item The learning algorithm is a support vector machine (SVM) with RBF kernel.
-        \item The hyperparmeters we optimize are
+        \item The hyperparameters we optimize are
             \begin{itemize}
                 \item Cost parameter $\text{cost} \in [2^{-5}, 2^5]$.
                 \item Kernel parameter $\gamma \in [2^{-5}, 2^5]$.
             \end{itemize}
-        \item We compare three different optimizer
+        \item We compare four different optimizer
             \begin{itemize}
                 \item Random search
                 \item Grid search
-                \item \textit{CMAES} - an evolutionary algorithm, that generates offsprings from a multivariate normal distribution (We didn't cover this algorithm).
-                \item Evolutionary Algorithm with $\mu = 1$, $\lambda = 1$ and Gauss mutation.
+                \item A $(\mu+\lambda)$-selection evolutionary algorithm with $\mu = 1$, $\lambda = 1$ and Gauss mutation with $\sigma = 0.5$.
+                \item \textit{CMAES} - an evolutionary algorithm that generates offspring from a multivariate normal distribution (We didn't cover this algorithm).
             \end{itemize}
         \item We use a 5-fold cross-validation and optimize the accuracy (ACC).
-        \item All methods are allowed a budget of 100 evaluations.
+        \item All methods are allowed a budget of $100$ evaluations.
     \end{itemize}
 
 \end{frame}
@@ -122,7 +122,7 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-15}, 2
   \begin{itemize}
       \item Both \emph{Grid search} and \emph{random search} have many evaluations in regions with bad performance ($\gamma>1$).
       \item \emph{CMAES} only explores a small region.
-      \item \emph{Gauss(1+1) EA} does not converge.
+      \item \emph{(1+1)-EA} does not converge.
       \item The ranges for $\text{cost} \in [2^{-5}, 2^5]$ and $\gamma \in [2^{-5}, 2^5]$ are rather small. \\
       More common would be ranges like $\text{cost} \in [2^{-15}, 2^{15}]$ and $\gamma \in [2^{-15}, 2^{15}]$.
   \end{itemize}
@@ -236,13 +236,13 @@ The \emph{optimization curve} shows the best found configuration until a given t
     \begin{itemize}
             \item Static defaults of hyperparameters, e.g., $\conf = (\text{cost},\gamma) = (1,1)$ are rarely a good choice.
             \item A simple extension is to compute defaults based on some simple dataset characteristics.
-            \item The best know example is the formular for the size of the random subset of features to consider as a split in a random forest: $\sqrt{p}$, where $p$ is the number of features.
+            \item The best know example is the formula for the size of the random subset of features to consider as a split in a random forest: $\sqrt{p}$, where $p$ is the number of features.
             \item For the RBF-SVM a data dependent default for the $\gamma$ parameter can be computed by
                 \begin{itemize}
                      \item The pairwise distances $\|\x - \tilde \x \|$ between points of a random subset containing $50\%$ of the data points are calculated.
                      \item The estimate is based upon the $0.1$ and $0.9$ quantile of these distances.
                      \item Basically any value between those two bounds will produce good results.
-                     \item Take the mean of the $0.1$ and $0.9$ quantile of these distances as an estimate for $\sigma$ and compute $\gamma = \tfrac{1}{2\sigma^2}$.
+                     \item Take the mean of the $0.1$ and $0.9$ quantile of these distances as an estimate for $\gamma$.
                 \end{itemize}
             \item These simple defaults can work well and don't require expensive tuning procedures.
     \end{itemize}
@@ -256,7 +256,7 @@ The \emph{optimization curve} shows the best found configuration until a given t
   \footnotesize
 
   \begin{itemize}
-      \item With the previously discussed data dependet default of $\gamma$ and $\text{cost} = 1$.
+      \item With the previously discussed data depended default of $\gamma$ and $\text{cost} = 1$.
   \end{itemize}
 \end{column}
 \begin{column}{0.6\textwidth}
