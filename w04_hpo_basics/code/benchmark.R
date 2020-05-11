@@ -34,8 +34,8 @@ set.seed(1)
 learner = lrn("classif.svm", predict_type = "prob", cost = 1, gamma = 1, type = "C-classification", kernel = "radial")
 measure = msr("classif.acc")
 
-#n_evalss = c(25,100)
-n_evalss = c(100)
+n_evalss = c(25,100)
+
 #define n tuners
 tuner_terms = lapply(n_evalss, function(n_evals) {
   tuners = tnrs(c("grid_search", "random_search"))
@@ -75,6 +75,8 @@ rsmp_outer = rsmp("cv", folds = 10)
 #rsmp_outer = rsmp("cv", folds = 2)
 
 learners = Map(function(ps, tuner_terms) {
+  learner$encapsulate = c(train = "evaluate", predict = "evaluate")
+  learner$fallback = lrn("classif.featureless")
   learner = AutoTuner$new(learner = learner, resampling = rsmp_tuning, measures = measure, terminator = tuner_terms$term, search_space = ps, tuner = tuner_terms$tuner)  
   learner$id = paste0(learner$id, ".", tuner_terms[[1]]$term$param_set$values$n_evals)
   return(learner)
@@ -144,7 +146,7 @@ if (!fs::file_exists("benchmark_res.rds")) {
   }, store_models = TRUE, design = split(design, seq_row(design)))
   
   #testJob(1)
-  submitJobs(resources = list(ncpus = rsmp_outer$param_set$values$folds %??% 10))
+  submitJobs(resources = list(ncpus = rsmp_outer$param_set$values$folds %??% 10, memory = 16000))
   waitForJobs()
   res = reduceResultsList(findDone())
   res_tune = res[[1]]
@@ -165,7 +167,8 @@ if (!fs::file_exists("benchmark_res.rds")) {
 
 res = readRDS("benchmark_res.rds")
 
-res_baseline = res$baseline$aggregate(measures = measure)
+xx = res$baseline$aggregate(measures = measure)
+res_baseline = map_dtr(xx$resample_result, function(x) x$score(measure))
 
 
 #build dt for plotting
@@ -188,15 +191,14 @@ res_outer = res$tune$score(measures = measure)
 
 #reduce size
 rm(res)
-res_baseline$resample_result = NULL
 #gc()
 
 
 theme_set(theme_bw())
 
-EVAL_ITERS = 100
+EVAL_ITERS = 25
 DATASET = "spam"
-tuners_select = c("GridSearch", "RandomSearch", "CMAES", "(1+1) EA" = "ECRSimpleEA", "Untuned", "Heuristic")
+tuners_select = c("GridSearch", "RandomSearch", "CMAES", "(1+1)-EA" = "ECRSimpleEA", "Untuned", "Heuristic")
 names(tuners_select) = ifelse(nzchar(names(tuners_select)), names(tuners_select), tuners_select)
 tuner_colors = set_names(RColorBrewer::brewer.pal(length(tuners_select), "Set1"), names(tuners_select))
 
