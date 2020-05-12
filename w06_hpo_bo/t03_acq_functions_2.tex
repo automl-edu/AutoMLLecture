@@ -188,7 +188,7 @@ This sampling view is useful for intuition;\\ but in practice, there are more ef
     \item Key idea: Evaluate $\conf$ which most \alert{reduces our uncertainty about the location of $\optconf$}
 \bigskip    
 \pause    
-    \item We'll use the $p_{min}$ distribution to characterize the location of $\optconf$: \alert{\[p_{min}(\conf^*|\dataset) = p(\conf^* \in \argmin_{\conf' \in \pcs} (\surro(\conf') | \dataset))\]}
+    \item We'll use the $p_{min}$ distribution to characterize the location of $\optconf$: \alert{\[p_{min}(\conf|\dataset) = p(\conf \in \argmin_{\conf' \in \pcs} (\surro(\conf') | \dataset))\]}
 \medskip
 \pause
     \item Our uncertainty is then captured by the \alert{entropy $H( p_{min}(\cdot |\dataset))$ of the $p_{min}$ distribution}

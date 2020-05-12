@@ -1,11 +1,11 @@
-\videotitle{The Alternative Optimization Approach of the Tree-Parzen Estimator (TPE)}
+\videotitle{The Tree-Parzen Estimator (TPE)}
 
 %-----------------------------------------------------------------------
 \begin{frame}[c]{Overview of TPE \litw{\href{https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf}{Bergstra et al. 2011}}}
 
 \begin{itemize}
     \item Standard Bayesian optimization models the probability $p(y \mid \conf)$ of observations $y$ given configurations $\conf$
-    \item Instead, \alert{TPE fits kernel density estimators (KDEs) $l(\conf \mid y \le \gamma)$ and $g(\conf \mid y \le \gamma)$}
+    \item Instead, \alert{TPE fits kernel density estimators (KDEs) $l(\conf \mid y \le \gamma)$ and $g(\conf \mid y > \gamma)$}
     \myit{
         \item These KDEs are for ``good configurations'' (leading to objective function values below a threshold $\gamma$) and ``bad configurations''
         \item By default, $\gamma$ is set to the 15\% quantile of the observations
@@ -82,7 +82,7 @@
     		maximal number of function evaluations $\bobudget$}
     \Result{Best observed configuration $\conf$ according to $\iter[\bobudget]{\dataset}$}
     
-    $\iter[0]{\dataset} \leftarrow \varnothing$\; 
+	Initialize data $\iter[0]{\dataset}$ with initial observations\;% \leftarrow \varnothing$\; 
     
     \For{$\bocount=1$ \KwTo $\bobudget$}{
 		\textcolor{blue}{$\dataset_\text{good}, \dataset_\text{bad}$ $\leftarrow$ split $\iter[\bocount-1]{\dataset}$} according to quantile $\gamma$\

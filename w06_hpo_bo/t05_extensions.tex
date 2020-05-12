@@ -1,22 +1,25 @@
-\videotitle{Extensions to Bayesian Optimization}
+\videotitle{Extensions of Bayesian Optimization}
 
 %-----------------------------------------------------------------------
-\begin{frame}{Some More Extensions We Will Discuss}
+\begin{frame}{Beyond the Standard Bayesian Optimization Setting}
 \begin{block}{Standard Bayesian optimization problems}
 \begin{itemize}
+    \item Low-dimensional functions
     \item Continuous, smooth functions
     \item Sequential optimization
-    \item Noise-free evaluations
+%    \item Noise-free evaluations
 %    \item No constraints
 \end{itemize}
 \end{block}
+\medskip
 %    \pause
 \begin{block}{Extensions}
 \begin{itemize}
     \item Structured search spaces: categorical \& conditional hyperparameters 
+	\item High dimensions
 %    \item Disconnected search spaces
     \item Parallel evaluations
-    \item Noisy evaluations
+%    \item Noisy evaluations
     \item Optimization with constraints
 %    \item Multi-objective Bayesian optimization
 \end{itemize}
@@ -87,7 +90,7 @@
 %-----------------------------------------------------------------------
 \begin{frame}[c]{Structured Search Spaces: Categorical \&  Conditional Hyperparameters}
 \begin{center}
-    \includegraphics[width=.9\linewidth, height=0.9\textheight, keepaspectratio=true]{images/categ_cond_params/Conditional Parameters AutoML Book.png}
+    \includegraphics[width=.9\linewidth, height=0.9\textheight, keepaspectratio=true]{images/categ_cond_params/Conditional_Parameters_AutoML_Book.png}
     \newline
     Example of a structured search space (Source: Figure 5.1 of the \lit{\href{https://www.automl.org/wp-content/uploads/2019/05/AutoML_Book.pdf}{AutoML book}})
 \end{center}
@@ -164,6 +167,58 @@ Modelling conditional hyperparameters:
 Overall, structured search spaces are \alert{still an active research topic} and far from solved
 \end{frame}
 
+%-----------------------------------------------------------------------
+\begin{frame}[c]{High Dimensions}
+\begin{columns}[T]
+\column{0.65\linewidth}
+	\myit{
+		\item Issues
+		\myit{
+			\item Standard Gaussian processes \\ do not tend to fit well in high dimensions
+			\item Maximizing the acquisition function \\ is computationally challenging
+		}
+		\smallskip
+		\onslide<2->{
+			\item There is still hope
+			\myit{
+				\item Many optimization problems have\\ \alert{low effective dimensionality}
+				\item Not all dimensions interact with each other
+			}
+		}
+		\onslide<3->{
+			\smallskip
+			\pause		
+			\item Possible solutions
+			\myit{
+				\item Optimize in a lower-dimensional \\
+				embedding \lit{\href{https://ml.informatik.uni-freiburg.de/papers/16-JAIR-REMBO.pdf}{Wang et al. 2016}}
+				\item Fit additive models on subsets \\ of dimensions \lit{\href{http://proceedings.mlr.press/v37/kandasamy15.pdf}{Kandasamy et al. 2015}}
+				\item Use other models; e.g., random forests
+			}
+		}
+	}
+
+    \column{0.35\linewidth}
+
+%\bigskip
+	{\onslide<2->{
+	    \begin{figure}
+	    	\includegraphics[width=0.8\textwidth]{images/highdim_images/Random_embeddings_in_a_nutshell1.png}\\
+	    \end{figure}
+    }}
+%\bigskip
+	{\onslide<3->{
+	    \begin{figure}
+	    	\includegraphics[width=0.65\textwidth]{images/highdim_images/Random_embeddings_in_a_nutshell2.png}
+	    \end{figure}
+    }}
+
+\end{columns}    
+	
+\end{frame}
+%-----------------------------------------------------------------------
+
+
 
 \begin{frame}[c]{Parallel Bayesian Optimization: Multi-point Acquisition Functions}
 
@@ -184,6 +239,8 @@ Overall, structured search spaces are \alert{still an active research topic} and
     \item Nevertheless, multi-point acquisition functions can be optimized efficiently with gradient descent via the reparameterization trick \lit{\href{https://papers.nips.cc/paper/8194-maximizing-acquisition-functions-for-bayesian-optimization}{Wilson et al. 2018}}
 }
 \end{frame}
+
+
 %----------------------------------------------------------------------
 \begin{frame}[c]{Asynchronous Parallel Bayesian Optimization with Pending Evaluations}
 
@@ -286,6 +343,7 @@ Overall, structured search spaces are \alert{still an active research topic} and
 
 %\end{frame}
 %-----------------------------------------------------------------------
+\iffalse
 \begin{frame}[c]{Noisy Evaluations}
 
     \begin{columns}[T]
@@ -340,7 +398,7 @@ Overall, structured search spaces are \alert{still an active research topic} and
 %    \end{itemize}
 %    \end{itemize}
 \end{frame}
-
+\fi
 %----------------------------------------------------------------------
 
 \begin{frame}[c]{Bayesian Optimization with Constraints}
