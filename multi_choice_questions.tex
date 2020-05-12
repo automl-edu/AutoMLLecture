@@ -296,5 +296,103 @@ Friedman-test was rejected. % Correct
         \choice False % Correct  % Should not be possible as in the 01 case either SVM and CNN are not easy to distinguish from each other.
     \end{choices}
     \end{center}
+
+\pagebreak
+%-------------------------------------------------------------------------------
+\section{HPO Basics}
+\question We determine the optimal hyperparameters ...
+\begin{choices}
+    \choice with respect to the generalization performance. % Correct
+    \choice with respect to the training performance.
+    \choice based on incomplete runs.
+\end{choices}
+
+\question Model parameters ...
+\begin{choices}
+    \choice are optimized during training. % Correct
+    \choice are inputs to the training.
+    \choice are equivalent to hyperparameters.
+\end{choices}
+
+\question Hyperparameters ....
+\begin{choices}
+    \choice are outputs of the training.
+    \choice often control the complexity of a model. % Correct
+    \choice can influence model parameters. % Correct
+    \choice can never change during training.
+\end{choices}
+
+\question Examples of model parameters are ...
+\begin{choices}
+    \choice learning rates for neural network training.
+    \choice the number of neighbors in $k$NN.
+    \choice neural network weights. % Correct
+    \choice centroids of $k$-means\footnote{\url{https://en.wikipedia.org/wiki/K-means\_clustering\#Algorithms}}. %Correct.
+    \choice number of layers in a neural network.
+    \choice support vectors of an SVM. % Correct
+    \choice coefficients of a linear model. % Correct
+    \choice the reward function used in reinforcement learning.
+\end{choices}
+
+\question (Hyperparameter) Tuning is the process of finding good model hyperparameters $\lambda$.
+\begin{choices}
+    \choice True % Correct
+    \choice False
+\end{choices}
+
+\question The components of a tuning problem are:  % Trick question. All of them are true
+\begin{choices}
+\choice The dataset.
+\choice The learner (possibly: several competing learners?) that is tuned.
+\choice The learner’s hyperparameters and their respective regions-of-interest over which we optimize.
+\choice The performance measure, as determined by the application.
+\choice A (resampling) procedure for estimating the predictive performance according to the
+performance measure.
+\end{choices}
+
+\question The performance measure of the tuning problem has to be  identical to the loss function that defines the risk minimization problem for the learner.
+\begin{choices}
+\choice True
+\choice False % Correct.
+\end{choices}
+
+\question Tuning
+\begin{choices}
+    \choice is easy because people properly document their machine learning models and extensively document their behaviour on a plethora of application domains.
+    \choice is hard because it is viewed as a black-box problem. % Correct
+    \choice only involves very simple configuration spaces.
+    \choice is hard because of the common stochasticity of machine learning models. % Correct
+\end{choices}
+
+\question Grid search can be disadvantageous compared to random search if
+some hyperparameters have little or no
+influence on the model.
+\begin{choices}
+    \choice True
+    \choice False
+\end{choices}
+
+\question With a tuning budget of $16$ samples and four parameters ...
+\begin{choices}
+    \choice both grid and random search will evaluate $2$ unique values per parameter.
+    \choice grid search will most likely evaluate more values per parameter than random search.
+    \choice random search will most likely evaluate $16$ unique values per parameter and grid search $2$. % Correct. GS evaluates budget^(1/parameters) unique values.
+    \choice both random search and grid search will evaluate $16$ unique values per parameter.
+\end{choices}
+
+\question Evolutionary Algorithms ...
+\begin{choices}
+    \choice are conceptually simple, yet powerful enough to solve complex problems. % Correct
+    \choice can not handle categorical parameters.
+    \choice are perfectly suited for expensive problems like HPO.
+    \choice have quite a few control parameters which often require tuning. % Correct
+\end{choices}
+
+\question Default heuristics ...
+\begin{choices}
+    \choice are the same thing as static default hyperparameters.
+    \choice determine which default to use out of a portfolio of defaults. % Correct
+    \choice are very difficult to use.
+\end{choices}
 \end{questions}
 \end{document}
