@@ -11,25 +11,28 @@
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-\begin{frame}[allowframebreaks]{Tuning Ranges}
+\begin{frame}[allowframebreaks]{Scaling and Ranges}
 
 \begin{itemize}
 	\item Knowledge about hyperparameters can help to guide the optimization
-	\item For example, it can be beneficial to sample hyperparameters on a non-uniform scale.
+	\item E.g., it can be beneficial to optimize hyperparameters on a non-uniform scale.
 \end{itemize}
 
-    \vspace{0.2cm}
-Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-5}, 2^{5}] \approx [0.03, 32]$
+    % \vspace{0.2cm}
+Example: regularization hyperparameter on log-scale
 
 \begin{itemize}
-	\item The distance between $10$ and $20$ should be the same as between $0.1$ and $0.2$.
-  \item We might want to sample here from from a log-scale, e.g., $[2^{\conf_l}, 2^{\conf_u}]$ with $\conf_l = -5$ and $\conf_u = 5$.
+    \item Many ML algorithms have non-neg. hyperparameters (e.g. regularization constant), for which it can make sense to try out very small and very large values during tuning
+    % \item Standard examples are regularization parameters       
+    \item Usual trick: put on log-scale: $C$ of SVM: $[2^{-15}, 2^{15}] = [0.00003, 32768]$
+	% \item The distance between $10$ and $20$ should be the same as between $0.1$ and $0.2$.
+  % \item We might want to sample here from from a log-scale, e.g., $[2^{\conf_l}, 2^{\conf_u}]$ with $\conf_l = -5$ and $\conf_u = 5$.
 \end{itemize}
 
 \begin{figure}[htb]
 \centering
 
-  \begin{tikzpicture}[auto]%[scale=1.5]
+  \begin{tikzpicture}[auto]
     \draw [->](-0.3,0)-- (12.3,0) coordinate;
     \draw [->](-0.3,-2)-- (12.3,-2) coordinate;
     % \foreach \x/\xtext/\xxtext in {-15/-15/0.000031, -10/-10/ , -5/-5/, 0/0/1, 5/5/32, 10/10/1024, 15/15/32768} {
@@ -51,10 +54,10 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-5}, 2^
 \framebreak
 
     \begin{itemize}
-        \item Similar to the scale, e.g., linear or logarithmic, the ranges in which to search have to be specified.
-        \item Deep knowledge about the inner working of the machine learning algorithm can help to choose better bounds.
-        \item If $\finconf$ is close to the border of $\pcs$ the ranges should be increased (or a different scale should be selected).
-        \item Meta-Learning can help to decide which hyperparameters should be tuned in which ranges.
+        \item Similar to the scale, e.g., linear or logarithmic, upper and lower bounds for paramaters have to be specified as many optimizers require them
+        \item Setting these correctly usually requires deeper knowledge about the inner workings of the ML method and a lot of practical experience
+        \item Furthermore, if $\finconf$ is close to the border of $\pcs$ the ranges should be increased (or a different scale should be selected), but many algroithms do not do this automatically
+        \item Meta-Learning can help to decide which hyperparameters should be tuned in which ranges
     \end{itemize}
     % \vspace{0.5cm}
     % Example:
@@ -79,15 +82,15 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-5}, 2^
                 \item Cost parameter $\text{cost} \in [2^{-15}, 2^{15}]$.
                 \item Kernel parameter $\gamma \in [2^{-15}, 2^{15}]$.
             \end{itemize}
-        \item We compare four different optimizer
+        \item We compare four different optimizers
             \begin{itemize}
                 \item Random search
                 \item Grid search
-                \item A $(\mu+\lambda)$-selection evolutionary algorithm with $\mu = 1$, $\lambda = 1$ and Gauss mutation with $\sigma = 1$.
-                \item \textit{CMAES} - an evolutionary algorithm that generates offspring from a multivariate normal distribution (We didn't cover this algorithm).
+                \item A $(1+1)$-selection EA and Gauss mutation with $\sigma = 1$.
+                \item \textit{CMAES} - efficient EA that generates offspring from a multivariate Gaussian
             \end{itemize}
-        \item We use a 5-fold cross-validation and optimize the accuracy (ACC).
-        \item All methods are allowed a budget of $100$ evaluations.
+        \item We use a 5-fold CV for tuning on the inside, to optimize accuracy (ACC) and 10-fold on the outside for nested CV
+        \item All methods are allowed a budget of $100$ evaluations
     \end{itemize}
 
 \end{frame}
@@ -109,9 +112,11 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-5}, 2^
   We notice here:
 
   \begin{itemize}
-      \item Both \emph{Grid search} and \emph{random search} have many evaluations in regions with bad performance ($\gamma>1$).
-      \item \emph{CMAES} only explores a small region.
-      \item \emph{(1+1)-EA} does not converge.
+      \item Both \emph{Grid search} and \emph{random search} have many evaluations in regions with bad performance ($\gamma>1$)
+      \item \emph{CMAES} only explores a small region
+      \item \emph{(1+1)-EA} does not converge, we probably set its control parameters suboptimally
+      \item May we should increase ranges?
+      \item Such a visual analysis is a lot harder for more than 2 hyperparameters
   \end{itemize}
 \end{column}%
 \begin{column}{0.5\textwidth}
@@ -125,39 +130,39 @@ Example: regularization hyperparameter ($C$ or \emph{cost}) of SVM: $[2^{-5}, 2^
 \end{frame}
 \begin{frame}{Tuning Example cont.}
 
-The \emph{optimization curve} shows the best found configuration until a given time point.
+The \emph{optimization trace} shows the best obtained performance until a given time point.
 \begin{columns}
 \begin{column}{0.4\textwidth}
-  \footnotesize
+  % \footnotesize
   \only<1>{
 
-    Note:
+    % Note:
 
     \begin{itemize}
-      \item For \emph{random search} and \emph{grid search} the chronological order on the x-axis is arbitrary.
+      \item For \emph{random search} and \emph{grid search} the chronological order of point evaluation is somewhat arbitrary
       \item The curve shows the performance on the tuning validation (\emph{inner resampling}) on a single fold
     \end{itemize}
   }
-  \only<2-3>{
+  \only<2>{
     \begin{itemize}
-      \item<2-> The outer 10-fold CV gives us 10 optimization curves.
-      \item<3-> The median at each time point gives us an estimate of the average optimization progress.
+      \item The outer 10-fold CV gives us 10 optimization curves.
+      \item The median at each time point gives us an estimate of the average optimization progress.
     \end{itemize}
   }
-  \only<4>{
-    \begin{itemize}
-      \item Remember: The final model will be trained on the \emph{outer training set} with the configuration $\finconf$ that lead to the best performance on the \emph{inner test set}.
-      \item To compare the effectiveness of the tuning strategies we have to look at the performance that $\finconf$ gives us on the \emph{outer test set}.
-    \end{itemize}
-  }
+  % \only<4>{
+    % \begin{itemize}
+      % \item Remember: The final model will be trained on the \emph{outer training set} with the configuration $\finconf$ that lead to the best performance on the \emph{inner test set}.
+      % \item To compare the effectiveness of the tuning strategies we have to look at the performance that $\finconf$ gives us on the \emph{outer test set}.
+    % \end{itemize}
+  % }
 \end{column}
 \begin{column}{0.6\textwidth}
   \vspace{-1em}
   \begin{figure}
   \only<1>{\includegraphics[width=\textwidth]{images/benchmark_curve_iter_1.png}}
-  \only<2>{\includegraphics[width=\textwidth]{images/benchmark_curve_iter_all.png}}
-  \only<3>{\includegraphics[width=\textwidth]{images/benchmark_curve_median.png}}
-  \only<4>{\includegraphics[width=\textwidth]{images/benchmark_curve_iter_all_median.png}}
+  % \only<2>{\includegraphics[width=\textwidth]{images/benchmark_curve_iter_all.png}}
+  % \only<3>{\includegraphics[width=\textwidth]{images/benchmark_curve_median.png}}
+  \only<2>{\includegraphics[width=\textwidth]{images/benchmark_curve_iter_all_median.png}}
   \end{figure}
 \end{column}
 \end{columns}
@@ -179,59 +184,59 @@ The \emph{optimization curve} shows the best found configuration until a given t
 
 \begin{columns}
 \begin{column}{0.4\textwidth}
-  \footnotesize
+  % \footnotesize
 
-  The box plots show the distribution of the ACC-values that were measured on the \emph{outer test set} with a 10-fold CV.
+  Distribution of the ACC-values on \emph{outer test sets} with a 10-fold CV.
 
-  Note:
+  % Note:
 
   \begin{itemize}
-    \item The box plots do not indicate significant differences.
-    \item The performance differs from the results obtained on the inner resampling.
+      \item We compare with SVM in (unreasonable) defaults $(\text{cost}=1,\gamma=1)$
+    \item The box plots do not indicate significant differences, we abstained from proper statistical testing here
+    \item The performance is somewhat lower than indicated by the results on the inner resampling
   \end{itemize}
 
 \end{column}
 \begin{column}{0.6\textwidth}
   \vspace{-1em}
   \begin{figure}
-  \includegraphics[width=\textwidth]{images/benchmark_boxplot_tuners.png}
-  \end{figure}
-\end{column}
-\end{columns}
-\end{frame}
-
-\begin{frame}{Tuning Example: Validation}
-
-\begin{columns}
-\begin{column}{0.4\textwidth}
-  \footnotesize
-
-  \begin{itemize}
-    \item Comparison with an SVM that was configured with $\conf = (\text{cost},\gamma) = (1,1)$ shows that tuning is necessary.
-  \end{itemize}
-\end{column}
-\begin{column}{0.6\textwidth}
-  \begin{figure}
+  % \includegraphics[width=\textwidth]{images/benchmark_boxplot_tuners.png}
   \includegraphics[width=\textwidth]{images/benchmark_boxplot_default.png}
   \end{figure}
 \end{column}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Data Dependent Defaults}
+% \begin{frame}{Tuning Example: Validation}
+
+% \begin{columns}
+% \begin{column}{0.4\textwidth}
+%   \footnotesize
+
+%   % \begin{itemize}
+%   % \end{itemize}
+% \end{column}
+% \begin{column}{0.6\textwidth}
+%   \begin{figure}
+%   \includegraphics[width=\textwidth]{images/benchmark_boxplot_default.png}
+%   \end{figure}
+% \end{column}
+% \end{columns}
+% \end{frame}
+
+\begin{frame}{Default Heuristics}
 
     \begin{itemize}
-            \item Static defaults of hyperparameters, e.g., $\conf = (\text{cost},\gamma) = (1,1)$ are rarely a good choice.
-            \item A simple extension is to compute defaults based on some simple dataset characteristics.
-            \item The best know example is the formula for the size of the random subset of features to consider as a split in a random forest: $\sqrt{p}$, where $p$ is the number of features.
-            \item For the RBF-SVM a data dependent default for the $\gamma$ parameter can be computed by
-                \begin{itemize}
-                     \item The pairwise distances $\|\x - \tilde \x \|$ between points of a random subset containing $50\%$ of the data points are calculated.
-                     \item The estimate is based upon the $0.1$ and $0.9$ quantile of these distances.
-                     \item Basically any value between those two bounds will produce good results.
-                     \item Take the mean of the $0.1$ and $0.9$ quantile of these distances as an estimate for $\gamma$.
-                \end{itemize}
-            \item These simple defaults can work well and don't require expensive tuning procedures.
+            \item Instead of using static defaults, we sometimes can compute hyperparamter defaults heuristically, based on simple data characteristics.
+            \item A lot faster than tuning and sometimes can work well,
+                although not many guarantees exists and it is often unclear how well this works across many different data scenarios
+            \item Well-known example: Number of random features to consider for splitting in random forest: $\text{mtry} = \sqrt{p}$, where $p$ is total number of features.
+            \item For the RBF-SVM a data dependent default for the $\gamma$ parameter can be computed by suing the median of the pairwise distances $\|\x - \tilde \x \|$ between data points (or a smaller random subset)
+                % of a random subset containing 
+                     % \item The estimate is based upon the $0.1$ and $0.9$ quantile of these distances.
+                     % \item Basically any value between those two bounds will produce good results.
+                     % \item Take the mean of the $0.1$ and $0.9$ quantile of these distances as an estimate for $\gamma$.
+                % \end{itemize}
     \end{itemize}
 \end{frame}
 
@@ -240,7 +245,7 @@ The \emph{optimization curve} shows the best found configuration until a given t
 
 \begin{columns}
 \begin{column}{0.4\textwidth}
-  \footnotesize
+  % \footnotesize
 
   \begin{itemize}
       \item With the previously discussed data depended default of $\gamma$ and $\text{cost} = 1$.
@@ -268,6 +273,23 @@ The \emph{optimization curve} shows the best found configuration until a given t
 %  \end{itemize}
 %\end{itemize}
 %\end{frame}
+
+\begin{frame}[allowframebreaks]{Challenges and Final Comments}
+\begin{enumerate}
+  \item Getting it right which hyperparameters to tune, in what ranges, and where defaults and where heuristics might be ok.
+  \item Choosing and balancing out budget for tuning and inner and outer resampling.
+  \item Dealing with multi criteria-situations, where multiple performance metrics are of interest
+  \item Dealing with parallelization and time-heterogeneity    
+  \item Ensuring the computational stability of the tuning process and dealing with crashes
+    
+  \framebreak    
+
+  \item Post-Hoc analysis of all obtained tuning results
+  \item Exploiting the multi-fidelity property of ML training (suppress bad configurations early without investing too much time)
+  \item Including prepreocessing and full pipelining into the tuning process, and dealing with complex hierarchical spaces
+ \end{enumerate}
+
+\end{frame}
 
 
 \end{document}
