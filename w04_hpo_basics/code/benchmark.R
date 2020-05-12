@@ -257,9 +257,10 @@ ggsave("../images/benchmark_curve_iter_all_median.png", g, height = 5, width = 7
 res_outer = res_outer[map_lgl(learner, function(x) x$model$tuning_instance$terminator$param_set$values$n_evals == EVAL_ITERS) & task_id %in% DATASET, ]
 res_outer[, tuner := map_chr(learner, function(x) class(x$tuner)[[1]])]
 res_outer[, tuner := stri_replace_first_fixed(tuner, "Tuner", "")]
+res_outer[, tuner:=factor(tuner, levels = tuners_select, labels = names(tuners_select))]
 res_baseline[, tuner := ifelse(stri_detect_fixed(learner_id, "default"), "Heuristic", "Untuned")]
+res_baseline[, tuner:=factor(tuner, levels = tuners_select, labels = names(tuners_select))]
 res_combined = rbind(res_baseline[task_id %in% DATASET,], res_outer, fill = TRUE)
-res_combined[, tuner:=factor(tuner, levels = tuners_select, labels = names(tuners_select))]
 settings = list(
   tuners = list(name = "tuners", tuners = unique(res_outer$tuner)),
   untuned = list(name = "default", tuners = c(unique(res_outer$tuner), "Untuned")),
