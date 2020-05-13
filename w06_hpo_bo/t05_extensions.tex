@@ -12,7 +12,7 @@
 \end{itemize}
 \end{block}
 \medskip
-%    \pause
+%    \fhpause
 \begin{block}{Extensions}
 \begin{itemize}
     \item Structured search spaces: categorical \& conditional hyperparameters 
@@ -116,7 +116,7 @@ Properties of categorical hyperparameters:
 %
 \end{columns}
 
-\pause
+\fhpause
 \vspace*{-0.4cm}
 This has to be taken into account by the surrogate model:
 %
@@ -153,7 +153,7 @@ Conditional hyperparameters:
 %
 \end{columns}
 
-\pause 
+\fhpause 
 \vspace*{-0.2cm}
 Modelling conditional hyperparameters:
 \myit{
@@ -162,7 +162,7 @@ Modelling conditional hyperparameters:
     \item There exist \alert{several kernels for Gaussian Processes} to handle conditional inputs \lit{\href{https://arxiv.org/abs/1310.5738}{Hutter et al. 2013}} \lit{\href{https://www.etsmtl.ca/Unites-de-recherche/LIVIA/Recherche-et-innovation/Publications/Publications-2017/Levesque_ijcnn_2017.pdf}{Lévesque et al. 2017}} \lit{\href{http://proceedings.mlr.press/v70/jenatton17a.html}{Jenatton et al. 2017}} 
 }
 %
-\pause
+\fhpause
 \vspace{0.4cm}
 Overall, structured search spaces are \alert{still an active research topic} and far from solved
 \end{frame}
@@ -187,7 +187,7 @@ Overall, structured search spaces are \alert{still an active research topic} and
 		}
 		\onslide<3->{
 			\smallskip
-			\pause		
+			\fhpause		
 			\item Possible solutions
 			\myit{
 				\item Optimize in a lower-dimensional \\
@@ -226,16 +226,16 @@ Overall, structured search spaces are \alert{still an active research topic} and
     \item Often, we have many parallel compute units
     \item How should these be exploited in (the typically inherently sequential) Bayesian optimization?
 \medskip
-\pause
+\fhpause
     \item To select a batch of $q$ points in parallel, we need to compute the multi-point acquisition function.
     E.g., for expected improvement:
     \begin{equation*}
         q\text{-EI}(\conf_{1, \dots, q}) = \E \left[ \cost(\incumbent) - \min_{i=1, \dots, q} \surro(\conf_i) \right]
     \end{equation*}
-\pause
+\fhpause
 \medskip
     \item For EI and KG, this requires \emph{expensive-to-compute} q-dimensional Gaussian cumulative distributions \lit{\href{https://hal.archives-ouvertes.fr/hal-00260579/document}{Ginsbourger et al. 2007}}, \lit{\href{https://arxiv.org/pdf/1606.04414v4.pdf}{Wu et al. 2018}}, \lit{\href{https://arxiv.org/pdf/1602.05149.pdf}{Wang et al. 2019}}
-    \pause
+    \fhpause
     \item Nevertheless, multi-point acquisition functions can be optimized efficiently with gradient descent via the reparameterization trick \lit{\href{https://papers.nips.cc/paper/8194-maximizing-acquisition-functions-for-bayesian-optimization}{Wilson et al. 2018}}
 }
 \end{frame}
@@ -249,18 +249,18 @@ Overall, structured search spaces are \alert{still an active research topic} and
     \myit{
         \item Thus, we need to select \alert{some new points} while we're still waiting for \alert{pending evaluations} at other points
     }
-\pause
+\fhpause
 \bigskip
 %
     \item Simple solution: \alert{hallucinate observations for pending evaluations}, and use otherwise standard methods:
-    \pause
+    \fhpause
     \myit{
         \item \alert{Constant Liar}: Choose a fixed value (constant) \lit{\href{http://www.cs.ubc.ca/labs/beta/EARG/stack/2010_CI_Ginsbourger-ParallelKriging.pdf}{Ginsbourger et al. 2010}}
 \smallskip
 \item \alert{Kriging Believer}: Use the current mean prediction (belief)  \lit{\href{http://www.cs.ubc.ca/labs/beta/EARG/stack/2010_CI_Ginsbourger-ParallelKriging.pdf}{Ginsbourger et al. 2010}}
 \smallskip
 \item \alert{Monte Carlo Fantasies} 
-        \pause
+        \fhpause
         \myit{
             \item Sample pending evaluations from the model
             \item Update copy of the model with these samples
@@ -276,10 +276,10 @@ Overall, structured search spaces are \alert{still an active research topic} and
 \iffalse
 \myframetop{Asynchronous Parallel Bayesian Optimization with Pending Evaluations}{
     %
-    Assume we have observed data $\left\{ \left\langle \bonextsample, \bonextobs \right\rangle \right\}^{N}_{\bocount = 1}$ and $J$ evaluations are pending $\left \{\conf_{j} \right \}^{J}_{j = 1}$. We can compute the expected mean function using the following integral: \pause
+    Assume we have observed data $\left\{ \left\langle \bonextsample, \bonextobs \right\rangle \right\}^{N}_{\bocount = 1}$ and $J$ evaluations are pending $\left \{\conf_{j} \right \}^{J}_{j = 1}$. We can compute the expected mean function using the following integral: \fhpause
     \begin{equation*}
     \begin{aligned}
-        \Bar{\acq} \left( \conf; \left\{ \left\langle \bonextsample, \bonextobs \right\rangle \right\}^{N}_{\bocount = 1}, \left \{\conf_{j} \right \}^{J}_{j = 1} \right) =  \pause
+        \Bar{\acq} \left( \conf; \left\{ \left\langle \bonextsample, \bonextobs \right\rangle \right\}^{N}_{\bocount = 1}, \left \{\conf_{j} \right \}^{J}_{j = 1} \right) =  \fhpause
         \int_{\mathbb{R}^J}  \acq \left( \conf; \left\{ \left\langle \bonextsample, \bonextobs \right\rangle \right\}^{N}_{\bocount = 1}, \left \{ \left\langle \conf_j, \obs_j \right\rangle \right \}^{J}_{j=1} \right) \\
         p( \{ \obs_j \}^{J}_{j = 1}  \rvert \{ \conf_j \}^{J}_{j = 1}, \left \left\{ \left\langle \bonextsample, \bonextobs \right\rangle \right\}^{N}_{\bocount = 1} )d\obs_1 \dots d\obs_J
     \end{aligned}
@@ -328,12 +328,12 @@ Overall, structured search spaces are \alert{still an active research topic} and
 %
 %\begin{frame}
 %\begin{itemize}
-%    \item <+-> Utilize tractable properties of GP to get Monte Carlo estimates of %acquisition function under different results from pending function evaluations. \pause
-%    \item <+-> Consider the case where $N$ evaluations have completed, with data $\left \{\bonextsample, \bonextobs \right \}^{N}_{\bocount = 1}$ and $J$ evaluations are pending $\left \{\conf_{j} \right \}^{J}_{j = 1}$: \pause
+%    \item <+-> Utilize tractable properties of GP to get Monte Carlo estimates of %acquisition function under different results from pending function evaluations. \fhpause
+%    \item <+-> Consider the case where $N$ evaluations have completed, with data $\left \{\bonextsample, \bonextobs \right \}^{N}_{\bocount = 1}$ and $J$ evaluations are pending $\left \{\conf_{j} \right \}^{J}_{j = 1}$: \fhpause
 %    \begin{equation*}
 %        \begin{aligned}
-%            \hat{\acq} ( \conf; \left \{ \bonextsample, \bonextobs \right \}, \left \{ \conf_j \right \} ) =  \pause
-%            \int_{\mathbb{R}^J}  \pause \acq ( \conf; \left \{ \bonextsample, %\bonextobs \right \}, \left \{ \conf_j, \obs_j \right \} ) \\  \pause
+%            \hat{\acq} ( \conf; \left \{ \bonextsample, \bonextobs \right \}, \left \{ \conf_j \right \} ) =  \fhpause
+%            \int_{\mathbb{R}^J}  \fhpause \acq ( \conf; \left \{ \bonextsample, %\bonextobs \right \}, \left \{ \conf_j, \obs_j \right \} ) \\  \fhpause
 %            p(\left \{ \obs_j \right \}^{J}_{j = 1}  \rvert \left \{ \conf_j \right \}^{J}_{j = 1}, \left \{ \bonextsample, \bonextobs \right \}^{N}_{\bocount=1} )d\obs_1 \dots d\obs_J
 %        \end{aligned}
 %    \end{equation*}
@@ -367,7 +367,7 @@ Overall, structured search spaces are \alert{still an active research topic} and
     %        \item KG and ES directly handle noisy function evaluations~\lit{\href{https://arxiv.org/abs/1807.02811}{Frazier 2018}}.
     %        \vspace{-0.2cm}
     
-\pause
+\fhpause
 \bigskip
     \myit{
         \item The acquisition function might need adaptation
@@ -428,7 +428,7 @@ Several types of constraints
 \end{columns}
 
 \vspace*{0.2cm}
-\pause
+\fhpause
 
 Most general solution: \alert{Expected Constrained Improvement}~\lit{\href{https://www.soe.ucsc.edu/sites/default/files/technical-reports/UCSC-SOE-10-10.pdf}{Lee and Gramacy 2010}}:
 \vspace{-0.1cm}

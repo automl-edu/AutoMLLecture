@@ -5,7 +5,7 @@
 \begin{itemize}
     \item Given the surrogate model $\iter{\surro}$ at the $\bocount$-th iteration of BO, the \\
     \alert{acquisition function $\acq(\cdot)$ judges the utility (or usefulness) of evaluating $f$ at $\iter{\conf}\in \pcs$ next}
-    \pause
+    \fhpause
     \bigskip
     \item The acquisition function needs to \alert{trade off exploration and exploitation}
     \myit{
@@ -57,14 +57,14 @@
         \item The \alert{probability of improvement $\acq_{PI}(\conf)$} at a configuration $\conf$ is then defined as: 
         \alert{\[\iter{\acq}_{PI}(\conf) = P(\cost(\conf) \leq \cost_{inc}).\]}
     \vspace*{-0.5cm}
-    \pause
+    \fhpause
     \item Since the predictive distribution for $\cost(\conf)$ is a Gaussian $\normaldist(\iter[\bocount-1]{\mean}(\conf), \iter[\bocount-1]{\variance}(\conf))$, this can be written as:
     \[
         \alert{\iter{\acq}_{PI}(\conf) = \cdf[Z]}, \quad \text{with } Z = \dfrac{\cost_{inc} - \iter[\bocount-1]{\mean}(\conf) - \xi}{\iter[\bocount-1]{\stddev}(\conf)}, 
     \]
     \newline
     where $\cdf(\cdot)$ is the CDF of the standard normal distribution and $\xi$ is an optional exploration parameter
-    \pause
+    \fhpause
     \item[] \[\boxed{\text{Choose}\;\;\bonextsample \in \argmax_{\conf\in\pcs}(\iter{\acq}_{PI}(\conf))}\]
 %    \comment{Source: Tutorial by Brochu et al.: https://arxiv.org/pdf/1012.2599.pdf }
 \end{itemize}
@@ -122,7 +122,7 @@
 %        \comment{This is probably a great time to point out, once again, that because I is defined in terms of the actual cost function, we cannot directly compute it.}
         \smallskip
         \item Expected Improvement is then defined as \alert{\[\iter{\acq}_{EI}(\conf) = \E[\iter{I}(\conf)] = \int_{-\infty}^{\infty} \iter{p}(\cost \mid \conf) \times \iter[\bocount]{I}(\conf)\;\; d\cost.\]}
-        \pause
+        \fhpause
         \smallskip
         \item Since the posterior distribution of $\surro(\conf)$ is a Gaussian, EI can be computed in closed form (see exercise):
         
@@ -137,7 +137,7 @@
             \text{ and } \xi \text{ is an optional exploration parameter.}
         \end{align*}
 %            \comment{I believe I needed to switch the signs of $\cost(\cdot)$ and $\mean(\cdot)$ as compared to the reference paper in order to accommodate for our convention of minimization/maximization. Please cross-check!}
-    \pause
+    \fhpause
     \bigskip
     \[\boxed{\text{Choose}\;\;\bonextsample \in \argmax_{\conf\in\pcs}(\iter{\acq}_{EI}(\conf))}
     \]
@@ -154,14 +154,14 @@
 %            \iter{I}(\conf) = \max(0, \cost(\incumbent[\bocount-1]) - \cost(\conf)), \quad\incumbent[\bocount-1]\in\argmin_{\conf'\in\iter[\bocount-1]{\dataset}}\obs[\conf']\in\iter[\bocount-1]{\dataset}
 %        \]
 %        \comment{This is probably a great time to point out, once again, that because I is defined in terms of the actual cost function, we cannot directly compute it.}
-%        \pause
+%        \fhpause
 %        \medskip
 %        \item[] Expected Improvement is then defined as
 %        \begin{align*}
 %            \iter{\acq}_{EI}(\conf) &= \E[\iter{I}(\conf)]\\
 %            &= \int_{\iter{I}=0}^{\iter{I}=\infty}\iter{I} P(\iter{I})d\iter{I}
 %        \end{align*}
-%        \pause
+%        \fhpause
 %        \medskip
 %        \item[]Since the posterior distribution of the surrogate is a Gaussian, it can be shown that the distribution on $\iter{I}(\conf)$ is also a Gaussian, defined as
 %        \[
@@ -233,7 +233,7 @@
 
 \end{itemize}
     \bigskip
-    \pause
+    \fhpause
     
     \myit{
         \item Note: when one aims to \alert{maximize} the objective function, one would use \alert{UCB} instead

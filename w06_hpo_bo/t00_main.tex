@@ -1,9 +1,12 @@
 \input{../latex_main/main.tex}
 
 % FH: I created this command videotitle (and file title_slide.tex) to show a new title slide for each video without the need of any repeating boiler plate code. Please do not change this anymore.
-%\newcommand{\videotitle}[1]{\subtitle{#1}\section{#1}\input{title_slide}}
 \newcommand{\videotitle}[1]{\subtitle{#1}\input{title_slide}}
+\newcommand{\fhpause}{\pause} % for taping
 
+% for final handout:
+\renewcommand{\videotitle}[1]{\subtitle{#1}\section{#1}\input{title_slide}}
+\renewcommand{\fhpause}{} % for final handout
 
 \title[AutoML: Bayesian Optimization for HPO]{AutoML: Bayesian Optimization for HPO} % week title
 \author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}

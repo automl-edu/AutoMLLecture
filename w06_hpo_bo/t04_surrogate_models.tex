@@ -99,7 +99,7 @@
     \end{itemize}
     \end{block}
 \bigskip
-\pause
+\fhpause
 \hspace*{0.5cm}These advantages make GPs the\\
 \hspace*{0.5cm}\alert{most commonly-used model\\
 \hspace*{0.5cm}in Bayesian optimization}
@@ -107,7 +107,7 @@
 \end{column}%
 
 \hfill%
-\pause
+\fhpause
 
 \begin{column}{.48\textwidth}
     \begin{block}{Disadvantages}
@@ -169,7 +169,7 @@
 % \begin{frame}[c]{Surrogate Models: GPs - kernel hyperparameters}
 
 % \begin{itemize}
-%     \item After choosing the kernel, we must also manage the hyperparameters that govern its behaviour, as well as that of the mean function.  \pause
+%     \item After choosing the kernel, we must also manage the hyperparameters that govern its behaviour, as well as that of the mean function.  \fhpause
 %     \item For our problems of interest, typically we have $D + 3$ GPs hyperparameters:  
 %     \begin{itemize}
 %         \item $D$ length scales $\theta_{1:D}$, 
@@ -245,7 +245,7 @@
 \end{block}
 \end{column}
 
-\pause
+\fhpause
 \hfill
 
 \begin{column}{.48\textwidth}
@@ -288,7 +288,7 @@
 \captionsetup[subfigure]{position=top}
 \centering
 
-\pause
+\fhpause
 \renewcommand{\thesubfigure}{c}
 \subfloat[][no bootstrapping, \\ with random splits]{
 \includegraphics[width=0.55\textwidth, clip]{images/surrogate_models/rf_noboot_rand_split.png}
@@ -327,7 +327,7 @@
 \end{column}%
 
 \hfill%
-\pause
+\fhpause
 
 \begin{column}{.48\textwidth}
     \begin{block}{Disadvantages}
@@ -338,7 +338,7 @@
     \end{itemize}
     \end{block}
 
-\pause
+\fhpause
 \bigskip
 \bigskip
 \hspace*{0.5cm}These qualities make RFs a \alert{robust} \\
@@ -356,8 +356,8 @@
     \item Neural networks are more flexible \& scalable than Gaussian processes 
     \item But for use in Bayesian optimization, neural networks need to be made probabilistic
     
-\pause
-    \item Bayesian deep learning aims to deal with all sources of uncertainty \pause
+\fhpause
+    \item Bayesian deep learning aims to deal with all sources of uncertainty \fhpause
     \begin{itemize}
         \item E.g., we don't have a single weight vector anymore, but a distribution over weights
     \end{itemize}
@@ -396,7 +396,7 @@
 \begin{itemize}
     \item Fit a standard regression neural network to the data (with a linear output layer)
     \item Use the representation in the last hidden layer as \alert{basis functions $\phi(x)$} of the input $x$ 
-    \item \alert{Use Bayesian linear regression with these basis functions} \pause
+    \item \alert{Use Bayesian linear regression with these basis functions} \fhpause
     \begin{itemize}
         \item The last layer is linear in its parameters $\theta$  
         \item Therefore, the Bayesian linear regression formulas work directly 
@@ -422,7 +422,7 @@
 	    \item \lit{\href{https://papers.nips.cc/paper/6117-bayesian-optimization-with-robust-bayesian-neural-networks.pdf}{Springenberg et al. 2016}} Bayesian Optimization with Robust Bayesian Neural Networks
 	    \item \lit{\href{https://arxiv.org/abs/1706.01825}{Hern\'andez-Lobato et al. 2017}} Parallel and Distributed Thompson Sampling for Large-scale Accelerated Exploration of Chemical Space
 \bigskip
-\pause
+\fhpause
         \item \lit{\href{https://www.ismll.uni-hildesheim.de/pub/pdfs/schilling2015-ecml.pdf}{Schilling et al. 2015}} Hyperparameter Optimization with Factorized Multilayer Perceptrons
         \item \lit{\href{https://papers.nips.cc/paper/7917-scalable-hyperparameter-transfer-learning}{Perrone et al. 2018}} Scalable Hyperparameter Transfer Learning
 
