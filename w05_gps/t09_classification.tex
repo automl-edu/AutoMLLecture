@@ -1,0 +1,208 @@
+
+\input{../latex_main/main.tex}
+
+
+\newcommand{\lz}{\vspace{0.5cm}}
+\newcommand{\thetab}{\bm{\weights}}
+\newcommand{\zero}{\mathbf{0}}
+\newcommand{\Xmat}{\mathbf{X}}
+\newcommand{\ydat}{\mathbf{y}}
+\newcommand{\id}{\boldsymbol{I}}
+\newcommand{\Amat}{\mathbf{A}}
+\newcommand{\Xspace}{\mathcal{X}}                                         
+\newcommand{\Yspace}{\mathcal{Y}}
+\newcommand{\ls}{\ell}
+\newcommand{\natnum}{\mathbb{N}}
+\newcommand{\intnum}{\mathbb{Z}}
+\newcommand{\sumin}{\sum\limits_{i=1}^n}	
+
+\usepackage{fontawesome}
+\usepackage{dirtytalk}
+\usepackage{csquotes}
+
+%\begin{frame}[c]{}
+%\centering
+%\huge
+%\textbf{}
+%\end{frame}
+
+
+%\item[\faLightbulbO]
+\title[AutoML: GPs]{AutoML: Gaussian Processes} % week title
+\subtitle{Gaussian Process Classification} % video title
+\author[Marius Lindauer]{\underline{Bernd Bischl} \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+
+\begin{document}
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c,allowframebreaks]{Training a GP via the Maximum Likelihood}
+
+\begin{itemize}
+\item Consider a binary classification problem, in which we want to learn $h: \Xspace \to \Yspace$, where $\Yspace = \{0, 1\}$. 
+
+\lz
+\item The idea behind Gaussian process classification is straightforward: a GP prior is placed over the score function $f(\x)$ and then transformed to a class probability via a sigmoid function $s(t)$:
+\vspace{-3mm}
+$$p(y = 1 \mid f(\x) ) = s(f(\x)).$$
+
+\vspace{3mm}
+\item Since this is a non-Gaussian likelihood, we need to use approximate inference methods, such as Laplace approximation, expecation propagation, MCMC.
+
+\lz
+\item For more details see \emph{Rasmussen, Gaussian Processes for Machine Learning, Chapter 3}.
+\end{itemize}
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\vspace*{1cm}
+
+\begin{figure}
+\includegraphics[width=0.9\textwidth]{figure_man/gp-classif-1-1.pdf}
+\end{figure}
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{itemize}
+
+\item According to Bayes' rule, the posterior of the score function $\bm{f}$ takes the following form:
+
+\vspace{-0.5cm}
+\begin{eqnarray*}p(\bm{f}\mid\Xmat, \ydat) &=&  \frac{p(\ydat\mid\bm{f}, \Xmat) \cdot p(\bm{f}\mid\Xmat)}{p(\ydat\mid\Xmat)} \propto p(\ydat\mid\bm{f}) \cdot p(\bm{f}\mid\Xmat),\end{eqnarray*}
+\vspace{-2mm}
+where, the denominator is independent of $\bm{f}$ and hence has been dropped.
+
+\vspace{15mm}
+
+\item Frm the GP assumption, we can assert that $p(\bm{f}\mid\Xmat) \sim \mathcal{N}\left(0, \bm{K}\right)$. Hence, we have:
+\vspace{-2mm}
+$$\log p(\bm{f}\mid\Xmat, y) \propto \log p(\ydat\mid\bm{f}) - \frac{1}{2} \bm{f}^\top \bm{K}^{-1} \bm{f} - \frac{1}{2} \log |\bm{K}| - \frac{n}{2} \log 2 \pi.$$
+
+\end{itemize}
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}
+
+\item If the kernel is fixed, the last two terms will be fixed. To obtain the maximum a-posteriori estimate (MAP), we should minimize:
+
+$$\frac{1}{2} \bm{f}^\top \bm{K}^{-1}\bm{f} - \sumin\, \log\, p(\yI{i}\mid f^{(i)}) + C.$$
+
+\vspace{0.5cm}
+\item Note that $-\sumin\,\log \,p(\yI{i}\mid f^{(i)})$ is the logistic loss.
+
+\vspace{0.7cm}
+\item It can be seen that the Gaussian process classification corresponds to the \textbf{kernel Bayesian logistic regression}!
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}[c,allowframebreaks]{Comparison: GP vs. SVM}
+
+
+\begin{itemize}
+\item For the SVM, we have: 
+\vspace{-2mm}
+$$\frac{1}{2} \|\thetab\|^2 + C \sumin \loss(\yI{i},f(\xI{i})),$$
+
+
+\vspace{.5cm}
+\item Plugging that in, the optimization objective would be:
+\vspace{-2mm}
+$$\frac{1}{2} \bm{f}^\top \bm{K}^{-1} \bm{f} + C \sumin \loss(\yI{i},f(\xI{i})),$$
+\vspace{-2mm}
+where $\loss(\y,f(\x))  = \max\{0, 1-f(\x)\cdot\y\}$ is the Hinge loss.
+
+
+\vspace{1cm}
+\item From the representer theorem: $\thetab = \sumin \beta_i\,\yI{i} k\left(\xI{i}, \cdot \right)$, and thus:
+\vspace{-2mm}
+$$\thetab^\top \thetab = \beta^\top \bm{K} \beta = \bm{f}^\top \bm{K}^{-1} \bm{f}$$. 
+
+\end{itemize}
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}
+\item For log-concave likelihoods $\log\, p(\ydat\mid \bm{f})$, there is a close correspondence between the MAP solution of the GP classifier and the SVM solution:
+
+\lz
+
+$$\argmin_f\,\frac{1}{2}\,\bm{f}^\top \bm{K}^{-1} \bm{f}- \sumin \log\, p(\yI{i}\mid f^{(i)}) + C \quad \text{(GP classifier)}$$
+
+\lz
+
+$$\argmin_f\,\frac{1}{2}\, \bm{f}^\top \bm{K}^{-1} \bm{f} + C \sumin \loss(\yI{i},f(\xI{i})) \quad \text{(SVM classifier)}$$
+\end{itemize}
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}
+\item Both the Hinge loss and the Bernoulli loss are monotonically decreasing with increasing margin $\y f(\x)$. 
+\item The key difference is that the Hinge loss takes on the value $0$ for $\y f(\x) \ge 1$, while the Bernoulli loss decays slowly.
+\item It is this flat part of the Hinge function that gives rise to the sparsity of the SVM solution. 
+\item The SVM classifier can be construed as a ``sparse'' GP classifier.
+\end{itemize}
+
+\begin{figure}
+\includegraphics[width=0.6\textwidth]{figure/los-exp-plot-1.pdf}
+\end{figure}
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
