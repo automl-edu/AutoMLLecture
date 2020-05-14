@@ -63,16 +63,22 @@ Let $\textbf{y} = (\yI{1}, ..., \yI{n})^\top$ and $\Xmat \in \realnum^{n \times 
 
 The linear regression model is defined as
 
+$$
+y = f(\x) + \epsilon = \bm{\weights}^\top \x + \epsilon 
+$$
+
+or on the data:
 
 $$
 \yI{i} = f(\xI{i}) + \epsilon^{(i)} = \bm{\weights}^\top \xI{i} + \epsilon^{(i)} \text{, for all } i \in \{1,\dots,n\}.
 $$
 
 \lz 
-\lz 
+We now assume (from a Bayesian perspective) that also our parameter vector $\bm{\weights}$ is stochastic and follows a distribution.
 
 The observed values $\yI{i}$ differ from the function values $f(\xI{i})$ by some additive noise, which is assumed to be i.i.d. Gaussian 
-$$\epsilon^{(i)} \sim \normaldist (0, \variance).$$
+$$\epsilon^{(i)} \sim \normaldist (0, \variance)$$
+and independent of $\x$ and $\theta$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -222,9 +228,9 @@ $$y_* \mid \Xmat, \ydat, \x_* \sim \normaldist(\sigma^{-2}\ydat^\top \Xmat \Amat
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \framebreak
 
-\foreach \x in{5, 10, 20} {
+\foreach \j in{5, 10, 20} {
 \begin{figure}
-\includegraphics[width=0.4\textwidth]{figure_man/bayes-lm/posterior-\x-3.pdf} \par
+\includegraphics[width=0.4\textwidth]{figure_man/bayes-lm/posterior-\j-3.pdf} \par
 \begin{footnotesize}
 For every test input $\x_*$, we get a distribution over the prediction $y_*$. In particular, we get a posterior mean (orange) and a posterior variance (the grey region, which equals $+/-$ two times the standard deviation).
 \end{footnotesize}

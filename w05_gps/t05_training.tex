@@ -50,13 +50,11 @@
 
 \begin{itemize}
 \vspace{.5cm}
-\item To make predictions for a regression task by a Gaussian process, one needs to perform matrix computations.
+\item To make predictions for a regression task by a Gaussian process, one simply needs to perform matrix computations.
 \vspace{.5cm}
-\item Here, the main difficulty is how to do \textbf{model selection}, i.e., how to choose the best covariance function and how to tune the hyperparameters.
+\item But for this to work out, we assume that the covariance functions is fully given, including all of its hyperparameters.
 \vspace{.5cm}
-\item There is a multitude of possible families of covariance functions, each coming with a number of hyperparameters to be chosen.
-\vspace{.5cm}
-\item We will refer to the model selection as \textbf{training} of a Gaussian process.
+\item A very nice property of GPs is that we can learn the numerical hyperparameters of a selected covariance function directly during GP training.
 \end{itemize}
 
 
@@ -93,7 +91,7 @@ Recalling that the increase of the length-scale reduces the model flexibility, t
 \item The data fit $-\frac{1}{2}\bm{y}^T\bm{K}_y^{-1} \bm{y}$. The data fit tends to decrease by increasing the length-scale.
 \vspace{.5cm}
 
-\item The complexity penalty $- \frac{1}{2}\,log\,\left| \bm{K}_y \right|$, which depends on the covariance function. This term also decreases with the increase of the length-scale (the model gets less complex as the length-scale grows).
+\item The complexity penalty $- \frac{1}{2}\,log\,\left| \bm{K}_y \right|$, which depends on the covariance function. This term decreases with the increase of the length-scale (the model gets less complex as the length-scale grows).
 \vspace{.5cm}
 
 \item The normalization constant $- \frac{n}{2}\,log\,2\pi$.
@@ -105,7 +103,7 @@ Recalling that the increase of the length-scale reduces the model flexibility, t
 
 \begin{frame}[c,allowframebreaks]{Training a GP: Example}
 
-To visualize the said ideas, let us consider a zero-mean Gaussian process with a squared exponential kernel:
+To visualize this, let us consider a zero-mean GP with a squared exponential kernel:
 
 $$
 k(\x, \x^\prime) = \exp\left(-\frac{1}{2\ls^2}\|\x - \x^\prime\|^2\right).
@@ -113,9 +111,9 @@ $$
 
 
 \begin{itemize}
-	\item[\faLightbulbO] Recall that the model becomes smoother and less complex as the length-scale $\ls$ increases.
+	\item Recall that the model becomes smoother and less complex as the length-scale $\ls$ increases.
 	\lz
-	\item[\faLightbulbO] We will show how each of the following terms behaves if the value of $\ls$ increases:
+	\item We will show how each of the following terms behaves if the value of $\ls$ increases:
 	\vspace{2mm}
 	\begin{itemize}
 		\item the data fit $-\frac{1}{2}\bm{y}^\top\bm{K}_y^{-1} \bm{y}$,
@@ -211,11 +209,11 @@ $$\frac{\partial}{\partial \theta_j} \bm{K}^{-1} = - \bm{K}^{-1} \frac{\partial 
 
 
 \begin{itemize}
-  \item The complexity and the runtime of training a Gaussian process is dominated by the computational task of inverting $\bm{K}$.
+  \item The complexity and the runtime of training a Gaussian process is dominated by the computational task of inverting $\bm{K}$ - or let's rather say for decomposing it.
   \lz
-  \item Standard methods require $\order(n^3)$ time (!) for inverting an $n\times n$ matrix.
+  \item Standard methods require $\order(n^3)$ time (!) for this.
   \lz
-  \item Once $\bm{K}^{-1}$ is known, the computation of the partial derivatives requires only $\order(n^2)$ time per hyperparameter.
+  \item Once $\bm{K}^{-1}$ - or rather the decomposition -is known, the computation of the partial derivatives requires only $\order(n^2)$ time per hyperparameter.
   \lz
   \item[\faLightbulbO] Thus, the computational overhead of computing derivatives is small, and using a gradient based optimizer is advantageous.
 \end{itemize}

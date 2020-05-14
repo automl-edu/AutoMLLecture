@@ -56,9 +56,9 @@
 
 \item So far, we have learned how to \textbf{sample} from a Gaussian process prior.
 \lz
-\item However, most of the time, we are not interested in drawing random functions from the prior. Instead, we usually like to implement the knowledge provided by the training data to predict values of $f$ at a new test point $\x_*$. 
+\item However, most of the time, we are not interested in drawing random functions from the prior. Instead, we usually like to use the knowledge provided by the training data to predict values of $f$ at a new test point $\x_*$. 
 \lz
-\item In what follows, we will investigate how to update Gaussian process prior ($\to$ posterior process) and how to make predictions.
+\item In what follows, we will investigate how to update the Gaussian process prior ($\to$ posterior process) and how to make predictions.
 
 
 \end{itemize}
@@ -81,9 +81,9 @@
   
 $$\bm{f} = \left[f\left(\xI{1}\right),\dots, f\left(\xI{n}\right)\right],$$ 
 
-and one single \textbf{unobserved test} point $f_* = f\left(\x_*\right).$
+and one single \textbf{unobserved test point} $\x_*$ with $f_* = f\left(\x_*\right).$
 
-\lz
+\item We now want to infer the distribution of $f_* | x_*, X, \bm{f}$.
 
 \item Assuming a zero-mean GP prior $\gp\left(\bm{0}, k(\x, \x^\prime)\right)$, we can assert that
 $$\begin{bmatrix}\bm{f} \\
@@ -102,8 +102,8 @@ where, $\bm{K} = \left(k\left(\xI{i}, \xI{j}\right)\right)_{i,j}$, $\bm{k}_* = \
 \lz
 \lz
 
-Let $\bm{z}_1 \in \realnum ^{m_1}$, $\bm{z}_2 \in \realnum^{m_2}$, and $\bm{z} = \left(\bm{z}_1, \bm{z}_2\right)$. If the $m$-dimensional Gaussian vector $\bm{z}$ can be partitioned as $$\mu = \left(\mu_1, \mu_2\right), \quad \Sigma = \begin{pmatrix} \Sigma_{11} & \Sigma_{12} \\ \Sigma_{21} & \Sigma_{22} \end{pmatrix},$$
-
+If the $m$-dimensional Gaussian vector $\bm{z} \sim \normaldist(\mu, \Sigma)$ can be partitioned with $\bm{z} = \left(\bm{z}_1, \bm{z}_2\right)$ where $\bm{z}_1$ is $m_1$-dimensional and $\bm{z}_2$ is $m_2$-dimensional, and:
+$$\left(\mu_1, \mu_2\right), \quad \Sigma = \begin{pmatrix} \Sigma_{11} & \Sigma_{12} \\ \Sigma_{21} & \Sigma_{22} \end{pmatrix},$$
 then the conditional distribution $\bm{a}= \bm{z}_2 ~|~ \bm{z}_1$ will be a multivariate normal distribution:
 
 $$
@@ -126,7 +126,7 @@ f_* ~|~ \x_*, \Xmat, \bm{f} \sim \normaldist(\bm{k}_{*}^{T}\Kmat^{-1}\bm{f}, \bm
 \lz
 \lz
 
-\item[\faLightbulbO] As the posterior is Gaussian, the maximum a-posteriori estimate (i.e., the mode of the posterior distribution) is:
+\item As the posterior is Gaussian, the maximum a-posteriori estimate (i.e., the mode of the posterior distribution) is:
 
 \large $$\bm{k}_{*}^{T}\Kmat^{-1}\bm{f}$$.
 
@@ -140,7 +140,7 @@ To visualize the above idea, assume that we have observed a single training poin
 \vspace{3mm}
 
 \begin{itemize}
-  \item Under a zero-mean $\gp$ with $k(\x, \x^\prime) = \exp(-\frac{1}{2}\|\x - \x^\prime\|^2)$, we assume (the covariance matrix has been computed):
+  \item Under a zero-mean $\gp$ with $k(\x, \x^\prime) = \exp(-\frac{1}{2}\|\x - \x^\prime\|^2)$, we compute the cov-matrix:
   \vspace{-3mm}
   $$\begin{bmatrix} f \\ f_* \end{bmatrix} \sim \normaldist\biggl(\bm{0}, \begin{bmatrix} 1 & 0.61 \\ 0.61 & 1\end{bmatrix}\biggr).$$ 
   \item Let us assume that we observe the point $f(\x) = 1$. We can compute the posterior distribution:
@@ -168,7 +168,7 @@ The figures show the bivariate normal density as well as the corresponding margi
 \framebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Now, assume that we observe the value of $f(\x) = 1$ corresponding to the training point $\x = -0.5$. 
+We observe $f(\x) = 1$ at training point $\x = -0.5$. 
 
 
 \begin{figure}
@@ -226,7 +226,7 @@ We can repeat this process for different $\x_*$ and find the respective mean (gr
 \begin{itemize}
 \item The previous discussion was restricted to a single test point. However, one can generalize it to posterior processes with multiple unobserved test points:
   
-$$\bm{f}_* = \left[f\left(\xI{1}_*\right),\dots, f\left(\xI{n}_*\right)\right].$$ 
+$$\bm{f}_* = \left[f\left(\xI{1}_*\right),\dots, f\left(\xI{m}_*\right)\right].$$ 
 
 
 \lz
@@ -234,10 +234,10 @@ $$\bm{f}_* = \left[f\left(\xI{1}_*\right),\dots, f\left(\xI{n}_*\right)\right].$
 \item Under a zero-mean Gaussian process, we have:
 
 $$\begin{bmatrix}\bm{f} \\
-f_*\end{bmatrix}\sim  
+\bm{f}_*\end{bmatrix}\sim  
 \normaldist\biggl(\bm{0}, \begin{bmatrix} \bm{K} & \bm{K}_* \\ \bm{K}_*^T & \bm{K}_{**}\end{bmatrix}\biggr),$$
 
-where $\bm{K}_* = \left(k\left(\xI{i}, \xI{j}_*\right)\right)_{i,j}$ and $ \bm{K}_{**}\ = k(\xI{i}_*, \xI{j}_*)$.
+where $\bm{K}_* = \left(k\left(\xI{i}, \xI{j}_*\right)\right)_{i,j}$ and $\bm{K}_{**} = \left(k\left(\xI{i}_*, \xI{j}_*\right)\right)_{i,j}$ 
 
 \end{itemize}
 
@@ -246,7 +246,7 @@ where $\bm{K}_* = \left(k\left(\xI{i}, \xI{j}_*\right)\right)_{i,j}$ and $ \bm{K
 
 \begin{itemize}
 
-  \item[\faLightbulbO] Similar to the single test point situation, to get the posterior distribution, we exploit the general rule of conditioning for Gaussians:
+  \item Similar to the single test point situation, to get the posterior distribution, we exploit the general rule of conditioning for Gaussians:
   
   \begin{eqnarray*}
     \bm{f}_* ~|~ \Xmat_*, \Xmat, \bm{f} \sim \normaldist(\Kmat_{*}^{T}\Kmat^{-1}\bm{f}, \Kmat_{**} - \Kmat_*^T \Kmat ^{-1}\Kmat_*).
@@ -254,7 +254,7 @@ where $\bm{K}_* = \left(k\left(\xI{i}, \xI{j}_*\right)\right)_{i,j}$ and $ \bm{K
   
 \lz
 
-  \item[\faLightbulbO] This formula enables us to talk about correlations among different test points and sample functions from the posterior process. 
+  \item This formula enables us to talk about correlations among different test points and sample functions from the posterior process. 
 \end{itemize}
 
 
@@ -303,9 +303,9 @@ where $\bm{K}_* = \left(k\left(\xI{i}, \xI{j}_*\right)\right)_{i,j}$ and $ \bm{K
 
 \begin{itemize}
 
-\item[\faLightbulbO] Posterior uncertainty increases if the new data points are far from the design points.
+\item Posterior uncertainty increases if the new data points are far from the design points.
 \lz
-\item[\faLightbulbO] The uncertainty is minimal at the design points, since the posterior variance is zero at these points.
+\item The uncertainty is minimal at the design points, since the posterior variance is zero at these points.
 \end{itemize}
 
 \begin{figure}\includegraphics[width=0.68\textwidth]{figure/mbo-2d-2-1.pdf}\par
@@ -355,7 +355,7 @@ where $\bm{K}_* = \left(k\left(\xI{i}, \xI{j}_*\right)\right)_{i,j}$ and $ \bm{K
     \\ &=& k\left(\xI{i}, \xI{j}\right) + \variance \delta_{ij}. 
   \end{eqnarray*}
   \end{footnotesize}
-  \item[\faLightbulbO] $\variance$ is called \textbf{nugget}. 
+  \item $\variance$ is called \textbf{nugget}. 
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -365,7 +365,7 @@ where $\bm{K}_* = \left(k\left(\xI{i}, \xI{j}_*\right)\right)_{i,j}$ and $ \bm{K
   \item We can now derive the predictive distribution for the case of noisy observations. 
   \item Assuming that $f$ is modeled by a Gaussian process, the prior distribution of $y$ is
   
-  $$\bm{y} = \begin{pmatrix} \yI{1} \\ \yI{2} \\ \vdots \\ \yI{n} \end{pmatrix} \sim \normaldist\left(\bm{m}, \bm{K} + \variance \delta_{ij}\right),$$
+  $$\bm{y} = \begin{pmatrix} \yI{1} \\ \yI{2} \\ \vdots \\ \yI{n} \end{pmatrix} \sim \normaldist\left(\bm{m}, \bm{K} + \variance I_n \right),$$
   
   with
 
@@ -384,7 +384,7 @@ We distinguish again between:
 \lz
 
 \begin{itemize}
-\item Observed training points and their corresponding values, i.e, $\Xmat$ and $\y$.
+    \item Observed training points and their corresponding values, i.e, $\Xmat$ and $\bm{y}$.
 \item Unobserved test points and their corresponding values, i.e, $\Xmat_*$ and $\bm{f}_*$.
 \end{itemize}
 
@@ -397,7 +397,7 @@ and get:
   \bm{y} \\
   \bm{f}_*
   \end{bmatrix} \sim  
-  \normaldist\biggl(\bm{0}, \begin{bmatrix} \Kmat + \variance\delta_{ij} & \Kmat_* \\ \Kmat_*^T & \Kmat_{**} \end{bmatrix}\biggr).
+  \normaldist\biggl(\bm{0}, \begin{bmatrix} \Kmat + \variance I_n & \Kmat_* \\ \Kmat_*^T & \Kmat_{**} \end{bmatrix}\biggr).
   $$
 
 \framebreak
@@ -421,7 +421,7 @@ with
 \end{itemize}
 
 \begin{itemize}
-\item[\faLightbulbO] This converts back to the noise-free formula if $\variance = 0$.
+\item This converts back to the noise-free formula if $\variance = 0$.
 \end{itemize}
 
 \framebreak
@@ -430,7 +430,7 @@ with
 \begin{itemize}
 \item The noisy Gaussian process is not an interpolator any more.
 \item A larger nugget term leads to a wider ``band'' around the observed training points.
-\item In general, the effect of the nugget term is estimated during training (see the next section).
+\item The nugget term is estimated during training.
 \end{itemize}
 
 
@@ -440,52 +440,52 @@ with
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[c]{}
-\centering
-\huge
-\textbf{Decision Theory for Gaussian Processes}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[c,allowframebreaks]{Risk Minimization for Gaussian Processes}
+%\begin{frame}[c]{}
+%\centering
+%\huge
+%\textbf{Decision Theory for Gaussian Processes}
+%\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{frame}[c,allowframebreaks]{Risk Minimization for Gaussian Processes}
 
-In machine learning, we usually choose a loss function and try to minimize the empirical risk:
-$$\riske(f) := \sum_{i=1}^{n}\loss(\yI{i},f(\xI{i})),$$
+%In machine learning, we usually choose a loss function and try to minimize the empirical risk:
+%$$\riske(f) := \sum_{i=1}^{n}\loss(\yI{i},f(\xI{i})),$$
 
-as an approximation to the theoretical risk:
-$$\risk(f):= \expectation_{xy}[\loss(\y,f(\x))]= \int \loss(\y,f(\x)) \mathrm{d} \mathbb{P}_{x y}.$$
+%as an approximation to the theoretical risk:
+%$$\risk(f):= \expectation_{xy}[\loss(\y,f(\x))]= \int \loss(\y,f(\x)) \mathrm{d} \mathbb{P}_{x y}.$$
 
-\lz
+%\lz
 
-\begin{itemize}
-  \item How does the theory of Gaussian processes fit into this scenario? 
-  \lz
-  \item What if we were looking for predictions that atr optimal w.r.t. a certain loss function?
-\end{itemize}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\framebreak
+%\begin{itemize}
+%  \item How does the theory of Gaussian processes fit into this scenario? 
+%  \lz
+%  \item What if we were looking for predictions that atr optimal w.r.t. a certain loss function?
+%\end{itemize}
 
 
-\begin{itemize}
 
-\item The theory of Gaussian process provides us with a posterior distribution, i.e, $p(y ~|~\dataset).$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\framebreak
 
-\lz
+
+%\begin{itemize}
+
+%\item The theory of Gaussian process provides us with a posterior distribution, i.e, $p(y ~|~\dataset).$
+
+%\lz
   
-\item To make a prediction at a test point $\bm{x}_*$, we can approximate the theoretical risk by explointing the posterior distribution:
-$$\mathcal{R}(y_* ~|~ \bm{x}_*) \approx \int L(\tilde y_*, y_*) \, p(\tilde y_*~|~\bm{x}_*, \dataset)d\tilde y_*.$$
+%\item To make a prediction at a test point $\bm{x}_*$, we can approximate the theoretical risk by explointing the posterior distribution:
+%$$\mathcal{R}(y_* ~|~ \bm{x}_*) \approx \int L(\tilde y_*, y_*) \, p(\tilde y_*~|~\bm{x}_*, \dataset)d\tilde y_*.$$
  
-\lz
+%\lz
 
-\item The optimal prediciton w.r.t the loss function is then: 
-$$\hat y_* ~|~ \bm{x}_* = \argmin_{y_*} \mathcal{R}(y_*~|~ \bm{x}_*)$$
+%\item The optimal prediciton w.r.t the loss function is then: 
+%$$\hat y_* ~|~ \bm{x}_* = \argmin_{y_*} \mathcal{R}(y_*~|~ \bm{x}_*)$$
 
-\end{itemize}
+%\end{itemize}
 
 
-\end{frame}
+% \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}

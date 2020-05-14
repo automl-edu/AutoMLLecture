@@ -46,7 +46,7 @@
 %----------------------------------------------------------------------
 \begin{frame}[c,allowframebreaks]{Covariance function of a GP}
 
-The marginalization property of the Gaussian process implies that for any set of input values, the corresponding vector of function values is Gaussian:
+    The marginalization property of the Gaussian process implies that for any finite set of input values, the corresponding vector of function values is Gaussian:
 
   $$
     \bm{f} = \left[f\left(\xI{1}\right),\dots, f\left(\xI{n}\right)\right] \sim \mathcal{N}\left(\bm{m}, \bm{K}\right).
@@ -78,9 +78,9 @@ If $\xI{i}$ and $\xI{j}$ are close in the $\Xspace$-space, their function values
 \begin{itemize}
 \item[\faLightbulbO] Closeness of $\xI{i}$ and $\xI{j}$ in the input space $\Xspace$ is measured by $\bm{d} =\xI{i}-\xI{j}$. 
 
-\lz
+% \lz
 
-\item[\faLightbulbO] $\bm{K}_{ij}$ is the covariance of $f(\xI{i})$ and $f(\xI{j})$, and \textbf{stationary} covariance functions are those in which the following holds:$$k(\xI{i}, \xI{j}) = k(\bm{d})$$ 
+% \item[\faLightbulbO] $\bm{K}_{ij}$ is the covariance of $f(\xI{i})$ and $f(\xI{j})$, and \textbf{stationary} covariance functions are those in which the following holds:$$k(\xI{i}, \xI{j}) = k(\bm{d})$$ 
 \end{itemize}
 
 \end{frame}
@@ -138,17 +138,6 @@ If $\xI{i}$ and $\xI{j}$ are close in the $\Xspace$-space, their function values
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[c]{Sampling from a GP: Covariance Function}
-
-Let us draw $10$ functions from a Gaussian process prior with the squared exponential covariance function but with two different values of $\ls$, also called the characteristic length-scale.
-
-$$k(\x, \x^\prime) = \exp\left(-\frac{1}{2\ls^2}\|\x - \x^\prime\|^2\right)$$
-
-\begin{figure}
-\includegraphics[width=0.7\textwidth]{figure_man/gp-sqexp-l-1.pdf}
-\end{figure}
-
-\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Covariance Functions}
@@ -158,11 +147,11 @@ Three types of properties are commonly used in covariance functions:
 \lz
 
 \begin{itemize}
-\item $k$ is \textbf{stationary} if its returning values depend on $\bm{d} =\x -\x^\prime$ and is denoted by $k(\bm{d})$.
+\item $k$ is \textbf{stationary} if it depends only on $\bm{d} =\x -\x^\prime$ and is denoted by $k(\bm{d})$.
 
-\item $k$ is \textbf{isotropic} if its returning values depend on $r = \|\x - \x^\prime\|$and is denoted by $k(r)$.
+\item $k$ is \textbf{isotropic} if it depends only on $r = \|\x - \x^\prime\|$and is denoted by $k(r)$.
 
-\item $k$ is a \textbf{dot product} if its returning values depend on $\x^T \x^\prime$.
+\item $k$ is a \textbf{dot product} if it depends only on $\x^T \x^\prime$.
 \end{itemize}
 
 \lz
@@ -208,17 +197,113 @@ $K_\nu(\cdot)$ is the modified Bessel function of the second kind.
 
 \begin{itemize}
 \item[\faLightbulbO] Some random functions drawn from Gaussian processes with a Squared Exponential Kernel (left), Polynomial Kernel (middle), and a Matérn Kernel (right, $\ls = 1$). 
-\item[\faLightbulbO] The choice of the hyperparameter determines the ``wiggliness'' of the function.
+\item[\faLightbulbO] The length-scale hyperparameter determines the ``wiggliness'' of the function.
+\item[\faLightbulbO] For Matérn, the $\nu$ parameter determines how differentiable the process is.
 \end{itemize}
 
 \begin{figure}
-\includegraphics[width=0.7\textwidth]{figure_man/covariance.png}
+\includegraphics[width=0.6\textwidth]{figure_man/covariance.png}
 \end{figure}
-
-
 
 
 \end{frame}
 %-----------------------------------------------------------------------
+
+\begin{frame}[c]{Squared Exponential Covariance Function}
+
+The squared exponential function is one of the most commonly used covariance functions.
+$$
+k(\x, \x^\prime) = \exp\biggl(- \frac{\|\x - \x^\prime\|^2}{2\ls^2}\biggr).
+$$
+
+\textbf{Properties}:
+\begin{itemize}
+\item[\faLightbulbO] It depends merely on the distance $r = \|\x - \x^\prime\|$ $\to$ isotropic and stationary.\lz
+\item[\faLightbulbO] Infinitely differentiable $\to$ the corresponding GP is too smooth.\lz
+\item[\faLightbulbO] It utilizes strong smoothness assumptions $\to$ unrealistic for modeling most of the physical processes.
+
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c,allowframebreaks]{Characteristic Length-Scale}
+    $$k(\x, \x^\prime) = \exp\left(-\frac{1}{2\ls^2}\|\x - \x^\prime\|^2\right)$$
+% \begin{figure}
+	% \includegraphics[width = .8\textwidth]{figure/lengthscale-1.pdf}
+% \end{figure}
+$\ls$ is called \textbf{characteristic length-scale}. Loosely speaking, the characteristic length-scale describes how far you need to move in input space for the function values to become uncorrelated. Higher $\ls$ induces smoother functions, lower $\ls$ induces more wiggly functions.
+
+\begin{figure}
+\includegraphics[width=0.6\textwidth]{figure_man/gp-sqexp-l-1.pdf}
+\end{figure}
+
+% \begin{itemize}
+    % \item Left: for higher $\ls$ the correlation between function values (for unchanged distance of input points) is also higher
+    % \item Right plot: a higher $\ls$ induces a smoother function 
+% \end{itemize}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+For more than $p = 2$ dimensions, the squared exponential can be parameterized as follows:
+
+$$
+k(\xI{i}, \xI{j}) = \variance_f \exp\,\biggl(- \frac{1}{2}\left(\xI{i} - \xI{j}\right)^\top\bm{M}\left(\xI{i} - \xI{j}\right)\biggr)
+$$
+
+\vspace{7mm}
+
+Possible choices for the matrix $\bm{M}$ include
+
+$$
+\bm{M}_1 = \ls^{-2}\id \qquad \bm{M}_2 = \text{diag}(\bm{\ls})^{-2} \qquad \bm{M}_3 = \Gamma \Gamma^\top + \text{diag}(\bm{\ls})^{-2}
+$$
+
+where $\bm{\ls}$ is a $p$-vector of positive values and $\Gamma$ is a $p \times k$ matrix. 
+
+\lz 
+\lz
+
+Here again, $\bm{\ls} = (\ls_1,\dots, \ls_p)$ are characteristic length-scales for each dimension. 
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+What is the benefit of having an individual hyperparameter $\ls_i$ for each dimension?
+
+\vspace{4mm}
+
+\begin{itemize} 
+\item The $\ls_1,\dots, \ls_p$ hyperparameters play the role of \textbf{characteristic length-scales}.
+\vspace{2mm}
+\item Loosely speaking, $\ls_i$ describes how far you need to move along axis $i$ in input space for the function values to be uncorrelated.
+\vspace{2mm}
+\item Such a covariance function implements \textbf{automatic relevance determination} (ARD), since the inverse of the length-scale $\ls_i$ determines the relevancy of input feature $i$ to the regression.
+\vspace{2mm}
+\item If $\ls_i$ is very large, the covariance will become almost independent of that input, effectively removing it from inference.
+\vspace{2mm}
+\item If the features are on different scales, the data can be automatically \textbf{rescaled} by estimating $\ls_1,\dots, \ls_p$ 
+
+\end{itemize}
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{figure}
+	\includegraphics[width = .8\textwidth]{figure_man/covariance2D.png}
+\end{figure}
+
+\vspace{3mm}
+%\begin{footnotesize}
+For the first plot, we have chosen $\bm{M} = \id$: the function varies the same in all directions. The second plot is for $\bm{M} = \text{diag}(\bm{\ls})^{-2}$ and $\bm{\ls} = \left(1, 3 \right)$: The function varies less rapidly as a function of $x_2$ than $x_1$ as the length-scale for $x_1$ is less. In the third plot $\bm{M} = \Gamma \Gamma^T + \text{diag}(\bm{\ls})^{-2}$ for $\Gamma = (1, -1)^\top$ and $\bm{\ls} = (6, 6)^\top$. Here $\Gamma$ gives the direction of the most rapid variation. (Image from Rasmussen \& Williams, 2006)
+%\end{footnotesize}
+
+
+\end{frame}
 
 \end{document}
