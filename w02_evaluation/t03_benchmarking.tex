@@ -76,7 +76,7 @@
 
     \begin{itemize}
     \item $H_0$: on average, model 1 does not perform better than model 2
-    \item $H_1$: on average, model 1 outperforms the model 2
+    \item $H_1$: on average, model 1 outperforms model 2
     \item Aim: Reject $H_0$ with confidence level of $1-\alpha$ (common values
         for $\alpha$ include 0.05 and 0.01)
     \end{itemize}
@@ -124,13 +124,13 @@
     \framebreak
 
     \begin{minipage}[c]{0.625\linewidth}
-    Accuracy of each model can be computed as follows:
+    Error of each model can be computed as follows:
     \begin{itemize}
       \item Model 1: (A+B)/(A+B+C+D)
       \item Model 2: (A+C)/(A+B+C+D)
     \end{itemize}
 
-    Even if the models have the \textbf{same} accuracies (indicating equal performance), cells B and C may be different because the models may misclassify different instances.
+    Even if the models have the \textbf{same} errors (indicating equal performance), cells B and C may be different because the models may misclassify different instances.
     \end{minipage}
     \begin{minipage}[c]{0.2\linewidth}
         \includegraphics[width=\textwidth]{mcnemar_1.png}
@@ -268,7 +268,7 @@
 
     \textbf{Post-hoc Nemenyi test}:
     \begin{itemize}
-    \item compares all pairsof algorithms to find best-performing algorithm after $H_0$ of the Friedman-test was rejected
+    \item compares all pairs of algorithms to find best-performing algorithm after $H_0$ of the Friedman-test was rejected
     \item for $n$ data sets and $k$ algorithms, $\frac{n(n-1)}{2}$ comparisons
     \item calculate average rank of algorithm $j$ on all $n$ data sets: $\bar{R}_{.j} =\frac{1}{n} \sum_{i=1}^n R_{ij}$
     \end{itemize}

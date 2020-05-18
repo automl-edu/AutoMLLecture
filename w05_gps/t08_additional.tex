@@ -1,0 +1,199 @@
+
+\input{../latex_main/main.tex}
+
+
+\newcommand{\lz}{\vspace{0.5cm}}
+\newcommand{\thetab}{\bm{\weights}}
+\newcommand{\zero}{\mathbf{0}}
+\newcommand{\Xmat}{\mathbf{X}}
+\newcommand{\Kmat}{\mathbf{K}}
+\newcommand{\ydat}{\mathbf{y}}
+\newcommand{\id}{\boldsymbol{I}}
+\newcommand{\Amat}{\mathbf{A}}
+\newcommand{\Xspace}{\mathcal{X}}                                           
+\newcommand{\Yspace}{\mathcal{Y}}
+\newcommand{\ls}{\ell}
+\newcommand{\natnum}{\mathbb{N}}
+\newcommand{\intnum}{\mathbb{Z}}
+\newcommand{\order}{\mathcal{O}} 
+
+\usepackage{fontawesome}
+\usepackage{dirtytalk}
+\usepackage{csquotes}
+
+%\begin{frame}[c]{}
+%\centering
+%\huge
+%\textbf{}
+%\end{frame}
+
+
+%\item[\faLightbulbO]
+\title[AutoML: GPs]{AutoML: Gaussian Processes} % week title
+\subtitle{Gaussian Proccesses: Additional Material} % video title
+\author[Marius Lindauer]{\underline{Bernd Bischl} \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Notation}
+
+In this part,
+\vspace{.3cm}
+\begin{itemize}
+\item $(\x_*, y_*)$ denotes a single test observation, excluded from the training data.
+\vspace{.7cm}
+\item $\Xmat_* \in \realnum^{n_* \times p}$ denotes a set of $n_*$ test observations. 
+\vspace{.7cm}
+\item $\ydat_* \in \realnum^{n_* \times p}$ denotes the corresponding outcomes, excluded from the training data.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{}
+\centering
+\huge
+\textbf{Noisy Gaussian Processes}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Noisy Gaussian Processes}
+
+\begin{itemize}
+\item In the previous slides, we implicitly assumed that we access the true function values $f(\x)$. However, in many practical cases, we only have a noisy version of the values:
+$$y = f(\x) + \epsilon.$$ 
+
+\item By assuming an additive i.i.d. Gaussian noise, the covariance function becomes:
+$$cov\,(\yI{i}, \yI{j})=k\left(\xI{i}, \xI{j}\right) + \variance_n \delta_{ij} \text{, where } \delta_{ij} = 1 \text{ if } i=j.$$
+
+\item In the matrix notation, this becomes:
+$$cov\,(\ydat) = \Kmat + \variance_n\id =: \Kmat_y \text{, where } \variance_n \text{ is called \textbf{nugget}.}$$
+
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{GP vs. Kernelized Ridge Regression}
+
+\begin{itemize}
+
+\item The predictive function is then 
+\vspace{-3mm}
+$$\bm{f}_* | \Xmat_*, \Xmat, \ydat \sim \mathcal{N}(\bm{\bar f}_*, \,cov\,(\bm{\bar f}_*)),$$ 
+\vspace{-5mm}
+with $\bm{\bar f}_* = \Kmat_{*}^{T} \Kmat_y^{-1}\ydat$ and $cov\,(\bm{\bar f}_*) = \Kmat_{**}- \Kmat_{*}^\top\Kmat_y^{-1}\Kmat_*$.
+\lz
+\lz
+
+\item The predicted mean value at the training points $\bm{\bar f} = \bm{K}\Kmat_y^{-1}\bm{y}$ is a \textbf{linear combination} of the $\bm{y}$ values. 
+\end{itemize}
+
+\lz
+\textcolor{blue}{\faLightbulbO} Predicting the posterior mean corresponds exactly to the predictions obtained by kernelized Ridge regression. However, a GP as a Bayesian model provides us with much more information (i.e., a posterior distribution), whilst the kernelized Ridge regression does not. 
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{}
+\centering
+\huge
+\textbf{Bayesian Linear Regression as a GP}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Bayesian Linear Regression as a GP}
+
+\begin{itemize}
+
+\item One example for a Gaussian process is the Bayesian linear regression model, and we already discuss it.
+\lz
+\item For $\thetab \sim \normaldist(\bm{0}, \tau^2 \id)$, the joint distribution of any set of function values is Gaussian:
+
+$$f(\xI{i}) = \thetab^\top \xI{i} + \epsilon.$$
+\vspace{3mm}
+\item The corresponding mean function is $m(\x) = \bm{0}$, and the covariance function is
+\vspace{-2mm}
+\begin{eqnarray*}
+cov\,(f(\x), f(\x^\prime)) &=& \expectation[f(\x) f(\x^\prime)] - \underbrace{\expectation[f(\x)] \expectation[f(\x^\prime]}_{= 0} \\ &=& \expectation[(\thetab^\top \x + \epsilon)^\top(\thetab^\top \x^\prime + \epsilon)] \\ &=&  \tau^2 \x^\top\x^\prime + \sigma^2 =: k(\x, \x^\prime).
+\end{eqnarray*}
+
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c,allowframebreaks]{Feature Spaces and the Kernel Trick}
+\begin{itemize}
+
+\item If one relaxes the linearity assumption by projecting the features into a higher dimensional feature space $\mathcal{Z}$ using a basis function $\phi: \Xspace \to \mathcal{Z}$, the corresponding covariance function becomes:
+$$k(\x, \x^\prime) = \tau^2 \phi(\x)^\top\phi(\x^\prime) + \variance.$$
+\vspace{.4cm}
+
+\item To get arbitrarily complicated functions, we would have to handle high-dimensional feature vectors $\phi(\x)$.
+\vspace{.4cm}
+
+\item Fortunately, all we need to know is the inner product $\phi(\x)^T\phi(\bm{x}^\prime)$. That is, the feature vector itself never occurs in calculations.
+
+\end{itemize}
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textcolor{blue}{\faLightbulbO} If we can get the inner product directly and without calculating the infinite feature vectors, we can infer an infinitely complicated model with a finite amount of computation. This idea is known as \textbf{kernel trick}.
+
+\begin{itemize}
+\vspace{.7cm}
+\item A Gaussian process can then be defined by either:
+\vspace{.3cm}
+\begin{itemize}
+\item deriving the covariance function from the inner products of the basis functions evaluations, or
+\vspace{.3cm}
+\item choosing a positive definite kernel function (Mercer Kernel), which- according to Mercer's theorem - corresponds to taking the inner products in some (possibly infinite) feature space.
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[c]{Summary: Gaussian Process Regression}
+
+\begin{itemize}
+\item The Gaussian process regression is equivalent to the \textbf{kernelized} Bayesian linear regression.
+\vspace{3mm}
+
+\item The covariance function describes the shape of the Gaussian process. Hence, with the right choice of covariance function, remarkably flexible models can be built.
+\vspace{3mm}
+
+\item Naive implementations of Gaussian process models scale poorly with large datasets, as
+\vspace{3mm}
+
+\begin{itemize}
+\item the kernel matrix has to be inverted / factorized, which is $\order(n^3)$,
+\vspace{3mm}
+
+\item computing the kernel matrix uses $\order(n^2)$ memory - running out of memory places a hard limit on the size of problems
+\vspace{3mm}
+
+\item generating predictions is $\order(n)$ for the mean, but $\order(n^2)$ for the variance.
+\end{itemize}
+(...special tricks are needed.)
+\end{itemize}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}

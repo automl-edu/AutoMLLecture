@@ -1,4 +1,78 @@
-\documentclass[]{report}
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdftitle={latex-math Macros},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{siunitx}
+\usepackage{dsfont}
+\usepackage{xspace}
+\usepackage{longtable}
+\usepackage{xcolor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{dsfont}
 \usepackage{bm}
 \usepackage[english]{babel}
@@ -8,8 +82,7 @@
 \usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
 \usepackage{booktabs}
 \usepackage{mathtools}
-
-\usepackage{amsmath,amssymb}
+%\documentclass[]{report}
 
 
 \input{../latex_main/macros.tex}
@@ -21,48 +94,50 @@
 
 
 \begin{document}
+
 \maketitle
 
 \begin{table}
-	\begin{tabular}{ll}
+	\begin{tabular}{lll}
 		\toprule
-		Symbol & Meaning \\
+		Macro & Symbol & Meaning \\
 		\midrule
-		\multicolumn{2}{c}{\textbf{Machine Learning}}\\
-     	$\dataset$ & Dataset\\
-     	$\datasettrain$ & Training dataset\\
-	   	$\datasetval$ & Validation dataset\\
-     	$\datasettest$ & Test dataset\\
-		$\datasets$ & Space of datasets\\
-     	$\x$ & Feature vector \\
-     	$y$ & Label \\
-     	$(\xI{i},\yI{i})$ & $i$-th observation\\
-		$\loss(y,\fh(\x))$ & (empirical) loss\\
-		$\risk$ & risk\\
-		$\riske$ & empirical risk\\
-		$\fx$ & continuous prediction function \\
-		$\Hspace$ & hypothesis space where f is from \\
-		$\fh$ & estimated prediction function \\
+		\multicolumn{3}{c}{\textcolor{red}{\textbf{Machine Learning}}}\\
+     \verb!\dataset!	& $\dataset$ & Dataset\\
+     \verb!\datasettrain!	& $\datasettrain$ & Training dataset\\
+	   \verb!\datasetval!	& $\datasetval$ & Validation dataset\\
+     \verb!\datasettest!  & $\datasettest$ & Test dataset\\
+		 \verb!\datasets!  & $\datasets$ & Space of datasets\\
+     \verb!\x!  & $\x$ & Feature vector \\
+     \verb!\y!  & $y$ & Label \\
+     \verb!\(\xI{i},\yI{i})! &	$(\xI{i},\yI{i})$ & $i$-th observation\\
+		 \verb!\loss(y,\fh(\x))!  & $\loss(y,\fh(\x))$ & (empirical) loss\\
+		 \verb!\risks!  & $\risk$ & risk\\
+		 \verb!\riske!  & $\riske$ & empirical risk\\
+		 \verb!\fx!  & $\fx$ & continuous prediction function \\
+		 \verb!\Hspace!  & $\Hspace$ & hypothesis space where f is from \\
+		 \verb!\fh!  & $\fh$ & estimated prediction function \\
 
 		\midrule
-		\multicolumn{2}{c}{\textbf{Hyperparameter Optimization}}\\
-		$\conf$ & Hyperparameter configuration\\
-		$\conf_i$ & Value of $i$-th hyperparameter \\
-		$\defconf$ & Default hyperparameter configuration\\
-		$\finconf$ & finally returned hyperparameter configuration\\
-		$\optconf$ & Optimal hyperparameter configuration\\
-		$\pcs$ &  Space of possible hyperparameter configurations\\
-		$\algo$ & Algorithm (e.g. SVM, RF, DNN) \\
-		$\algos$ & Distribution or set of algorithms\\
-		$\cost(\conf)$ & Target cost function (e.g., empirical risk, validation loss, runtime)\\
-		$\surro(\conf)$ & Surrogate (probabilistic) model of target function\\
-		$\hist = \langle \confI{\bocount}, \cost(\confI{\bocount}) \rangle_{\bocount=1}^\bobudget$ &  All observations collected for BO / HPO\\
+		\multicolumn{3}{c}{\textcolor{red}{\textbf{Hyperparameter Optimization}}}\\
+		 \verb!\conf!  & $\conf$ & Hyperparameter configuration\\
+		 \verb!\conf_i!  & $\conf_i$ & Value of $i$-th hyperparameter \\
+		 \verb!\defconf!  & $\defconf$ & Default hyperparameter configuration\\
+		 \verb!\finconf!  & $\finconf$ & finally returned hyperparameter configuration\\
+		 \verb!\optconf!  & $\optconf$ & Optimal hyperparameter configuration\\
+		 \verb!\pcs!  & $\pcs$ &  Space of possible hyperparameter configurations\\
+		 \verb!\algo!  & $\algo$ & Algorithm (e.g. SVM, RF, DNN) \\
+		 \verb!\algos!  & $\algos$ & Distribution or set of algorithms\\
+		 \verb!\cost(\conf)!  & $\cost(\conf)$ & Target cost function (e.g., empirical risk, validation loss, runtime)\\
+		 \verb!\surro(\conf)!  & $\surro(\conf)$ & Surrogate (probabilistic) model of target function\\
+		 ---  & $\hist = \langle \confI{\bocount}, \cost(\confI{\bocount}) \rangle_{\bocount=1}^\bobudget$ &  All observations collected for BO / HPO\\
+		
 		\midrule
-		\multicolumn{2}{c}{\textbf{Gaussian Processes and Bayesian Optimization}}\\
-		 $\gp$ & Gaussian process \\
+		\multicolumn{3}{c}{\textbf{\textcolor{red}{Gaussian Processes and Bayesian Optimization}}}\\
+		\verb!\gp!  & $\gp$ & Gaussian process \\
 %		$\objF$ & Family of Target Functions \\
-		$\bocount$ & BO loop counter \\
-		$\bobudget$ & BO loop counter max, the counter runs from 1 to this value \\
+		\verb!\bocount!  & $\bocount$ & BO loop counter \\
+		\verb!\bobudget!  & $\bobudget$ & BO loop counter max, the counter runs from 1 to this value \\
 %		ML: please use AutoML-specific notation --> \conf \in \pcs and so on
 %		$\boparamspace$ & BO parameter space \\
 %		$\boparam$ & BO parameter \\
@@ -71,51 +146,51 @@
 %		$\boobsspace$ & BO loop observation space \\
 %		$\bonextsample$ & BO loop next sample (selected for evaluation at each iteration of the BO loop) \\
 %		$\bonextobs$ & BO loop next observation \\
-		$\acq$ & Acquisition Function, no args \\
-		$\pdf$ & Standard Normal PDF \\
-		$\cdf$ & Standard Normal CDF \\
-		$\mean$ & Mean \\
-		$\stddev$ & Standard Deviation \\
-		$\variance$ & Variance \\
-		$\noise$ & Noise \\
-		$\realnum$ & Real numbers set \\
-		$\expectation$ & Expected value \\
-		$\kernel$ & kernel \\
-		$\constraintf$ & Constraint function \\
-		$\normaldist$ & Normal distribution \\
+		\verb!\acq!  & $\acq$ & Acquisition Function, no args \\
+		\verb!\pdf!  & $\pdf$ & Standard Normal PDF \\
+		\verb!\cdf!  & $\cdf$ & Standard Normal CDF \\
+		\verb!\mean!  & $\mean$ & Mean \\
+		\verb!\stddev!  & $\stddev$ & Standard Deviation \\
+		\verb!\variance!  & $\variance$ & Variance \\
+		\verb!\noise!  & $\noise$ & Noise \\
+		\verb!\realnum!  & $\realnum$ & Real numbers set \\
+		\verb!\expectation!  & $\expectation$ & Expected value \\
+		\verb!\kernel!  & $\kernel$ & kernel \\
+		\verb!\constraintf!  & $\constraintf$ & Constraint function \\
+		\verb!\normaldist!  & $\normaldist$ & Normal distribution \\
 		\bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}
-	\begin{tabular}{ll}
+	\begin{tabular}{lll}
 		\toprule
-		Symbol & Meaning \\
+		Macro & Symbol & Meaning \\
 		\midrule
-		\multicolumn{2}{c}{\textbf{Algorithm Selection}}\\
-		$\feat$ & Vector of (meta-) features\\
-		$\feats$ & Space of (meta-)features \\
-		$\portfolio$ & Portfolio (i.e., discrete set) of algorithms or hyperparameter configurations\\
-		$\schedule$ & Schedule of algorithms or hyperparameter configurations\\
+		\multicolumn{3}{c}{\textcolor{red}{\textbf{Algorithm Selection}}}\\
+		\verb!\feat! & $\feat$ & Vector of (meta-) features\\
+		\verb!\feats! & $\feats$ & Space of (meta-)features \\
+		\verb!\portfolio! & $\portfolio$ & Portfolio (i.e., discrete set) of algorithms or hyperparameter configurations\\
+		\verb!\schedule! & $\schedule$ & Schedule of algorithms or hyperparameter configurations\\
 		\midrule
-		\multicolumn{2}{c}{\textbf{Meta-Learning}}\\
-		$\weights$ & Weights (a.k.a. parameters) of ML model (e.g., DNN)\\
-		$\metaweights$ & Weights of meta-model\\
-    	$\mdata$ & Meta-dataset\\
+		\multicolumn{3}{c}{\textcolor{red}{\textbf{Meta-Learning}}}\\
+		\verb!\weights! & $\weights$ & Weights (a.k.a. parameters) of ML model (e.g., DNN)\\
+		\verb!\metaweights! & $\metaweights$ & Weights of meta-model\\
+    \verb!\mdata! & $\mdata$ & Meta-dataset\\
 		\midrule
-		\multicolumn{2}{c}{\textbf{Reinforcement Learning}}\\
-		$\policy$ & Reinforcement learning policy\\
-		$\policies$ & Space of policies\\
-		$\actionRL$ & action in RL-setting\\
-		$\stateRL$ & state in RL-setting\\
-		$\statesRL$ & Space of states\\
-		$\rewardRL$ & Reward in RL-setting\\
-		$\rewardfuncRL$ & Random variable or function of reward\\
+		\multicolumn{3}{c}{\textcolor{red}{\textbf{Reinforcement Learning}}}\\
+		\verb!\policy! & $\policy$ & Reinforcement learning policy\\
+		\verb!\policies! & $\policies$ & Space of policies\\
+		\verb!\actionRL! & $\actionRL$ & action in RL-setting\\
+		\verb!\stateRL! & $\stateRL$ & state in RL-setting\\
+		\verb!\statesRL! & $\statesRL$ & Space of states\\
+		\verb!\rewardRL! & $\rewardRL$ & Reward in RL-setting\\
+		\verb!\rewardfuncRL! & $\rewardfuncRL$ & Random variable or function of reward\\
 		\midrule
-		\multicolumn{2}{c}{\textbf{Algorithm Configuration}}\\
-		$\cutoff$ & Cutoff (often runtime) of an algorithm run\\
-		$\inst$ & a single instances (a.k.a. problem, dataset, task)\\
-		$\insts$ & Distribution over instances (a.k.a. problems, datasets, tasks)\\
+		\multicolumn{3}{c}{\textcolor{red}{\textbf{Algorithm Configuration}}}\\
+		\verb!\cutoff! & $\cutoff$ & Cutoff (often runtime) of an algorithm run\\
+		\verb!\inst! & $\inst$ & a single instances (a.k.a. problem, dataset, task)\\
+		\verb!\insts! & $\insts$ & Distribution over instances (a.k.a. problems, datasets, tasks)\\
 		\bottomrule
 	\end{tabular}
 \end{table}
