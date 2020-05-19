@@ -120,7 +120,7 @@ There are four general approaches:
                 \item Random variation?
             \end{itemize}
         \item If expert knowledge is not available a-priori, we need to ensured that different trade-offs between the cost functions are explored.
-            \item Simplifies multi-criteria optimization problem to single-criteria $\longrightarrow$ Bayesian optimization can be used.
+            \item Simplifies multi-criteria optimization problem to single-criteria \\$\longrightarrow$ Bayesian optimization can be used without adaptions of the general algorithm.
     \end{itemize}
 
 \end{frame}
@@ -266,17 +266,27 @@ There are four general approaches:
 
 \begin{frame}{Further Hypervolume based Acquisition Functions}
 
-    Expected Hypervolume Improvement (EHI)
+    \textbf{Expected Hypervolume Improvement (EHI)}
 
 $$
-    u_{EI, \mathcal{H}}(\conf) = \int_{-\infty}^{\infty} p(\cost \mid \conf) \times \mathcal{H}(\conf)\;\; d\cost.\
+    u_{EI, \mathcal{H}}(\conf) = \int_{-\infty}^{\infty} p(\cost \mid \conf) \times \mathcal{H}(\conf)\;\; d\cost,\
 $$
     with $\mathcal{H}(\conf) = S(\mathcal{P} \cup \conf, R) - S(\mathcal{P}, R))$.
 
     \begin{itemize}
-        \item Direct extension of $u_\text{EI}$ to the hypervolume.
+        \item Direct extension of $u_EI$ to the hypervolume.
         \item Efficient computations for $m \le 3$ exist, beyond that expensive simulation-based computation is required.
     \end{itemize}
+
+
+    \vspace{0.5cm}
+Further hypervolume based acquisition functions:
+
+    \begin{itemize}
+        \item \textbf{Stepwise Uncertainty Reduction} (SUR) based on the probability of improvement.
+        \item \textbf{Expected Maximin Improvement} (EMI) based on the $\epsilon$-indicator.
+    \end{itemize}
+
 
 \end{frame}
 
