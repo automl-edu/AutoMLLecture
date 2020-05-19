@@ -62,7 +62,7 @@ In machine learning:
 \item ...
 \end{itemize}
 
-A \textit{simple} approach would be to formulate all but one objective function simplified as a secondary condition. %FIXME: JR: unclear to me
+%A \textit{simple} approach would be to formulate all but one objective function simplified as a secondary condition.
 
 \vspace*{0.2cm}
 
@@ -70,14 +70,16 @@ A \textit{simple} approach would be to formulate all but one objective function 
 
 \textbf{Example}:
 
-Maximize hotel rating subject to a maximum price per night.
+Choose the best hotel to stay at by maximizing ratings subject to a maximum price per night.
 
 \vspace*{0.2cm}
 
  \textbf{Disadvantages}:
+
 \begin{itemize}
- \item The result depends of course on how we select the max price and usually returns different solutions for different max price values.
- \item The more target functions we optimize, the more difficult such a definition becomes.
+ \item The result depends on how we select the max price and usually returns different solutions for different max price values.
+ \item We could also choose a minimum rating and optimize the price per night.
+ \item The more objectives we optimize, the more difficult such a definition becomes.
 \end{itemize}
 
 \vspace*{0.2cm}
@@ -99,19 +101,19 @@ When booking a hotel: find the hotel with
 \vfill
 
 \begin{footnotesize}
-Since we limit ourselves to minimizing problems, we minimize negative valuations.
+Since we limit ourselves to minimizing problems, we minimize negative ratings.
 \end{footnotesize}
 
 \framebreak
 
-The goals often conflict with each other:
+The objectives often conflict with each other:
 
 \begin{itemize}
-\item Lower price $\to$ often lower hotel rating.
+\item Lower price $\to$ usually lower hotel rating.
 \item Better rating $\to$ usually higher price.
 \end{itemize}
 
-Example: (negative) average rating by hotel guests (1 - 5) vs. average price per night in USD from hotels on Expedia (excerpt).
+Example: (negative) average rating by hotel guests (1 - 5) vs. average price per night in USD from hotels (excerpt).
 
 \vspace*{0.2cm}
 
@@ -120,12 +122,12 @@ Example: (negative) average rating by hotel guests (1 - 5) vs. average price per
 
 \framebreak
 
-In addition, targets are often not comparable because they have different units, for example:
+Oftentimes, objectives are not directly comparable as they are measured on different scales, for example:
 
 \begin{itemize}
-    \item Left: a hotel with rating $4$ for $89$ Euro ($\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$) would be preferred to a hotel for 108 Euro with the same rating ($\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$).
+    \item Left: A hotel with rating $4$ for $89$ Euro ($\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$) would be preferred to a hotel for $108$ Euro with the same rating ($\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$).
 \item Right: how to decide if $\textcolor{orange}{\cost^{(1)}} = \left(89, - 4.0\right)$ or $\textcolor{orange}{\cost^{(1)}} = \left(95, - 4.5\right)$ is preferred?
-\item How much money is one \textit{rating point} worth?
+\item How much is one \textit{rating point} worth?
 \end{itemize}
 
 \centering \includegraphics[scale=1]{images/expedia-2-1}
@@ -135,11 +137,13 @@ In addition, targets are often not comparable because they have different units,
 
 \begin{frame}{Definition: multi-criteria optimization problem}
 
-Let $\pcs \subset \realnum^n$ and $\cost: \pcs \to \realnum^m$, $m \ge 2$. A \textbf{multi-criteria optimization problem} is defined by
+ A \textbf{multi-criteria optimization problem} is defined by
 
 $$
-\min_{\conf \in \pcs}  \cost(\conf) \Leftrightarrow \min_{\conf \in \pcs} \left(\cost_1(\conf), \cost_2(\conf), ..., \cost_m(\conf)\right).
+\min_{\conf \in \pcs}  \cost(\conf) \Leftrightarrow \min_{\conf \in \pcs} \left(\cost_1(\conf), \cost_2(\conf), ..., \cost_m(\conf)\right),
 $$
+
+with $\pcs \subset \realnum^n$ and $\cost: \pcs \to \realnum^m$, $m \ge 2$.
 
 \begin{itemize}
 \item \textbf{Goal:} minimize multiple target functions simultaneously.
@@ -150,12 +154,12 @@ $$
 
 \end{frame}
 
-\begin{frame}{Pareto sets und Pareto optimality}
+\begin{frame}{Pareto sets and Pareto optimality}
 
 \textbf{Definition:}
 
 Given a multi-criteria optimization problem
-    $$\min_{\conf \in \pcs} \cost(\conf) = \left(\cost_1(\conf), ..., \cost_m(\conf)\right), \quad \cost_i: \pcs \to \realnum.$$
+    $$\min_{\conf \in \pcs} \left(\cost_1(\conf), ..., \cost_m(\conf)\right), \quad \cost_i: \pcs \to \realnum.$$
 
 \begin{itemize}
     \item A solution $\conf^{(1)}$ \textbf{(Pareto-) dominates} $\conf^{(2)}$, if $\cost(\conf^{(1)}) \prec \cost(\conf^{(2)})$, i.e.
@@ -175,7 +179,7 @@ Given a multi-criteria optimization problem
 
 \begin{frame}[allowframebreaks]{How to define optimality?}
 
-Let still $\cost = (\text{price}, - \text{rating})$. For some cases it is \textit{clear} which point is the better one:
+Let $\cost = (\text{price}, - \text{rating})$. For some cases it is \textit{clear} which point is the better one:
 
 \begin{itemize}
     \item The solution $\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$ dominates $\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$: $\textcolor{green}{\cost^{(1)}}$ is not worse in any dimension and is better in one dimension. Therefore, $\textcolor{red}{\cost^{(2)}}$ gets \textbf{dominated} by $\textcolor{green}{\cost^{(1)}}$
@@ -282,7 +286,7 @@ There are two possible approaches:
 \textbf{Example: weighted total}
 
 
-\textbf{Prior knowledge:} one rating point is worth $50$ Euro to a customer. \\ $\to$ We optimize the weighted sum:
+\textbf{Prior knowledge:} One rating point is worth $50$ Euro to a customer. \\ $\to$ We optimize the weighted sum:
 
 $$
 \min_\text{Hotel} \text{(Price / Night)} - 50 \cdot \text{Rating}
@@ -299,7 +303,7 @@ $$
 
 \textbf{Example: Lexicographic method}
 
-\textbf{Prior knowledge:} customer prioritizes rating over price. \\
+\textbf{Prior knowledge:} Customer prioritizes rating over price. \\
 $\to$ optimize target functions one after the other.
 
 
@@ -324,17 +328,17 @@ But: different sequences provide different solutions.
 
 \textbf{Summary a-priori approach:}
 \begin{itemize}
-\item In a single application, only one solution is obtained, which depends on the a-priori selection of weights, order, etc.
-\item In case of repeated use, several solutions are obtained if weights, order, etc. are systematically varied.
-\item Usually there are solutions that remain hidden from these methods.
-\item Implicit assumption: single-criteria optimization is "simple".
+\item Only one solution is obtained, which depends on the a-priori selection of weights, order, etc.
+\item Several solutions can be obtained if weights, order, etc. are systematically varied.
+\item Usually there are solutions that cannot be found by these methods.
+\item Implicit assumption: Single-criteria optimization is "easy".
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}[allowframebreaks]{A-posteriori procedure}
 
-A-posteriori methods, on the other hand, have the goal to
+A-posteriori methods try to
 
 \begin{itemize}
 \item find the set of \textbf{all} optimal solutions (the Pareto set),
@@ -368,8 +372,7 @@ $$
 where $\Lambda$ is the Lebuesge measure.
     \vspace{1cm}
     \begin{itemize}
-            \item The dominated hypervolume is calculated respective to the reference point $R$, that can be chosen arbitrarely.
-            \item Exact computation of the hypervolume is expensive (NP-hard), but fast approximations exist.
+            \item The dominated hypervolume is calculated respective to the reference point $R$, that can be chosen arbitrarily.
             \item The dominated hypervolume is also often called \textbf{S-Metric}.
     \end{itemize}
 

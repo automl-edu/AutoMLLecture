@@ -8,7 +8,7 @@
 \newcommand{\xxi}[1][i]{\lambda_{#1}} %i-th component of xx (not confuse with i-th individual)
 \newcommand{\XX}{\pcs} %search space / domain of f
 \newcommand{\f}{\cost} %objective function
-\newcommand{\y}{\cost} %outcome of objective function
+%\newcommand{\y}{\cost} %outcome of objective function
 
 \title[AutoML: Overview]{Multi-criteria Optimization}
 \subtitle{Evolutionary Approaches}
@@ -67,8 +67,14 @@ Image of the function (grey) and target function values $(\cost_1(\x), \cost_2(\
     \end{center}
 \end{algorithm}
 
-The population of solution candidates consists of $\xx \in \XX$. %FIXME: JR: Write this in Return part of algorithm?
+%The population of solution candidates consists of $\xx \in \XX$. %FIXME: JR: Write this in Return part of algorithm?
 
+Notation clash:
+\begin{itemize}
+    \item In EAs the objective function is often denoted $f(x)$.
+    \item As these symbols are used for ML already we use $\cost(\conf)$ and $\conf$ instead of $f$ and $x$.
+    \item Be careful: The offspring size $\lambda$ is different from the candidate $\xx$ (bold symbol!).
+\end{itemize}
 \end{frame}
 
 
@@ -90,7 +96,7 @@ The aim is to select the evolution strategy in such a way that the algorithm pro
 \vspace*{-0.5cm}
 
 \begin{footnotesize}
-\textbf{Caution}: in this graphic the objective function values are exceptionally \textbf{maximized}. %FIXME: JR: Multicolumn and fig on the right?
+\textbf{Caution}: in this graphic the objective function values are \textbf{maximized}. %FIXME: JR: Multicolumn and fig on the right?
 \end{footnotesize}
 
 \end{frame}
@@ -120,17 +126,14 @@ The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by 
 
 % \framebreak
 
-\begin{footnotesize}
 %FIXME: JR: After offspring is generated.. ?
 We subdivide $R_t = P_t \cup Q_t$ into fronts $F_1, F_2, F_3, ...$ such that
 
 \begin{itemize}
 \item the points in the fronts are equivalent to each other, and
-\item that any point $\xx \in F_1$ dominates any point from $F_2, F_3, F_4...$; any point $\xx \in F_2$ dominates all points from $F_3, F_4, ...$, etc. \\
-We write $F_1 \prec F_2 \prec F_4 \prec ... $
+\item that any point $\xx \in F_1$ dominates any point from $F_2, F_3, F_4...$ and any point $\xx \in F_2$ dominates all points from $F_3, F_4, ...$, and so on. We write $F_1 \prec F_2 \prec F_4 \prec ... $
 \end{itemize}
-\end{footnotesize}
-    \vspace{-0.5cm}
+
 \begin{center}
 \includegraphics[width = 0.4\linewidth]{images/NSGA2_NDS.png}
 \end{center}
@@ -156,9 +159,7 @@ Which individuals survive from $F_3$? $\to$ \textbf{crowding sort}
 \includegraphics[height = 0.5\textheight]{images/NSGA2_CS1.png}
 \end{center}
 
-\begin{footnotesize}
 The points on the left (marked by a triangle) do not represent the front very well because they are very close together. The front is better represented by the points on the right plot.
-\end{footnotesize}
 
 \framebreak
 
@@ -285,11 +286,10 @@ $$
 \framebreak
 
 \begin{center}
-hypervolume contribution in a 2-dimensional objective space:\\
+Hypervolume contribution in a 2-dimensional objective space:\\
 \includegraphics[width = 0.4\textwidth]{images/hypervolumenbeitrag.png}
 \end{center}
 
-\footnotesize
 \vspace*{-0.5cm}
 \begin{itemize}
 % \item Links: Punkte entsprechen Werten der Individuen in 2-dimensionalem Zielraum.
