@@ -1,8 +1,9 @@
 \section{Meta-Learning}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Introduction}
+\begin{frame}[c]{Introduction}
+
+\notefh{Please add the visualization on the first slide for meta-learning}
 
 \begin{itemize}
 	\item Learning essentially never stops:
@@ -49,8 +50,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Learning from model evaluations}
+\begin{frame}[c]{Learning from model evaluations}
 
 \begin{itemize}
     \item Similarly, while building ML models for a specific task, we exploit our experience with related tasks
@@ -68,7 +68,7 @@
     \item \emph{Goal.} Train a meta-learner using meta-data $\dataset \cup \dataset_{\text{new}}$, such that it recommends configurations for a new task better than a black-box algorithm
 \end{itemize}
 
-\source{\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}}
+\hspace{11cm}\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}
 
 \end{frame}
 % %----------------------------------------------------------------------
@@ -76,8 +76,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Learning from task properties}
+\begin{frame}[c]{Learning from task properties}
 
 \begin{itemize}
     \item Other than characterize the data by its performance, we can extract characterizations (called \alert{meta-features}) from data at hand 
@@ -89,7 +88,7 @@
     \item Based on similarity, we can transfer information from the most similar tasks to the new task $t_{\text{new}}$
     \end{itemize}
 
-\source{\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}}
+\hspace{11cm}\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}
 
 \end{frame}
 % %----------------------------------------------------------------------
@@ -220,8 +219,7 @@
 % \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Meta-Features in Machine Learning}
+\begin{frame}[c]{Meta-Features in Machine Learning}
 
 \begin{itemize}
 	\item \alert{Simple} - easily extracted from the data, describe the basic dataset structure: e.g. number of features, patterns or classes. \pause
@@ -241,9 +239,7 @@
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\subsection{Warmstarting}
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Warmstarting}
+\begin{frame}[c]{Warmstarting}
 	
 \begin{itemize}
 	\item Recap: Instead of starting from a random configuration we often start from a expert-defined configuration for hyperparameter optimization (HPO)
@@ -255,18 +251,17 @@
 	\pause
 	\item \alert{Can we learn from previous datasets $\mdata$ how to initialize HPO?}\\
 	(i.e., running an initial design)
-	\begin{itemize}
-		\item the same ideas also apply to NAS
-		\item for simplicity we focus on HPO 
-	\end{itemize}
+%	\begin{itemize}
+%		\item the same ideas also apply to NAS
+%		\item for simplicity we focus on HPO 
+%	\end{itemize}
 \end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Model-Warmstarting}
+\begin{frame}[c]{Model-Warmstarting}
 
 \begin{itemize}
 	\item Many HPO optimizers make use of some kind of a predictive model,\\
@@ -287,21 +282,19 @@
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\subsection{Task-independent recommendations}
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Task-independent Recommendations}
+\begin{frame}[c]{Task-independent Recommendations}
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
 
-    \only<1-3>{
+    \only<1->{
     \begin{itemize}
         \item \emph{Idea:} learn a sorted list of defaults
         \item \emph{Method:} mostly greedy 
         \item \emph{Results:} improves over Random Search and Bayesian Optimization
     \end{itemize}}
 
-    \only<2-3>{
+    \only<2->{
     \begin{block}{Advantages}
     \begin{itemize}
     	\item Easy to share and use
@@ -310,7 +303,7 @@
     \end{itemize}
     \end{block}}
     
-    \only<3-3>{
+    \only<2->{
     \begin{block}{Disadvantages}
     \begin{itemize}
     	\item Not adaptive
@@ -324,14 +317,20 @@
 \begin{column}{.48\textwidth}
 
     \centering
-    \only<1-1>{\includegraphics[width=.8\textwidth]{images/meta_learning/task_independent.jpg}}
-    \only<2-3>{\includegraphics[width=.9\textwidth]{images/meta_learning/task_independent_results.jpg}}
+    \onslide<1->{\includegraphics[width=.8\textwidth]{w07_hpo_grey_box/images/meta_learning/task_independent.jpg}}
+%    \only<2->{\includegraphics[width=.9\textwidth]{w07_hpo_grey_box/images/meta_learning/task_independent_results.jpg}}
 
 
 \end{column}
 \end{columns}  
 
-\source{Wistuba et al., 2015a,\&b, Feurer et al., 2018, Pfisterer et al., 2018}
+
+
+\vspace{0.5cm}
+\hspace{6cm}
+\lit{\href{https://link.springer.com/article/10.1007/s10994-017-5684-y}{Wistuba et al. 2015a}}, \lit{\href{https://arxiv.org/pdf/1802.02219.pdf}{Feurer et al. 2018}},  \lit{\href{}{Pfisterer et al. 2018}}
+
+
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -339,128 +338,148 @@
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\subsection{Joint model for Bayesian optimization}
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Joint model for Bayesian optimization}
+\begin{frame}[c]{Joint model for Bayesian optimization}
 
 \begin{columns}[T] % align columns
 \begin{column}{.38\textwidth}
 
 \begin{itemize}
-    \item<1-5> Jointly train a „deep“ neural network on all tasks 
-    \item<2-5> Have a separate output layer (head) for each tasks 
-    \item<3-5> Each head is a Bayesian linear regression 
-    \item<4-5> Feature extraction on hyperparameter configurations 
-    \item<5-5> (Recall DNGO)
+    \item<1-> Jointly train a „deep“ neural network on all tasks 
+    \item<2-> Have a separate output layer (head) for each tasks 
+    \item<3-> Each head is a Bayesian linear regression 
+    \item<4-> Feature extraction on hyperparameter configurations 
+    \item<5-> (Recall DNGO)
 \end{itemize}
 \end{column}%
 
 \hfill%
 
 \begin{column}{.58\textwidth}
-\includegraphics[width=0.9\textwidth]{images/meta_learning/perrone_int.jpg}
+\includegraphics[width=0.9\textwidth]{w07_hpo_grey_box/images/meta_learning/perrone_int.jpg}
 \end{column}%
 \end{columns}
 
-\source{Perrone et al. 2018}
+\hspace{12cm}\lit{\href{http://papers.nips.cc/paper/7917-scalable-hyperparameter-transfer-learning.pdf}{Perrone et al. 2018}}
 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Joint model for Bayesian optimization}
-
-\centering
-\includegraphics[width=0.7\textwidth]{images/meta_learning/perrone_res.jpg}
-
-\end{frame}
+%\begin{frame}[c]{Joint model for Bayesian optimization}
+%
+%\centering
+%\includegraphics[width=0.7\textwidth]{w07_hpo_grey_box/images/meta_learning/perrone_res.jpg}
+%
+%\end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\subsection{Learning Black-box Optimization}
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Learning Black-box Optimization}
+\begin{frame}[c]{Learning a Black-box Optimization Algorithm from Data}
 
-Black Box Optimization Setting
-\begin{enumerate}
-    \item Given the current state of knowledge $\iter[\bocount]{h}$ propose a query point $\iter[\bocount]{x}$
-    \item Observe the response $\iter[\bocount]{y}$
-    \item Update any internal statistics to produce $\iter[\bocount+1]{h}$
-\end{enumerate}
+\myit{
 
-\pause
-
-Learning Black Box Optimization - essentially, same idea as before:
-\begin{eqnarray}
-\iter[\bocount]{h}, \iter[\bocount]{x} = \text{RNN}_\phi(\iter[\bocount-1]{h}, \iter[\bocount-1]{x}, \iter[\bocount-1]{y}) \nonumber \\
-\iter[\bocount]{y} \sim p(y|\iter[\bocount]{x})\nonumber
-\end{eqnarray}
-
-\begin{itemize}
-    \item Using recurrent neural network (RNN) to predict next $\iter[\bocount]{x}$
-    \item $\iter[\bocount]{h}$ is the internal hidden state 
+    \item Recall the black box optimization setting:
+    \begin{enumerate}
+        \item Given the current state of knowledge $\iter[\bocount]{h}$, propose the next query point $\iter[\bocount]{x}$
+        \item Observe the response $\iter[\bocount]{y}$ \& update any internal statistics to produce $\iter[\bocount+1]{h}$
+    \end{enumerate}
+    
     \pause
-    \item \alert{Remark:} in a black-box setting, we don't have gradient information!
-\end{itemize}
+    \bigskip
+    
+    \item \alert{Learning} a blackbox optimization algorithm
+    \myit{
+        \item Learn a mapping from $\iter[\bocount]{h}$ to next query $\iter[\bocount]{x}$
+        \item This mapping can be a (recurrent) neural net $\text{NN}_{\phi}: \iter[\bocount]{h} \mapsto \iter[\bocount]{x}$ parameterized by weights $\phi$   
+\pause        
+        \item \alert{This mapping $\text{NN}_{\phi}$ constitutes a blackbox optimization algorithm}
+        \myit{
+            \item Should be learned on a \alert{meta-train} set of blackbox functions \& generalize to new functions
+%            \item Like a manually-designed algorithm ...
+        }
 
-\source{Chen et al'17}
-
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-%-----------------------------------------------------------------------
-%-----------------------------------------------------------------------
-\subsection{Learning Acquisition Functions}
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Learning Acquisition Functions}
-
-\begin{itemize}
-	\item Instead of learning everything, it might be sufficient to \alert{learn hand-design heuristics}
-	\pause
-	\item In Bayesian optimization, the most critical hand-design heuristic is the acquisition function
-	\begin{itemize}
-		\item trade-off between exploitation and exploration
-		\item Depending on the problem at hand, you might need a different acquisition function
-		\pause
-		\item Choices:
-		\begin{itemize}
-			\item PI, EI, UCB, ES, KG, \dots
-		\end{itemize} 
-	\end{itemize}
-	\pause
-	\item \alert{Idea:} Learn a \emph{neural acquisition function} from data
-\end{itemize}
-
-$\leadsto$ Replace acquisition function 
-
-\source{Volpp et al.'19}
-
-\end{frame}
-%-----------------------------------------------------------------------
-%-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning}
-\framesubtitle{Learning Acquisition Functions}
-
-Although the \alert{acquisition function $\acq$} depends on the history $\mathcal{D}_{\bocount-1}$ and the predictive model $\surro$, $\acq$ mainly makes use of the \alert{predictive mean $\mu$ and variance $\sigma^2$}.
+%\pause
+%        \item Since $\iter[\bocount]{h}$ captures a \alert{sequence}, a recurrent NN $RNN_{\phi}:\iter[\bocount]{h} \mapsto \iter[\bocount]{x}$ makes sense
 
 \pause
 \bigskip
+    
+    }
+    
+    \item Existing approaches for learning a blackbox optimizer
+    \myit{
+        \item \alert{Gradient descent} on $\phi$  \lit{\href{http://proceedings.mlr.press/v70/chen17e.html}{Chen et al. 2017}}
+        \myit{
+            \item Simplest technique, but requires backpropagation through the optimization trace
+            \item This also requires the blackbox functions $f$ used for training to be differentiable
+       }
+        \item \alert{Reinforcement learning} \lit{\href{https://arxiv.org/abs/1606.01885}{Li \& Malik, 2016}}
+        \myit{
+            \item Can be harder to get to work, but does not require differentiable $f$
+        }
+    
+%        \item Gradient-free approaches should also work
 
-Neural acquisition function (AF):
+    }
+}
 
-\begin{eqnarray}
-\acq_\theta(x) = \acq_\theta(\mu_t(x), \sigma_t(x)) \nonumber
-\end{eqnarray}
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Learning Acquisition Functions}
 
-where $\theta$ are the parameters of a neural network,\\ and $\mu$ and $\sigma$ are its inputs.
-
-\pause 
 \begin{itemize}
-	\item Since the input is not $\pmb{x}$, it allows to learn scalable acquisition function
-	\item No calibration of hyperparameter necessary, once the neural AF is learnt
+	\item Learning a complete optimization algorithm  \alert{requires a lot of data}
+	\item A more \alert{sample-efficient} would be to \alert{only replace hand-designed parts} of an algorithm
+
+\bigskip
+\pause
+	\item In Bayesian optimization, a critical hand-designed heuristic is the acquisition function
+	\begin{itemize}
+		\item Trade-off between exploitation and exploration
+		\item Depending on the problem at hand, you might need a different acquisition function
+		\pause
+		\item Choices: PI, EI, UCB, ES, KG, \dots 
+		%all of them are \alert{myopic} (no long-term look-ahead)
+	\end{itemize}
+\pause
+\bigskip
+
+    \item \alert{Idea:} Learn a \alert{neural acquisition function} from data, but still make use of the sample efficiency of Gaussian processes \lit{\href{https://openreview.net/forum?id=ryeYpJSKwr}{Volpp et al. 2020}}
+
+\pause
+\medskip
+    \item Two options:
+    \myit{
+        \item Only depend on predicted mean and variance: $\acq_\theta(x) = \acq_\theta(\mu_t(x), \sigma_t(x))$ 
+        \myit{
+            \item This allows to learn a general acquisition function
+        }
+        \item Also depend on the $x$ value: $\acq_\theta(x) = \acq_\theta(\mu_t(x), \sigma_t(x), \alert{x})$  
+    }
+
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+
+\begin{itemize}
+    \item \alert{Repetition.} What are the different kind of meta-features which can be used to describe machine learning datasets?
+    
+    \medskip
+
+    \item \alert{Discussion.}
+    \begin{itemize}
+        \item How would you pick meta-features to be used in meta-learning hyperparameter optimization?
+        \item What will happen with the meta-learning system if all prior tasks are dissimilar to the target task?
+    \end{itemize}
 \end{itemize}
 
 \end{frame}
-

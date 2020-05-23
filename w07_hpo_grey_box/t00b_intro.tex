@@ -1,0 +1,205 @@
+%-------------------------------------------------
+\begin{frame}{Beyond Black-box Optimization}
+\medskip
+Recall general blackbox optimization:\\
+        \bigskip
+        \begin{center}
+        \scalebox{0.7}{\hspace*{1.0cm}
+        \input{../w06_hpo_bo/images/intro_images/blackbox_HPO.tex}}\\
+        \bigskip
+         Only mode of interaction with $f$: querying $f$'s value at a given $\conf$
+        
+\pause
+        \bigskip
+        \bigskip
+        \huge{\textcolor{red}{Too slow for tuning expensive models}}
+        
+        \end{center}
+\vspace*{-6cm}
+\begin{center}
+\scalebox{15}{\color{Red}{$\bm{\times}$}}
+\end{center}    
+    
+\end{frame}
+%-------------------------------------------------
+
+%-------------------------------------------------
+%  \begin{frame}{Outline}
+%    \bigskip
+%    \vfill
+%    \tableofcontents
+%  \end{frame}
+%-------------------------------------------------
+
+\begin{frame}[c]{Methods for Going Beyond Blackbox Bayesian Optimization}
+
+\begin{columns}
+
+    \column{0.5\textwidth}
+    \begin{itemize}
+        \item One possible cheap approximation of an expensive function: use a data subset
+        \begin{itemize}
+            \item Many cheap evaluations on small subsets
+            \item Few expensive evaluations on the full data
+        \end{itemize}
+    \end{itemize}
+    
+    \column{0.5\textwidth}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.3\textwidth]{w07_hpo_grey_box/images/intro/black_blocks.png}
+    \end{figure}
+
+\end{columns}
+
+\begin{itemize}
+    \item E.g.: Support Vector Machines (SVM) on MNIST dataset (hyperparameters: C, $\gamma$)
+\end{itemize}
+
+% Screen shots were clipped to 114, 500, 1860, 940
+\only<1>{
+    \includegraphics[width=\textwidth,trim=5px 10px 5px 10px, clip]{w07_hpo_grey_box/images/intro/animation_1.png}
+}
+
+\only<2->{
+    \includegraphics[width=\textwidth,trim=5px 10px 5px 10px, clip]{w07_hpo_grey_box/images/intro/animation_2.png}
+}
+
+\vskip -15pt
+
+\only<3->{
+    $\rightarrow$ up to 1000x speedups over blackbox optimization on full data \lit{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al, AISTATS 2017}}
+}
+
+\end{frame}
+
+%-----------------------------------------------------------------------
+
+\begin{frame}[c]{Learning Goals of this Lecture}
+\framesubtitle{After this lecture, students can ...}
+
+\begin{itemize}
+    \item Describe many different ways of using \alert{meta-learning} to speed up HPO
+    \item Discuss several ways of predicting \alert{learning curves}
+    \item Explain how to \alert{exploit multiple fidelities in Bayesian optimization} 
+    \item Explain the \alert{Successive Halving} and \alert{Hyperband} algorithms 
+    \item Explain how to combine Bayesian optimization and Hyperband in \alert{BOHB}
+    \item Discuss \alert{success stories} of speeding up Bayesian optimization
+\end{itemize}
+\end{frame}
+
+%-----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+%-------------------------------------------------
+\iffalse
+
+
+%-------------------------------------------------
+\begin{frame}{Recall: Black-box optimization}
+
+\begin{figure}
+    \centering
+    \input{images/intro/blackboxoptimization}
+\end{figure}
+\pause
+\begin{itemize}
+    \item Can we do better?
+\end{itemize}
+%\source{\lit{\href{https://slideslive.com/38917532/greybox-bayesian-optimization-for-automl}{Peter Frazier: Grey-box Bayesian Optimization for AutoML}}}
+    
+    \textcolor{red}{FH: can you please create this figure yourself, using the same picture for black box and looking inside the black box, except that for ``looking inside'' the lid is open. For one (not necessarily optimal) way to do this in tikz, see: http://www.texample.net/tikz/examples/annotated-3d-box/}
+    
+\end{frame}
+%-------------------------------------------------
+
+
+
+
+%\section{Introduction to grey-box approaches}
+%-------------------------------------------------
+%-------------------------------------------------
+\begin{frame}{Recall: Black-box optimization}
+\begin{figure}
+    \centering
+    \input{images/intro/blackboxoptimization}
+\end{figure}
+\pause
+\begin{itemize}
+    \item Can we do better?
+\end{itemize}
+%\source{\lit{\href{https://slideslive.com/38917532/greybox-bayesian-optimization-for-automl}{Peter Frazier: Grey-box Bayesian Optimization for AutoML}}}
+    
+    \textcolor{red}{FH: can you please create this figure yourself, using the same picture for black box and looking inside the black box, except that for ``looking inside'' the lid is open. For one (not necessarily optimal) way to do this in tikz, see: http://www.texample.net/tikz/examples/annotated-3d-box/}
+    
+\end{frame}
+%-------------------------------------------------
+%-------------------------------------------------
+\begin{frame}{Looking inside the box}
+\begin{figure}
+    \centering
+    \input{images/intro/greyboxoptimization}
+\end{figure}
+
+    \textcolor{red}{FH: can you please create this figure yourself, using the same picture for black box and looking inside the black box, except that for ``looking inside'' the lid is open. For one (not necessarily optimal) way to do this in tikz, see: http://www.texample.net/tikz/examples/annotated-3d-box/}
+
+%\hspace{6.5cm}\lit{\href{https://slideslive.com/38917532/greybox-bayesian-optimization-for-automl}{Peter Frazier: Grey-box Bayesian Optimization for AutoML}}
+\end{frame}
+%-------------------------------------------------
+
+
+\begin{frame}{Looking inside the box}
+Utilize additional knowledge available about the objective function to improve optimization performance:
+\begin{itemize}
+    \item Learning curves:
+    \begin{itemize}
+        \item Early stopping
+        \item Freezing \& Thawing
+    \end{itemize}
+    \item Cheap-to-evaluate proxies
+    \begin{itemize}
+        \item Trained neural network on small part of $\dataset$ 
+    \end{itemize}
+    \item Multi-task learning
+    \begin{itemize}
+        \item Solve multiple learning tasks simultaneously.
+        \item Exploit commonalities and differences across tasks.
+    \end{itemize}
+    \item Warm starts
+    \begin{itemize}
+        \item Reuse trained hyperparameter configurations from similar models or datasets.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+%-------------------------------------------------
+%-------------------------------------------------
+%\iffalse
+\begin{frame}{Learning Curves}
+
+\centering
+\includegraphics[width=0.4\textwidth]{w07_hpo_grey_box/images/intro/learning_curves.png}
+
+Exemplary learning curves of training deep neural networks\\
+Many ML algorithms iteratively optimize a (loss) function
+
+\end{frame}
+%-------------------------------------------------
+%-------------------------------------------------
+\begin{frame}{Stopping poor evaluations early}
+
+\centering
+\includegraphics[width=0.5\textwidth]{w07_hpo_grey_box/images/intro/differetiatingConfigurations.png}
+
+Only stop evaluations after they have spent sufficient resources to differentiate between them in terms of quality.
+
+\end{frame}
+\fi

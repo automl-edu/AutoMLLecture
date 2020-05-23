@@ -5,20 +5,18 @@
 Desiderata for a practical solution to the hyperparamenter optimization problem:
 \begin{itemize}
     \item Strong Anytime Performance
-    \pause
     \item Strong Final Performance
     \pause
-    \item Effective Use of Parallel Resources
-    \pause
     \item Scalability
-    \pause
     \item Robustness $\&$ Flexibility
     \pause
-    \item Simplicity
-    \pause
     \item Computational Efficiency
+    \item Effective Use of Parallel Resources
+    \pause
+    \item Conceptual / Algorithmic Simplicity
     \pause
 \end{itemize}
+\bigskip
 To fulfill all of these desiderata BOHB combines Bayesian Optimization with Hyperband
 
 \end{frame}
@@ -26,45 +24,53 @@ To fulfill all of these desiderata BOHB combines Bayesian Optimization with Hype
 %----------------------------------------------------------------------
 \begin{frame}[c]{BOHB}
 \begin{itemize}
-    \item BOHB combines Bayesian Optimization and Hyperband to combine both advantages into one.
-    \pause
-    \item Bayesian Optimization part is handled by a variant of the Tree Parzen Estimator with a product kernel.
-    \pause
-    \item BOHB uses Hyperband to allocate budgets to configurations.
-    \pause
-    \item BOHB replaces the random selection of configurations at the beginning of each HB iteration by a model-based search.
-    \begin{itemize}
-        \item The configurations are sampled sequentially.
-        \item The model is trained on the highest budget for which there are sufficiently many configurations evaluated.
-        \item The model is trained on the configurations that were evaluated on that budget so far.
-    \end{itemize}
+    \item BOHB combines the advantages of Bayesian Optimization and Hyperband
+    \myit{
+        \item Bayesian Optimization for choosing configurations to achieve strong final performance
+        \item Hyperband to choose the budgets for good anytime performance    
+    }
+\pause
+\bigskip
+    \item BOHB replaces the random selection of configurations at the beginning of each HB iteration by a model-based search
+\pause
+\bigskip
+    \item Details of the model
+    \myit{
+        \item Variant of the Tree Parzen Estimator, with a product kernel
+        \item Models are fitted independently to the data for one budget at a time
+        \myit{
+            \item Specifically, always the highest budget that has enough data points
+        }
+    }
 \end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{BOHB}
-\begin{itemize}
-    \item Strong anytime performance of BOHB(desideratum 1) stems from its use of Hyperband.
-    \begin{itemize}
-        \item Quickly evaluating lots of configurations on small budgets allows BOHB to quickly identify promising configurations.
-        \pause
-    \end{itemize}
-    \item The strong final performance (desideratum 2) stems from BOHB's BO part as the guided search is able to refine the selected configurations.
-    \pause
-    \item BOHB also efficiently takes advantage of parallel resources (desideratum 3).
-    \begin{itemize}
-        \item In each iteration BOHB is evaluations multiple configurations, which can be independently run on multiple workers.
-        \item The parallelism in TPE is achieved by limiting the number of samples to optimize EI.
-        \item Single pool of workers, and whenever a worker becomes available preferentially execute waiting runs with smaller budgets.
-    \end{itemize}
-\end{itemize}
-
-\end{frame}
+%\begin{frame}[c]{BOHB}
+%\begin{itemize}
+%    \item Strong anytime performance of BOHB(desideratum 1) stems from its use of Hyperband.
+%    \begin{itemize}
+%        \item Quickly evaluating lots of configurations on small budgets allows BOHB to quickly identify promising configurations.
+%        \pause
+%    \end{itemize}
+%    \item The strong final performance (desideratum 2) stems from BOHB's BO part as the guided search is able to refine the selected configurations.
+%    \pause
+%    \item BOHB also efficiently takes advantage of parallel resources (desideratum 3).
+%    \begin{itemize}
+%        \item In each iteration BOHB is evaluations multiple configurations, which can be independently run on multiple workers.
+%        \item The parallelism in TPE is achieved by limiting the number of samples to optimize EI.
+%        \item Single pool of workers, and whenever a worker becomes available preferentially execute waiting runs with smaller budgets.
+%    \end{itemize}
+%\end{itemize}
+%
+%\end{frame}
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \begin{frame}{BOHB: Algorithm}
 
+\begin{centering}
+\begin{minipage}{0.75\textwidth}
 \begin{algorithm}[H]
     %\DontPrintSemicolon
     \LinesNumbered
@@ -82,22 +88,22 @@ To fulfill all of these desiderata BOHB combines Bayesian Optimization with Hype
     
     \lIf{$b=\varnothing$}{\Return{random configuration}}
     
-    fit KDEs according to Equation~\ref{eq:TPE_Densities}
+    Fit KDEs according to Equation~\ref{eq:TPE_Densities}
     
     Draw $N_s$ samples acoording to $l'(\conf)$
     
     \Return{sample with highest ratio $l(\conf)/g(\conf)$}
+       
     
-   
- 
-        
-    
-    \caption{Pseudocode for sampling in BOHB}
+    \caption*{Pseudocode for sampling in BOHB}
 \end{algorithm}
-\vspace{-2em}
+\end{minipage}
+\end{centering}
+
+%\vspace{-2em}
 \begin{equation}
-    l(\conf)=p(\obs<\alpha|\conf, \dataset)\quad\quad\quad\quad
-    g(\conf)=p(\obs>\alpha|\conf, \dataset)
+    l(\conf)=p(\obs<\alpha| D_b)\quad\quad\quad\quad
+    g(\conf)=p(\obs>\alpha| D_b)
     \label{eq:TPE_Densities}
 \end{equation}
 
@@ -210,3 +216,21 @@ benchmarks. }
 
 \end{frame}
 %-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}{Questions to Answer for Yourself / Discuss with Friends}
+
+\bigskip
+
+\begin{itemize}
+    \item \alert{Repetition.} Why does BOHB interleave randomly sampled configurations in the optimization process?
+
+\medskip
+    \item \alert{Discussion.} 
+    What are the advantages of the Parzen estimator model over more advanced models such as random forests or Gaussian processes?
+
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------

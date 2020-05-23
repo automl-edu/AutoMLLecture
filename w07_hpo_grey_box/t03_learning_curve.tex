@@ -1,5 +1,7 @@
-\section{Learning Curves}
+\section{Learning Curve Prediction}
 \begin{frame}{Learning Curves}
+\notefh{Please add the visualization on the first slide}
+
 \begin{figure}
    \centering
    \includegraphics[width=0.44\textwidth]{w07_hpo_grey_box/images/learningcurve/learning_curve_domhan.png}
@@ -50,7 +52,7 @@
 \begin{frame}{Learning Curves: Early Termination}
 
 \centering
-\includegraphics[width=0.8\textwidth]{images/learningcurve/learning_curve_dec.png}
+\includegraphics[width=0.8\textwidth]{w07_hpo_grey_box/images/learningcurve/learning_curve_dec.png}
 
 $\rightarrow$ need for \alert{probabilistic predictions / quantification of uncertainty}
 
@@ -60,7 +62,7 @@ $\rightarrow$ need for \alert{probabilistic predictions / quantification of unce
 \begin{frame}{Learning Curves: Early Termination}
 
 \centering
-\includegraphics[width=0.8\textwidth]{images/learningcurve/learning_curve_dec2.png}
+\includegraphics[width=0.8\textwidth]{w07_hpo_grey_box/images/learningcurve/learning_curve_dec2.png}
 
 $\rightarrow$ need for \alert{probabilistic predictions / quantification of uncertainty}
 
@@ -80,7 +82,7 @@ where $\bm{\xi} = (w_1, \dots, w_{K}, \boldsymbol{\theta}_1, \dots, \boldsymbol{
 %	\item MSc Thesis in my group, 2015
 }
 \begin{center}
-\includegraphics[width=0.9\textwidth]{images/learningcurve/Domhan_types_of_curves.png}\\
+\includegraphics[width=0.9\textwidth]{w07_hpo_grey_box/images/learningcurve/Domhan_types_of_curves.png}\\
 \scriptsize{$K=11$ parametric families for modelling learning curves}
 \end{center}
 
@@ -97,7 +99,7 @@ where $\bm{\xi} = (w_1, \dots, w_{K}, \boldsymbol{\theta}_1, \dots, \boldsymbol{
 
 {
 \begin{center}
-\includegraphics[width=0.9\textwidth]{images/learningcurve/learning_curve_tuning.jpg}
+\includegraphics[width=0.9\textwidth]{w07_hpo_grey_box/images/learningcurve/learning_curve_tuning.jpg}
 
 All learning curves vs. learning curves with early termination
 \end{center}
@@ -113,7 +115,7 @@ All learning curves vs. learning curves with early termination
 
 {
 \begin{center}
-\includegraphics[width=0.5\textwidth]{images/learningcurve/learning_curve_tuning.jpg}
+\includegraphics[width=0.5\textwidth]{w07_hpo_grey_box/images/learningcurve/learning_curve_tuning.jpg}
 
 All learning curves vs. learning curves with early termination
 \end{center}
@@ -176,8 +178,8 @@ All learning curves vs. learning curves with early termination
 	}
 
 \begin{center}
-	\includegraphics[width=0.58\textwidth]{images/learningcurve/Gargiani-MNIST-extrapolations_1.png}\\
-	\includegraphics[width=0.58\textwidth]{images/learningcurve/Gargiani-MNIST-extrapolations_2.png}\\
+	\includegraphics[width=0.58\textwidth]{w07_hpo_grey_box/images/learningcurve/Gargiani-MNIST-extrapolations_1.png}\\
+	\includegraphics[width=0.58\textwidth]{w07_hpo_grey_box/images/learningcurve/Gargiani-MNIST-extrapolations_2.png}\\
 \end{center}	
 	
 \end{frame}
@@ -192,7 +194,7 @@ All learning curves vs. learning curves with early termination
 		}
 	}
 \begin{center}
-	\includegraphics[width=0.9\textwidth]{images/learningcurve/Gargiani-MNIST-extrapolation-quality-based-on-different-sized-prefixes.png}
+	\includegraphics[width=0.9\textwidth]{w07_hpo_grey_box/images/learningcurve/Gargiani-MNIST-extrapolation-quality-based-on-different-sized-prefixes.png}
 \end{center}	
 \end{frame}
 %-----------------------------------------------------------------------
@@ -250,13 +252,27 @@ All learning curves vs. learning curves with early termination
 			\myit{
 				\item Instead of only validation accuracy
 			}
-			\item E.g., split cross-entry into data-dependent \& weight dependent parts
+			\item E.g., split cross-entropy into data-dependent \& weight dependent parts
 			\item E.g., keep track of gradient norms, activation statistics, \ldots
 		}
-		\item Information about learning rate (\& weight decay) at each step
-		\begin{itemize}
-		    \item Only Predictive termination leads to a practically usable algorithm
-		\end{itemize}
-		
+\bigskip
+        \item Information about learning rate (\& weight decay) at each step
+%		\begin{itemize}
+%		    \item Only Predictive termination leads to a practically usable algorithm
+%		\end{itemize}
 	}
 }
+
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+
+\begin{itemize}
+    \item 
+    \alert{Discussion.} 
+    \begin{itemize}
+        \item Is it dangerous (in terms of performance) to cut evaluations early on, i.e., could one cut evaluations that would be final best?
+        \item How would you set the new hyperparameters, such as the 5\% for early learning curve termination, in practice?
+    \end{itemize}
+\end{itemize}
+
+\end{frame}

@@ -1,8 +1,7 @@
 \section{Multi-fidelity Bayesian optimization}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Multi-fidelity Bayesian optimization}
-\framesubtitle{Motivating example}
+\begin{frame}[c]{Motivating example}
 
 \begin{itemize}
     % \item Traditional Bayesian hyperparamter optimizers model \\ the loss of ML algorithm given the dataset and seek to find \\ the minimum of such black-box function.
@@ -13,7 +12,7 @@
             \item Computational cost grows quadratically in dataset size $z$
             \item Error shrinks smoothly with $z$
         \end{itemize}
-	\item Evaluations on the smallest subset (128 data points) cost 10\,000 less than on the full data set
+	\item Evaluations on the smallest subset (about 400 data points) cost 10\,000$\times$ less than on the full data set
     
 \end{itemize}
 \end{frame}
@@ -22,95 +21,100 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Multi-fidelity Bayesian optimization}
-\framesubtitle{Idea}
+\begin{frame}[c]{Idea}
 
 \alert{Multi-fidelity Bayesian optimization} for fidelity with values $z\in \mathcal{Z}$ 
 \begin{itemize}
 	\item Standard Bayesian optimization uses a model $\surro(\conf) \approx y$ to select the next $\conf$
-	\item \alert{Multi-fidelity Bayesian optimization} uses a model $\surro(\conf\alert{, z}) \approx y$ to select the next $(\conf\alert{, z})$
+	\item \alert{Multi-fidelity} Bayesian optimization uses a model $\surro(\conf\alert{, z}) \approx y$ to select the next $(\conf\alert{, z})$
     \pause
-    \smallskip
+    \bigskip
     
-	\item Model $\surro$ needs to be good at extrapolating from small to large $z$
+
 	
-	\item BOCA - a general approach
-	\begin{itemize}
-	    \item Introduces continuity in fidelity space
-		\item Based on \alert{UCB}
-	\end{itemize}
-    
-	\item FABOLAS - a Gaussian process for extrapolating from small to large datasets
-	\begin{itemize}
-		\item This approach uses dataset size as a fidelity $(z \in [0, 1])$
-		\item Based on \alert{Entropy Search}
-	\end{itemize}
-	
-\end{itemize}
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
+%	\item BOCA - a general approach
+%	\begin{itemize}
+%	    \item Introduces continuity in fidelity space
+%		\item Based on \alert{UCB}
+%	\end{itemize}
+%   
+%	\item FABOLAS - a Gaussian process for extrapolating from small to large datasets
+%	\begin{itemize}
+%		\item This approach uses dataset size as a fidelity $(z \in [0, 1])$
+%		\item Based on \alert{Entropy Search}
+%	\end{itemize}
 
-
-\subsection{BOCA}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Bayesian Optimization with Continuous Approximations}
-\framesubtitle{Introduction}
-
-\begin{itemize}
-    \item \emph{Goal.} Use the cheap approximations to guide search for the optimum of $\func$, \\ reduce the overall cost of optimization
-    \item \emph{Example.} Tuning of a classification algorithm over a space of hyperparameters $\conf$ 
-        \begin{itemize}
-            \item using $N_{\bullet}$ data points
-            \item via iterative algorithm for $T_{\bullet}$ iterations
-        \end{itemize}
-    \item \emph{Solution.} Approximate validation loss using fewer data points $N < N_{\bullet}$ and/or fewer iterations $T < T_{\bullet}$, such that search deploys:
-        \begin{itemize}
-            \item cheap low fidelity experiments with small $(N, T)$ to discard bad hyperparameters 
-            \item expensive high fidelity experiments with large $(N, T)$ for promising regions
-        \end{itemize}
-    
-\end{itemize}
-\end{frame}
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Bayesian Optimization with Continuous Approximations}
-\framesubtitle{Further details}
-
-\begin{itemize}
 
     \item Our goal:
         \begin{equation*}
             \optconf = \argmin_{\conf \in \pcs} \func(\conf) = \argmin_{\conf \in \pcs} \surro(\alert{z_{\bullet}}, \conf)
         \end{equation*}
-        \begin{itemize}
-            \item surrogate function $\surro : \alert{\mathcal{Z}} \times \conf \rightarrow  \mathbb{R}$
-            \item e.g. fidelity space $\mathcal{Z} = [1, N_{\bullet}] \times  [1, T_{\bullet}], z_{\bullet} = [N_{\bullet}, T_{\bullet}]$
 
-        \end{itemize}
+    \pause
+    \bigskip
 
-    \item Determine the fidelity $\iter[\bocount]{z} \in \mathcal{Z}$ to query $\surro$:
-        \begin{enumerate}
-            \item Select a subset  $\iter[\bocount]{Z}$ of $\mathcal{Z}$, that:
-                \begin{itemize}
-                    \item considers only cheaper fidelities,
-                    \item trades of \emph{information gain} and \emph{cost} while enforcing more exploration \\ in cheaper regions in the early stage of the search, 
-                    \item excludes fidelities in a close neighborhood of $z_{\bullet}$.
-                \end{itemize}
-            \item If the subset is empty: $\iter[\bocount]{z} = z_{\bullet}$
-            \item Otherwise: $\iter[\bocount]{z} \in \argmin_{z \in \iter[\bocount]{Z}} \cost(z)$
-        \end{enumerate}
+    \item Model $\surro$ needs to be good at extrapolating from small to large $z$
 
 \end{itemize}
+
+
+
+
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-\subsection{FABOLAS}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+%\begin{frame}[c]{Bayesian Optimization with Continuous Approximations}
+%
+%\begin{itemize}
+%    \item \emph{Goal.} Use the cheap approximations to guide search for the optimum of $\func$, \\ reduce the overall cost of optimization
+%    \item \emph{Example.} Tuning of a classification algorithm over a space of hyperparameters $\conf$ 
+%        \begin{itemize}
+%            \item using $N_{\bullet}$ data points
+%            \item via iterative algorithm for $T_{\bullet}$ iterations
+%        \end{itemize}
+%    \item \emph{Solution.} Approximate validation loss using fewer data points $N < N_{\bullet}$ and/or fewer iterations $T < T_{\bullet}$, such that search deploys:
+%        \begin{itemize}
+%            \item cheap low fidelity experiments with small $(N, T)$ to discard bad hyperparameters 
+%            \item expensive high fidelity experiments with large $(N, T)$ for promising regions
+%        \end{itemize}
+%    
+%\end{itemize}
+%\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+%\begin{frame}[c]{Bayesian Optimization with Continuous Approximations}
+%
+%\begin{itemize}
+%
+%        \begin{itemize}
+%            \item surrogate function $\surro : \alert{\mathcal{Z}} \times \conf \rightarrow  \mathbb{R}$
+%            \item e.g. fidelity space $\mathcal{Z} = [1, N_{\bullet}] \times  [1, T_{\bullet}], z_{\bullet} = [N_{\bullet}, T_{\bullet}]$
+%
+%        \end{itemize}
+%
+%    \item Determine the fidelity $\iter[\bocount]{z} \in \mathcal{Z}$ to query $\surro$:
+%        \begin{enumerate}
+%            \item Select a subset  $\iter[\bocount]{Z}$ of $\mathcal{Z}$, that:
+%                \begin{itemize}
+%                    \item considers only cheaper fidelities,
+%                    \item trades of \emph{information gain} and \emph{cost} while enforcing more exploration \\ in cheaper regions in the early stage of the search, %
+%                    \item excludes fidelities in a close neighborhood of $z_{\bullet}$.
+%                \end{itemize}
+%            \item If the subset is empty: $\iter[\bocount]{z} = z_{\bullet}$
+%            \item Otherwise: $\iter[\bocount]{z} \in \argmin_{z \in \iter[\bocount]{Z}} \cost(z)$
+%        \end{enumerate}
+%
+%\end{itemize}
+%\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
 % %----------------------------------------------------------------------
 % %----------------------------------------------------------------------
 % \begin{frame}[c]{Fast Bayesian Optimization on Large Datasets}
@@ -138,8 +142,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets}
-\framesubtitle{Entropy Search - reminder}
+\begin{frame}[c]{Entropy Search - reminder}
 
 \begin{itemize}
 		\item Define the $p_{\text{min}}$ distribution given data $\dataset$:
@@ -163,8 +166,8 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets}
-\framesubtitle{FABOLAS - Overview}
+\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets: Overview}
+
 \begin{itemize}
 		\item We care about the $p_{\text{min}}$ distribution for the maximal budget $z_{\bullet}$:
 		$$p_{\text{min}}(\conf^* \mid \dataset) := p(\conf^* \in \argmin_{\conf\in \pcs} \func(\conf\alert{,z_{\bullet}}) \mid \dataset)$$
@@ -187,8 +190,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets}
-\framesubtitle{FABOLAS - Overview}
+\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets: Overview}
 
 \begin{itemize}
     \item The entire algorithm iterates the following 2 steps until time is up:
@@ -268,13 +270,29 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets}
-\framesubtitle{Results}
+\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets: Results}
 
 \centering
 \includegraphics[width=1.\textwidth]{w07_hpo_grey_box/images/fabolas/fabolas_results.jpg}
 
-\source{\lit{\href{proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al, AISTATS 2017}}}
+\hspace{12cm}{\lit{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al. 2017}}}
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
+
+
+\begin{frame}{Questions to Answer for Yourself / Discuss with Friends}
+
+\bigskip
+
+\begin{itemize}
+    \item \alert{Discussion.} 
+    \begin{itemize}
+        \item What kind of cost model should be incorporated into the FABOLAS algorithm?
+        \item Could one use other acquisition functions than entropy search for FABOLAS?
+    \end{itemize}
+    
+
+\end{itemize}
+
+\end{frame}

@@ -11,7 +11,7 @@
     \item Training data for the models changes over time \item Hyperparameters are constantly re-optimized using meta-learning Bayesian optimization as described in \lit{\href{https://arxiv.org/abs/1802.02219}{Feurer et al. 2018}}
     \begin{figure}
         \centering
-        \includegraphics[width=0.5\textwidth]{images/success_stories/FB_RGPE.png}
+        \includegraphics[width=0.5\textwidth]{w07_hpo_grey_box/images/success_stories/FB_RGPE.png}
         \caption{Bayesian optimization with meta-learning (RGPE) vs. vanilla Bayesian optimization (GP)}
     \end{figure}
 \end{itemize}
@@ -35,16 +35,23 @@ Extension of Auto-WEKA with focus on speed improvements and robustness:
     \centering
     \includegraphics[width=0.9\textwidth]{images/success_stories/Auto-sklearn_01.png}
 \end{figure}
-Available at \href{automl.github.io/auto-sklearn}{automl.github.io/auto-sklearn}
+Available at \href{http://automl.github.io/auto-sklearn}{automl.github.io/auto-sklearn}
 \end{frame}
 
 %-----------------------------------------------------------------------
 
-\begin{frame}[c]{PoSH-Auto-sklearn}
+\begin{frame}[c]{PoSH-Auto-sklearn} \lit{\href{https://ml.informatik.uni-freiburg.de/papers/18-AUTOML-AutoChallenge.pdf}{Feurer et al. 2018}}
+
 Idea: integrate successive halving for further speed improvements:
 \begin{itemize}
     \item Uses task-independent Meta-learning to warmstart Bayesian optimization
+    \myit{
+        \item Therefore, no need for (potentially unreliable) meta-features
+    }
     \item Uses Successive Halving to quickly go through proposed configurations
+    \myit{
+        \item Therefore, scales better to larger datasets
+    }
     \item Won the 2nd AutoML challenge
 \end{itemize}
 
@@ -53,7 +60,34 @@ Idea: integrate successive halving for further speed improvements:
     \includegraphics[width=\textwidth]{images/success_stories/automl_bo_po_es.png}
 \end{figure}
 
-\hspace{12cm}\lit{\href{https://ml.informatik.uni-freiburg.de/papers/18-AUTOML-AutoChallenge.pdf}{Feurer et al. 2018}}
+\end{frame}
+
+%-----------------------------------------------------------------------
+
+\begin{frame}[c]{Auto-sklearn 2.0}
+
+\begin{columns}
+
+\column{0.4\textwidth}
+\vskip 35pt
+Idea: automatically choose:
+\begin{itemize}
+    \item holdout or cross-validation
+    \item optimization on the full budget or optimization with successive halving
+\end{itemize}
+using algorithm selection
+\vskip 10pt
+Yields huge improvements over Auto-sklearn 1.0.
+
+\column{0.6\textwidth}
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{w07_hpo_grey_box/images/success_stories/RQ1_60MIN_ens_rank.pdf}
+    \includegraphics[width=\textwidth]{w07_hpo_grey_box/images/success_stories/RQ1_legend.pdf}
+    \label{fig:my_label}
+\end{figure}
+\end{columns}
+
 \end{frame}
 
 %-----------------------------------------------------------------------
