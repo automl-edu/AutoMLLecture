@@ -1,6 +1,51 @@
 \videotitle{Overview of Multi-Fidelity Optimization}
 %----------------------------------------------------------------------
 
+\myframetop{Motivating Example}{
+\vspace*{-0.6cm}	\begin{columns}
+	    \column{0.6\textwidth}
+	    \begin{itemize}
+	        \item One possible cheap approximation of an expensive function: use a data subset
+	        \begin{itemize}
+	            \item Many cheap evaluations on small subsets
+	            \item Few expensive evaluations on the full data
+	        \end{itemize}
+	    \end{itemize}
+	    
+	    \column{0.4\textwidth}
+	    \begin{figure}
+	        \centering
+	        \includegraphics[width=0.5\textwidth]{../w07_hpo_speedup/images/intro/black_blocks.png}
+	    \end{figure}
+	
+	\end{columns}
+
+\bigskip
+	\onslide<2->{
+	\begin{itemize}
+	    \item E.g.: Support Vector Machines (SVM) on MNIST dataset (hyperparameters: C, $\gamma$)
+	\end{itemize}
+	}
+	% Screen shots were clipped to 114, 500, 1860, 940
+	\only<2>{
+	    \includegraphics[width=\textwidth,trim=5px 10px 5px 10px, clip]{../w07_hpo_speedup/images/intro/animation_1.png}
+	}
+	
+	\only<3->{
+	    \includegraphics[width=\textwidth,trim=5px 10px 5px 10px, clip]{../w07_hpo_speedup/images/intro/animation_2.png}
+	}
+	
+	\vskip -15pt
+	
+\medskip
+	\only<4->{
+	    $\rightarrow$ up to 1000x speedups over blackbox optimization on full data \lit{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al, AISTATS 2017}}
+	}
+}
+
+
+
+\iffalse
 \begin{frame}[c]{Motivating Example}
 
 \begin{itemize}
@@ -16,6 +61,7 @@
 \end{itemize}
 \end{frame}
 %----------------------------------------------------------------------
+\fi
 
 %----------------------------------------------------------------------
 \begin{frame}[c]{Motivating Example 2: Shorter Runs of Anytime Algorithms}
