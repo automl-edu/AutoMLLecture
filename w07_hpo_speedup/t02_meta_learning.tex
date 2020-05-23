@@ -3,21 +3,41 @@
 
 \begin{frame}[c]{Introduction}
 
-\notefh{Please add the visualization on the first slide for meta-learning}
-
-\begin{itemize}
-	\item Learning essentially never stops:
+	\begin{center}
+		\includegraphics[width=0.2\linewidth, keepaspectratio=true]{images/intro/meta-learning.png}
+	\end{center}
+				
 	\begin{itemize}
-		\item Many models are periodically re-fit to track changes in the data
-		\item Many models are re-fit to perform well on new tasks
-	\end{itemize}
-	
-    \item Machine Learning is often done from scratch
-    
-    \item We humans do not start from scratch all the time \\ - we learned how to learn!
-\end{itemize}
-
+		\item Learning essentially never stops:
+		\begin{itemize}
+			\item Many models are periodically re-fit to track changes in the data
+			\item Many models are re-fit to perform well on new tasks
+		\end{itemize}
+		\item The best hyperparameter configuration tends to remain quite stable across tasks
+	\end{itemize}		
 \end{frame}
+
+\begin{frame}[c]{Problem Statement}
+%	\myblock{Definition: meta-learning for HPO}{
+		Given:
+	    \myit{
+	        \item a set of prior tasks: $t_{j} \in \mathcal{T}$,
+	        \item a set of new tasks: $t_{\text{new}} \in \mathcal{T}$,
+\pause
+	        \item a set of learning algorithms, fully defined by $\theta_{i} \in \Theta$
+\pause
+	        \item a set of prior evaluations: $\dataset$, where $\dataset_{i, j} = \cost(\theta_{i}, t_{j})$
+	        \item a (possibly empty) set of known evaluations $\cost_{i, \text{new}}$ on a new task $t_{\text{new}}$
+		}
+		\bigskip
+\pause
+		\alert{Goal of meta-learning:} train a meta-learner using meta-data $\dataset \cup \dataset_{\text{new}}$ to recommend configurations for a new task better than a black-box algorithm. 
+%	}	
+
+\hspace{11cm}\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}
+\end{frame}
+
+
 % %----------------------------------------------------------------------
 % %----------------------------------------------------------------------
 % \begin{frame}[c]{Meta-Learning}
@@ -50,41 +70,36 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning from model evaluations}
-
-\begin{itemize}
-    \item Similarly, while building ML models for a specific task, we exploit our experience with related tasks
-    \item The challenge of meta-learning is to provide a systematic and data-driven approach to learn from experience 
-    \item Consider that we have an access to:
-        \begin{itemize}
-            \item set of prior tasks: $t_{j} \in \mathcal{T}$,
-            \item set of new tasks: $t_{\text{new}} \in \mathcal{T}$,
-            \item set of learning algorithms, fully defined by $\theta_{i} \in \Theta$
-            \item set of prior evaluations: $\dataset$, where $\dataset_{i, j} = \cost(\theta_{i}, t_{j})$
-            \begin{itemize}
-                \item $\dataset_{\text{new}}$ is the set of known evaluations $\cost_{i, \text{new}}$ on a new task $t_{\text{new}}$
-            \end{itemize}
-        \end{itemize}
-    \item \emph{Goal.} Train a meta-learner using meta-data $\dataset \cup \dataset_{\text{new}}$, such that it recommends configurations for a new task better than a black-box algorithm
-\end{itemize}
-
-\hspace{11cm}\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}
-
-\end{frame}
+%\begin{frame}[c]{Learning from model evaluations}
+%
+%\begin{itemize}
+%    \item Similarly, while building ML models for a specific task, we exploit our experience with related tasks
+%    \item The challenge of meta-learning is to provide a systematic and data-driven approach to learn from experience 
+%\end{itemize}
+%
+%\hspace{11cm}\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}
+%
+%\end{frame}
 % %----------------------------------------------------------------------
 % %----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning from task properties}
+\begin{frame}[c]{The Role of Meta-Features}
 
 \begin{itemize}
-    \item Other than characterize the data by its performance, we can extract characterizations (called \alert{meta-features}) from data at hand 
+    \item We can often extract additional characteristics for each task, called \alert{meta-features}
     \item Each task $t_j$ can be described by a vector of $K$ meta-features:
         \begin{equation*}
             m(t_j) = (m_{j, 1}, \dots, m_{j, K})
         \end{equation*}
-    \item This vector can be used to define the similarity measure between two tasks, e.g. calculating the Euclidean distance between $m(t_i)$ and $m(t_j)$
+\medskip
+\pause
+    \item This vector can be used to define a \alert{similarity measure} between two tasks
+    \myit{
+    	\item e.g., calculating the Euclidean distance between $m(t_i)$ and $m(t_j)$
+    }
+\smallskip
     \item Based on similarity, we can transfer information from the most similar tasks to the new task $t_{\text{new}}$
     \end{itemize}
 
@@ -219,38 +234,59 @@
 % \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Features in Machine Learning}
+\begin{frame}[c]{Overview of Meta-Features in Machine Learning}
 
 \begin{itemize}
-	\item \alert{Simple} - easily extracted from the data, describe the basic dataset structure: e.g. number of features, patterns or classes. \pause
+	\item \alert{Simple} - easily extracted from the data, describe the basic dataset structure
+	\myit{
+		\item e.g., number of features, data points or classes
+		\pause
+	}
 	
-	\item \alert{Statistical} - characterize the data via descriptive statistics: e.g. average, standard deviation, correlation, the kurtosis or the dispersion of the label distribution. \pause
-	
-	\item \alert{Information-theoretic} - measure the class entropy in the data, capturing the amount of information in the data and their complexity. \pause 
-    
-    \item \alert{Model-based} - extracted from a model induced using the training data, they are often based on properties of decision tree models: e.g. the number of leaves, the number of nodes, the shape of the tree. \pause
-		
-	\item \alert{Landmarking} - computed by running several fast machine learning algorithms on the dataset. Based on their learning scheme they can capture different properties of the dataset, like e.g. linear separability. \pause
-	
-	\item \alert{Others} - not included in the previous groups, such as standalone measures, time related measures, concept and case-based measures, clustering and distance-based measures.
+	\item \alert{Statistical} - characterize the data via descriptive statistics:
+	\myit{
+		\item e.g., average, standard deviation, correlation, kurtosis or dispersion of the label distribution 
+		\pause
+	} 	
+	\item \alert{Information-theoretic} - measure the class entropy in the data
+	\myit{
+		\item capture the amount of information in the data and their complexity
+		\pause 
+    }
+    \item \alert{Model-based} - extracted from a model induced using the training data
+    \myit{
+    	\item these are often based on properties of decision tree models
+    	\item e.g., number of leaves, number of nodes, shape of the tree 
+    	\pause
+	}	
+	\item \alert{Landmarking} - computed by running several fast ML algorithms on the dataset
+	\myit{
+		\item e.g., is fast algorithm A better than fast algorithm B on this dataset?
+		\item this can capture different properties of the dataset, e.g., linear separability
+		\pause
+	}
+	\item \alert{Others} - not included in the previous groups
+	\myit{
+		\item e.g., time related measures, clustering and distance-based measures
+	}
 	
 \end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Warmstarting}
+\begin{frame}[c]{Meta-Learning for HPO Approach 1: Warmstarting}
 	
 \begin{itemize}
-	\item Recap: Instead of starting from a random configuration we often start from a expert-defined configuration for hyperparameter optimization (HPO)
+	\item Experts often start HPO from a strong default (rather than random configurations)
 	\pause
-	\item We also know that such a default configuration often does not perform well on a new dataset
+	\item But such a default configuration often does not perform well on a new dataset
 	\begin{itemize}
 		\item Otherwise there would be no point in HPO
 	\end{itemize}
 	\pause
 	\item \alert{Can we learn from previous datasets $\mdata$ how to initialize HPO?}\\
-	(i.e., running an initial design)
+%	(i.e., running an initial design)
 %	\begin{itemize}
 %		\item the same ideas also apply to NAS
 %		\item for simplicity we focus on HPO 
@@ -261,13 +297,12 @@
 %-----------------------------------------------------------------------
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Model-Warmstarting}
+\begin{frame}[c]{Meta-Learning for HPO Approach 2: Model-Warmstarting}
 
 \begin{itemize}
-	\item Many HPO optimizers make use of some kind of a predictive model,\\
-	e.g., Bayesian optimization
-	\item By running HPO over and over again on different datasets,
-	we can actually learn something about the search landscape
+	\item Many HPO methods use a predictive model (e.g., Bayesian optimization)
+	\item By running HPO on different datasets,
+	we learn something about the search landscape
 	\begin{itemize}
 		\item E.g., what are bad regions of the configuration space in general
 	\end{itemize}
@@ -282,19 +317,20 @@
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Task-independent Recommendations}
+\myframetop{Meta-Learning for HPO Approach 3: Task-independent Recommendations}{
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
 
-    \only<1->{
+\vspace*{-0.3cm}
+    \onslide<1->{
     \begin{itemize}
-        \item \emph{Idea:} learn a sorted list of defaults
-        \item \emph{Method:} mostly greedy 
-        \item \emph{Results:} improves over Random Search and Bayesian Optimization
+        \item \emph{Idea:} learn a \alert{sorted list of defaults}
+        \item \emph{Method:} mostly \alert{greedy} on $\dataset_{\text{meta}}$
+        \item \emph{Results:} surprisingly strong; better than Bayesian Optimization
     \end{itemize}}
 
-    \only<2->{
+    \onslide<2->{
     \begin{block}{Advantages}
     \begin{itemize}
     	\item Easy to share and use
@@ -303,7 +339,7 @@
     \end{itemize}
     \end{block}}
     
-    \only<2->{
+    \onslide<2->{
     \begin{block}{Disadvantages}
     \begin{itemize}
     	\item Not adaptive
@@ -330,25 +366,22 @@
 \hspace{6cm}
 \lit{\href{https://link.springer.com/article/10.1007/s10994-017-5684-y}{Wistuba et al. 2015a}}, \lit{\href{https://arxiv.org/pdf/1802.02219.pdf}{Feurer et al. 2018}},  \lit{\href{}{Pfisterer et al. 2018}}
 
-
-
-\end{frame}
+}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Joint model for Bayesian optimization}
+\begin{frame}[c]{Meta-Learning for HPO Approach 4: Joint model for Bayesian optimization}
 
 \begin{columns}[T] % align columns
 \begin{column}{.38\textwidth}
 
 \begin{itemize}
-    \item<1-> Jointly train a „deep“ neural network on all tasks 
-    \item<2-> Have a separate output layer (head) for each tasks 
-    \item<3-> Each head is a Bayesian linear regression 
-    \item<4-> Feature extraction on hyperparameter configurations 
-    \item<5-> (Recall DNGO)
+    \item<1-> \alert{Jointly train} a ``deep'' neural network \alert{on all tasks} 
+    \item<2-> Have a separate output layer (head) for each task 
+    \item<3-> Each head is a Bayesian linear regression (recall DNGO)
+    \item<4-> Learned: feature extraction on hyperparameter configurations 
 \end{itemize}
 \end{column}%
 
@@ -375,23 +408,19 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning a Black-box Optimization Algorithm from Data}
+\begin{frame}[c]{Meta-Learning for HPO Approach 5: Learning a Black-box Optimization Algorithm from Data}
 
 \myit{
 
-    \item Recall the black box optimization setting:
-    \begin{enumerate}
-        \item Given the current state of knowledge $\iter[\bocount]{h}$, propose the next query point $\iter[\bocount]{x}$
-        \item Observe the response $\iter[\bocount]{y}$ \& update any internal statistics to produce $\iter[\bocount+1]{h}$
-    \end{enumerate}
-    
-    \pause
-    \bigskip
-    
     \item \alert{Learning} a blackbox optimization algorithm
     \myit{
-        \item Learn a mapping from $\iter[\bocount]{h}$ to next query $\iter[\bocount]{x}$
-        \item This mapping can be a (recurrent) neural net $\text{NN}_{\phi}: \iter[\bocount]{h} \mapsto \iter[\bocount]{x}$ parameterized by weights $\phi$   
+        \item Use $\dataset_{\text{meta}}$ to learn a mapping from $\dataset_{\text{new}}$ to the next configuration $\conf$ to evaluate
+ %       \item This 
+%        \item 
+%        \cost_{i, \text{new}}$ on a new task $t_{\text{new}}$
+ %       
+ %       \iter[\bocount]{h}$ to next query $\iter[\bocount]{x}$
+        \item This mapping can be a (recurrent) neural net $\text{NN}_{\phi}: \dataset_{\text{new}} \mapsto \conf$ parameterized by weights $\phi$   
 \pause        
         \item \alert{This mapping $\text{NN}_{\phi}$ constitutes a blackbox optimization algorithm}
         \myit{
@@ -429,7 +458,7 @@
 %----------------------------------------------------------------------
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Learning Acquisition Functions}
+\begin{frame}[c]{Meta-Learning for HPO Approach 6: Learning Algorithm Parts}
 
 \begin{itemize}
 	\item Learning a complete optimization algorithm  \alert{requires a lot of data}
@@ -454,11 +483,11 @@
 \medskip
     \item Two options:
     \myit{
-        \item Only depend on predicted mean and variance: $\acq_\theta(x) = \acq_\theta(\mu_t(x), \sigma_t(x))$ 
+        \item Only depend on predicted mean and variance: $\acq_\phi(\conf) = \acq_\phi(\mu_t(\conf), \sigma_t(\conf))$ 
         \myit{
             \item This allows to learn a general acquisition function
         }
-        \item Also depend on the $x$ value: $\acq_\theta(x) = \acq_\theta(\mu_t(x), \sigma_t(x), \alert{x})$  
+        \item Also depend on the $\conf$ value: $\acq_\phi(\conf) = \acq_\phi(\mu_t(\conf), \sigma_t(\conf), \alert{\conf})$  
     }
 
 \end{itemize}
@@ -471,15 +500,20 @@
 \begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
 
 \begin{itemize}
-    \item \alert{Repetition.} What are the different kind of meta-features which can be used to describe machine learning datasets?
+    \item \alert{Repetition.} What are the different kinds of meta-features which can be used to describe machine learning datasets?
     
+    \medskip
+
+    \item \alert{Repetition.} List six different ways of using the meta data for HPO.
     \medskip
 
     \item \alert{Discussion.}
     \begin{itemize}
         \item How would you pick meta-features to be used in meta-learning hyperparameter optimization?
-        \item What will happen with the meta-learning system if all prior tasks are dissimilar to the target task?
+        \item What will happen with the various meta-learning systems if all prior tasks are dissimilar to the target task?
     \end{itemize}
+
+
 \end{itemize}
 
 \end{frame}
