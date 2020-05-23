@@ -31,47 +31,44 @@ Recall general blackbox optimization:\\
 %  \end{frame}
 %-------------------------------------------------
 
-\begin{frame}[c]{Methods for Going Beyond Blackbox Bayesian Optimization}
-
-\begin{columns}
-
-    \column{0.5\textwidth}
-    \begin{itemize}
-        \item One possible cheap approximation of an expensive function: use a data subset
-        \begin{itemize}
-            \item Many cheap evaluations on small subsets
-            \item Few expensive evaluations on the full data
-        \end{itemize}
-    \end{itemize}
-    
-    \column{0.5\textwidth}
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.3\textwidth]{../w07_hpo_speedup/images/intro/black_blocks.png}
-    \end{figure}
-
-\end{columns}
-
-\begin{itemize}
-    \item E.g.: Support Vector Machines (SVM) on MNIST dataset (hyperparameters: C, $\gamma$)
-\end{itemize}
-
-% Screen shots were clipped to 114, 500, 1860, 940
-\only<1>{
-    \includegraphics[width=\textwidth,trim=5px 10px 5px 10px, clip]{../w07_hpo_speedup/images/intro/animation_1.png}
+\myframetop{Methods for Going Beyond Blackbox Bayesian Optimization}{
+\vspace*{-0.6cm}	\begin{columns}
+	    \column{0.5\textwidth}
+	    \begin{itemize}
+	        \item One possible cheap approximation of an expensive function: use a data subset
+	        \begin{itemize}
+	            \item Many cheap evaluations on small subsets
+	            \item Few expensive evaluations on the full data
+	        \end{itemize}
+	    \end{itemize}
+	    
+	    \column{0.5\textwidth}
+	    \begin{figure}
+	        \centering
+	        \includegraphics[width=0.3\textwidth]{../w07_hpo_speedup/images/intro/black_blocks.png}
+	    \end{figure}
+	
+	\end{columns}
+	
+	\begin{itemize}
+	    \item E.g.: Support Vector Machines (SVM) on MNIST dataset (hyperparameters: C, $\gamma$)
+	\end{itemize}
+	
+	% Screen shots were clipped to 114, 500, 1860, 940
+	\only<1>{
+	    \includegraphics[width=\textwidth,trim=5px 10px 5px 10px, clip]{../w07_hpo_speedup/images/intro/animation_1.png}
+	}
+	
+	\only<2->{
+	    \includegraphics[width=\textwidth,trim=5px 10px 5px 10px, clip]{../w07_hpo_speedup/images/intro/animation_2.png}
+	}
+	
+	\vskip -15pt
+	
+	\only<3->{
+	    $\rightarrow$ up to 1000x speedups over blackbox optimization on full data \lit{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al, AISTATS 2017}}
+	}
 }
-
-\only<2->{
-    \includegraphics[width=\textwidth,trim=5px 10px 5px 10px, clip]{../w07_hpo_speedup/images/intro/animation_2.png}
-}
-
-\vskip -15pt
-
-\only<3->{
-    $\rightarrow$ up to 1000x speedups over blackbox optimization on full data \lit{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al, AISTATS 2017}}
-}
-
-\end{frame}
 
 %-----------------------------------------------------------------------
 
@@ -80,10 +77,12 @@ Recall general blackbox optimization:\\
 
 \begin{itemize}
     \item Describe many different ways of using \alert{meta-learning} to speed up HPO
+    \item Describe the concept of \alert{multi-fidelity} optimization to speed up HPO
     \item Discuss several ways of predicting \alert{learning curves}
     \item Explain how to \alert{exploit multiple fidelities in Bayesian optimization} 
     \item Explain the \alert{Successive Halving} and \alert{Hyperband} algorithms 
     \item Explain how to combine Bayesian optimization and Hyperband in \alert{BOHB}
+    \item Describe \alert{gradient descent} approaches for HPO
     \item Discuss \alert{success stories} of speeding up Bayesian optimization
 \end{itemize}
 \end{frame}

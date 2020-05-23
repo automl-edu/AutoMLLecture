@@ -1,6 +1,6 @@
+\videotitle{Success Stories and Practical Recommendations}
 %----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\section{Success Stories}
+
 
 \begin{frame}[c]{Large-scale meta-learning for hyperparameter optimization}
 
@@ -33,15 +33,33 @@ Extension of Auto-WEKA with focus on speed improvements and robustness:
 \end{itemize}
 \begin{figure}
     \centering
-    \includegraphics[width=0.9\textwidth]{images/success_stories/Auto-sklearn_01.png}
+    \includegraphics[width=0.85\textwidth]{images/success_stories/Auto-sklearn_01.png}
 \end{figure}
-Available at \href{http://automl.github.io/auto-sklearn}{automl.github.io/auto-sklearn}
+Available at \url{https://automl.github.io/auto-sklearn}
 \end{frame}
 
 %-----------------------------------------------------------------------
+\begin{frame}[c]{BOHB}
 
+\myit{
+	\item Robust and efficient 
+	\item Only published in 2018, adopted by the community very quickly 
+\begin{figure}
+    \centering
+    \includegraphics[height=4cm]{../w07_hpo_speedup/images/success_stories/BOHB-citations.png}
+\end{figure}
+\vspace*{0.4cm}
+	\item Available at \url{https://github.com/automl/HpBandSter}
+\begin{figure}
+    \includegraphics[height=0.6cm]{../w07_hpo_speedup/images/success_stories/BOHB-repo-stats.png}
+\end{figure}
+}
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
 \begin{frame}[c]{PoSH-Auto-sklearn} \lit{\href{https://ml.informatik.uni-freiburg.de/papers/18-AUTOML-AutoChallenge.pdf}{Feurer et al. 2018}}
-
 Idea: integrate successive halving for further speed improvements:
 \begin{itemize}
     \item Uses task-independent Meta-learning to warmstart Bayesian optimization
@@ -63,7 +81,6 @@ Idea: integrate successive halving for further speed improvements:
 \end{frame}
 
 %-----------------------------------------------------------------------
-
 \begin{frame}[c]{Auto-sklearn 2.0}
 
 \begin{columns}
@@ -89,5 +106,4 @@ Yields huge improvements over Auto-sklearn 1.0.
 \end{columns}
 
 \end{frame}
-
 %-----------------------------------------------------------------------
