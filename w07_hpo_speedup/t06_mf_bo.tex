@@ -21,16 +21,19 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Idea}
+\begin{frame}[c]{Idea of Multi-fidelity Bayesian optimization \litw{\href{http://proceedings.mlr.press/v70/kandasamy17a.html}{Kandasamy et al, 2017}} \litw{\href{http://proceedings.mlr.press/v54/klein17a.html}{Klein et al, 2017}}}
+% https://papers.nips.cc/paper/6118-gaussian-process-bandit-optimisation-with-multi-fidelity-evaluations
 
-\alert{Multi-fidelity Bayesian optimization} for fidelity with values $z\in \mathcal{Z}$ 
 \begin{itemize}
-	\item Standard Bayesian optimization uses a model $\surro(\conf) \approx y$ to select the next $\conf$
+	\item Recall: standard Bayesian optimization uses a model $\surro(\conf) \approx y$ to select the next $\conf$
+\pause
+\medskip
 	\item \alert{Multi-fidelity} Bayesian optimization uses a model $\surro(\conf\alert{, z}) \approx y$ to select the next $(\conf\alert{, z})$
+	\myit{
+		\item Here, $z\in \mathcal{Z}$ is the fidelity; $\mathcal{Z}$ is the fidelity space, e.g., $\mathcal{Z} = [1, N_{\bullet}] \times  [1, T_{\bullet}]$
+	}	 
     \pause
     \bigskip
-    
-
 	
 %	\item BOCA - a general approach
 %	\begin{itemize}
@@ -45,16 +48,19 @@
 %	\end{itemize}
 
 
-    \item Our goal:
+    \item Denoting $\alert{z_{\bullet}}$ as the maximum fidelity (e.g., $z_{\bullet} = [N_{\bullet},T_{\bullet}]$), our goal is to find:
         \begin{equation*}
-            \optconf = \argmin_{\conf \in \pcs} \func(\conf) = \argmin_{\conf \in \pcs} \surro(\alert{z_{\bullet}}, \conf)
+            \optconf = \argmin_{\conf \in \pcs} \func(\conf) = \argmin_{\conf \in \pcs} \surro(\conf, \alert{z_{\bullet}})
         \end{equation*}
 
     \pause
     \bigskip
 
-    \item Model $\surro$ needs to be good at extrapolating from small to large $z$
-
+    \item Implications for Bayesian optimization
+    \myit{
+    	\item Model $\surro$ needs to be good at \alert{extrapolating} from small to large $z$
+		\item Acquisition function now also needs to select $z$: take into account cost of evaluations
+	}
 \end{itemize}
 
 
@@ -142,22 +148,27 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Entropy Search - reminder}
+\begin{frame}[c]{Entropy Search: Reminder}
 
 \begin{itemize}
 		\item Define the $p_{\text{min}}$ distribution given data $\dataset$:
 		$$p_{\text{min}}(\conf^* \mid \alert{\dataset}) := p(\conf^* \in \argmin_{\conf\in \pcs} \func(\conf) \mid \alert{\dataset})$$
 	
-		\item Entropy search aims to minimize the entropy \alert{$\mathcal{H}[p_\text{min}]$} 
+		\item Entropy search \lit{\href{http://jmlr.csail.mit.edu/papers/volume13/hennig12a/hennig12a.pdf}{Hennig et al. 2012}} aims to minimize the entropy \alert{$\mathcal{H}[p_\text{min}]$}
+		\myit{
+			\item It aims to be maximally certain about the location of $\conf^*$
+		}
+\bigskip
+\pause
 		\item In a nutshell:
 		\begin{enumerate}
-			\item Estimate $p(\func \mid \dataset)$, e.g., using a GP (as before)
+			\item Estimate $p(\func \mid \dataset)$, e.g., using a GP 
 			\item Approximate $p_\text{min}$ by representer points and Monte-Carlo simulations
-			\item Select $\conf$ that minimizes the following acquisition function:
+			\item Select $\conf$ that maximizes the following acquisition function:
 		\end{enumerate}
 \end{itemize}
 \vspace*{0.5cm}
-	\[{\acq}_{ES}(\conf) := \mathds{E}_{\alert{p(\tilde{\cost}\mid \conf, \dataset)}} 
+	\[{\acq}_{ES}(\conf) := \mathcal{H}[p_{\text{min}}(\cdot \mid \alert{\dataset})] - \mathds{E}_{\alert{p(\tilde{\cost}\mid \conf, \dataset)}} 
 	\left[   \mathcal{H}[p_{\text{min}}(\cdot \mid \alert{\dataset \cup \left\langle \conf, \tilde{\cost} \right\rangle })] \right]\]
 
 \end{frame}
@@ -166,14 +177,18 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets: Overview}
+\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets (Fabolas) \litw{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al. 2017}}}
 
 \begin{itemize}
-		\item We care about the $p_{\text{min}}$ distribution for the maximal budget $z_{\bullet}$:
+		\item Entropy search for multi-fidelity optimization 
+		\pause
+\medskip
+		\item We now care about the $p_{\text{min}}$ distribution for the maximal budget $z_{\bullet}$:
 		$$p_{\text{min}}(\conf^* \mid \dataset) := p(\conf^* \in \argmin_{\conf\in \pcs} \func(\conf\alert{,z_{\bullet}}) \mid \dataset)$$
 	
 		\item We still want to minimize the entropy $\mathcal{H}[p_\text{min}]$
 \pause
+\medskip
 		\item Now we aim for the biggest \alert{reduction in entropy per time spent}
 		\begin{itemize}
 			\item Now we don't model only $\func$, but also \alert{the cost $c(\conf,z)$}
@@ -198,7 +213,7 @@
 			\item Select $(\conf,s)$ by maximizing:
     			\[{\acq}_{ES}(\conf,\dataset) := \mathds{E}_{\alert{p(\tilde{\cost}\mid (\conf, z), \dataset)}} 
             	\left[   \frac{\mathcal{H}[p_{\text{min}}(\cdot \mid \alert{\dataset})] - \mathcal{H}[p_{\text{min}}(\cdot \mid \alert{\dataset \cup \left\langle (\conf,z), \tilde{\cost} \right\rangle}}{\alert{c(\conf,z)}} \right]\]
-			\item Observe performance and cost, and update models $\func$ and $\cost$ 
+			\item Observe performance $f(\conf,s)$ and cost $c(\conf,s)$ and update models for $f$ and $c$ 
 		\end{enumerate}
 
 \pause
@@ -276,6 +291,17 @@
 \includegraphics[width=1.\textwidth]{../w07_hpo_speedup/images/fabolas/fabolas_results.jpg}
 
 \hspace{12cm}{\lit{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al. 2017}}}
+
+\pause
+\bigskip
+\myit{
+	\item However, Faboloas is limited to low-dimensional, continuous functions
+	\item Standard GP model causes large \alert{overhead} -- cannot exploit too many cheap evaluations
+	\myit{
+		\item BOHB is much simpler and more flexible
+	}
+}
+
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
