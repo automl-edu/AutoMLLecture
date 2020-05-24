@@ -69,7 +69,7 @@ To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press
 %----------------------------------------------------------------------
 \begin{frame}{BOHB: Algorithm}
 
-\begin{centering}
+\begin{center}
 \begin{minipage}{0.75\textwidth}
 \begin{algorithm}[H]
     %\DontPrintSemicolon
@@ -94,12 +94,12 @@ To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press
     
     \Return{sample with highest ratio $l(\conf)/g(\conf)$}
        
-    
     \caption*{Pseudocode for sampling in BOHB}
 \end{algorithm}
 \end{minipage}
-\end{centering}
+\end{center}
 
+\pause
 %\vspace{-2em}
 \begin{equation}
     l(\conf)=p(\obs<\alpha| D_b)\quad\quad\quad\quad
@@ -107,8 +107,10 @@ To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press
     \label{eq:TPE_Densities}
 \end{equation}
 
+\pause
 \begin{itemize}
-    \item To optimize EI, we sample $N_s$ points from $l^{'}(\conf)$ which is $l(\conf)$ but with all bandwidths multiplied by a factor $b_w$ to encourage more exploration around the promising configurations.
+	\item Note: $l^{'}(\conf)$ is similar to $l(\conf,)$ but has larger bandwidths
+%    \item To optimize EI, we sample $N_s$ points from $l^{'}(\conf)$ which is $l(\conf)$ but with all bandwidths multiplied by a factor $b_w$ to encourage more exploration around the promising configurations.
 \end{itemize}
 
 \end{frame}
@@ -207,6 +209,7 @@ space with 8 categorical and 8 continuous hyperparameters.}
 %----------------------------------------------------------------------
 \begin{frame}{BOHB: Surrogate on poker }
 \begin{figure}
+\vspace*{-0.2cm}
     \centering
     \includegraphics[width=0.70\textwidth]{../w07_hpo_speedup/images/bohb/surrogate_on_poker.png}
     \caption{Optimizing six hyperparameter of a feed-forward neural
