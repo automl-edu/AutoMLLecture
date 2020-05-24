@@ -386,9 +386,11 @@
 
 \begin{itemize}
     \item<1-> \alert{Jointly train} a ``deep'' neural network \alert{on all tasks} 
-    \item<2-> Have a separate output layer (head) for each task 
-    \item<3-> Each head is a Bayesian linear regression (recall DNGO)
-    \item<4-> This uses meta-learning for feature extraction on the hyperparameter configurations 
+    \myit{
+    	\item<2-> Have a separate output layer (head) for each task 
+    	\item<2-> Each head is a Bayesian linear regression (recall DNGO)
+    }
+    \item<3-> This uses meta-learning for feature extraction on the hyperparameter configurations 
 \end{itemize}
 \end{column}%
 
@@ -476,13 +478,12 @@
 \pause
 	\item In Bayesian optimization, a critical hand-designed heuristic is the acquisition function
 	\begin{itemize}
-		\item Trade-off between exploitation and exploration
+		\item Trade-off between exploitation and exploration, e.g., via PI, EI, UCB, ES, KG, \dots 
 		\item Depending on the problem at hand, you might need a different acquisition function
-		\item Choices: PI, EI, UCB, ES, KG, \dots 
 		%all of them are \alert{myopic} (no long-term look-ahead)
 	\end{itemize}
 \pause
-\bigskip
+\smallskip
 
     \item \alert{Idea:} Learn a \alert{neural acquisition function} from data, but still make use of the sample efficiency of Gaussian processes \lit{\href{https://openreview.net/forum?id=ryeYpJSKwr}{Volpp et al. 2020}}
 
@@ -494,7 +495,11 @@
         \myit{
             \item This allows to learn a general acquisition function
         }
+\pause
         \item Also depend on the $\conf$ value: $\acq_\phi(\conf) = \acq_\phi(\mu_t(\conf), \sigma_t(\conf), \alert{\conf})$  
+        \myit{
+            \item This allows to fine-tune to the characteristics of $\mathcal{D}_{\text{meta}}$ (e.g., avoid poor parts of the space) 
+        }
     }
 
 \end{itemize}

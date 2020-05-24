@@ -59,7 +59,7 @@
     \item Implications for Bayesian optimization
     \myit{
     	\item Model $\surro$ needs to be good at \alert{extrapolating} from small to large $z$
-		\item Acquisition function now also needs to select $z$: take into account cost of evaluations
+		\item Acquisition function now also needs to select $z$ (i.e., take into account cost of evaluations)
 	}
 \end{itemize}
 
@@ -160,12 +160,13 @@
 		}
 \bigskip
 \pause
-		\item In a nutshell:
-		\begin{enumerate}
-			\item Estimate $p(\func \mid \dataset)$, e.g., using a GP 
-			\item Approximate $p_\text{min}$ by representer points and Monte-Carlo simulations
-			\item Select $\conf$ that maximizes the following acquisition function:
-		\end{enumerate}
+		\item In a nutshell: select 
+%		\begin{enumerate}
+%			\item Estimate $p(\func \mid \dataset)$, e.g., using a GP 
+%			\item Approximate $p_\text{min}$ by representer points and Monte-Carlo simulations
+%			\item Select 
+$\conf$ that maximizes the following acquisition function:
+%		\end{enumerate}
 \end{itemize}
 \vspace*{0.5cm}
 	\[{\acq}_{ES}(\conf) := \mathcal{H}[p_{\text{min}}(\cdot \mid \alert{\dataset})] - \mathds{E}_{\alert{p(\tilde{\cost}\mid \conf, \dataset)}} 
@@ -177,12 +178,9 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets (Fabolas) \litw{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al. 2017}}}
+\begin{frame}[c]{Entropy Search for Multi-Fidelity Optimization \litw{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein, Falkner \& Hutter, 2017}}}
 
 \begin{itemize}
-		\item Entropy search for multi-fidelity optimization 
-		\pause
-\medskip
 		\item We now care about the $p_{\text{min}}$ distribution for the maximal budget $z_{\bullet}$:
 		$$p_{\text{min}}(\conf^* \mid \dataset) := p(\conf^* \in \argmin_{\conf\in \pcs} \func(\conf\alert{,z_{\bullet}}) \mid \dataset)$$
 	
@@ -199,13 +197,15 @@
 	\[{\acq}_{ES}(\conf,\dataset) := \mathds{E}_{\alert{p(\tilde{\cost}\mid (\conf, z), \dataset)}} 
 	\left[   \frac{\mathcal{H}[p_{\text{min}}(\cdot \mid \alert{\dataset})] - \mathcal{H}[p_{\text{min}}(\cdot \mid \alert{\dataset \cup \left\langle (\conf,z), \tilde{\cost} \right\rangle}}{\alert{c(\conf,z)}} \right]\]
 
+%	\item Introduced to handle large datasets, in paper ``Fast Bayesian Optimization on Large Datasets (Fabolas)'' by \lit{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein, Falkner \& Hutter, 2017}}
+
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets: Overview}
+\begin{frame}[c]{Entropy Search for Multi-Fidelity Optimization \litw{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein, Falkner \& Hutter, 2017}}}
 
 \begin{itemize}
     \item The entire algorithm iterates the following 2 steps until time is up:
@@ -285,15 +285,16 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Fast Bayesian Optimization on Large Datasets: Results}
+\begin{frame}[c]{Entropy Search for Multi-Fidelity Optimization -- Results}
+
+\alert{Fabolas} algorithm (``Fast Bayesian Optimization on Large Datasets'')
 
 \centering
 \includegraphics[width=1.\textwidth]{../w07_hpo_speedup/images/fabolas/fabolas_results.jpg}
 
-\hspace{12cm}{\lit{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al. 2017}}}
-
 \pause
 \bigskip
+
 \myit{
 	\item However, Faboloas is limited to low-dimensional, continuous functions
 	\item Standard GP model causes large \alert{overhead} -- cannot exploit too many cheap evaluations
@@ -312,12 +313,9 @@
 \bigskip
 
 \begin{itemize}
-    \item \alert{Discussion.} 
-    \begin{itemize}
-        \item What kind of cost model should be incorporated into the FABOLAS algorithm?
-        \item Could one use other acquisition functions than entropy search for FABOLAS?
-    \end{itemize}
-    
+    \item \alert{Discussion.} What kind of cost model would you use in Fabolas?
+\medskip
+	\item \alert{Discussion.} Could one use an acquisition function other than entropy search for Fabolas?    
 
 \end{itemize}
 

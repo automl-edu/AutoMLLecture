@@ -155,80 +155,77 @@
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
 
-\begin{frame}{Successive Halving(SH): Algorithm}
-
-\begin{center}
-\begin{minipage}{0.75\textwidth}
-\begin{algorithm}[H]
-    %\DontPrintSemicolon
-    \LinesNumbered
-    \SetAlgoLined
-    \setcounter{AlgoLine}{0}
-    \SetKwInOut{Input}{Input}
-    \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
-    \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
-    \DeclarePairedDelimiter\abs{\lvert}{\rvert}
-    
-    \Input{ initial budget $b_0,$ maximum budget $b_{max},$ set of $n$ configurations $C=\{\conf_1, \conf_2,\dots, \conf_{n}\}$}
-    $b=b_0$\\
-    \While{$b\leq b_{max}$}{
-    $L=\{\Tilde{\cost}(\conf,b):\conf \in C\}$;\
-    
-    $C=top_{k}(C,L,\lfloor\lvert C \rvert\ / \eta \rfloor)$;\
-    
-    $b=\eta \cdot b$;\
-    }
-    
- 
-        
-    
-    \caption*{Pseudocode for SuccessiveHalving used by Hyperband as a subroutine}
-\end{algorithm}
-\end{minipage}
-\end{center}
-\end{frame}
-
+%\begin{frame}{Successive Halving(SH): Algorithm}
+%
+%\begin{center}
+%\begin{minipage}{0.75\textwidth}
+%\begin{algorithm}[H]
+%    %\DontPrintSemicolon
+%    \LinesNumbered
+%    \SetAlgoLined
+%    \setcounter{AlgoLine}{0}
+%    \SetKwInOut{Input}{Input}
+%    \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+%    \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+%    \DeclarePairedDelimiter\abs{\lvert}{\rvert}
+%    
+%    \Input{ initial budget $b_0,$ maximum budget $b_{max},$ set of $n$ configurations $C=\{\conf_1, \conf_2,\dots, \conf_{n}\}$}
+%    $b=b_0$\\
+%    \While{$b\leq b_{max}$}{
+%    $L=\{\Tilde{\cost}(\conf,b):\conf \in C\}$;\
+%    
+%    $C=top_{k}(C,L,\lfloor\lvert C \rvert\ / \eta \rfloor)$;\
+%    
+%    $b=\eta \cdot b$;\
+%    }
+%    
+%    \caption*{Pseudocode for SuccessiveHalving} % used by Hyperband as a subroutine}
+%\end{algorithm}
+%\end{minipage}
+%\end{center}
+%\end{frame}
+%
 %-----------------------------------------------------------------------
 
-\begin{frame}{\emph{"n versus B/n" Problem}}
-\begin{columns}
-
-\begin{column}{.45\linewidth}
-\begin{itemize}
-    \item SH requires $B$ and $n$ as an input.
-    \item Given finite $B$, $B/n$ resources are allocated across the configurations.
-    \item Configurations need enough minimal resources to differentiate between them in terms of quality.
-\end{itemize}
-\end{column}
-
-\begin{column}{.45\linewidth}
-
-\begin{figure}
-    \centering
-    \vspace{2em}
-    \includegraphics[width=0.9\linewidth]{../w07_hpo_speedup/images/intro/differetiatingConfigurations.png}
-\end{figure}
-\end{column}
-\end{columns}
-
-\vspace{-6.5em}
-\begin{columns}
-
-\begin{column}{.45\linewidth}
-\begin{itemize}
-
-    \item Issue: Optimal allocation strategy is unknown in practice.
-    \item Idea: Perform grid search over a feasible set of tuples of $n$ and minimal resource $r$. (Hyperband) 
-\end{itemize}
-\end{column}
-
-\begin{column}{.45\linewidth}
-
-\end{column}
-    
-\end{columns}
-    
-\end{frame}
+%\begin{frame}{\emph{"n versus B/n" Problem}}
+%\begin{columns}
+%
+%\begin{column}{.45\linewidth}
+%\begin{itemize}
+%    \item SH requires $B$ and $n$ as an input.
+%    \item Given finite $B$, $B/n$ resources are allocated across the configurations.
+%    \item Configurations need enough minimal resources to differentiate between them in terms of quality.
+%\end{itemize}
+%\end{column}
+%
+%\begin{column}{.45\linewidth}
+%
+%\begin{figure}
+%    \centering
+%    \vspace{2em}
+%    \includegraphics[width=0.9\linewidth]{../w07_hpo_speedup/images/intro/differetiatingConfigurations.png}
+%\end{figure}
+%\end{column}
+%\end{columns}
+%
+%\vspace{-6.5em}
+%\begin{columns}
+%
+%\begin{column}{.45\linewidth}
+%\begin{itemize}
+%
+%    \item Issue: Optimal allocation strategy is unknown in practice.
+%    \item Idea: Perform grid search over a feasible set of tuples of $n$ and minimal resource $r$. (Hyperband) 
+%\end{itemize}
+%\end{column}
+%
+%\begin{column}{.45\linewidth}
+%
+%\end{column}
+%    
+%\end{columns}
+%    
+%\end{frame}
 
 % %-----------------------------------------------------------------------
 % \begin{frame}{Hyperband}
@@ -262,6 +259,7 @@
     \column{0.25\textwidth}
     \begin{itemize}
         \item Main Idea: \\ hedge against errors in cheap approximations
+\medskip
         \item Algorithm: \\ run multiple copies of SH in parallel, starting at different cheapest fidelities
     \end{itemize}
     
@@ -278,35 +276,35 @@
 
 %-----------------------------------------------------------------------
 
-\begin{frame}{Hyperband: Algorithm}
-\begin{center}
-\begin{minipage}{0.75\textwidth}
-\begin{algorithm}[H]
-    %\DontPrintSemicolon
-    \LinesNumbered
-    \SetAlgoLined
-    \setcounter{AlgoLine}{0}
-    \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
-    \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
-    
-    \Input{budgets $b_{min}$ and $b_{max}, \eta$}
-    
-    $s_{max}=\floor*{\log_{\eta}\frac{b_{max}}{b_{min}}}$;\
-    
-    \For{$s\in \{s_{max}, s_{max}-1, \dots, 0\}$}
-    {
-        sample $\eta=\lceil\frac{s_{max}+1}{s+1} \cdot\eta^{s}\rceil$;\
-        
-        run SH on them with $\eta^{s}\cdot b_{max}$;\
-    }
- 
-        
-    
-    \caption*{Pseudocode for Hyperband using SuccessiveHalving (SH) as a subroutine}
-\end{algorithm}
-\end{minipage}
-\end{center}
-\end{frame}
+%\begin{frame}{Hyperband: Algorithm}
+%\begin{center}
+%\begin{minipage}{0.75\textwidth}
+%\begin{algorithm}[H]
+%    %\DontPrintSemicolon
+%    \LinesNumbered
+%    \SetAlgoLined
+%    \setcounter{AlgoLine}{0}
+%    \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+%    \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+%    
+%    \Input{budgets $b_{min}$ and $b_{max}, \eta$}
+%    
+%    $s_{max}=\floor*{\log_{\eta}\frac{b_{max}}{b_{min}}}$;\
+%    
+%    \For{$s\in \{s_{max}, s_{max}-1, \dots, 0\}$}
+%    {
+%        sample $\eta=\lceil\frac{s_{max}+1}{s+1} \cdot\eta^{s}\rceil$;\
+%        
+%        run SH on them with $\eta^{s}\cdot b_{max}$;\
+%    }
+% 
+%        
+%    
+%    \caption*{Pseudocode for Hyperband using SuccessiveHalving (SH) as a subroutine}
+%\end{algorithm}
+%\end{minipage}
+%\end{center}
+%\end{frame}
 % %-----------------------------------------------------------------------
 % %-----------------------------------------------------------------------
 % \begin{frame}{Tradeoffs between n and B/n}
@@ -369,21 +367,21 @@
 \end{frame}
 
 %-----------------------------------------------------------------------
-\begin{frame}{Random Search vs. Hyperband}
-
-\begin{itemize}
-    \item In practice HB performs very well for small to medium budgets
-    \item Outperforms random search and vanilla BO
-    \item However, its convergence is limited by its reliance on randomly-drawn configurations
-    \item With larger budgets its advantage over random search diminishes
-\end{itemize}
-\begin{figure}
-    \centering
-    \includegraphics[width=0.6\textwidth]{../w07_hpo_speedup/images/hyperband/comparison_rs_hb.png}
-\end{figure}
-
-
-\end{frame}
+%\begin{frame}{Random Search vs. Hyperband}
+%
+%\begin{itemize}
+%   \item In practice HB performs very well for small to medium budgets
+%    \item Outperforms random search and vanilla BO
+%    \item However, its convergence is limited by its reliance on randomly-drawn configurations
+%    \item With larger budgets its advantage over random search diminishes
+%\end{itemize}
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=0.6\textwidth]{../w07_hpo_speedup/images/hyperband/comparison_rs_hb.png}
+%\end{figure}
+%
+%
+%\end{frame}
 
 %-----------------------------------------------------------------------
 
@@ -393,11 +391,13 @@
 \bigskip
 
 \begin{itemize}
-    \item \alert{Repetition.} Why can't one simply use both a large $B$ and $n$ for doing hyperparameter optimization?
+%    \item \alert{Repetition.} Why can't one simply use both a large $B$ and $n$ for doing hyperparameter optimization?
 
-\medskip
+%\medskip
     \item \alert{Discussion.} 
-    Can you think of settings where the stopping heuristic is futile?
+    How do you think Hyperband would compare to successive halving using the most aggressive fidelity?
+\medskip    
+    \item \alert{Discussion.} How slow is Hyperband in the worst case?
 
 \end{itemize}
 
