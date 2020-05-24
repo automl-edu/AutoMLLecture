@@ -21,17 +21,20 @@
 %	\myblock{Definition: meta-learning for HPO}{
 		Given:
 	    \myit{
-	        \item a set of prior tasks: $t_{j} \in \mathcal{T}$,
+	        \item a set of prior datasets: $t_{j} \in \mathcal{T}_{\text{meta}} \subset \mathcal{T}$,
 	        \item a set of new tasks: $t_{\text{new}} \in \mathcal{T}$,
 \pause
 	        \item a set of learning algorithms, fully defined by $\theta_{i} \in \Theta$
 \pause
-	        \item a set of prior evaluations: $\dataset$, where $\dataset_{i, j} = \cost(\theta_{i}, t_{j})$
-	        \item a (possibly empty) set of known evaluations $\cost_{i, \text{new}}$ on a new task $t_{\text{new}}$
+	        \item a set of prior evaluations $\dataset_{\text{meta}}$ on $t_j \in \mathcal{T}_{\text{meta}}$%, where $\dataset_{i, j} = \cost(\theta_{i}, t_{j})$
+	        \item a set of evaluations $\dataset_{\text{new}}$ on new task $t_{\text{new}}$
 		}
 		\bigskip
 \pause
-		\alert{Goal of meta-learning:} train a meta-learner using meta-data $\dataset \cup \dataset_{\text{new}}$ to recommend configurations for a new task better than a black-box algorithm. 
+		\alert{Goal of meta-learning:}
+		\myit{
+			\item use meta-data $\mathcal{D}_{\text{meta}}$ to choose $\theta_{i} \in \Theta$ for $t_{\text{new}}$ better than only based on $\dataset_{\text{new}}$. 
+		}
 %	}	
 
 \hspace{11cm}\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}
@@ -280,12 +283,14 @@
 \begin{itemize}
 	\item Experts often start HPO from a strong default (rather than random configurations)
 	\pause
+	\medskip
 	\item But such a default configuration often does not perform well on a new dataset
 	\begin{itemize}
 		\item Otherwise there would be no point in HPO
 	\end{itemize}
 	\pause
-	\item \alert{Can we learn from previous datasets $\mdata$ how to initialize HPO?}\\
+	\medskip
+	\item Can we learn from meta-data $\mdata$ how to \alert{initialize} HPO, based on meta-features?
 %	(i.e., running an initial design)
 %	\begin{itemize}
 %		\item the same ideas also apply to NAS
@@ -301,13 +306,15 @@
 
 \begin{itemize}
 	\item Many HPO methods use a predictive model (e.g., Bayesian optimization)
+	\medskip
 	\item By running HPO on different datasets,
 	we learn something about the search landscape
 	\begin{itemize}
 		\item E.g., what are bad regions of the configuration space in general
 	\end{itemize}
-	\smallskip
-	\item Given: $n$ predictive models $\surro_{\dataset_i}: \pcs \to \mathbb{R}$ from HPO on $\dataset_{\text{meta}}$	
+	\bigskip
+	\pause
+	\item Given: $n$ predictive models $\surro_{\dataset_i}: \pcs \to \mathbb{R}$ from HPO on $\mathcal{T}_{\text{meta}}$	
 	\item \alert{How can we use these $\surro_{\dataset_i}$ to speed up HPO?}
 \end{itemize}
 
@@ -326,7 +333,7 @@
     \onslide<1->{
     \begin{itemize}
         \item \emph{Idea:} learn a \alert{sorted list of defaults}
-        \item \emph{Method:} mostly \alert{greedy} on $\dataset_{\text{meta}}$
+        \item \emph{Method:} mostly \alert{greedy} on $\mathcal{T}_{\text{meta}}$
         \item \emph{Results:} surprisingly strong; better than Bayesian Optimization
     \end{itemize}}
 
@@ -372,7 +379,7 @@
 
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning for HPO Approach 4: Joint model for Bayesian optimization}
+\begin{frame}[c]{Meta-Learning for HPO Approach 4:\\ Joint model for Bayesian optimization}
 
 \begin{columns}[T] % align columns
 \begin{column}{.38\textwidth}
@@ -381,7 +388,7 @@
     \item<1-> \alert{Jointly train} a ``deep'' neural network \alert{on all tasks} 
     \item<2-> Have a separate output layer (head) for each task 
     \item<3-> Each head is a Bayesian linear regression (recall DNGO)
-    \item<4-> Learned: feature extraction on hyperparameter configurations 
+    \item<4-> This uses meta-learning for feature extraction on the hyperparameter configurations 
 \end{itemize}
 \end{column}%
 
@@ -408,7 +415,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Meta-Learning for HPO Approach 5: Learning a Black-box Optimization Algorithm from Data}
+\begin{frame}[c]{Meta-Learning for HPO Approach 5:\\ Learning a Black-box Optimization Algorithm from Data}
 
 \myit{
 
@@ -422,11 +429,12 @@
  %       \iter[\bocount]{h}$ to next query $\iter[\bocount]{x}$
         \item This mapping can be a (recurrent) neural net $\text{NN}_{\phi}: \dataset_{\text{new}} \mapsto \conf$ parameterized by weights $\phi$   
 \pause        
+\smallskip
         \item \alert{This mapping $\text{NN}_{\phi}$ constitutes a blackbox optimization algorithm}
-        \myit{
-            \item Should be learned on a \alert{meta-train} set of blackbox functions \& generalize to new functions
+%        \myit{
+%            \item Should be learned on a \alert{meta-train} set of blackbox functions \& generalize to new functions
 %            \item Like a manually-designed algorithm ...
-        }
+%        }
 
 %\pause
 %        \item Since $\iter[\bocount]{h}$ captures a \alert{sequence}, a recurrent NN $RNN_{\phi}:\iter[\bocount]{h} \mapsto \iter[\bocount]{x}$ makes sense
@@ -462,7 +470,7 @@
 
 \begin{itemize}
 	\item Learning a complete optimization algorithm  \alert{requires a lot of data}
-	\item A more \alert{sample-efficient} would be to \alert{only replace hand-designed parts} of an algorithm
+	\item It would be more \alert{sample-efficient} to \alert{only replace hand-designed parts} of an algorithm
 
 \bigskip
 \pause
@@ -470,7 +478,6 @@
 	\begin{itemize}
 		\item Trade-off between exploitation and exploration
 		\item Depending on the problem at hand, you might need a different acquisition function
-		\pause
 		\item Choices: PI, EI, UCB, ES, KG, \dots 
 		%all of them are \alert{myopic} (no long-term look-ahead)
 	\end{itemize}
@@ -504,13 +511,13 @@
     
     \medskip
 
-    \item \alert{Repetition.} List six different ways of using the meta data for HPO.
+    \item \alert{Repetition.} List all the different ways of using the meta data for HPO you recall
     \medskip
 
     \item \alert{Discussion.}
     \begin{itemize}
-        \item How would you pick meta-features to be used in meta-learning hyperparameter optimization?
-        \item What will happen with the various meta-learning systems if all prior tasks are dissimilar to the target task?
+%        \item How would you pick meta-features to be used in meta-learning hyperparameter optimization?
+        \item In the various meta-learning approaches, what will happen if all prior tasks are dissimilar to the target task?
     \end{itemize}
 
 
