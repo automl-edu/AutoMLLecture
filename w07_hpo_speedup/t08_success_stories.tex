@@ -103,16 +103,21 @@ Idea: integrate warmstarting and a BOHB-like approach for Auto-sklearn
 \begin{columns}
 
 \column{0.4\textwidth}
-\vskip 35pt
-Idea: automatically choose:
-\begin{itemize}
-    \item holdout or cross-validation
-    \item optimization on the full budget or optimization with successive halving
-\end{itemize}
-using algorithm selection
+\myit{
+	\item Idea: automatically choose on a per-dataset basis
+	\begin{itemize}
+	    \item holdout or cross-validation
+	    \item optimization on the full budget or optimization with successive halving
+	\end{itemize}
+\vskip 4pt
+	\item Can be done based on algorithm selection
 \vskip 10pt
-Yields huge improvements over Auto-sklearn 1.0.
-
+	\item Substantial improvements over Auto-sklearn 1.0
+	\myit{
+		\item $5\times$ reduction of average error
+		\item $6\times$ speedup (same performance in 10 minutes as Auto-sklearn 1.0 in 1 hour)
+	}
+}
 \column{0.6\textwidth}
 \begin{figure}
     \centering
@@ -151,7 +156,7 @@ Yields huge improvements over Auto-sklearn 1.0.
 	\bigskip
 	\bigskip
 	\pause
-	\item Hot off the press: \alert{DEHB} combines differential evolution and Hyperband and largely dominates BOHB. Especially good for high dimensions.
+	\item Just submitted: \alert{DEHB} combines differential evolution and Hyperband and largely dominates BOHB. Especially good for high dimensions.
 }
 
 \end{frame}
