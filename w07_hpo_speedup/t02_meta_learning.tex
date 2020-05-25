@@ -14,15 +14,26 @@
 			\item Many models are re-fit to perform well on new tasks
 		\end{itemize}
 		\item The best hyperparameter configuration tends to remain quite stable across tasks
-	\end{itemize}		
+	\end{itemize}
+	\bigskip
+	\bigskip
+	\bigskip
+\pause
+	\begin{center}
+	For a good introduction to meta-learning in general, see \lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}
+	\end{center}			
 \end{frame}
 
 \begin{frame}[c]{Problem Statement}
 %	\myblock{Definition: meta-learning for HPO}{
 		Given:
 	    \myit{
-	        \item a set of prior datasets: $t_{j} \in \mathcal{T}_{\text{meta}} \subset \mathcal{T}$,
-	        \item a set of new tasks: $t_{\text{new}} \in \mathcal{T}$,
+	        \item a set of prior tasks: 
+	        %(e.g., datasets): 
+	        $t_{j} \in \mathcal{T}_{\text{meta}} \subset \mathcal{T}$,
+	        \item a set of new tasks: 
+	        %(e.g., datasets): 
+	        $t_{\text{new}} \in \mathcal{T}$,
 \pause
 	        \item a set of learning algorithms, fully defined by $\theta_{i} \in \Theta$
 \pause
@@ -36,8 +47,8 @@
 			\item use meta-data $\mathcal{D}_{\text{meta}}$ to choose $\theta_{i} \in \Theta$ for $t_{\text{new}}$ better than only based on $\dataset_{\text{new}}$. 
 		}
 %	}	
-
-\hspace{11cm}\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}
+\bigskip
+\hspace{9cm}\lit{adapted from \href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}
 \end{frame}
 
 
@@ -105,8 +116,6 @@
 \smallskip
     \item Based on similarity, we can transfer information from the most similar tasks to the new task $t_{\text{new}}$
     \end{itemize}
-
-\hspace{11cm}\lit{\href{https://www.springer.com/gp/book/9783030053178}{AutoML Book: Chapter 2}}
 
 \end{frame}
 % %----------------------------------------------------------------------
@@ -290,7 +299,8 @@
 	\end{itemize}
 	\pause
 	\medskip
-	\item Can we learn from meta-data $\mdata$ how to \alert{initialize} HPO, based on meta-features?
+	\item Can we learn from meta-data $\mdata$ how to \alert{initialize} HPO
+	%, based on meta-features?
 %	(i.e., running an initial design)
 %	\begin{itemize}
 %		\item the same ideas also apply to NAS
@@ -334,7 +344,7 @@
     \begin{itemize}
         \item \emph{Idea:} learn a \alert{sorted list of defaults}
         \item \emph{Method:} mostly \alert{greedy} on $\mathcal{T}_{\text{meta}}$
-        \item \emph{Results:} surprisingly strong; better than Bayesian Optimization
+        \item \emph{Results:} surprisingly strong,\\ better than Bayesian Optimization
     \end{itemize}}
 
     \onslide<2->{
@@ -453,6 +463,7 @@
             \item Simplest technique, but requires backpropagation through the optimization trace
             \item This also requires the blackbox functions $f$ used for training to be differentiable
        }
+\pause
         \item \alert{Reinforcement learning} \lit{\href{https://arxiv.org/abs/1606.01885}{Li \& Malik, 2016}}
         \myit{
             \item Can be harder to get to work, but does not require differentiable $f$
