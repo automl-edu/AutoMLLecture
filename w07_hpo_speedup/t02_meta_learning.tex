@@ -112,10 +112,10 @@
     \item This vector can be used to define a \alert{similarity measure} between two tasks
     \myit{
     	\item e.g., calculating the Euclidean distance between $m(t_i)$ and $m(t_j)$
-    }
 \smallskip
-    \item Based on similarity, we can transfer information from the most similar tasks to the new task $t_{\text{new}}$
-    \end{itemize}
+	    \item Based on similarity, we can transfer information from the most similar tasks to new task $t_{\text{new}}$
+	}
+\end{itemize}
 
 \end{frame}
 % %----------------------------------------------------------------------
@@ -257,12 +257,12 @@
 	
 	\item \alert{Statistical} - characterize the data via descriptive statistics:
 	\myit{
-		\item e.g., average, standard deviation, correlation, kurtosis or dispersion of the label distribution 
+		\item e.g., average or standard deviation of features, or their correlation with the labels
 		\pause
 	} 	
 	\item \alert{Information-theoretic} - measure the class entropy in the data
 	\myit{
-		\item capture the amount of information in the data and their complexity
+		\item capture the amount of information in the data %and their complexity
 		\pause 
     }
     \item \alert{Model-based} - extracted from a model induced using the training data
@@ -293,13 +293,13 @@
 	\item Experts often start HPO from a strong default (rather than random configurations)
 	\pause
 	\medskip
-	\item But such a default configuration often does not perform well on a new dataset
+	\item Can we learn from meta-data $\mdata$ how to \alert{initialize} HPO?
+	\pause
+	\medskip
+	\item Note: just a single default configuration often does not perform great on a new dataset
 	\begin{itemize}
 		\item Otherwise there would be no point in HPO
 	\end{itemize}
-	\pause
-	\medskip
-	\item Can we learn from meta-data $\mdata$ how to \alert{initialize} HPO
 	%, based on meta-features?
 %	(i.e., running an initial design)
 %	\begin{itemize}
@@ -531,10 +531,8 @@
     \medskip
 
     \item \alert{Discussion.}
-    \begin{itemize}
 %        \item How would you pick meta-features to be used in meta-learning hyperparameter optimization?
-        \item In the various meta-learning approaches, what will happen if all prior tasks are dissimilar to the target task?
-    \end{itemize}
+        In the various meta-learning approaches, what will happen if all prior tasks are dissimilar to the target task?
 
 
 \end{itemize}
