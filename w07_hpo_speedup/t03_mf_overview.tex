@@ -99,23 +99,23 @@ Exploit cheap approximations of an expensive blackbox function $\rightarrow$ aff
 \begin{columns}
     \begin{column}{.9\linewidth}
     \vspace{-10em}
-\pause
+\fhpause
 \medskip
     \myit{
     	\item Possible Resources:
     	\myit{
     	    \item Data subset size
     	    \item Runtime / \# epochs / \# iterations
-\pause
+\fhpause
 \smallskip
     	    \item Downsampled size of images in object recognition
     	    \item Depth / width of neural networks
-\pause
+\fhpause
 \smallskip
     	    \item Number of trees 
     	    \item Number of features
     	    \item Number of cross validation folds
-\pause
+\fhpause
 \bigskip
     	    \item General concept, applicable even in fields outside ML, e.g., fluid simulation:
     	    \myit{
@@ -137,10 +137,10 @@ Exploit cheap approximations of an expensive blackbox function $\rightarrow$ aff
 \myit{
     \item Often, we have a \alert{choice} which resources we use as budget
 \bigskip
-\pause
+\fhpause
     \item For multi-fidelity optimization to be helpful, \alert{performance with low budgets should be informative about performance with high budgets}  
 \bigskip    
-\pause  
+\fhpause  
     \item In the simplest case: 
     good with low resources $\leftrightarrow$ good with high resources.
     \myit{
@@ -164,7 +164,7 @@ Given:
     \item The performances $g(\conf_1), ..., g(\conf_n)$ on a cheap approximation of the black box
 
 \bigskip
-\pause
+\fhpause
 
 }
     We compute the \alert{Spearman rank correlation} between $[f(\conf_1), ..., f(\conf_n)]$ and $[g(\conf_1), ..., g(\conf_n)]$
@@ -178,7 +178,7 @@ Given:
 }
 
 \bigskip
-\pause
+\fhpause
 \alert{Goal: find approximations $g$ that are very cheap but have high rank correlations with $f$}
 
 \end{frame}

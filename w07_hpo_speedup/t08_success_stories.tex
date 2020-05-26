@@ -11,7 +11,7 @@
     	\item Hyperparameters of the ML models are optimized with Bayesian optimization
     }
 \bigskip
-\pause
+\fhpause
     \item Training data for the models changes over time 
     \myit{
     	\item Hyperparameters are constantly re-optimized 
@@ -38,7 +38,7 @@ Extension of Auto-WEKA with focus on speed improvements and robustness:
 \begin{itemize}
     \item Uses meta-learning to warmstart Bayesian optimization
     \item Won the 1st AutoML challenge
-\pause
+\fhpause
     \item Open source (BSD) and trivial to use \includegraphics[width=0.5\textwidth]{images/success_stories/auto-sklearn-repo-stats.png}
 \end{itemize}
 \begin{figure}
@@ -78,19 +78,19 @@ Idea: integrate warmstarting and a BOHB-like approach for Auto-sklearn
     \centering
     \includegraphics[width=\textwidth]{images/success_stories/automl_bo_po_es.png}
 \end{figure}
-\pause
+\fhpause
 
 \begin{itemize}
     \item Uses task-independent meta-learning to warmstart Bayesian optimization
     \myit{
         \item Therefore, no need for (potentially unreliable) meta-features
     }
-\pause
+\fhpause
     \item Uses successive halving to quickly go through proposed configurations
     \myit{
         \item Therefore, scales better to larger datasets
     }
-\pause
+\fhpause
     \item Followed by BOHB-like approach (uses successive halving instead of Hyperband)
     \item Won the 2nd AutoML challenge
 \end{itemize}
@@ -158,7 +158,7 @@ Idea: integrate warmstarting and a BOHB-like approach for Auto-sklearn
 	}
 	\bigskip
 	\bigskip
-	\pause
+	\fhpause
 	\item Just submitted: \alert{DEHB} combines differential evolution and Hyperband and largely dominates BOHB. Especially good for high dimensions.
 }
 

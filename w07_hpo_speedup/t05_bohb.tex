@@ -6,15 +6,15 @@ Desiderata for a practical solution to the hyperparamenter optimization problem:
 \begin{itemize}
     \item Strong Anytime Performance
     \item Strong Final Performance
-%    \pause
+%    \fhpause
     \item Scalability
     \item Robustness $\&$ Flexibility
-%    \pause
+%    \fhpause
     \item Computational Efficiency
     \item Effective Use of Parallel Resources
-%    \pause
+%    \fhpause
     \item Conceptual / Algorithmic Simplicity
-    \pause
+    \fhpause
 \end{itemize}
 \bigskip
 To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press/v80/falkner18a.html}{Falkner, Klein and Hutter, ICML 2018}} combines Bayesian Optimization with Hyperband 
@@ -29,10 +29,10 @@ To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press
         \item Bayesian Optimization for choosing configurations to achieve strong final performance
         \item Hyperband to choose the budgets for good anytime performance    
     }
-\pause
+\fhpause
 \bigskip
     \item BOHB replaces the random selection of configurations at the beginning of each HB iteration by a model-based search
-\pause
+\fhpause
 \bigskip
     \item Details of the model
     \myit{
@@ -52,10 +52,10 @@ To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press
 %    \item Strong anytime performance of BOHB(desideratum 1) stems from its use of Hyperband.
 %    \begin{itemize}
 %        \item Quickly evaluating lots of configurations on small budgets allows BOHB to quickly identify promising configurations.
-%        \pause
+%        \fhpause
 %    \end{itemize}
 %    \item The strong final performance (desideratum 2) stems from BOHB's BO part as the guided search is able to refine the selected configurations.
-%    \pause
+%    \fhpause
 %    \item BOHB also efficiently takes advantage of parallel resources (desideratum 3).
 %    \begin{itemize}
 %        \item In each iteration BOHB is evaluations multiple configurations, which can be independently run on multiple workers.
@@ -99,7 +99,7 @@ To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press
 \end{minipage}
 \end{center}
 
-\pause
+\fhpause
 %\vspace{-2em}
 \begin{equation}
     l(\conf)=p(\obs \le \gamma| D_b)\quad\quad\quad\quad
@@ -107,7 +107,7 @@ To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press
     \label{eq:TPE_Densities}
 \end{equation}
 
-\pause
+\fhpause
 \begin{itemize}
 	\item Note: $l^{'}(\conf)$ is similar to $l(\conf,)$ but has larger bandwidths
 %    \item To optimize EI, we sample $N_s$ points from $l^{'}(\conf)$ which is $l(\conf)$ but with all bandwidths multiplied by a factor $b_w$ to encourage more exploration around the promising configurations.

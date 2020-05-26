@@ -26,13 +26,13 @@
 
 \begin{itemize}
 	\item Recall: standard Bayesian optimization uses a model $\surro(\conf) \approx y$ to select the next $\conf$
-\pause
+\fhpause
 \medskip
 	\item \alert{Multi-fidelity} Bayesian optimization uses a model $\surro(\conf\alert{, z}) \approx y$ to select the next $(\conf\alert{, z})$
 	\myit{
 		\item Here, $z\in \mathcal{Z}$ is the fidelity; $\mathcal{Z}$ is the fidelity space, e.g., $\mathcal{Z} = [1, N_{\bullet}] \times  [1, T_{\bullet}]$
 	}	 
-    \pause
+    \fhpause
     \bigskip
 	
 %	\item BOCA - a general approach
@@ -53,7 +53,7 @@
             \optconf = \argmin_{\conf \in \pcs} \func(\conf) = \argmin_{\conf \in \pcs} \surro(\conf, \alert{z_{\bullet}})
         \end{equation*}
 
-    \pause
+    \fhpause
     \bigskip
 
     \item Implications for Bayesian optimization
@@ -130,7 +130,7 @@
 % \begin{itemize}
 % 	\item Standard Bayesian optimization uses a model $\func(\conf) \approx y$ to select the next $\conf$
 % 	\item \alert{Multi-fidelity Bayesian optimization} uses a model $\func(\conf\alert{, z}) \approx y$ to select the next $(\conf\alert{, z})$
-%     \pause
+%     \fhpause
 %     \smallskip
     
 % 	\item Model $\func$ needs to be good at extrapolating from small to large $z$
@@ -159,7 +159,7 @@
 			\item It aims to be maximally certain about the location of $\conf^*$
 		}
 \bigskip
-\pause
+\fhpause
 		\item In a nutshell: select 
 %		\begin{enumerate}
 %			\item Estimate $p(\func \mid \dataset)$, e.g., using a GP 
@@ -185,7 +185,7 @@ $\conf$ that maximizes the following acquisition function:
 		$$p_{\text{min}}(\conf^* \mid \dataset) := p(\conf^* \in \argmin_{\conf\in \pcs} \func(\conf\alert{,z_{\bullet}}) \mid \dataset)$$
 	
 		\item We still want to minimize the entropy $\mathcal{H}[p_\text{min}]$
-\pause
+\fhpause
 \medskip
 		\item Now we aim for the biggest \alert{reduction in entropy per time spent}
 		\begin{itemize}
@@ -216,12 +216,12 @@ $\conf$ that maximizes the following acquisition function:
 			\item Observe performance $f(\conf,z)$ and cost $c(\conf,z)$ and update models for $f$ and $c$ 
 		\end{enumerate}
 
-\pause
+\fhpause
 
     \item The algorithm originally focussed on data subsets and is therefore dubbed \\ \alert{Fabolas}: 
     ``Fast Bayesian Optimization on Large Datasets''
 	
-\pause
+\fhpause
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
@@ -233,7 +233,7 @@ $\conf$ that maximizes the following acquisition function:
     	\item 1\,000-fold speedups for optimizing SVMs on MNIST
     \end{itemize}
     \end{block}
-\pause
+\fhpause
 \end{column}%
 
 \hfill%
