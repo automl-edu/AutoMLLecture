@@ -110,21 +110,24 @@ Idea: integrate warmstarting and a BOHB-like approach for Auto-sklearn
 	    \item optimization on the full budget or optimization with successive halving
 	\end{itemize}
 \vskip 4pt
-	\item Can be done based on algorithm selection
-\vskip 10pt
-	\item Substantial improvements over Auto-sklearn 1.0
-	\myit{
-		\item $5\times$ reduction of average error
-		\item $6\times$ speedup (same performance in 10 minutes as Auto-sklearn 1.0 in 1 hour)
+	\onslide<2->{\item Can be done based on algorithm selection}
+	\onslide<3->{\vskip 10pt
+		\item Substantial improvements over Auto-sklearn 1.0
+		\myit{
+			\item $5\times$ reduction of average error
+			\item $6\times$ speedup (same performance in 10 minutes as Auto-sklearn 1.0 in 1 hour)
+		}
 	}
 }
 \column{0.6\textwidth}
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{../w07_hpo_speedup/images/success_stories/RQ1_60MIN_ens_rank.pdf}
-    \includegraphics[width=\textwidth]{../w07_hpo_speedup/images/success_stories/RQ1_legend.pdf}
-    \label{fig:my_label}
-\end{figure}
+\onslide<3->{
+	\begin{figure}
+	    \centering
+	    \includegraphics[width=\textwidth]{../w07_hpo_speedup/images/success_stories/RQ1_60MIN_ens_rank.pdf}
+	    \includegraphics[width=\textwidth]{../w07_hpo_speedup/images/success_stories/RQ1_legend.pdf}
+	    \label{fig:my_label}
+	\end{figure}
+}
 \end{columns}
 
 \end{frame}
@@ -161,3 +164,15 @@ Idea: integrate warmstarting and a BOHB-like approach for Auto-sklearn
 
 \end{frame}
 %-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\begin{frame}{Questions to Answer for Yourself / Discuss with Friends}
+
+\begin{itemize}
+    \item \alert{Repetition.} Discuss several success stories of speeding up Bayesian optimization.
+
+    \item \alert{Repetition.} What differs between Auto-sklearn 1.0 and Auto-sklearn 2.0?
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
