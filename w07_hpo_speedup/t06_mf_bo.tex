@@ -194,7 +194,7 @@ $\conf$ that maximizes the following acquisition function:
 		\end{itemize}
 \end{itemize}
 \vspace*{0.5cm}
-	\[{\acq}_{ES}(\conf,\dataset) := \mathds{E}_{\alert{p(\tilde{\cost}\mid (\conf, z), \dataset)}} 
+	\[{\acq}_{ES}(\conf,z \mid \dataset) := \mathds{E}_{\alert{p(\tilde{\cost}\mid (\conf, z), \dataset)}} 
 	\left[   \frac{\mathcal{H}[p_{\text{min}}(\cdot \mid \alert{\dataset})] - \mathcal{H}[p_{\text{min}}(\cdot \mid \alert{\dataset \cup \left\langle (\conf,z), \tilde{\cost} \right\rangle}}{\alert{c(\conf,z)}} \right]\]
 
 %	\item Introduced to handle large datasets, in paper ``Fast Bayesian Optimization on Large Datasets (Fabolas)'' by \lit{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein, Falkner \& Hutter, 2017}}
@@ -210,12 +210,17 @@ $\conf$ that maximizes the following acquisition function:
 \begin{itemize}
     \item The entire algorithm iterates the following 2 steps until time is up:
 		\begin{enumerate}
-			\item Select $(\conf,s)$ by maximizing:
-    			\[{\acq}_{ES}(\conf,\dataset) := \mathds{E}_{\alert{p(\tilde{\cost}\mid (\conf, z), \dataset)}} 
+			\item Select $(\conf,z)$ by maximizing:
+    			\[{\acq}_{ES}(\conf,z \mid \dataset) := \mathds{E}_{\alert{p(\tilde{\cost}\mid (\conf, z), \dataset)}} 
             	\left[   \frac{\mathcal{H}[p_{\text{min}}(\cdot \mid \alert{\dataset})] - \mathcal{H}[p_{\text{min}}(\cdot \mid \alert{\dataset \cup \left\langle (\conf,z), \tilde{\cost} \right\rangle}}{\alert{c(\conf,z)}} \right]\]
-			\item Observe performance $f(\conf,s)$ and cost $c(\conf,s)$ and update models for $f$ and $c$ 
+			\item Observe performance $f(\conf,z)$ and cost $c(\conf,z)$ and update models for $f$ and $c$ 
 		\end{enumerate}
 
+\pause
+
+    \item The algorithm originally focussed on data subsets and is therefore dubbed \\ \alert{Fabolas}: 
+    ``Fast Bayesian Optimization on Large Datasets''
+	
 \pause
 
 \begin{columns}[T] % align columns
@@ -283,28 +288,6 @@ $\conf$ that maximizes the following acquisition function:
 % %----------------------------------------------------------------------
 % %----------------------------------------------------------------------
 
-%----------------------------------------------------------------------
-%----------------------------------------------------------------------
-\begin{frame}[c]{Entropy Search for Multi-Fidelity Optimization -- Results}
-
-\alert{Fabolas} algorithm (``Fast Bayesian Optimization on Large Datasets'')
-
-\centering
-\includegraphics[width=1.\textwidth]{../w07_hpo_speedup/images/fabolas/fabolas_results.jpg}
-
-\pause
-\bigskip
-
-\myit{
-	\item However, Faboloas is limited to low-dimensional, continuous functions
-	\item Standard GP model causes large \alert{overhead} -- cannot exploit too many cheap evaluations
-	\myit{
-		\item BOHB is much simpler and more flexible
-	}
-}
-
-\end{frame}
-%----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
 
