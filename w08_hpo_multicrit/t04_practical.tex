@@ -1,0 +1,189 @@
+
+\input{../latex_main/main.tex}
+
+%\newcommand{\a}[0]{\mathbf{a}}
+%\newcommand{\y}[0]{\mathbf{y}}
+\newcommand{\q}[0]{\mathbf{q}}
+\newcommand{\Xspace}[0]{\mathcal{X}}
+
+\title[AutoML: Overview]{Multi-criteria Optimization}
+\subtitle{Practical Applications}
+%TODO: change authors!
+\author[Bernd Bischl]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+
+	\maketitle
+
+
+
+\begin{frame}[allowframebreaks]{Practical Applications in Machine Learning}
+
+\textbf{ROC Optimization}:
+  Balance \emph{TPR} and \emph{FPR}
+  \begin{itemize}
+    \item Typically unbalanced tasks with unspecified misclassification costs.
+    \item If costs were given we would construct the optimization criterion accordingly.
+  \end{itemize}  
+
+\textbf{Efficient Models}:
+  Balance \emph{accuracy} and subset or all of: \emph{prediction time}, \emph{model complexity}, \emph{model size}, \emph{energy consumption}.
+  \begin{itemize}
+    \item Time: In production models should predict fast.
+    \item Complexity: A model should be explainable.
+    \item Size / Energy: A model should fit on a mobile device and not use much power.
+  \end{itemize}
+
+\textbf{Fair Models}:
+  Balance \emph{accuracy} and \emph{fairness}.
+  \begin{itemize}
+    \item Tasks with skewed training data. A model should not learn discrimination that is present in the training data. 
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{ROC Optimization - Setup}
+
+  Again, we want to train a \textit{spam detector} on the popular Spam dataset\footnote{\url{https://archive.ics.uci.edu/ml/datasets/spambase}}.
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+        \item Learning algorithm: SVM with RBF kernel.
+        \item Hyperparameters to optimize: \\
+        \begin{tabular}{rl}
+        \texttt{cost} & $[2^{-15}, 2^{15}]$ \\
+        $\gamma$ & $[2^{-15}, 2^{15}]$ \\
+        Threshold $t$ & $[0,1]$ \\
+        \end{tabular}
+        \item Objective: \emph{minimize} false positive rate (FPR) and \emph{maximize} true positive rate (TPR), evaluated through 5-fold CV
+\end{itemize}
+\end{column}%
+\begin{column}{0.5\textwidth}
+\begin{itemize}    
+        \item Tuner: Multi-criteria Bayesian optimization:
+            \begin{itemize}
+              \item ParEGO with $\rho = 0.05$, $s = 100000$.
+              \item Acquisition function $\acq$: \emph{Confidence Bound} with $\alpha = 2$. 
+              \item Budget: $100$ evaluations
+            \end{itemize}
+        \item Tuning is conducted on a training holdout and all hyperparameters configurations of the Pareto front are validated on an outer validation set.
+\end{itemize}
+\end{column}
+\end{columns}
+\vspace{0.5cm}
+{\footnotesize For simplicity we refrain from optimizing the threshold parameter independently posthoc.}
+\end{frame}
+
+\begin{frame}{ROC Optimization - Result}
+
+\begin{columns}
+\begin{column}{0.45\textwidth}
+  We notice here:
+  \begin{itemize}
+    \item A big portion of the evaluations during tuning are on the Pareto front.
+    \item The performance on the validation set varies heavily from the tuning.
+    On the validation set we were able to achieve a better TPR but the FPR got worse.
+  \end{itemize}
+  Note: The Pareto front does not reflect the stochastic characteristic of our objective.
+\end{column}%
+\begin{column}{0.5\textwidth}
+  \begin{figure}
+  \includegraphics[width=\textwidth]{images/example_parego_spam.png}
+  \end{figure}
+\end{column}
+\end{columns}
+    
+\end{frame}
+
+\begin{frame}{Efficient Models - Overview}
+
+\begin{itemize}
+  \item "Efficiency" can be:
+  \begin{itemize}
+    \item Size of the model on the disk
+    \item Model training or prediction time
+    \item Number of features needed
+    \item Energy consumption
+    \item \ldots
+  \end{itemize}
+  \item Optimizing hyperparameters for one learner results in simlarly efficient models.
+  \begin{itemize}
+    \item Exceptions: \texttt{ntrees} (\emph{Random Forest}), \texttt{nrounds} (\emph{xgboost}), \texttt{penalty} (L1-regularized regression methods), \ldots
+  \end{itemize}
+  \item Search space $\pcs$ spans multiple machine learning methods and their hyperparameters (the typical AutoML scenario) to include methods of different complexity.
+  \item Similarly \emph{Neural architecture search (NAS)} can search over a wide set of possible architectures to find different complex models.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Fair Models - Setup I}
+A fair model for income prediction on binarized target\footnote{\url{https://www.openml.org/d/4535}}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+  \item Learning Algorithm: \emph{xgboost}
+  \item Hyperparameters to optimize: \\
+  \begin{tabular}{rl}
+    \texttt{eta} & $[0.01,0.2]$ \\
+    \texttt{gamma} & $[2^{-7},2^6]$ \\
+    \texttt{max\_depth} & $\{2, \ldots, 20\}$ \\
+    \texttt{colsample\_bytree} & $[0.5,1]$ \\
+    \texttt{colsample\_bylevel} & $[0.5,1]$ \\
+    \texttt{lambda} & $[2^{-10},2^{10}]$ \\
+    \texttt{alpha} & $[2^{-10},2^{10}]$ \\
+    \texttt{subsample} & $[0.5,1]$ \\
+  \end{tabular}
+\end{itemize}
+\end{column}%
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+  \item Objective: minimize \emph{missclassification error} and \emph{fairness}
+  \item Fairness here: absolute difference in F1-Scores between female ($f$) and male ($m$) population:
+  \[
+  \loss_{\text{fair}} := |\loss_{\text{F1}}(y_f,\fh(\x_f)) - \loss_{\text{F1}}(y_m,\fh(\x_m))|
+  \]
+  \item "Is the rate of classified as high income equal amongst both subgroups given the prevalence in each subgroup?"
+\end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}{Fair Models - Setup II}
+\begin{itemize}
+  \item Tuner: Multi-criteria Bayesian optimization:
+  \begin{itemize}
+    \item ParEGO with $\rho = 0.05$, $s = 100000$.
+    \item range of projections: $[0.1, 0.9]$ \\
+    .i.e.: "No interest in extreme unfair and badly performing configurations."
+    \item Acquisition function $\acq$: \emph{Confidence Bound} with $\alpha = 2$.
+    \item Surrogate: \emph{random forest}
+    \item Budget: 120 evaluations
+  \end{itemize}
+\end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Fair Models - Example}
+\begin{figure}[ht]
+\centering
+\includegraphics{images/Pfisterer_et_al_2019_Multi_Objective_fig4.pdf}
+\caption{Pareto fronts after 20, 70 and 120 tuning iterations.}
+\end{figure}
+\end{frame}
+
+\end{document}
