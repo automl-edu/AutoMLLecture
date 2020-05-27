@@ -7,24 +7,17 @@
 \newcommand{\videotitle}[1]{\subtitle{#1}\input{title_slide}}
 \newcommand{\fhpause}{\pause} % for taping
 
-% for final handout:
-\renewcommand{\videotitle}[1]{\subtitle{#1}\section{#1}\input{title_slide}}
-\renewcommand{\fhpause}{} % for final handout
-
 \title[Speedup Techniques for Hyperparameter Optimization]{Speedup Techniques for Hyperparameter Optimization} % week title
 \author[Frank Hutter]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
+%\AtBeginSection[]{}
 
-\AtBeginSection[] % Show a table of contents between videos for easier navigation and making available a single PDF per lecture. 
-{
-  \begin{frame}{Outline}
-    \bigskip
-    \vfill
-    \tableofcontents[currentsection]
-  \end{frame}
-}
+% for final handout:
+\renewcommand{\videotitle}[1]{\subtitle{#1}\section{#1}\input{title_slide}}
+\renewcommand{\fhpause}{} % for final handout
+\AtBeginSection[]{\begin{frame}{Outline}\bigskip\vfill\tableofcontents[currentsection]\end{frame}}
 
 
 \begin{document}
@@ -38,5 +31,5 @@
 \input{t06_mf_bo.tex}
 \input{t07_learning_curve.tex}
 \input{t08_success_stories.tex}
-
+\input{t99_bibliography.tex}
 \end{document}
