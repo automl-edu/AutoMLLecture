@@ -9,6 +9,7 @@ set.seed(1)
 tsk = spam.task
 #tsk = sonar.task
 n_evals = 100
+theme_set(theme_bw())
 
 res_file = "example_parego_res.rds"
 
@@ -96,8 +97,10 @@ if (!file.exists(res_file)) {
     res_rs = cbind(res_rs, des_random)
   }
   
-  eval_x = function(x) {
-    x = trafoValue(par = ps, x = x)
+  eval_x = function(x, trafo = TRUE) {
+    if (trafo) {
+      x = trafoValue(par = ps, x = x)  
+    }
     lrn_x = x[intersect(names(x), getParamIds(getParamSet(data$lrn)))]
     lrn2 = setHyperPars(data$lrn, par.vals = lrn_x)
     mod = train(lrn2, tsk_train)
@@ -111,11 +114,11 @@ if (!file.exists(res_file)) {
     y[, .curve := list(tprfprs)]
     return(y)
   }
-  # calc mbo performance on test
+  # calc mbo performance on testv
   y_outer_mbo = map_dtr(res_mbo$pareto.set, eval_x)
   
   # calc rs performance on test
-  y_outer_rs = map_dtr(res_rs[dominated == FALSE,]$xs, eval_x)
+  y_outer_rs = map_dtr(res_rs[dominated == FALSE,]$xs, eval_x, trafo = FALSE)
   
   saveRDS(list(res_mbo = res_mbo, y_outer_mbo = y_outer_mbo, res_rs = res_rs, y_outer_rs = y_outer_rs), res_file)
 } else {
@@ -126,44 +129,71 @@ if (!file.exists(res_file)) {
   res_rs = tmp$res_rs
 }
 
-res_rs[, type := "rs"]
-res_rs$dominated = emoa::is_dominated(t(as.matrix(res_rs[, .(fpr,1-tpr)])))
+res_rs[, tuner := "rs"]
 opdf = as.data.frame(res_mbo$opt.path)
 pareto_df = unique(as.data.frame(res_mbo$pareto.front))
 pareto_df$dominated = FALSE
 opdf = merge(opdf, pareto_df, by = colnames(res_mbo$pareto.front), all.x = TRUE)
 setDT(opdf)
-opdf$type = "parEGO"
+opdf$tuner = "parEGO"
 opdf[is.na(dominated), dominated := TRUE]
-opdf = rbindlist(list(opdf, res_rs[type == "rs"]), fill = TRUE)
+opdf = rbindlist(list(opdf, res_rs[tuner == "rs"]), fill = TRUE)
 
 #tuning performance
-g = ggplot(opdf[dominated == FALSE,], aes(x = 1-tpr, y = fpr, color = type, shape = type))
+g = ggplot(opdf[dominated == FALSE,], aes(x = 1-tpr, y = fpr, color = tuner))
 #g = g + geom_point(data = subdf_inner, alpha = 0.1, size = 1)
 #g = g + geom_point(data = subdf_outer, alpha = 0.1, size = 1)
-g = g + geom_point(data = opdf)
+g = g + geom_point(data = opdf, alpha = 0.5)
 g = g + geom_step()
 # g = g + geom_point(data = y_outer_mbo, size = 2)
 g = g + coord_cartesian(ylim = c(0,0.5), xlim = c(0,0.5))
-g = g + labs(title = "ParEGO Tuning SVM (cost, gama, threshold) for spam dataset", subtitle = "positive = nonspam")
+g = g + labs(
+  title = "Tuning: SVM (cost, gama, threshold) on spam dataset", subtitle = "positive = nonspam")
 if (interactive()) {
   print(g)
 }
 ggsave("../images/example_parego_spam.png", g, height = 5, width = 7)
 
+emoa::dominated_hypervolume(points = t(as.matrix(opdf[tuner == "rs", .(fpr,1-tpr)])), ref = c(1,1))
+# 0.9586348
+emoa::dominated_hypervolume(points = t(as.matrix(opdf[tuner == "parEGO", .(fpr,1-tpr)])), ref = c(1,1))
+# 0.9651275
+
 #outer performance
-y_outer_mbo$type = "parEGO"
-y_outer_rs$type = "rs"
-g = ggplot(opdf[dominated == FALSE,], aes(x = 1-tpr, y = fpr, color = type, shape = type))
-g = g + geom_step()
-g = g + geom_point(data = y_outer_mbo, size = 2)
-g = g + geom_point(data = y_outer_rs, size = 2)
+y_outer_mbo$tuner = "parEGO"
+y_outer_rs$tuner = "rs"
+y_outer_mbo$type = "validation"
+y_outer_rs$type = "validation"
+opdf$type = "tuning"
+g = ggplot(opdf[dominated == FALSE,], aes(x = 1-tpr, y = fpr, color = tuner, shape = type))
+g = g + geom_point(alpha = 0.5)
+g = g + geom_step(alpha = 0.5)
+g = g + geom_point(data = rbind(y_outer_mbo, y_outer_rs), size = 2)
 g = g + coord_cartesian(ylim = c(0,0.5), xlim = c(0,0.5))
-g = g + labs(title = "ParEGO Tuning SVM (cost, gama, threshold) for spam dataset", subtitle = "positive = nonspam")
+g = g + labs(title = "Tuning Validation: SVM on spam dataset", subtitle = "positive = nonspam")
 if (interactive()) {
   print(g)
 }
-ggsave("../images/example_parego_spam.png", g, height = 5, width = 7)
+ggsave("../images/example_parego_spam_outer.png", g, height = 5, width = 7)
+
+# outer pareto
+
+emoa::dominated_hypervolume(points = t(as.matrix(y_outer_rs[, .(fpr,1-tpr)])), ref = c(1,1))
+# 0.961211
+emoa::dominated_hypervolume(points = t(as.matrix(y_outer_mbo[, .(fpr,1-tpr)])), ref = c(1,1))
+# 0.9601199
+y_outer_rs$dominated = emoa::is_dominated(points = t(as.matrix(y_outer_rs[, .(fpr,1-tpr)])))
+y_outer_mbo$dominated = emoa::is_dominated(points = t(as.matrix(y_outer_mbo[, .(fpr,1-tpr)])))
+tmp = rbind(y_outer_mbo, y_outer_rs)
+g = ggplot(data = tmp[dominated == TRUE,], mapping = aes(x = 1-tpr, y = fpr, color = tuner, shape = type))
+g = g + geom_point(data = tmp, alpha = 0.5)
+g = g + geom_step()
+g = g + labs(title = "Tuning Validation: SVM on spam dataset", subtitle = "positive = nonspam")
+if (interactive()) {
+  print(g)
+}
+ggsave("../images/example_parego_spam_outer_pareto.png", g, height = 5, width = 7)
+
 
 
 subdf_inner = map_dtr(res_mbo$opt.path$env$extra, ".curve")

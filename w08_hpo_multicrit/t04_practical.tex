@@ -88,15 +88,19 @@
 {\footnotesize For simplicity we refrain from optimizing the threshold parameter independently posthoc.}
 \end{frame}
 
-\begin{frame}{ROC Optimization - Result}
+\begin{frame}{ROC Optimization - Result I}
 
 \begin{columns}
 \begin{column}{0.45\textwidth}
   We notice here:
   \begin{itemize}
-    \item A big portion of the evaluations during tuning are on the Pareto front.
-    \item The performance on the validation set varies heavily from the tuning.
-    On the validation set we were able to achieve a better TPR but the FPR got worse.
+    \item Compared to the \emph{random search}: Many \emph{ParEGO} evaluations are on the Pareto front.
+    \item The Pareto front of \emph{ParEGO} dominates most points from the \emph{random search}.
+    \item The dominated hypervolume to the reference point $(1,1)$ is:
+    \begin{tabular}{rl}
+    \emph{ParEGO:} & 0.965\\ 
+    \emph{random search:} & 0.959\\ 
+    \end{tabular}
   \end{itemize}
   Note: The Pareto front does not reflect the stochastic characteristic of our objective.
 \end{column}%
@@ -109,12 +113,38 @@
     
 \end{frame}
 
+\begin{frame}{ROC Optimization - Result II}
+
+\begin{columns}
+\begin{column}{0.45\textwidth}
+  We validate the configurations on the Pareto front on a holdout:
+  \begin{itemize}
+    \item<1-> The performance on the validation set varies slightly.
+    \item<1-> The TPR got slightly better but the FPR got slightly worse.
+    \item<1-> On the validatoon set, some configurations get dominated by others.
+    \item<2> The dominated hypervolume of the validation set is:
+    \begin{tabular}{rl}
+    \emph{ParEGO:} & 0.960\\ 
+    \emph{random search:} & 0.961\\ 
+    \end{tabular}
+  \end{itemize}
+\end{column}%
+\begin{column}{0.5\textwidth}
+  \begin{figure}
+  \includegraphics<1>[width=\textwidth]{images/example_parego_spam_outer.png}
+  \includegraphics<2>[width=\textwidth]{images/example_parego_spam_outer_pareto.png}
+  \end{figure}
+\end{column}
+\end{columns}
+    
+\end{frame}
+
 \begin{frame}{Efficient Models - Overview}
 
 \begin{itemize}
   \item "Efficiency" can be:
   \begin{itemize}
-    \item Size of the model on the disk
+    \item Memory consumption of the model
     \item Model training or prediction time
     \item Number of features needed
     \item Energy consumption
@@ -128,6 +158,10 @@
   \item Similarly \emph{Neural architecture search (NAS)} can search over a wide set of possible architectures to find different complex models.
 \end{itemize}
 
+\end{frame}
+
+\begin{frame}{Efficient Models - Example}
+    
 \end{frame}
 
 \begin{frame}{Fair Models - Setup I}
@@ -163,27 +197,28 @@ A fair model for income prediction on binarized target\footnote{\url{https://www
 
 \end{frame}
 
-\begin{frame}{Fair Models - Setup II}
+\begin{frame}{Fair Models - Results}
 \begin{itemize}
-  \item Tuner: Multi-criteria Bayesian optimization:
+  \item ParEGO Optimization as in previous example but with
   \begin{itemize}
-    \item ParEGO with $\rho = 0.05$, $s = 100000$.
+    %\item ParEGO with $\rho = 0.05$, $s = 100000$.
     \item range of projections: $[0.1, 0.9]$ \\
     .i.e.: "No interest in extreme unfair and badly performing configurations."
-    \item Acquisition function $\acq$: \emph{Confidence Bound} with $\alpha = 2$.
+    %\item Acquisition function $\acq$: \emph{Confidence Bound} with $\alpha = 2$.
     \item Surrogate: \emph{random forest}
-    \item Budget: 120 evaluations
+    %\item Budget: 120 evaluations
   \end{itemize}
 \end{itemize}
-    
-\end{frame}
 
-\begin{frame}{Fair Models - Example}
-\begin{figure}[ht]
+\begin{figure}
 \centering
 \includegraphics{images/Pfisterer_et_al_2019_Multi_Objective_fig4.pdf}
 \caption{Pareto fronts after 20, 70 and 120 tuning iterations.}
 \end{figure}
+
+    
 \end{frame}
+
+
 
 \end{document}
