@@ -161,7 +161,31 @@
 \end{frame}
 
 \begin{frame}{Efficient Models - Example}
-    
+Image Classification on CIFAR-10 dataset\footnote{\url{https://arxiv.org/pdf/1904.09035.pdf}}
+  \begin{columns}
+  \begin{column}{0.65\textwidth}
+    \begin{itemize}
+      \item Objective: \emph{accuracy} vs.\ \emph{FLOPS} (floating point operations, per obersevation) 
+      \item Learner: \emph{DenseNet-121} (Convolutional Neural Network)
+      \item Search Space:\\
+        \begin{tabular}{rl}
+          \texttt{growth rate in all four blocks} & $[8,32]$ \\
+          \texttt{layers in first block} & $[4, 6]$ \\
+          \texttt{layers in second block} & $[4, 12] $ \\
+          \texttt{layers in third block} & $[4, 24] $ \\
+          \texttt{layers in fourth block} & $[4, 16] $ \\
+        \end{tabular}
+      \item Tuner: \emph{Particle Swarm Optimization}
+    \end{itemize}
+  \end{column}%
+  \begin{column}{0.35\textwidth}
+    \begin{figure}
+    \includegraphics[width=\textwidth]{images/Wang_et_al_2019_Evolving_Deep_Neural_Networks_fig7_1.png}
+    \end{figure}
+  \end{column}
+  \end{columns}
+
+      
 \end{frame}
 
 \begin{frame}{Fair Models - Setup I}
