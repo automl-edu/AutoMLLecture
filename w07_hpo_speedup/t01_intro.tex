@@ -1,0 +1,221 @@
+\videotitle{Overview}
+
+%-------------------------------------------------
+\begin{frame}{Beyond Black-box Optimization}
+\medskip
+Recall general blackbox optimization:\\
+        \bigskip
+        \begin{center}
+        \scalebox{0.7}{\hspace*{1.0cm}
+        \input{../w06_hpo_bo/images/intro_images/blackbox_HPO.tex}}\\
+        \bigskip
+         Only mode of interaction with $f$: querying $f$'s value at a given $\conf$
+        
+\pause
+        \bigskip
+        \bigskip
+        \huge{\textcolor{red}{Too slow for tuning expensive models}}
+        
+        \end{center}
+\vspace*{-6cm}
+\begin{center}
+\scalebox{15}{\color{Red}{$\bm{\times}$}}
+\end{center}    
+    
+\end{frame}
+%-------------------------------------------------
+
+%-------------------------------------------------
+%  \begin{frame}{Outline}
+%    \bigskip
+%    \vfill
+%    \tableofcontents
+%  \end{frame}
+%-------------------------------------------------
+
+
+\myframetop{Methods for Going Beyond Blackbox Bayesian Optimization}{
+
+	\begin{columns}
+	\column{0.0\textwidth}
+	\column{0.8\textwidth}
+	
+		\vspace*{-0.4cm}
+	    \myit{
+			\onslide<1->{
+				\item \alert{Sum of little black boxes}
+	        	\myit{
+		        	\item Each little black box is fast but only yields a noisy estimate \\
+		        	\item SMAC \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011}} directly solves $\argmin_{\conf\in\confs} \sum_{i=1}^N \cost(\conf,i)$ 	        	
+		        	\item Auto-WEKA \lit{\href{https://dl.acm.org/doi/10.1145/2487575.2487629}{Thornton et al, 2013}} used this to optimize 10-fold cross-validation performance
+		        }
+			}\onslide<2->{
+				\bigskip
+				\item \alert{Meta-learning across problems / datasets}
+				\bigskip
+				\bigskip
+			}\onslide<3->{
+			    \item \alert{Multi-fidelity optimization} 
+		   		\bigskip
+		   		\bigskip
+		   		\medskip
+		    }\onslide<4->{
+			    \item \alert{Graybox optimization / learning curve prediction} 
+		    }
+	    }
+	\column{0.2\textwidth}
+		\vspace*{-0.4cm}
+		\onslide<1->{
+			\includegraphics[width=\linewidth, keepaspectratio=true]{images/intro/Sum_of_little_blackboxes.png}
+		}\onslide<2->{
+			\includegraphics[width=\linewidth, keepaspectratio=true]{images/intro/meta-learning.png}
+			\smallskip
+		}\onslide<3->{
+%			\smallskip~
+			\smallskip
+			\vspace*{-0.3cm}
+			\includegraphics[width=\linewidth, keepaspectratio=true]{images/intro/black_blocks.png}
+			\smallskip
+		}\onslide<4->{
+%			\vspace*{0.5cm}~
+			\hspace*{-2.5cm}~
+			\includegraphics[width=1.8\linewidth, keepaspectratio=true]{images/intro/graybox_optimization.png}
+		}   
+		\end{columns}
+	
+}
+
+
+
+%-----------------------------------------------------------------------
+
+\begin{frame}[c]{Learning Goals of this Lecture}
+\framesubtitle{After this lecture, students can ...}
+
+\begin{itemize}
+    \item Describe many different ways of using \alert{meta-learning} to speed up HPO
+    \item Explain the concept of \alert{multi-fidelity} optimization to speed up HPO
+    \item Explain the \alert{Successive Halving} and \alert{Hyperband} algorithms 
+    \item Explain how to combine Bayesian optimization and Hyperband in \alert{BOHB}
+    \item Describe how to \alert{exploit multiple fidelities in Bayesian optimization} 
+    \item Discuss several ways of predicting \alert{learning curves}
+    \item Discuss \alert{success stories} of speeding up Bayesian optimization
+%    \item Describe \alert{gradient descent} approaches for HPO
+\end{itemize}
+\end{frame}
+
+%-----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+%-------------------------------------------------
+\iffalse
+
+
+%-------------------------------------------------
+\begin{frame}{Recall: Black-box optimization}
+
+\begin{figure}
+    \centering
+    \input{images/intro/blackboxoptimization}
+\end{figure}
+\pause
+\begin{itemize}
+    \item Can we do better?
+\end{itemize}
+%\source{\lit{\href{https://slideslive.com/38917532/greybox-bayesian-optimization-for-automl}{Peter Frazier: Grey-box Bayesian Optimization for AutoML}}}
+    
+    \textcolor{red}{FH: can you please create this figure yourself, using the same picture for black box and looking inside the black box, except that for ``looking inside'' the lid is open. For one (not necessarily optimal) way to do this in tikz, see: http://www.texample.net/tikz/examples/annotated-3d-box/}
+    
+\end{frame}
+%-------------------------------------------------
+
+
+
+
+%\section{Introduction to grey-box approaches}
+%-------------------------------------------------
+%-------------------------------------------------
+\begin{frame}{Recall: Black-box optimization}
+\begin{figure}
+    \centering
+    \input{images/intro/blackboxoptimization}
+\end{figure}
+\pause
+\begin{itemize}
+    \item Can we do better?
+\end{itemize}
+%\source{\lit{\href{https://slideslive.com/38917532/greybox-bayesian-optimization-for-automl}{Peter Frazier: Grey-box Bayesian Optimization for AutoML}}}
+    
+    \textcolor{red}{FH: can you please create this figure yourself, using the same picture for black box and looking inside the black box, except that for ``looking inside'' the lid is open. For one (not necessarily optimal) way to do this in tikz, see: http://www.texample.net/tikz/examples/annotated-3d-box/}
+    
+\end{frame}
+%-------------------------------------------------
+%-------------------------------------------------
+\begin{frame}{Looking inside the box}
+\begin{figure}
+    \centering
+    \input{images/intro/greyboxoptimization}
+\end{figure}
+
+    \textcolor{red}{FH: can you please create this figure yourself, using the same picture for black box and looking inside the black box, except that for ``looking inside'' the lid is open. For one (not necessarily optimal) way to do this in tikz, see: http://www.texample.net/tikz/examples/annotated-3d-box/}
+
+%\hspace{6.5cm}\lit{\href{https://slideslive.com/38917532/greybox-bayesian-optimization-for-automl}{Peter Frazier: Grey-box Bayesian Optimization for AutoML}}
+\end{frame}
+%-------------------------------------------------
+
+
+\begin{frame}{Looking inside the box}
+Utilize additional knowledge available about the objective function to improve optimization performance:
+\begin{itemize}
+    \item Learning curves:
+    \begin{itemize}
+        \item Early stopping
+        \item Freezing \& Thawing
+    \end{itemize}
+    \item Cheap-to-evaluate proxies
+    \begin{itemize}
+        \item Trained neural network on small part of $\dataset$ 
+    \end{itemize}
+    \item Multi-task learning
+    \begin{itemize}
+        \item Solve multiple learning tasks simultaneously.
+        \item Exploit commonalities and differences across tasks.
+    \end{itemize}
+    \item Warm starts
+    \begin{itemize}
+        \item Reuse trained hyperparameter configurations from similar models or datasets.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+%-------------------------------------------------
+%-------------------------------------------------
+%\iffalse
+\begin{frame}{Learning Curves}
+
+\centering
+\includegraphics[width=0.4\textwidth]{../w07_hpo_speedup/images/intro/learning_curves.png}
+
+Exemplary learning curves of training deep neural networks\\
+Many ML algorithms iteratively optimize a (loss) function
+
+\end{frame}
+%-------------------------------------------------
+%-------------------------------------------------
+\begin{frame}{Stopping poor evaluations early}
+
+\centering
+\includegraphics[width=0.5\textwidth]{../w07_hpo_speedup/images/intro/differetiatingConfigurations.png}
+
+Only stop evaluations after they have spent sufficient resources to differentiate between them in terms of quality.
+
+\end{frame}
+\fi

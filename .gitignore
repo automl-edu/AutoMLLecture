@@ -8,3 +8,5 @@
 *.synctex.gz
 *.toc
 *.vrb
+/tmp/
+/w06_hpo_bo/

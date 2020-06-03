@@ -1,14 +1,16 @@
-\section{Learning Curves}
+\videotitle{Predicting Learning Curves}
+%----------------------------------------------------------------------
+
 \begin{frame}{Learning Curves}
+\begin{center}
+\includegraphics[width=0.4\linewidth, keepaspectratio=true]{images/intro/graybox_optimization.png}
+\end{center}
+
 \begin{figure}
    \centering
-   \includegraphics[width=0.44\textwidth]{w07_hpo_grey_box/images/learningcurve/learning_curve_domhan.png}
+   \includegraphics[width=0.34\textwidth]{../w07_hpo_speedup/images/learningcurve/learning_curve_domhan.png}
    \caption{Exemplary learning curves of training deep neural networks}
 \end{figure}
-
-
-
-
 \end{frame}
 %-----------------------------------------------------------------------
 
@@ -17,8 +19,8 @@
 \onslide<1->
 \begin{figure}
     \centering
-    \only <1>{\includegraphics[width=0.5\textwidth]{w07_hpo_grey_box/images/learningcurve/learning_curve_questionmark.png}}
-    \only <2->{\includegraphics[width=0.5\textwidth]{w07_hpo_grey_box/images/learningcurve/learning_curve_single_pred.jpg}}
+    \only <1>{\includegraphics[width=0.5\textwidth]{../w07_hpo_speedup/images/learningcurve/learning_curve_questionmark.png}}
+    \only <2->{\includegraphics[width=0.5\textwidth]{../w07_hpo_speedup/images/learningcurve/learning_curve_single_pred.jpg}}
     
 \end{figure}
 
@@ -50,7 +52,7 @@
 \begin{frame}{Learning Curves: Early Termination}
 
 \centering
-\includegraphics[width=0.8\textwidth]{images/learningcurve/learning_curve_dec.png}
+\includegraphics[width=0.75\textwidth]{../w07_hpo_speedup/images/learningcurve/learning_curve_dec.png}
 
 $\rightarrow$ need for \alert{probabilistic predictions / quantification of uncertainty}
 
@@ -60,7 +62,7 @@ $\rightarrow$ need for \alert{probabilistic predictions / quantification of unce
 \begin{frame}{Learning Curves: Early Termination}
 
 \centering
-\includegraphics[width=0.8\textwidth]{images/learningcurve/learning_curve_dec2.png}
+\includegraphics[width=0.75\textwidth]{../w07_hpo_speedup/images/learningcurve/learning_curve_dec2.png}
 
 $\rightarrow$ need for \alert{probabilistic predictions / quantification of uncertainty}
 
@@ -68,8 +70,9 @@ $\rightarrow$ need for \alert{probabilistic predictions / quantification of unce
 %-----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
-\begin{frame}{Parametric Learning Curves}
+\begin{frame}{Parametric Learning Curves \litw{\href{https://www.aaai.org/ocs/index.php/IJCAI/IJCAI15/paper/view/11468}{Domhan, Springenberg \& Hutter, IJCAI 2015}}}
 
+\vspace*{-0.25cm}
 \myit{
 	\item Use a parametric model $f_k$ with parameters $\boldsymbol{\theta}$ to model performance at step $t$ as:
 	\alert{$y_t = f_k(t|\boldsymbol{\theta}) + \epsilon$}, with $\epsilon \sim \mathcal{N}(0, \sigma^2)$.
@@ -79,8 +82,9 @@ $\rightarrow$ need for \alert{probabilistic predictions / quantification of unce
 where $\bm{\xi} = (w_1, \dots, w_{K}, \boldsymbol{\theta}_1, \dots, \boldsymbol{\theta}_{K}, \sigma^2)$
 %	\item MSc Thesis in my group, 2015
 }
+\pause
 \begin{center}
-\includegraphics[width=0.9\textwidth]{images/learningcurve/Domhan_types_of_curves.png}\\
+\includegraphics[width=0.9\textwidth]{../w07_hpo_speedup/images/learningcurve/Domhan_types_of_curves.png}\\
 \scriptsize{$K=11$ parametric families for modelling learning curves}
 \end{center}
 
@@ -94,10 +98,10 @@ where $\bm{\xi} = (w_1, \dots, w_{K}, \boldsymbol{\theta}_1, \dots, \boldsymbol{
 
 %-----------------------------------------------------------------------
 \begin{frame}{Predictive Termination}
-
+\vspace*{-0.2cm}
 {
 \begin{center}
-\includegraphics[width=0.9\textwidth]{images/learningcurve/learning_curve_tuning.jpg}
+\includegraphics[width=0.9\textwidth]{../w07_hpo_speedup/images/learningcurve/learning_curve_tuning.jpg}
 
 All learning curves vs. learning curves with early termination
 \end{center}
@@ -113,7 +117,7 @@ All learning curves vs. learning curves with early termination
 
 {
 \begin{center}
-\includegraphics[width=0.5\textwidth]{images/learningcurve/learning_curve_tuning.jpg}
+\includegraphics[width=0.5\textwidth]{../w07_hpo_speedup/images/learningcurve/learning_curve_tuning.jpg}
 
 All learning curves vs. learning curves with early termination
 \end{center}
@@ -127,7 +131,7 @@ All learning curves vs. learning curves with early termination
 		\myit{
 			\item[$\rightarrow$] can't learn across hyperparameters
 		}
-		\item Does not learn across curves; simply extrapolates one at a time
+%		\item Does not learn across curves; simply extrapolates one at a time
 %		\item Cannot quickly integrate new information from extending the curve
 	}
 }
@@ -135,11 +139,11 @@ All learning curves vs. learning curves with early termination
 \end{frame}
 
 %-----------------------------------------------------------------------
-\begin{frame}{LC-Net}
+\begin{frame}{LC-Net \litw{\href{https://openreview.net/forum?id=S11KBYclx}{Klein, Falkner \& Hutter, ICLR 2017}}}
 
 \vspace*{-0.25em}
 {
-	\rightimage[.4]{w07_hpo_grey_box/images/learningcurve/LC-Net-network.png}
+	\rightimage[.4]{../w07_hpo_speedup/images/learningcurve/LC-Net-network.png}
 	\myit{
 		\item \goleft[.45]{Make a layer out of the parametric learning curves by Domhan et al.}
 		\item \goleft[.45]{Also support hyperparameters as inputs (in the figure denoted by $x_1, \dots, x_d$)}
@@ -154,6 +158,8 @@ All learning curves vs. learning curves with early termination
 	\myit{
 		\item \goleft[.45]{Relies on manually-selected parametric families of curves}
 		\item \goleft[.45]{Cannot quickly integrate new information from extending the current curve \\ (or from new runs)}
+\pause
+		\item Also, the model is very hard to train	
 	}
 }
 \end{frame}
@@ -163,7 +169,7 @@ All learning curves vs. learning curves with early termination
 
 
 %-----------------------------------------------------------------------
-\begin{frame}{Sequence Models {\smaller{(e.g., Bayesian RNN)}}}
+\begin{frame}{Sequence Models {\smaller{(e.g., Bayesian RNN)}} \litw{\href{https://www.automl.org/wp-content/uploads/2019/06/automlws2019_Paper24.pdf}{Gargiani et al, AutoML WS 2019}}}
 
 	\myit{
 		\item Learning curves are \alert{sequences}
@@ -176,36 +182,43 @@ All learning curves vs. learning curves with early termination
 	}
 
 \begin{center}
-	\includegraphics[width=0.58\textwidth]{images/learningcurve/Gargiani-MNIST-extrapolations_1.png}\\
-	\includegraphics[width=0.58\textwidth]{images/learningcurve/Gargiani-MNIST-extrapolations_2.png}\\
+	\includegraphics[width=0.45\textwidth]{../w07_hpo_speedup/images/learningcurve/Gargiani-MNIST-extrapolations_1.png}\\
+	\includegraphics[width=0.45\textwidth]{../w07_hpo_speedup/images/learningcurve/Gargiani-MNIST-extrapolations_2.png}\\
 \end{center}	
+
+\pause
+	Note: we can also use a simpler model
+	\myit{
+		\item E.g., a random forest to map from a fixed-size window to the next value
+	}
+
 	
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}{Sequence Models {\smaller{(e.g., Bayesian RNN)}}}
-
-	\myit{
-		\item Note: we can also use a simpler model
-		\myit{
-			\item E.g., a random forest to map from a fixed-size window to the next value
-		}
-	}
-\begin{center}
-	\includegraphics[width=0.9\textwidth]{images/learningcurve/Gargiani-MNIST-extrapolation-quality-based-on-different-sized-prefixes.png}
-\end{center}	
-\end{frame}
+%\begin{frame}{Sequence Models {\smaller{(e.g., Bayesian RNN)}}}
+%
+%	\myit{
+%		\item Note: we can also use a simpler model
+%		\myit{
+%			\item E.g., a random forest to map from a fixed-size window to the next value
+%		}
+%	}
+%\begin{center}
+%	\includegraphics[width=0.9\textwidth]{../w07_hpo_speedup/images/learningcurve/Gargiani-MNIST-extrapolation-quality-based-on-different-sized-prefixes.png}
+%\end{center}	
+%\end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}{Compare: Baker et al, 2017}
+\begin{frame}{Compare: Baker et al, 2017 \litw{\href{https://openreview.net/forum?id=BJypUGZ0Z}{Baker et al, ICLR WS 2018}}}
 
 	\myit{
-		\item Idea: Map from configurations (including architectural hyperparameters) 
+		\item Idea: map from configurations (including architectural hyperparameters) 
 		and partial learning curves to the final performance
 
 		\item Advantages
 		\myit{
-			\item \alert{Much simpler idea} than all the approaches just discussed: no need to model the entire learning curve
+			\item \alert{Much simpler idea} than all the approaches just discussed:\\ no need to model the entire learning curve
 			\item \alert{Much easier to implement}
 		}
 		\item Disadvantage? \pause
@@ -222,15 +235,14 @@ All learning curves vs. learning curves with early termination
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}{Freeze-Thaw Bayesian Optimization}
-
+\begin{frame}{Freeze-Thaw Bayesian Optimization \litw{\href{https://arxiv.org/abs/1406.3896}{Swersky et al, arXiv 2014}}}
 \myit{
 	\item Use a Gaussian process with inputs $\conf$ and $t$; special kernel for $t$
 	\item For $N$ configurations and $T$ epochs each: $O(N^3 t^3)$ $\rightarrow$ approximation
 	\item Iteratively: either extend existing configuration or try new one
 \pause
 	\item Result for probabilistic matrix factorization:
-	\includegraphics[width=0.8\textwidth]{w07_hpo_grey_box/images/learningcurve/FTBO.png}
+	\includegraphics[width=0.8\textwidth]{../w07_hpo_speedup/images/learningcurve/FTBO.png}
 \pause
 	\item Unfortunately, no results for DNNs; no code available
 }
@@ -242,21 +254,36 @@ All learning curves vs. learning curves with early termination
 
 
 
-\myframe{Possible extension of LC models waiting to be done}{
-	\myit{
-		\item We could keep track of additional information to feed to our model for better predictions
-		\myit{
-			\item E.g., training \& validation cross-entropy loss \& accuracy
-			\myit{
-				\item Instead of only validation accuracy
-			}
-			\item E.g., split cross-entry into data-dependent \& weight dependent parts
-			\item E.g., keep track of gradient norms, activation statistics, \ldots
-		}
-		\item Information about learning rate (\& weight decay) at each step
-		\begin{itemize}
-		    \item Only Predictive termination leads to a practically usable algorithm
-		\end{itemize}
-		
-	}
-}
+%\myframe{Possible extension of LC models (under development)}{
+%	\myit{
+%		\item We could keep track of additional information to feed to our model for better predictions
+%		\myit{
+%			\item E.g., training \& validation cross-entropy loss \& accuracy
+%			\myit{
+%				\item Instead of only validation accuracy
+%			}
+%			\item E.g., split cross-entropy into data-dependent \& weight dependent parts
+%			\item E.g., keep track of gradient norms, activation statistics, \ldots
+%		}
+%\bigskip
+%        \item Information about learning rate (\& weight decay) at each step
+%%		\begin{itemize}
+%%		    \item Only Predictive termination leads to a practically usable algorithm
+%%		\end{itemize}
+%	}
+%}
+
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+
+\begin{itemize}
+    \item \alert{Repetition.} List all learning curve prediction methods you recall, along with their pros and cons.
+\medskip
+    \item \alert{Discussion.} Could predictive termination cut off evaluations early that would turn out to be the best?
+\medskip
+    \item \alert{Discussion.} How would you determine a learning curve prediction method's own hyperparameters (such as the 5\% for early learning curve termination), in practice?
+\medskip
+    \item \alert{Discussion.} How could we exploit additional side information we gain about the learning curve, such as, e.g., statistics for the size of the gradients and activations over time?
+\end{itemize}
+
+\end{frame}
