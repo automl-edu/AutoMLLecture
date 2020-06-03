@@ -8,8 +8,7 @@
 
 \title[AutoML: Overview]{Multi-criteria Optimization}
 \subtitle{Practical Applications}
-%TODO: change authors!
-\author[Bernd Bischl]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Bernd Bischl]{\underline{Bernd Bischl} \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -32,25 +31,24 @@
 
 \begin{frame}[allowframebreaks]{Practical Applications in Machine Learning}
 
-\textbf{ROC Optimization}:
-  Balance \emph{TPR} and \emph{FPR}
+    \textbf{ROC Optimization}: Balance \emph{true positive} and \emph{false positive} rates
   \begin{itemize}
-    \item Typically unbalanced tasks with unspecified misclassification costs.
-    \item If costs were given we would construct the optimization criterion accordingly.
-  \end{itemize}  
+    \item Typically unbalanced classification tasks with unspecified costs.
+    \item Many related measures, e.g., \emph{positive predicted value} or \emph{false discovery rate}, exist and can be of interest as well.
+  \end{itemize}
 
 \textbf{Efficient Models}:
-  Balance \emph{accuracy} and subset or all of: \emph{prediction time}, \emph{model complexity}, \emph{model size}, \emph{energy consumption}.
+    Balance \emph{predictive performance} with \emph{prediction time}, \emph{energy consumption} and/or \emph{model size}.
   \begin{itemize}
-    \item Time: In production models should predict fast.
-    \item Complexity: A model should be explainable.
-    \item Size / Energy: A model should fit on a mobile device and not use much power.
+    \item Time: Models in production models need to predict fast.
+    \item Size / Energy consumption: Models should be deployed on a mobile/edge device and not use much power.
   \end{itemize}
 
 \textbf{Fair Models}:
-  Balance \emph{accuracy} and \emph{fairness}.
+  Balance \emph{predictive performance} and \emph{fairness}.
   \begin{itemize}
-    \item Tasks with skewed training data. A model should not learn discrimination that is present in the training data. 
+    \item Model has to be fair regarding subgroups in the data, e.g. gender.
+    \item Many different approaches to quantify fairness exist.
   \end{itemize}
 
 \end{frame}
@@ -73,11 +71,11 @@
 \end{itemize}
 \end{column}%
 \begin{column}{0.5\textwidth}
-\begin{itemize}    
-        \item Tuner: Multi-criteria Bayesian optimization:
+\begin{itemize}
+        \item Optimizer: Multi-criteria Bayesian optimization:
             \begin{itemize}
               \item ParEGO with $\rho = 0.05$, $s = 100000$.
-              \item Acquisition function $\acq$: \emph{Confidence Bound} with $\alpha = 2$. 
+              \item Acquisition function $\acq$: \emph{Confidence Bound} with $\alpha = 2$.
               \item Budget: $100$ evaluations
             \end{itemize}
         \item Tuning is conducted on a training holdout and all hyperparameters configurations of the Pareto front are validated on an outer validation set.
@@ -94,12 +92,12 @@
 \begin{column}{0.45\textwidth}
   We notice here:
   \begin{itemize}
-    \item Compared to the \emph{random search}: Many \emph{ParEGO} evaluations are on the Pareto front.
+    \item Compared to the \emph{random search}: Many \emph{ParEGO} evaluations are on the estimated Pareto front.
     \item The Pareto front of \emph{ParEGO} dominates most points from the \emph{random search}.
     \item The dominated hypervolume to the reference point $(1,1)$ is:
     \begin{tabular}{rl}
-    \emph{ParEGO:} & 0.965\\ 
-    \emph{random search:} & 0.959\\ 
+    \emph{ParEGO:} & 0.965\\
+    \emph{random search:} & 0.959\\
     \end{tabular}
   \end{itemize}
   Note: The Pareto front does not reflect the stochastic characteristic of our objective.
@@ -110,7 +108,7 @@
   \end{figure}
 \end{column}
 \end{columns}
-    
+
 \end{frame}
 
 \begin{frame}{ROC Optimization - Result II}
@@ -124,8 +122,8 @@
     \item<1-> On the validatoon set, some configurations get dominated by others.
     \item<2> The dominated hypervolume of the validation set is:
     \begin{tabular}{rl}
-    \emph{ParEGO:} & 0.960\\ 
-    \emph{random search:} & 0.961\\ 
+    \emph{ParEGO:} & 0.960\\
+    \emph{random search:} & 0.961\\
     \end{tabular}
   \end{itemize}
 \end{column}%
@@ -136,7 +134,7 @@
   \end{figure}
 \end{column}
 \end{columns}
-    
+
 \end{frame}
 
 \begin{frame}{Efficient Models - Overview}
@@ -145,17 +143,20 @@
   \item "Efficiency" can be:
   \begin{itemize}
     \item Memory consumption of the model
-    \item Model training or prediction time
+    \item Training or prediction time
     \item Number of features needed
-    \item Energy consumption
+    \item Energy consumption for prediction
     \item \ldots
   \end{itemize}
-  \item Optimizing hyperparameters for one learner results in simlarly efficient models.
+  \item Some hyperparameters have a strong impact on the efficiency of a model, e.g.,
   \begin{itemize}
-    \item Exceptions: \texttt{ntrees} (\emph{Random Forest}), \texttt{nrounds} (\emph{xgboost}), \texttt{penalty} (L1-regularized regression methods), \ldots
+    \item Number of trees in Random Forests or gradient tree boosting,
+    \item Number, size and type of layers in neural networks,
+    \item L1 regularization penalties,
+    \item ...
   \end{itemize}
-  \item Search space $\pcs$ spans multiple machine learning methods and their hyperparameters (the typical AutoML scenario) to include methods of different complexity.
-  \item Similarly \emph{Neural architecture search (NAS)} can search over a wide set of possible architectures to find different complex models.
+  \item Other hyperparameters can have no influence on efficiency.
+  \item Optimizing over multiple algorithms of varying efficiency at the same time.
 \end{itemize}
 
 \end{frame}
@@ -165,7 +166,7 @@ Image Classification on CIFAR-10 dataset\footnote{\url{https://arxiv.org/pdf/190
   \begin{columns}
   \begin{column}{0.65\textwidth}
     \begin{itemize}
-      \item Objective: \emph{accuracy} vs.\ \emph{FLOPS} (floating point operations, per obersevation) 
+      \item Objective: \emph{accuracy} vs.\ \emph{FLOPS} (floating point operations, per obersevation)
       \item Learner: \emph{DenseNet-121} (Convolutional Neural Network)
       \item Search Space:\\
         \begin{tabular}{rl}
@@ -185,15 +186,15 @@ Image Classification on CIFAR-10 dataset\footnote{\url{https://arxiv.org/pdf/190
   \end{column}
   \end{columns}
 
-      
+
 \end{frame}
 
-\begin{frame}{Fair Models - Setup I}
+\begin{frame}{Fair Models - Setup}
 A fair model for income prediction on binarized target\footnote{\url{https://www.openml.org/d/4535}}
-\begin{columns}
+    \begin{columns}
 \begin{column}{0.5\textwidth}
 \begin{itemize}
-  \item Learning Algorithm: \emph{xgboost}
+  \item Learner: \emph{eXtreme Gradient Boosting}
   \item Hyperparameters to optimize: \\
   \begin{tabular}{rl}
     \texttt{eta} & $[0.01,0.2]$ \\
@@ -205,16 +206,17 @@ A fair model for income prediction on binarized target\footnote{\url{https://www
     \texttt{alpha} & $[2^{-10},2^{10}]$ \\
     \texttt{subsample} & $[0.5,1]$ \\
   \end{tabular}
+  \item Objective: minimize \emph{missclassification error} and \emph{fairness}
 \end{itemize}
 \end{column}%
 \begin{column}{0.5\textwidth}
 \begin{itemize}
-  \item Objective: minimize \emph{missclassification error} and \emph{fairness}
-  \item Fairness here: absolute difference in F1-Scores between female ($f$) and male ($m$) population:
+  \item "Is the rate of classified as high income equal amongst both subgroups given the prevalence in each subgroup?"
+  \item Fairness is defined as the absolute difference in F1-Scores between female ($f$) and male ($m$) population:
   \[
   \loss_{\text{fair}} := |\loss_{\text{F1}}(y_f,\fh(\x_f)) - \loss_{\text{F1}}(y_m,\fh(\x_m))|
   \]
-  \item "Is the rate of classified as high income equal amongst both subgroups given the prevalence in each subgroup?"
+  \item Optimizer: ParEGO with Random Forest surrogate and restricted range of projections to $[0.1, 0.9]$ (No interest in very unfair or bad configurations).
 \end{itemize}
 \end{column}
 \end{columns}
@@ -222,25 +224,14 @@ A fair model for income prediction on binarized target\footnote{\url{https://www
 \end{frame}
 
 \begin{frame}{Fair Models - Results}
-\begin{itemize}
-  \item ParEGO Optimization as in previous example but with
-  \begin{itemize}
-    %\item ParEGO with $\rho = 0.05$, $s = 100000$.
-    \item range of projections: $[0.1, 0.9]$ \\
-    .i.e.: "No interest in extreme unfair and badly performing configurations."
-    %\item Acquisition function $\acq$: \emph{Confidence Bound} with $\alpha = 2$.
-    \item Surrogate: \emph{random forest}
-    %\item Budget: 120 evaluations
-  \end{itemize}
-\end{itemize}
 
 \begin{figure}
 \centering
-\includegraphics{images/Pfisterer_et_al_2019_Multi_Objective_fig4.pdf}
+    \includegraphics[scale=1.2]{images/Pfisterer_et_al_2019_Multi_Objective_fig4.pdf}
 \caption{Pareto fronts after 20, 70 and 120 tuning iterations.}
 \end{figure}
 
-    
+
 \end{frame}
 
 

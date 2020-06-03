@@ -9,7 +9,7 @@
 \title[AutoML: Overview]{Multi-criteria Optimization}
 \subtitle{Bayesian Optimization}
 %TODO: change authors!
-\author[Bernd Bischl]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\author[Bernd Bischl]{\underline{Bernd Bischl} \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -99,7 +99,7 @@ There are four general approaches:
 \begin{enumerate}
         \item Scalarization of cost functions.
         \item Multi-criteria acquisition functions.
-        \item Multi-criteria optimization of multiple single-criteria acquisition functions.
+        \item Multi-criteria optimization of multiple single-objective acquisition functions.
         \item Multi-criteria surrogate models.
 \end{enumerate}
 
@@ -120,7 +120,7 @@ There are four general approaches:
                 \item Random variation?
             \end{itemize}
         \item If expert knowledge is not available a-priori, we need to ensured that different trade-offs between the cost functions are explored.
-            \item Simplifies multi-criteria optimization problem to single-criteria \\$\longrightarrow$ Bayesian optimization can be used without adaptions of the general algorithm.
+            \item Simplifies multi-criteria optimization problem to single-objective \\$\longrightarrow$ Bayesian optimization can be used without adaptions of the general algorithm.
     \end{itemize}
 
 \end{frame}
@@ -233,7 +233,7 @@ There are four general approaches:
     \end{center}
 
     \begin{itemize}
-            \item Fit $m$ single-criteria surrogate models $\surro_1, \dots, \surro_m$
+            \item Fit $m$ single-objective surrogate models $\surro_1, \dots, \surro_m$
             \item Acquisition function takes all surrogate models into account.
             \item Single-criteria optimization of acquisition function.
     \end{itemize}
