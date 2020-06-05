@@ -165,10 +165,10 @@ Image Classification on CIFAR-10 dataset\footnote{\url{https://arxiv.org/pdf/190
   \begin{column}{0.65\textwidth}
     \begin{itemize}
       \item Objective: \emph{accuracy} vs.\ \emph{FLOPS} (floating point operations, per observation)
-      \item Learner: \emph{DenseNet-121} (Convolutional Neural Network)
+      \item Learner: \emph{DenseNet-121} (Densely Connected Convolutional Networks)
       \item Search Space:\\
         \begin{tabular}{rl}
-          \texttt{growth rate in all four blocks} & $[8,32]$ \\
+          \texttt{growth rate in all four blocks} ($k$) & $[8,32]$ \\ %growth rate: k_l = k_0 + k (l-1), how much information is added in each layer
           \texttt{layers in first block} & $[4, 6]$ \\
           \texttt{layers in second block} & $[4, 12] $ \\
           \texttt{layers in third block} & $[4, 24] $ \\
@@ -194,7 +194,7 @@ Dataset: \texttt{Adult}
 \begin{itemize}
   \footnotesize
   \item  Source: US Census database, 1994, \url{https://www.openml.org/d/1590}.
-  \item 48842 observations.
+  \item 48842 observations
   \item Target: binary, income above 50k
   \item 14 features: \texttt{age, education, hours.per.week, marital.status, native.country, occupation, race, relationship, sex, \ldots}
 \end{itemize}
