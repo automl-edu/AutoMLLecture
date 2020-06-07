@@ -30,7 +30,7 @@
 
 
 
-\begin{frame}[allowframebreaks]{Introductory Example}
+\begin{frame}[allowframebreaks]{Introductory example}
 
 Often we want to solve optimization problems concerning several goals.
 
@@ -75,7 +75,7 @@ Choose the best hotel to stay at by maximizing ratings subject to a maximum pric
 
 \textbf{Goal}:
 
-Find a general approach to solving multi-criteria problems.
+Find a more general approach to solve multi-criteria problems.
 
 
 \begin{center}
@@ -92,7 +92,7 @@ When booking a hotel: find the hotel with
 \vfill
 
 \begin{footnotesize}
-Since we limit ourselves to minimizing problems, we minimize negative ratings.
+Since our standard is to minimize objectives, we minimize negative ratings.
 \end{footnotesize}
 
 \framebreak
@@ -104,7 +104,7 @@ The objectives often conflict with each other:
 \item Better rating $\to$ usually higher price.
 \end{itemize}
 
-Example: (negative) average rating by hotel guests (1 - 5) vs. average price per night in USD from hotels (excerpt).
+Example: (negative) average rating by hotel guests (1 - 5) vs. average price per night (excerpt).
 
 \vspace*{0.2cm}
 
@@ -114,7 +114,7 @@ Example: (negative) average rating by hotel guests (1 - 5) vs. average price per
 
 \framebreak
 
-Oftentimes, objectives are not directly comparable as they are measured on different scales, for example:
+Often, objectives are not directly comparable as they are measured on different scales:
 
 \begin{itemize}
     \item Left: A hotel with rating $4$ for $89$ Euro ($\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$) would be preferred to a hotel for $108$ Euro with the same rating ($\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$).
@@ -139,11 +139,11 @@ with $\pcs \subset \realnum^n$ and multi-criteria objective function $\cost: \pc
 
 \begin{itemize}
 \item \textbf{Goal:} minimize multiple target functions simultaneously.
-\item $\left(\cost_1(\conf), ..., \cost_m(\conf)\right)^\top \in \realnum^m$ is the objective function vector, which maps $\conf$ into the space $\realnum^m$.
-\item Often no clear best solution, but a set of solutions that are equally good.
-\item Objective functions are often conflicting.
-\item w.l.o.g. we look at minimization problems.
-\item Synonym terms: multi-criteria optimization, multi-objective optimization, Pareto optimization.
+\item $\left(\cost_1(\conf), ..., \cost_m(\conf)\right)^\top$ maps each candidate $\conf$ into the objecive space $\realnum^m$.
+\item Often no clear best solution, as objective are usually conflicting and we cannot totally order in $\realnum^m$. 
+% \item Objective functions are often conflicting.
+\item W.l.o.g. we always minimize.
+\item Alternative names: multi-criteria optimization, multi-objective optimization, Pareto optimization.
 \end{itemize}
 
 \end{frame}
@@ -156,15 +156,15 @@ Given a multi-criteria optimization problem
     $$\min_{\conf \in \pcs} \left(\cost_1(\conf), ..., \cost_m(\conf)\right), \quad \cost_i: \pcs \to \realnum.$$
 
 \begin{itemize}
-    \item A solution $\conf^{(1)}$ \textbf{(Pareto-) dominates} $\conf^{(2)}$, if $\cost(\conf^{(1)}) \prec \cost(\conf^{(2)})$, i.e.
+    \item A candidate $\conf^{(1)}$ \textbf{(Pareto-) dominates} $\conf^{(2)}$, if $\cost(\conf^{(1)}) \prec \cost(\conf^{(2)})$, i.e.
 \begin{enumerate}
     \item $\cost_i(\conf^{(1)}) \le \cost_i(\conf^{(2)})$ for all $i \in \{1, 2, ..., m\}$ and
     \item $\cost_j(\conf^{(1)}) < \cost_j(\conf^{(2)})$ for at least one $j \in \{1, 2, ..., m\}$
 \end{enumerate}
 \vspace*{0.1cm}
-\item A solution $\optconf$ that is not dominated by any other solution is called \textbf{Pareto optimal}.
+\item A candidate $\optconf$ that is not dominated by any other candidate is called \textbf{Pareto optimal}.
 \vspace*{0.1cm}
-\item The set of all Pareto optimal solutions is called \textbf{Pareto set} $\mathcal{P} := \{\conf \in \pcs |\not \exists ~\tilde{\conf} \text{ with } \cost(\tilde{\conf}) \prec \cost(\conf)\}$
+\item The set of all Pareto optimal candidates is called \textbf{Pareto set} $\mathcal{P} := \{\conf \in \pcs |\not \exists ~\tilde{\conf} \text{ with } \cost(\tilde{\conf}) \prec \cost(\conf)\}$
 \item $\mathcal{F} = \cost(\mathcal{P}) = \{\cost(\conf) | \conf \in \mathcal{P}\}$ is called \textbf{Pareto front}.
 \end{itemize}
 
@@ -176,7 +176,7 @@ Given a multi-criteria optimization problem
 Let $\cost = (\text{price}, - \text{rating})$. For some cases it is \textit{clear} which point is the better one:
 
 \begin{itemize}
-    \item The solution $\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$ dominates $\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$: $\textcolor{green}{\cost^{(1)}}$ is not worse in any dimension and is better in one dimension. Therefore, $\textcolor{red}{\cost^{(2)}}$ gets \textbf{dominated} by $\textcolor{green}{\cost^{(1)}}$
+    \item The candidate $\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$ dominates $\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$: $\textcolor{green}{\cost^{(1)}}$ is not worse in any dimension and is better in one dimension. Therefore, $\textcolor{red}{\cost^{(2)}}$ gets \textbf{dominated} by $\textcolor{green}{\cost^{(1)}}$
 $$
 \textcolor{red}{\cost^{(2)}} \prec \textcolor{green}{\cost^{(1)}}.
 $$
@@ -258,7 +258,7 @@ The Pareto front is shown in green.
 \end{frame}
 
 
-\begin{frame}{Two solutions}
+\begin{frame}{A-priori vs. A-posteriori}
 
 \begin{itemize}
 \item The Pareto set is a set of equally optimal solutions.
@@ -324,10 +324,10 @@ A-priori approach: Lexicographic method
 
 \textbf{Summary a-priori approach:}
 \begin{itemize}
-\item Only one solution is obtained, which depends on the a-priori selection of weights, order, etc.
-\item Several solutions can be obtained if weights, order, etc. are systematically varied.
-\item Usually there are solutions that cannot be found by these methods.
 \item Implicit assumption: Single-objective optimization is \emph{easy}.
+\item Only one solution is obtained, which depends on a-priori weights, order, etc.
+\item Several solutions can be obtained if weights, order, etc. are systematically varied.
+\item Usually not all non-dominated candidates can be found by these methods.
 \end{itemize}
 
 \end{frame}
@@ -337,8 +337,9 @@ A-priori approach: Lexicographic method
 A-posteriori methods try to
 
 \begin{itemize}
-\item find the set of \textbf{all} optimal solutions (the Pareto set),
-\item select (if necessary) an optimal solution based on prior knowledge or individual preferences.
+\item find the set of \textbf{all} optimal candidates (the Pareto set),
+\item select (if necessary) an optimal candidate based on prior knowledge or individual preferences.
+\item Implicit assumption: Specifying your hidden preferences / making a selection from a pool of candidates is easier, if you see the non-dominated solutions.
 \end{itemize}
 
 A-posteriori methods are therefore the more generic approach to solving a multi-criteria optimization problem.
@@ -346,7 +347,7 @@ A-posteriori methods are therefore the more generic approach to solving a multi-
 
 \framebreak
 
-\textbf{Example:} A user gets more detailed information about all Pareto optimal hotels (left) and chooses an optimal solution (right) based on previous knowledge or additional criteria (e.g. location of the hotel).
+\textbf{Example:} A user is displayed all Pareto optimal hotels (left) and chooses an optimal candidate (right) based on his hidden preferences or additional criteria (e.g. location of the hotel).
 
 \vspace*{0.1cm}
 
@@ -359,27 +360,32 @@ A-posteriori methods are therefore the more generic approach to solving a multi-
 
 \begin{frame}[allowframebreaks]{Evaluation of solutions}
 
-A common metric for evaluating the performance of a set of solutions $\mathcal{P} \subset \pcs$ is the \textbf{dominated hypervolume}
 
+\begin{columns}
+\begin{column}{0.5\textwidth}
+
+A common metric for evaluating the performance of a set of candidates $\mathcal{P} \subset \pcs$ is the \textbf{dominated hypervolume}
 $$
     S(\mathcal{P}, R) = \Lambda\left(\bigcup_{\tilde{\conf} \in \mathcal{P}}\left\{\conf | \tilde{\conf} \prec \conf \prec R\right\}\right),
 $$
-
 where $\Lambda$ is the Lebuesge measure.
-    \begin{itemize}
-            \item The dominated hypervolume is calculated respective to the reference point $R$, that can be chosen arbitrarily.
-            \item The dominated hypervolume is also often called \textbf{S-Metric}.
-            \item Computation of the dominated hypervolume scales exponentially in the number of objective functions $\mathcal{O}(n^{m-1})$.
-            \item Fast approximations exist for small values of $m$ and especially for machine learning applications we rarely optimize $m > 3$ objectives.
-    \end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{images/dominated_hypervolume.png}
+\end{center}
+\end{column}
+\end{columns}
+    
 
 \framebreak
 
-\begin{center}
-\includegraphics[width = 0.3\linewidth]{images/dominated_hypervolume.png}
-\end{center}
-
-The dominated hypervolume of $\mathcal{P}$ (5 black points) is the area in the target function space (in respect to the reference point $R$) which is dominated by points $\mathcal{P}$.
+\begin{itemize}
+            \item HV is calculated w.r.t the reference point $R$, which often reflects in each component the natural maximum of the respective objective -- if possible
+            \item The dominated hypervolume is also often called \textbf{S-Metric}.
+            \item Computation of HV scales exponentially in the number of objective functions $\mathcal{O}(n^{m-1})$.
+            \item Fast approximations exist for small values of $m$ and especially for machine learning applications we rarely optimize $m > 3$ objectives.
+    \end{itemize}
 
 \end{frame}
 
