@@ -1,12 +1,7 @@
-library(knitr)
 library(ggplot2)
 library(gridExtra)
-library(ecr)
-library(smoof)
 
-set_parent("../style/preamble.Rnw")
-
-df = readRDS("rsrc/expedia_example.rds")
+df = readRDS("expedia_example.rds")
 
 p = ggplot(data = df, aes(x = mean_price, y = - mean_rating)) + geom_point(size = 1.5)
 p = p + theme_bw()
@@ -105,9 +100,10 @@ p1 = p1 + ylim(c(-5, -2))
 p1 = p1 + xlab("Price per night") + ylab("Rating")
 
 
-p2 = p1 + geom_point(data = P[P$mean_rating == -4.0, ], aes(x = mean_price, y = mean_rating), colour = "green", size = 2)
+p2 = p1 + geom_point(data = P[P$mean_rating == -4.5, ], aes(x = mean_price, y = mean_rating), colour = "green", size = 2)
 
-grid.arrange(p1, p2, ncol = 2)
+g = grid.arrange(p1, p2, ncol = 2)
+ggsave("../images/expedia-11-1.pdf", g, height = 2, width = 5)
 
 x = seq(-1, 4, length.out = 1000)
 lin = 3 * 0.4 - 2 * x
