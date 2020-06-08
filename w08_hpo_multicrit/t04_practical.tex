@@ -194,15 +194,45 @@ Idea: \emph{Multi-Objective Hyperparameter Tuning and Feature Selection  using F
       \includegraphics[width = 0.7\linewidth]{images/mosmafs_presentation_p39.pdf}
     \end{figure}
 
-    \item New joint search space: $\pcs = \tilde{\pcs} \cup \{w_1, \ldots, w_p ,\tau \}$
+    \item New joint hyperparameter vector: $\conf = (\tilde{\conf}, w_1, \ldots, w_p ,\tau )$
     \begin{itemize}
-      \item Hyperparameters of learner: $\tilde{\pcs}$
-      \item Weight of each \emph{feature filter} value vector: $w_1, \ldots, w_p$
+      \item Hyperparameters of learner: $\tilde{\conf}$
+      \item Weight of each \emph{feature filter value vector}: $(w_1, \ldots, w_p)$
       \item Fraction of features to keep $\tau$
     \end{itemize}
     
   \end{itemize}  
 
+\end{frame}
+
+\begin{frame}{Efficient Models - Example: Feature Selection III}
+Combined feature selection and hyperparameter optimization on \texttt{Sonar} dataset.
+\begin{columns}
+\begin{column}{0.65\textwidth}
+  \begin{itemize}
+    \item Learning algorithm: SVM with RBF kernel.
+    \item Hyperparameters to optimize: \\
+    \begin{tabular}{rl}
+    \texttt{cost} & $[2^{-10}, 2^{10}]$ \\
+    $\gamma$ & $[2^{-10}, 2^{10}]$ \\
+    $(w_1, \ldots, w_p)$ & $[0,1]^p$ \\
+    $\tau$ & $[0,1]^p$ \\
+    \end{tabular}
+    \item Objective: minimize \emph{misclassification} and \emph{fraction of features selected}
+    \item Optimizer: \emph{ParEGO} with \emph{random forest} surrogate, LCB acquisition function, 15 batch proposals, budget: 2000 evaluations
+    \item Result: only tuning error is shown here
+  \end{itemize}
+\end{column}%
+\begin{column}{0.35\textwidth}
+
+  \begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{images/mosmafs_sonar_eval_domHV.pdf}
+    %\includegraphics[width=\linewidth]{images/mosmafs_sonar_front.pdf}
+  \end{figure}
+
+\end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}{Efficient Models - Example: FLOPS}
@@ -273,13 +303,13 @@ Dataset: \texttt{Adult}
     \texttt{alpha} & $[2^{-10},2^{10}]$ \\
     \texttt{subsample} & $[0.5,1]$ \\
   \end{tabular}
-  \item Objective: minimize \emph{missclassification error} and \emph{fairness}
+  \item Objective: minimize \emph{missclassification error} and \emph{unfairness}
 %\end{itemize}
 %\end{column}%
 %\begin{column}{0.5\textwidth}
 %\begin{itemize}
   \item "Is the rate of classified as high income equal amongst both subgroups given the prevalence in each subgroup?"
-  \item Here, a simplified proxy for fairness is defined as the absolute difference in F1-Scores between female ($f$) and male ($m$) population:
+  \item Here, a simplified proxy for fairness is defined as the absolute difference in F1-Scores between female ($f$) and male ($m$) population (low is good):
   \[
   \loss_{\text{fair}} := |\loss_{\text{F1}}(y_f,\fh(\x_f)) - \loss_{\text{F1}}(y_m,\fh(\x_m))|
   \]
