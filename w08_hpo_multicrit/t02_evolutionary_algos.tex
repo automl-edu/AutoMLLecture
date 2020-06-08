@@ -133,7 +133,7 @@ The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by~
 
 % \framebreak
 
-NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{F}_2 \prec \mathcal{F}_4 \prec ... $.
+NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{F}_2 \prec \mathcal{F}_3 \prec ... $.
 
 \begin{columns}
 \begin{column}{0.4\textwidth}
@@ -143,7 +143,7 @@ NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{
       each $\xx \in \mathcal{F}_3$ is dominated, but only by points in $\mathcal{F}_1$ and $\mathcal{F}_2$, 
       and so on. 
     \item We can easily compute the partitioning by computing all non-dominated points  $\mathcal{F}_1$,
-        removing them, then computing the next layer of non-dominated points $\mathcal{F_2}$, and so on.
+        removing them, then computing the next layer of non-dominated points $\mathcal{F}_2$, and so on.
 \end{itemize}
 \end{column}
 
@@ -302,15 +302,15 @@ $$
 \begin{itemize}
 \item Dark rectangles: HV contribution of dots.
 \item Grey point: reference point.
-\item The HVC contribution is the volume of space that is dominated only by $\bm{a}$, and nothing else.
-\item $a^\star$ has lowest S-metric contribution.
+\item The HVC contribution is the volume of space that is dominated only by $\xx$, and nothing else.
+\item $\tilde{\xx}$ has lowest S-metric contribution.
 \end{itemize}
 \end{column}
 
 \begin{column}{0.5\textwidth}
 \begin{center}
 % Hypervolume contribution in a 2-dimensional objective space:\\
-\includegraphics[width = 0.8\textwidth]{images/hypervolumenbeitrag.png}
+\includegraphics[width = 0.8\textwidth]{images/hv_contrib.png}
 \end{center}
 \end{column}
 \end{columns}
@@ -352,8 +352,8 @@ $$
       \REPEAT
         \STATE Generate \textbf{one} individual $\q$ by recombination and mutation of $\mathcal{P}_t$ 
         \STATE $\{\mathcal{F}_{1},..., \mathcal{F}_k\} \leftarrow \text{NDS}(\mathcal{P}_{t}\cup \{\q\})$
-        \STATE $\bm{a}^\star \leftarrow \text{argmin}_{\bm{a} \in \mathcal{F}_{k}}\Delta s(\bm{a}, \mathcal{F}_{k})$
-        \STATE $\mathcal{P}_{t+1} \leftarrow (\mathcal{P}_t \cup \{\q\}) \setminus\{\bm{a}^\star\}$
+        \STATE $\tilde{\xx} \leftarrow \text{argmin}_{\xx \in \mathcal{F}_{k}}\Delta s(\xx, \mathcal{F}_{k})$
+        \STATE $\mathcal{P}_{t+1} \leftarrow (\mathcal{P}_t \cup \{\q\}) \setminus\{\tilde{\xx}\}$
         \STATE $ t \leftarrow t+1$
       \UNTIL{Termination criterion fulfilled}
     \vspace*{-0.3cm}
@@ -363,7 +363,7 @@ $$
     \vspace{-0.5cm}
 \begin{itemize}
 \item L5: the set of temporary $(\mu + 1)$ individuals is partitioned by NDS into $k$ fronts $\mathcal{F}_{1},...,\mathcal{F}_{k}$. 
-\item L6-7: In last front, find $\bm{a}^\star \in \mathcal{F}_{k}$ with smallest HV contribution - and kill it.
+\item L6-7: In last front, find $\tilde{\xx} \in \mathcal{F}_{k}$ with smallest HV contribution - and kill it.
 \item Fitness of an individual is mainly the rank of its front and HV contribution as tie-breaker.
 \end{itemize}
 \end{frame}
