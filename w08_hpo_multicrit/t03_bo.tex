@@ -147,11 +147,14 @@ There are two basic approaches:
 
 \begin{frame}{Why the Tchebycheff norm?}
 
-
+    \begin{center}
+        \includegraphics[scale=0.1]{images/parego_viz}
+    \end{center}
+        %Example of 3 different ParEGO scalarizations of the two objective functions $\cost_1(\conf) = (\conf - 1)^2$ and $c_2(\conf) = 3(\conf - 2)^2$.
     $$
     c = \max_{i=1,\dots,m}\left(w_i \cost_i(\conf)\right) + \rho \sum_{i=1}^m w_i\cost_i(\conf),
     $$
-
+    \begin{scriptsize}
     \begin{itemize}
         \item The norm consists of two components:
             \begin{itemize}
@@ -161,7 +164,7 @@ There are two basic approaches:
         \item $\rho$ describes the trade-off between these components.
         \item By the randomized weights in each iteration and the usually small value of $\rho = 0.05$, this allows exploration of extreme points of single cost functions.
     \end{itemize}
-
+    \end{scriptsize}
 \end{frame}
 
 \begin{frame}{ParEGO Algorithm}
@@ -207,13 +210,13 @@ There are two basic approaches:
 \end{frame}
 
 
-\begin{frame}{ParEGO Example}
+%\begin{frame}{ParEGO Example}
 
-    \begin{center}
-        \includegraphics[scale=0.15]{images/parego_viz}
-    \end{center}
-        Example of 3 different ParEGO scalarizations of the two objective functions $\cost_1(\conf) = (\conf - 1)^2$ and $c_2(\conf) = 3(\conf - 2)^2$.
-\end{frame}
+%    \begin{center}
+%        \includegraphics[scale=0.15]{images/parego_viz}
+%    \end{center}
+%        Example of 3 different ParEGO scalarizations of the two objective functions $\cost_1(\conf) = (\conf - 1)^2$ and $c_2(\conf) = 3(\conf - 2)^2$.
+%\end{frame}
 
 
 \begin{frame}{Hypervolume based Acquisition Functions}
