@@ -77,7 +77,7 @@ To achieve all these advantages for multi-criteria problems, we want to extend B
 
 		Update data: $\iter[\bocount]{\dataset} \leftarrow \iter[\bocount-1]{\dataset} \cup \{\langle \bonextsample, \bonextobs \rangle \}$\;
 	}
-	\caption*{BO loop}
+	\caption*{Bayesian optimization loop}
 \end{algorithm}
 \end{minipage}
 \end{center}
@@ -93,14 +93,13 @@ $$
 $$
 
 
+    \vspace{0.5cm}
 
-There are four general approaches:
+There are two basic approaches:
 
 \begin{enumerate}
-        \item Scalarization of cost functions.
-        \item Multi-criteria acquisition functions.
-        \item Multi-criteria optimization of multiple single-objective acquisition functions.
-        \item Multi-criteria surrogate models.
+        \item Simplify the problem by scalarizing the cost functions, or
+        \item define acquisition functions for multiple cost functions.
 \end{enumerate}
 
 \end{frame}
@@ -113,7 +112,7 @@ There are four general approaches:
     $$\min_{\conf \in \pcs} \sum_{i = 1}^m w_i \cost_i(\conf) \qquad \text{with} \quad w_i \ge 0 $$
 
     \begin{itemize}
-        \item \textbf{Obvious problem:} How to define $w_1, \dots, w_m$?
+        \item \textbf{Obvious problem:} How to choose $w_1, \dots, w_m$?
             \begin{itemize}
                 \item Expert knowledge?
                 \item Systematic variation?
@@ -211,13 +210,9 @@ There are four general approaches:
 \begin{frame}{ParEGO Example}
 
     \begin{center}
-        \includegraphics[scale=0.4]{images/parego_ex}
+        \includegraphics[scale=0.15]{images/parego_viz}
     \end{center}
-    \vspace{-0.5cm}
-    \begin{scriptsize}
-    Example of 3 ParEGO iterations. Red circles are initial design points, blue triangles are proposed configurations and green squares proposed configurations of earlier iterations.
-    The solid line shows the current scalarization of the current iterations.
-    \end{scriptsize}
+        Example of 3 different ParEGO scalarizations of the two objective functions $\cost_1(\conf) = (\conf - 1)^2$ and $c_2(\conf) = 3(\conf - 2)^2$.
 \end{frame}
 
 
@@ -274,7 +269,9 @@ $$
     with $\mathcal{H}(\conf) = S(\mathcal{P} \cup \conf, R) - S(\mathcal{P}, R))$.
 
     \begin{itemize}
-        \item Direct extension of $u_EI$ to the hypervolume.
+        \item Direct extension of $u_{EI}$ to the hypervolume.
+        \item $p(\cost \mid \conf)$ is the joint density of the surrogate model predictions at $\conf$.
+        \item As the surrogates are GPs and modeled independently of each other, this is just an integral over $m$ univariate normal distributions.
         \item Efficient computations for $m \le 3$ exist, beyond that expensive simulation-based computation is required.
     \end{itemize}
 
@@ -323,7 +320,7 @@ Further hypervolume based acquisition functions:
 
 		Update data: $\iter[\bocount]{\dataset} \leftarrow \iter[\bocount-1]{\dataset} \cup \{\langle \bonextsample, \bonextobs \rangle \}$\;
 	}
-	\caption*{Hypervolume based BO loop}
+	\caption*{Hypervolume based Bayesian optimization loop}
 \end{algorithm}
 \end{minipage}
 \end{center}

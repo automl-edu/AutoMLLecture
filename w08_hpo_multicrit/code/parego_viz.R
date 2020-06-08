@@ -33,19 +33,19 @@ plotSpace = function(w1, w2) {
   if (FALSE) {
     w1 = 0.1; w2 = 0.9
   }
-  
-  x = ygrid
+
+  x = xgrid
 
   x$c = mapply(tscheb, y1 = x$y1, y2 = x$y2, MoreArgs = list(w1 = w1, w2 = w2))
-  
+
   g = ggplot(x, aes(x = y1, y = y2, fill = c, z = c))
-  g = g + geom_raster() + geom_contour()
+  g = g + geom_raster() + geom_contour(bins = 40)
   g = g + theme(legend.position = "None")
   g = g + scale_fill_gradientn(colours=c("yellow","red"))
   g = g + labs(x = "c1", y = "c2", title = paste("w1 =", w1, ", w2 =", w2))
   g
 }
 
-p = ggarrange(plotSpace(0.9,0.1), plotSpace(0.4,0.6), plotSpace(0.1,0.9), common.legend = TRUE, legend = "bottom", nrow = 1)
+p = ggarrange(plotSpace(0.9,0.1), plotSpace(0.49,0.51), plotSpace(0.1,0.9), common.legend = TRUE, legend = "bottom", nrow = 1)
 if (interactive()) print(p)
-ggsave("../images/parego_viz.png", p, height = 5, width = 6)
+ggsave("../images/parego_viz.png", p, height = 3, width = 8)
