@@ -77,7 +77,7 @@ To achieve all these advantages for multi-criteria problems, we want to extend B
 
 		Update data: $\iter[\bocount]{\dataset} \leftarrow \iter[\bocount-1]{\dataset} \cup \{\langle \bonextsample, \bonextobs \rangle \}$\;
 	}
-	\caption*{BO loop}
+	\caption*{Bayesian optimization loop}
 \end{algorithm}
 \end{minipage}
 \end{center}
@@ -93,14 +93,13 @@ $$
 $$
 
 
+    \vspace{0.5cm}
 
-There are four general approaches:
+There are two basic approaches:
 
 \begin{enumerate}
-        \item Scalarization of cost functions.
-        \item Multi-criteria acquisition functions.
-        \item Multi-criteria optimization of multiple single-objective acquisition functions.
-        \item Multi-criteria surrogate models.
+        \item Simplify the problem by scalarizing the cost functions, or
+        \item define acquisition functions for multiple cost functions.
 \end{enumerate}
 
 \end{frame}
@@ -113,7 +112,7 @@ There are four general approaches:
     $$\min_{\conf \in \pcs} \sum_{i = 1}^m w_i \cost_i(\conf) \qquad \text{with} \quad w_i \ge 0 $$
 
     \begin{itemize}
-        \item \textbf{Obvious problem:} How to define $w_1, \dots, w_m$?
+        \item \textbf{Obvious problem:} How to choose $w_1, \dots, w_m$?
             \begin{itemize}
                 \item Expert knowledge?
                 \item Systematic variation?
@@ -125,7 +124,7 @@ There are four general approaches:
 
 \end{frame}
 
-\begin{frame}{Scalarization: ParEGO}
+\begin{frame}{Scalarization: ParEGO~\litw{\href{https://doi.org/10.1109/TEVC.2005.851274}{Knowles et al. 2006}}}
 
     Scalarize the cost functions using the augmented Tchebycheff norm
 
@@ -208,16 +207,12 @@ There are four general approaches:
 \end{frame}
 
 
-\begin{frame}{ParEgo Example}
+\begin{frame}{ParEGO Example}
 
     \begin{center}
-        \includegraphics[scale=0.4]{images/parego_ex}
+        \includegraphics[scale=0.15]{images/parego_viz}
     \end{center}
-    \vspace{-0.5cm}
-    \begin{scriptsize}
-    Example of 3 ParEGO iterations. Red circles are initial design points, blue triangles are proposed configurations and green squares proposed configurations of earlier iterations.
-    The solid line shows the current scalarization of the current iterations.
-    \end{scriptsize}
+        Example of 3 different ParEGO scalarizations of the two objective functions $\cost_1(\conf) = (\conf - 1)^2$ and $c_2(\conf) = 3(\conf - 2)^2$.
 \end{frame}
 
 
@@ -260,13 +255,13 @@ There are four general approaches:
             $$
 
     \begin{itemize}
-        \item This method is referred to as SMS-EGO.
+        \item This method is referred to as SMS-EGO~\litw{\href{https://doi.org/10.1007/978-3-540-87700-4_78}{Ponweiser et al. 2008}}.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Further Hypervolume based Acquisition Functions}
 
-    \textbf{Expected Hypervolume Improvement (EHI)}
+    \textbf{Expected Hypervolume Improvement (EHI)}~\litw{\href{https://doi.org/10.1016/j.swevo.2018.10.007}{Yang et al. 2019}}
 
 $$
     u_{EI, \mathcal{H}}(\conf) = \int_{-\infty}^{\infty} p(\cost \mid \conf) \times \mathcal{H}(\conf)\;\; d\cost,\
@@ -274,7 +269,9 @@ $$
     with $\mathcal{H}(\conf) = S(\mathcal{P} \cup \conf, R) - S(\mathcal{P}, R))$.
 
     \begin{itemize}
-        \item Direct extension of $u_EI$ to the hypervolume.
+        \item Direct extension of $u_{EI}$ to the hypervolume.
+        \item $p(\cost \mid \conf)$ is the joint density of the surrogate model predictions at $\conf$.
+        \item As the surrogates are GPs and modeled independently of each other, this is just an integral over $m$ univariate normal distributions.
         \item Efficient computations for $m \le 3$ exist, beyond that expensive simulation-based computation is required.
     \end{itemize}
 
@@ -323,21 +320,22 @@ Further hypervolume based acquisition functions:
 
 		Update data: $\iter[\bocount]{\dataset} \leftarrow \iter[\bocount-1]{\dataset} \cup \{\langle \bonextsample, \bonextobs \rangle \}$\;
 	}
-	\caption*{Hypervolume based BO loop}
+	\caption*{Hypervolume based Bayesian optimization loop}
 \end{algorithm}
 \end{minipage}
 \end{center}
 \end{frame}
 
-\begin{frame}{Multi-Criteria Optimization of Acquisition Functions}
-    \textbf{Goal:} Apply multi-criteria optimization methods on acquisition to approximate a pareto front.
+% NOTE: We decided to scrap mspot
+% \begin{frame}{Multi-Criteria Optimization of Acquisition Functions}
+%     \textbf{Goal:} Apply multi-criteria optimization methods on acquisition to approximate a pareto front.
 
-    \begin{itemize}
-       \item Separate surrogate model $\surro_1, \dots, \surro_m$ for each cost function.
-       \item Apply Multi-Criteria optimization (e.g. NSGA-II) to approximate pareto front over acquisition functions.
-       \item Select a single configuration from the estimated pareto front, e.g., by hypervolume contribution.
-    \end{itemize}
-\end{frame}
+%     \begin{itemize}
+%        \item Separate surrogate model $\surro_1, \dots, \surro_m$ for each cost function.
+%        \item Apply Multi-Criteria optimization (e.g. NSGA-II) to approximate pareto front over acquisition functions.
+%        \item Select a single configuration from the estimated pareto front, e.g., by hypervolume contribution.
+%     \end{itemize}
+% \end{frame}
 
 
 \end{document}

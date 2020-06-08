@@ -39,8 +39,9 @@
 \textbf{Efficient Models}:
     Balance \emph{predictive performance} with \emph{prediction time}, \emph{energy consumption} and/or \emph{model size}.
   \begin{itemize}
-    \item Time: Models in production models need to predict fast.
+    \item Time: Models in production need to predict fast.
     \item Size / Energy consumption: Models should be deployed on a mobile/edge device and not use much power.
+    % \item Complexity: A model should be explainable.
   \end{itemize}
 
 \textbf{Fair Models}:
@@ -49,6 +50,8 @@
     \item Model has to be fair regarding subgroups in the data, e.g. gender.
     \item Many different approaches to quantify fairness exist.
   \end{itemize}
+
+    \textbf{Sparse Models}: Balance \emph{predictive performance} and \emph{number of used features}.
 
 \end{frame}
 
@@ -77,12 +80,12 @@
               \item Acquisition function $\acq$: \emph{Confidence Bound} with $\alpha = 2$.
               \item Budget: $100$ evaluations
             \end{itemize}
-        \item Tuning is conducted on a training holdout and all hyperparameters configurations of the Pareto front are validated on an outer validation set.
+        \item Tuning is conducted on a training holdout and all hyperparameter configurations on the estimated Pareto front are validated on an outer validation set.
 \end{itemize}
 \end{column}
 \end{columns}
 \vspace{0.5cm}
-{\footnotesize For simplicity we refrain from optimizing the threshold parameter independently posthoc.}
+    {\footnotesize The threshold $t$ could be separately optimized post-hoc.}
 \end{frame}
 
 \begin{frame}{ROC Optimization - Result I}
@@ -91,15 +94,15 @@
 \begin{column}{0.45\textwidth}
   We notice here:
   \begin{itemize}
-    \item Compared to the \emph{random search}: Many \emph{ParEGO} evaluations are on the estimated Pareto front.
+    \item Compared to the \emph{random search}: Many \emph{ParEGO} evaluations are on the Pareto front.
     \item The Pareto front of \emph{ParEGO} dominates most points from the \emph{random search}.
-    \item The dominated hypervolume to the reference point $(1,1)$ is:
+    \item The dominated hypervolume to the reference point $(0,1)$ is:
     \begin{tabular}{rl}
     \emph{ParEGO:} & 0.965\\
     \emph{random search:} & 0.959\\
     \end{tabular}
   \end{itemize}
-  Note: The Pareto front does not reflect the stochastic characteristic of our objective.
+  %Note: The Pareto front does not reflect the stochastic characteristic of our objective.
 \end{column}%
 \begin{column}{0.5\textwidth}
   \begin{figure}
@@ -114,7 +117,7 @@
 
 \begin{columns}
 \begin{column}{0.45\textwidth}
-  We validate the configurations on the Pareto front on a holdout:
+  We validate the configurations on the estimated Pareto front on a holdout:
   \begin{itemize}
     \item<1-> The performance on the validation set varies slightly.
     \item<1-> The TPR got slightly better but the FPR got slightly worse.
@@ -149,30 +152,28 @@
   \end{itemize}
   \item Some hyperparameters have a strong impact on the efficiency of a model, e.g.,
   \begin{itemize}
-    \item Number of trees in Random Forests or gradient tree boosting,
-    \item Number, size and type of layers in neural networks,
+    \item Number of trees in \emph{random forests} or \emph{gradient tree boosting},
+    \item Number, size and type of layers in \emph{neural networks},
     \item L1 regularization penalties,
     \item ...
   \end{itemize}
-  \item Other hyperparameters can have no influence on efficiency.
-  \item Optimizing over multiple algorithms of varying efficiency at the same time.
+  \item Other hyperparameters might have no influence on efficiency.
+  \item Typical scenario: Optimize jointly over multiple algorithms of varying efficiency.
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}{Efficient Models - Example: Feature Selection I}
 
-Goals of Feature Selection:
-\begin{itemize}
-  \item Identify an informative feature subset
-  \item with only a small drop in predictive performance.
-\end{itemize}
-Problem Statement:
+Goal of \emph{feature selection}: Identify an informative feature subset with only a small drop in predictive performance compared to all features.
+
+    \vspace{0.5cm}
+Find optimal hyperparameter setting $\conf$ and minimal feature subset $s$
 \[
 \min_{\conf \in \pcs, s \in \{0,1\}^p}\left( \widehat{GE}\left(\inducer(\dataset, \conf, s)\right), \frac{1}{p}\sum_{i=1}^p s_i \right)
-\] 
+\]
 \begin{itemize}
-  \item Problem: Feature selection and hyperparameter tuning are usually two separate steps. 
+  \item Problem: Feature selection and hyperparameter tuning are usually two separate steps.
   \item Solution: Identify an informative subset of features and a good hyperparameter configuration \textbf{simultaneously}.
 
 \end{itemize}
@@ -180,47 +181,99 @@ Problem Statement:
   \centering
   \includegraphics[width = 0.5\linewidth]{images/mosmafs_presentation_p14.pdf}
 \end{figure}
-    
+
 \end{frame}
 
 \begin{frame}{Efficient Models - Example: Feature Selection II}
-Idea: \emph{Multi-Objective Hyperparameter Tuning and Feature Selection  using Filter Ensembles}\footnote{\url{https://arxiv.org/pdf/1912.12912.pdf}}:
+Idea: \emph{Multi-Objective Hyperparameter Tuning and Feature Selection using Filter Ensembles}~\litw{\href{https://arxiv.org/pdf/1912.12912.pdf}{Moosbauer, Binder, et al. 2020}}:
+
 
   \begin{itemize}
-    \item Pre-calculate multiple \emph{feature filter} values.
-    
+    \item Pre-calculate multiple ranked \emph{feature filter values} .
+
     \begin{figure}
       \centering
       \includegraphics[width = 0.7\linewidth]{images/mosmafs_presentation_p39.pdf}
     \end{figure}
 
-    \item New joint search space: $\pcs = \tilde{\pcs} \cup \{w_1, \ldots, w_p ,\tau \}$
+    \item New joint hyperparameter vector: $\conf = (\tilde{\conf}, w_1, \ldots, w_p ,\tau )$
     \begin{itemize}
-      \item Hyperparameters of learner: $\tilde{\pcs}$
-      \item Weight of each \emph{feature filter} value vector: $w_1, \ldots, w_p$
+      \item Hyperparameters of learner: $\tilde{\conf}$
+      \item Weight of each \emph{feature filter value} vector: $(w_1, \ldots, w_p)$
       \item Fraction of features to keep $\tau$
     \end{itemize}
-    
-  \end{itemize}  
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Efficient Models - Example: Feature Selection III}
+    Combined feature selection and hyperparameter optimization on \texttt{Sonar} dataset\footnote{Only the tuning error is shown here}.
+\begin{columns}
+\begin{column}{0.65\textwidth}
+  \begin{itemize}
+    \item Learning algorithm: SVM with RBF kernel.
+    \item Hyperparameters to optimize: \\
+    \begin{tabular}{rl}
+    \texttt{cost} & $[2^{-10}, 2^{10}]$ \\
+    $\gamma$ & $[2^{-10}, 2^{10}]$ \\
+    $(w_1, \ldots, w_p)$ & $[0,1]^p$ \\
+    $\tau$ & $[0,1]^p$ \\
+    \end{tabular}
+    \item Objective: minimize \emph{misclassification} and \emph{fraction of features selected}
+    \item Optimizer: \emph{ParEGO} with \emph{random forest} surrogate, LCB acquisition function, 15 batch proposals, budget: 2000 evaluations
+  \end{itemize}
+\end{column}%
+\begin{column}{0.35\textwidth}
+
+  \begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{images/mosmafs_sonar_eval_domHV.pdf}
+    %\includegraphics[width=\linewidth]{images/mosmafs_sonar_front.pdf}
+  \end{figure}
+
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Efficient Models - Example: FLOPS}
+
+    Goal: Optimize prediction accuracy and number of floating point operations (FLOPs)~\litw{\href{https://arxiv.org/pdf/1904.09035.pdf}{Wang et al. 2019}}.
+
+    \vspace{0.5cm}
+
+    Data: Image Classification on CIFAR-10.
+
+    \vspace{0.5cm}
+
+    Learner: \emph{DenseNet} - Densely Connected Convolutional Network~\litw{\href{https://arxiv.org/abs/1608.06993}{Huang et al. 2018}}.
+
+    \begin{itemize}
+        \item Composed out of $4$ \emph{dense blocks}.
+        \item A dense block consists of multiple convolutional layers where the inputs for each layer are all feature maps of all preceding layers in the block.
+        \item Dense blocks are connected via convolutional and max pooling layer.
+    \end{itemize}
+
+    \vspace{0.5cm}
+
+    Training: $300$ Epochs with a batch size of $128$ and initial learning rate of $0.1$.
 
 \end{frame}
 
 \begin{frame}{Efficient Models - Example: FLOPS}
-Image Classification on CIFAR-10 dataset\footnote{\url{https://arxiv.org/pdf/1904.09035.pdf}}
-  \begin{columns}
+\begin{columns}
   \begin{column}{0.65\textwidth}
     \begin{itemize}
       \item Objective: \emph{accuracy} vs.\ \emph{FLOPS} (floating point operations, per observation)
-      \item Learner: \emph{DenseNet-121} (Densely Connected Convolutional Networks)
       \item Search Space:\\
         \begin{tabular}{rl}
-          \texttt{growth rate in all four blocks} ($k$) & $[8,32]$ \\ %growth rate: k_l = k_0 + k (l-1), how much information is added in each layer
+            \texttt{growth rate} ($k$) & $[8,32]$ \\ %growth rate: k_l = k_0 + k (l-1), how much information is added in each layer
           \texttt{layers in first block} & $[4, 6]$ \\
           \texttt{layers in second block} & $[4, 12] $ \\
           \texttt{layers in third block} & $[4, 24] $ \\
           \texttt{layers in fourth block} & $[4, 16] $ \\
         \end{tabular}
-      \item Tuner: \emph{Particle Swarm Optimization}
+      \item Tuner: \emph{Particle Swarm Optimization} with a population size of $20$ and $400$ evaluations.
     \end{itemize}
   \end{column}%
   \begin{column}{0.35\textwidth}
@@ -230,6 +283,7 @@ Image Classification on CIFAR-10 dataset\footnote{\url{https://arxiv.org/pdf/190
   \end{column}
   \end{columns}
 
+    {\footnotesize The \texttt{growth rate} is the number of output feature maps in each layer of a block}
 
 \end{frame}
 
@@ -273,17 +327,17 @@ Dataset: \texttt{Adult}
     \texttt{alpha} & $[2^{-10},2^{10}]$ \\
     \texttt{subsample} & $[0.5,1]$ \\
   \end{tabular}
-  \item Objective: minimize \emph{missclassification error} and \emph{fairness}
+  \item Objective: minimize \emph{missclassification error} and \emph{unfairness}
 %\end{itemize}
 %\end{column}%
 %\begin{column}{0.5\textwidth}
 %\begin{itemize}
-  \item "Is the rate of classified as high income equal amongst both subgroups given the prevalence in each subgroup?"
-  \item Here, a simplified proxy for fairness is defined as the absolute difference in F1-Scores between female ($f$) and male ($m$) population:
+  \item Question: Is the rate of classified as \emph{high income} equal amongst both subgroups given the prevalence in each subgroup?
+  \item Here, a simplified proxy for fairness is defined as the absolute difference in F1-Scores between female ($f$) and male ($m$) population (low is good):
   \[
   \loss_{\text{fair}} := |\loss_{\text{F1}}(y_f,\fh(\x_f)) - \loss_{\text{F1}}(y_m,\fh(\x_m))|
   \]
-  \item Optimizer: ParEGO with Random Forest surrogate and restricted range of projections to $[0.1, 0.9]$ (No interest in very unfair or bad configurations).
+  \item Optimizer: ParEGO with random forest surrogate and restricted range of projections to $[0.1, 0.9]$ (No interest in very unfair or bad configurations).
 \end{itemize}
 \vspace{1em}
 Note on this example:
