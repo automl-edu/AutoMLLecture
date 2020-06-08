@@ -37,84 +37,91 @@
 
 \begin{frame}[allowframebreaks]{A-posteriori methods and evolutionary algorithms}
 
-Evolutionary algorithms return as a solution a \textbf{population} of solution candidates. Evolutionary multi-objective (EMO) algorithms aim to provide a set of solution candidates that corresponds to the Pareto set \textit{as well as possible}.
+Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over time to approximate the Pareto front. 
 
-\vspace*{-0.4cm}
-
+\begin{columns}
+\begin{column}{0.3\textwidth}
 \begin{center}
-\includegraphics[width = 0.7\linewidth]{images/EA-steps.png}
-\end{center}
-
-\vspace*{-0.4cm}
-
+\begin{figure}
+\centering
+\begin{tikzpicture}[node distance=-1.8cm, auto,]
+%nodes
 \begin{footnotesize}
-Image of the function (grey) and target function values $(\cost_1(\x), \cost_2(\x))$ for $\x \in \mathcal{P}_i, i = 1, 3, 10$ (blue).
+\node (init) {Initialize population};
+\node[below = 0.1cm of init](rating1) {Eval population};
+\node[below = 0.1cm of rating1](selection1) {Parent selection};
+\node[below = 0.1cm of selection1](variation) {Variation};
+\node[below = 0.1cm of variation](rating2) {Eval offspring};
+\node[below = 0.1cm of rating2](selection2) {Survival selection};
+\node[below = 0.1cm of selection2](stop) {Stop};
+\node[below = 0.2cm of stop](dummy2) {};
+\node[below = 0.2cm of stop](dummy3) {};
+\node[right = 0.01cm of dummy3](dummy4) {yes};
+\node[left = 0.2cm of rating2](dummy1) {no};
+\draw[->] (init) to (rating1) node[midway, above]{};
+\draw[->] (rating1) to (selection1) node[midway, above]{};
+\draw[->] (selection1) to (variation) node[midway, above]{};
+\draw[->] (variation) to (rating2) node[midway, above]{};
+\draw[->] (rating2) to (selection2) node[midway, above]{};
+\draw[->] (selection2) to (stop) node[midway, above]{};
+\draw[->] (stop) to (dummy2) node[midway, above]{};
+\draw[->] (stop) to [bend left=90, looseness=2](selection1) node[midway, above]{};
 \end{footnotesize}
+\end{tikzpicture}
+\end{figure}
+\end{center}
+\begin{footnotesize}
+\end{footnotesize}
+\end{column}
+    
+\begin{column}{0.7\textwidth}
+\begin{center}
+\includegraphics[width = 0.9\textwidth]{images/NSGA2_steps.png}
+\end{center}
+\end{column}
+\end{columns}
+% Image of the function (grey) and target function values $(\cost_1(\), \cost_2(\x))$ for $\x \in \mathcal{P}_i, i = 1, 3, 10$ (blue).
 
 \framebreak
+
 \begin{algorithm}[H]
   \begin{center}
-  \caption{Evolutionary algorithm}
+  \caption{Basic EA template loop}
       \begin{algorithmic}[1]
-      \STATE Initialize and rate population $P_0 \subset \XX$ with $|\mathcal{P}| = \mu$ %FIXME: JR: Das gleiche P?
+          \STATE Init and eval population $\mathcal{P}_0 \subset \XX$ with $|\mathcal{P}| = \mu$ 
       \STATE $t \leftarrow 0$
       \REPEAT
-        \STATE Variation: generate offspring $Q_t$ with $|Q_t| = \lambda$
-        \STATE Selection: select $\mu$ survivors $P_{t + 1}$ %FIXME: JR: I put $\mu$ here. Correct?
+        \STATE Select parents and generate offspring $\mathcal{Q}_t$ with $|\mathcal{Q}_t| = \lambda$
+        \STATE Select $\mu$ survivors $\mathcal{P}_{t + 1}$ 
  		\STATE $t \leftarrow t + 1$
       \UNTIL{Stop criterion fulfilled}
      \end{algorithmic}
     \end{center}
 \end{algorithm}
 
-%The population of solution candidates consists of $\xx \in \XX$. %FIXME: JR: Write this in Return part of algorithm?
 
-Notation clash:
 \begin{itemize}
-    \item In EAs the objective function is often denoted $f(x)$.
-    \item As these symbols are used for ML already we use $\cost(\conf)$ and $\conf$ instead of $f$ and $x$.
-    \item Be careful: The offspring size $\lambda$ is different from the candidate $\xx$ (bold symbol!).
+    \item Note that (as in the EA lecture unit) we are using somewhat non-standard notation here.
+    \item Nearly all steps in the above template work also for EMOAs but both parent and survival 
+      selection are now less obvious. How do we rank under multiple objectives?
 \end{itemize}
 \end{frame}
 
-
-\begin{frame}{Objectives of an evolutionary strategy}
-
-The aim is to select the evolution strategy in such a way that the algorithm provides an approximation of the Pareto front, where:
-
-\begin{enumerate}
-\item The individuals of the population (or the corresponding functional values in the target function space) \textbf{converge} to the Pareto front.
-\item The individuals of the population provide a \textbf{diverse} as possible approximation of the Pareto front.
-\end{enumerate}
-
-\vspace*{-0.3cm}
-
-\begin{center}
-\includegraphics[width = 0.2\linewidth]{images/EMO_goals.png}
-\end{center}
-
-\vspace*{-0.5cm}
-
-\begin{footnotesize}
-\textbf{Caution}: in this graphic the objective function values are \textbf{maximized}. %FIXME: JR: Multicolumn and fig on the right?
-\end{footnotesize}
-
-\end{frame}
 
 \begin{frame}{NSGA-II}
 
 The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by~\litw{\href{https://www.iitk.ac.in/kangal/Deb_NSGA-II.pdf}{K. Dep et al. 2002}}.
 
 \begin{itemize}
-\item The NSGA-II follows a $(\mu + \lambda)$ strategy
-\item All previously discussed strategies can be used as a variation strategy; the original paper uses polynomial mutation and simulated binary crossover.
-\item The selection strategy is based on
-\begin{itemize}
-\item \textbf{Non-dominated sorting}
-\item \textbf{Crowding distance assignment}
+\item Follows a $(\mu + \lambda)$ strategy.
+\item All previously discussed variation strategies can be used; 
+    the original paper uses tournament selection, polynomial mutation and simulated binary crossover.
+\item Parent and survival selection rank candidates by 
+\begin{enumerate}
+\item \textbf{Non-dominated sorting} as main criterion
+\item \textbf{Crowding distance assignment} as tie breaker
+\end{enumerate}
 \end{itemize}
-\end{itemize}
-%FIXME: JR: Is the student supposed to know what all this means or is this an overview of what will come. Interrupts understanding.
 
 \end{frame}
 
@@ -126,89 +133,111 @@ The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by~
 
 % \framebreak
 
-%FIXME: JR: After offspring is generated.. ?
-We subdivide $R_t = P_t \cup Q_t$ into fronts $F_1, F_2, F_3, ...$ such that
+NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{F}_2 \prec \mathcal{F}_4 \prec ... $.
 
+\begin{columns}
+\begin{column}{0.4\textwidth}
 \begin{itemize}
-\item the points in the fronts are equivalent to each other, and
-\item that any point $\xx \in F_1$ dominates any point from $F_2, F_3, F_4...$ and any point $\xx \in F_2$ dominates all points from $F_3, F_4, ...$, and so on. We write $F_1 \prec F_2 \prec F_4 \prec ... $
+    \item $\mathcal{F}_1$ is non-dominated, 
+      each $\xx \in \mathcal{F}_2$ is dominated, but only by points in $\mathcal{F}_1$, 
+      each $\xx \in \mathcal{F}_3$ is dominated, but only by points in $\mathcal{F}_1$ and $\mathcal{F}_2$, 
+      and so on. 
+    \item We can easily compute the partitioning by computing all non-dominated points  $\mathcal{F}_1$,
+        removing them, then computing the next layer of non-dominated points $\mathcal{F_2}$, and so on.
 \end{itemize}
+\end{column}
 
+\begin{column}{0.6\textwidth}
 \begin{center}
-\includegraphics[width = 0.4\linewidth]{images/NSGA2_NDS.png}
+\includegraphics[width = 0.9\textwidth]{images/NSGA2_NDS.png}
 \end{center}
-%FIXME: JR: Two-colum here?
+\end{column}
+\end{columns}
 
 \framebreak
 
-Which individuals survive? We fill $\mu$ \textit{places} one by one with $F_1, F_2, ...$ until a front can no longer \textbf{fully} survive (here: $F_3$).
+How does survival selection now work? We fill $\mu$ \textit{places} one by one with $\mathcal{F}_1, \mathcal{F}_2, ...$ until a front can no longer \textbf{fully} survive (here: $\mathcal{F}_3$).
 
 \begin{center}
 \includegraphics[width = 0.45\linewidth]{images/NSGA2_2.png}
 \end{center}
 
-Which individuals survive from $F_3$? $\to$ \textbf{crowding sort}
+Which individuals survive from $\mathcal{F}_3$? $\to$ \textbf{crowding sort}
+
+\vspace{0.3cm}
+
+\footnotesize{NB: the same principle to rank individuals is applied in tournament selection in parent selection.}
 
 \end{frame}
 
-\begin{frame}[allowframebreaks]{NSGA-II: crowding sort}
+\begin{frame}[allowframebreaks]{NSGA-II: crowding distance}
 
-\textbf{Idea:} add a \textit{good} representative of the front $F_3$ if possible.
+\textbf{Idea:} Add \textit{good} representatives of front $\mathcal{F}_3$, define this as points of "low density" in c-space.
 
 \begin{center}
-\includegraphics[height = 0.5\textheight]{images/NSGA2_CS1.png}
+\includegraphics[height = 0.6\textheight]{images/NSGA2_CS1.png}
 \end{center}
 
-The points on the left (marked by a triangle) do not represent the front very well because they are very close together. The front is better represented by the points on the right plot.
+Left: Not good, points very close together. Right: better.
 
 \framebreak
 
-\textbf{Crowding sort} sorts the individuals based on their crowding distance:
+% \textbf{Crowding distance} sorts candidates by this criterion:
 
+\begin{columns}
+\begin{column}{0.5\textwidth}
+For each objective $c_j$
 \begin{itemize}
-\item The crowding distance describes the solution density by one point.
-\item It is calculated from the mean distance to the nearest neighbors around a point in the target function space.
-\item The crowding distance is greater when the neighbors are very far away.
-\item The maximum crowding distance is assigned to the boundary points so that they are always selected.
+\item Sort points by $c_j$
+\item Normalize scores to [0,1]
+\item Assign border points (which have score 0 or 1) a CD of $\infty$ (they should always be selected, if possible)
+\item Each point gets a distance score, which is the distance between its 2 next-neighbors w.r.t. the sorting of $c_j$
 \end{itemize}
+For each point, all of its $m$ distance scores are summed up (or averaged) and points are ranked w.r.t. to this overall score.
+\end{column}
 
+\begin{column}{0.5\textwidth}
 \begin{center}
-\includegraphics[width = 0.4\linewidth]{images/NSGA2_CS2.png}
-\end{center}
+\includegraphics[width = 0.7\textwidth]{images/NSGA2_CS2.png}
 
 \begin{footnotesize}
-One point with high crowding distance (red) and one point with very small crowding distance (blue).
+Red: Point with high CD. Blue: Low CD.
 \end{footnotesize}
+\end{center}
+\end{column}
+\end{columns}
+
 
 \framebreak
-\begin{algorithm}[H]
 
-  \begin{center}
-  \caption{NSGA-II}
-    \begin{algorithmic}[1]
-   	\begin{footnotesize}
-    \STATE Initialize population $P_0$, $t \leftarrow 0$
-    \STATE $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_0)$
-    \STATE Generate $Q_0$ by binary tournament selection, recombination and mutation %FIXME: JR: We need F_1, F_2, ... for that right? Maybe we can write $Q_0 \leftarrow \texttt{offspring-generation(F_1, ...)}$ and add details on a extra slide? At least it should become clear what the parameters of the offspring generation are.
-      \REPEAT
-        \STATE $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_t \cup Q_t)$
-        \STATE $i \leftarrow 1$
-        \WHILE{$|P_{t + 1} \cup F_i| < \mu$}
-        	\STATE $P_{t + 1} = P_{t + 1} \cup F_i$
-        	\STATE $i \leftarrow i + 1$
-    	\ENDWHILE
-        \STATE $\tilde F_i = (\xx_1, \xx_2, ..., \xx_k)= \texttt{SortByCrowdingDistance}(F_i)$
-        \WHILE {$P_{t + 1} < \mu$}
-        	\STATE $P_{t + 1} = P_{t + 1} \cup \xx_j$
-        	\STATE $j \leftarrow j + 1$
-        \ENDWHILE
-        \STATE Generate $Q_{t + 1}$ by binary tournament selection, recombination and mutation %FIXME: JR: See above
-      \UNTIL{Stop criterion fulfilled}
-      \vspace*{-0.3cm}
-      \end{footnotesize}
-    \end{algorithmic}
-    \end{center}
-\end{algorithm}
+% \begin{algorithm}[H]
+
+%   \begin{center}
+%   \caption{NSGA-II}
+%     \begin{algorithmic}[1]
+%    	\begin{footnotesize}
+%     \STATE Initialize population $\mathcal{P}_0$, $t \leftarrow 0$
+%     \STATE $\mathcal{F}_1, \mathcal{F}_2, \mathcal{F}_3, ... \leftarrow \texttt{nondominated-sort}(\mathcal{P}_0)$
+%     \STATE Generate $\mathcal{Q}_0$ by binary tournament selection, recombination and mutation 
+%       \REPEAT
+%       \STATE $\mathcal{F}_1, \mathcal{F}_2, \mathcal{F}_3, ... \leftarrow \texttt{nondominated-sort}(\mathcal{P}_t \cup \mathcal{Q}_t)$
+%         \STATE $i \leftarrow 1$
+%         \WHILE{$|\mathcal{P}_{t + 1} \cup \mathcal{F}_i| < \mu$}
+%         	\STATE $\mathcal{P}_{t + 1} = \mathcal{P}_{t + 1} \cup \mathcal{F}_i$
+%         	\STATE $i \leftarrow i + 1$
+%     	\ENDWHILE
+%         \STATE $ \mathcal{F}_i = (\xx_1, \xx_2, ..., \xx_k)= \texttt{SortByCrowdingDistance}(\mathcal{F}_i)$
+%         \WHILE {$\mathcal{P}_{t + 1} < \mu$}
+%         	\STATE $\mathcal{P}_{t + 1} = \mathcal{P}_{t + 1} \cup \xx_j$
+%         	\STATE $j \leftarrow j + 1$
+%         \ENDWHILE
+%         \STATE Generate $\mathcal{Q}_{t + 1}$ by binary tournament selection, recombination and mutation 
+%       \UNTIL{Stop criterion fulfilled}
+%       \vspace*{-0.3cm}
+%       \end{footnotesize}
+%     \end{algorithmic}
+%     \end{center}
+% \end{algorithm}
 
 \end{frame}
 
@@ -263,12 +292,40 @@ One point with high crowding distance (red) and one point with very small crowdi
 
 \begin{frame}[allowframebreaks]{Selection criteria: contribution to the hypervolume}
 
-\begin{itemize}
-\item The SMS-EMOA (S-Metric-Selection-EMOA)~\litw{\href{https://doi.org/10.1016/j.ejor.2006.08.008}{Beume et al. 2007}} evaluates the fitness of an individual $\xx \in \mathcal{P} \subset \XX$ based on its contribution to the dominated hypervolume (S-Metric):
+\begin{columns}
+\begin{column}{0.5\textwidth}
+SMS-EMOA (S-Metric-Selection-EMOA)~\litw{\href{https://doi.org/10.1016/j.ejor.2006.08.008}{Beume et al. 2007}} is a $(\mu+1)$ EMOA and evaluates fitness of an individual $\xx \in \mathcal{P} \subset \XX$ based on its contribution to the dominated HV:
 $$
 \Delta s(\xx, \mathcal{P}) = S(\mathcal{P}, R) - S(\mathcal{P} \setminus \{ \xx\}, R).
 $$
+
+\begin{itemize}
+\item Dark rectangles: HV contribution of dots.
+\item Grey point: reference point.
+\item The HVC contribution is the volume of space that is dominated only by $\bm{a}$, and nothing else.
+\item $a^\star$ has lowest S-metric contribution.
 \end{itemize}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{center}
+% Hypervolume contribution in a 2-dimensional objective space:\\
+\includegraphics[width = 0.8\textwidth]{images/hypervolumenbeitrag.png}
+\end{center}
+\end{column}
+\end{columns}
+
+% \vspace*{-0.5cm}
+% \begin{itemize}
+% \item Links: Punkte entsprechen Werten der Individuen in 2-dimensionalem Zielraum.
+% \item Links: Punkte ohne Füllung zeigen dominierte Lösungen. Gelbe Fläche zeigt Bereich in dem dominierende Lösungen liegen.
+% \item Dark rectangles correspond to the hypervolume contribution of the black dots.
+% \item Grey point is the so-called reference point and limits the space.
+% \item The hypervolume contribution thus corresponds to the size of the space that is dominated only by the individual $\bm{a}$, and not to any other of the space.
+% \item $a^\star$ has lowest S-metric contribution.
+% \end{itemize}
+\end{frame}
+
 % \framebreak
 
 % \textbf{Berechnung des Hypervolumens im 2 dimensionalen Fall:}
@@ -283,70 +340,31 @@ $$
 % $$
 % \end{enumerate}
 
-\framebreak
-
-\begin{center}
-Hypervolume contribution in a 2-dimensional objective space:\\
-\includegraphics[width = 0.4\textwidth]{images/hypervolumenbeitrag.png}
-\end{center}
-
-\vspace*{-0.5cm}
-\begin{itemize}
-% \item Links: Punkte entsprechen Werten der Individuen in 2-dimensionalem Zielraum.
-% \item Links: Punkte ohne Füllung zeigen dominierte Lösungen. Gelbe Fläche zeigt Bereich in dem dominierende Lösungen liegen.
-\item Dark rectangles correspond to the hypervolume contribution of the black dots.
-\item Grey point is the so-called reference point and limits the space.
-\item The hypervolume contribution thus corresponds to the size of the space that is dominated only by the individual $\bm{a}$, and not to any other of the space.
-\item $a^\star$ has lowest S-metric contribution.
-\end{itemize}
-\end{frame}
-
-% \begin{frame}[allowframebreaks]{SMS-EMOA}
-% \textbf{Motivation:}
-% \begin{itemize}
-% \item Pareto-Front bildet Menge von optimalen Parameterkonbinationen ab.
-% \item Oft ist die Menge dieser Kombinationen noch sehr groß.
-% \item In Praxis ist es meist nicht möglich alle Pareto-Effizienten Lösungen zu prüfen
-% \end{itemize}
-% $\Rightarrow$ SMS-EMOA soll möglichst guten Kompromiss zwischen Aufwand der Überprüfung der Paretoeffizienten Lösungen bei gleichzeitig umfassender Abdeckung möglicher Kompromisslösungen darstellen.
-% \medskip
-
-% $\Rightarrow$ SMS-EMOA ist einfach handhabbar und verzichtet auf Erstellung eines Archivs um den Aufwand zu reduzieren.
-% \medskip
-
-% $\Rightarrow$ Optimierung wird allein auf Grundlage der Population durchgeführt.
-
 % \framebreak
-% \end{frame}
 
 \begin{frame}[allowframebreaks]{SMS-EMOA algorithm}
-
 \begin{algorithm}[H]
   \begin{center}
   \caption{SMS-EMOA}
     \begin{algorithmic}[1]
-    \begin{footnotesize}
-    \STATE Generate start population $P_0$ of size $\mu$
+    \STATE Generate start population $\mathcal{P}_0$ of size $\mu$
     \STATE $t \leftarrow 0$
       \REPEAT
-        \STATE Generate \textbf{one} individual $\q \in \realnum^n$ by recombination and mutation of $\mathcal{P}_t$ %FIXME: JR: Mathcal P?
-        \STATE $\{F_{1},..., F_k\} \leftarrow \text{fast-dominated-sort}(P_{t}\cup \q)$
-        \STATE $\bm{a}^\star \leftarrow \text{argmin}_{\bm{a} \in F_{k}}\Delta s(\bm{a}, F_{k})$
-        \STATE $P_{t+1} \leftarrow (P_t \cup \{\q\}) \setminus\{\bm{a}^\star\}$
+        \STATE Generate \textbf{one} individual $\q$ by recombination and mutation of $\mathcal{P}_t$ 
+        \STATE $\{\mathcal{F}_{1},..., \mathcal{F}_k\} \leftarrow \text{NDS}(\mathcal{P}_{t}\cup \{\q\})$
+        \STATE $\bm{a}^\star \leftarrow \text{argmin}_{\bm{a} \in \mathcal{F}_{k}}\Delta s(\bm{a}, \mathcal{F}_{k})$
+        \STATE $\mathcal{P}_{t+1} \leftarrow (\mathcal{P}_t \cup \{\q\}) \setminus\{\bm{a}^\star\}$
         \STATE $ t \leftarrow t+1$
       \UNTIL{Termination criterion fulfilled}
-    \end{footnotesize}
     \vspace*{-0.3cm}
     \end{algorithmic}
     \end{center}
 \end{algorithm}
     \vspace{-0.5cm}
-\scriptsize
 \begin{itemize}
-\item L5: the set of temporary $(\mu + 1)$ individuals is divided by \textbf{fast-dominated-sort} into $k$ fronts $F_{1},...,F_{k}$. %FIXME: JR: fast-dominated-sort is something else then nondominated-sort? If yes what?
-\item L6: determine individual $\bm{a}^\star \in F_{k}$ with smallest hypervolume contribution.
-\item L7: the individual $\bm{a}^\star$ from the worst front with the smallest contribution to the dominated hypervolume does not survive.
-\item The fitness of an individual is therefore primarily the rank of its associated front and secondarily its contribution to hypervolume.
+\item L5: the set of temporary $(\mu + 1)$ individuals is partitioned by NDS into $k$ fronts $\mathcal{F}_{1},...,\mathcal{F}_{k}$. 
+\item L6-7: In last front, find $\bm{a}^\star \in \mathcal{F}_{k}$ with smallest HV contribution - and kill it.
+\item Fitness of an individual is mainly the rank of its front and HV contribution as tie-breaker.
 \end{itemize}
 \end{frame}
 
