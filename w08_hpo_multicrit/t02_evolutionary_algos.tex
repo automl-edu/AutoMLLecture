@@ -103,7 +103,7 @@ The aim is to select the evolution strategy in such a way that the algorithm pro
 
 \begin{frame}{NSGA-II}
 
-The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by K. Deb in 2002.
+The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by~\litw{\href{https://www.iitk.ac.in/kangal/Deb_NSGA-II.pdf}{K. Dep et al. 2002}}.
 
 \begin{itemize}
 \item The NSGA-II follows a $(\mu + \lambda)$ strategy
@@ -264,7 +264,7 @@ One point with high crowding distance (red) and one point with very small crowdi
 \begin{frame}[allowframebreaks]{Selection criteria: contribution to the hypervolume}
 
 \begin{itemize}
-\item The SMS-EMOA (S-Metric-Selection-EMOA) evaluates the fitness of an individual $\xx \in \mathcal{P} \subset \XX$ based on its contribution to the dominated hypervolume (S-Metric):
+\item The SMS-EMOA (S-Metric-Selection-EMOA)~\litw{\href{https://doi.org/10.1016/j.ejor.2006.08.008}{Beume et al. 2007}} evaluates the fitness of an individual $\xx \in \mathcal{P} \subset \XX$ based on its contribution to the dominated hypervolume (S-Metric):
 $$
 \Delta s(\xx, \mathcal{P}) = S(\mathcal{P}, R) - S(\mathcal{P} \setminus \{ \xx\}, R).
 $$
