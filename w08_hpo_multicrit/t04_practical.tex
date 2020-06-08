@@ -5,6 +5,7 @@
 %\newcommand{\y}[0]{\mathbf{y}}
 \newcommand{\q}[0]{\mathbf{q}}
 \newcommand{\Xspace}[0]{\mathcal{X}}
+\newcommand{\inducer}{\mathcal{I}}
 
 \title[AutoML: Overview]{Multi-criteria Optimization}
 \subtitle{Practical Applications}
@@ -159,7 +160,52 @@
 
 \end{frame}
 
-\begin{frame}{Efficient Models - Example}
+\begin{frame}{Efficient Models - Example: Feature Selection I}
+
+Goals of Feature Selection:
+\begin{itemize}
+  \item Identify an informative feature subset
+  \item with only a small drop in predictive performance.
+\end{itemize}
+Problem Statement:
+\[
+\min_{\conf \in \pcs, s \in \{0,1\}^p}\left( \widehat{GE}\left(\inducer(\dataset, \conf, s)\right), \frac{1}{p}\sum_{i=1}^p s_i \right)
+\] 
+\begin{itemize}
+  \item Problem: Feature selection and hyperparameter tuning are usually two separate steps. 
+  \item Solution: Identify an informative subset of features and a good hyperparameter configuration \textbf{simultaneously}.
+
+\end{itemize}
+\begin{figure}
+  \centering
+  \includegraphics[width = 0.5\linewidth]{images/mosmafs_presentation_p14.pdf}
+\end{figure}
+    
+\end{frame}
+
+\begin{frame}{Efficient Models - Example: Feature Selection II}
+Idea: \emph{Multi-Objective Hyperparameter Tuning and Feature Selection  using Filter Ensembles}\footnote{\url{https://arxiv.org/pdf/1912.12912.pdf}}:
+
+  \begin{itemize}
+    \item Pre-calculate multiple \emph{feature filter} values.
+    
+    \begin{figure}
+      \centering
+      \includegraphics[width = 0.7\linewidth]{images/mosmafs_presentation_p39.pdf}
+    \end{figure}
+
+    \item New joint search space: $\pcs = \tilde{\pcs} \cup \{w_1, \ldots, w_p ,\tau \}$
+    \begin{itemize}
+      \item Hyperparameters of learner: $\tilde{\pcs}$
+      \item Weight of each \emph{feature filter} value vector: $w_1, \ldots, w_p$
+      \item Fraction of features to keep $\tau$
+    \end{itemize}
+    
+  \end{itemize}  
+
+\end{frame}
+
+\begin{frame}{Efficient Models - Example: FLOPS}
 Image Classification on CIFAR-10 dataset\footnote{\url{https://arxiv.org/pdf/1904.09035.pdf}}
   \begin{columns}
   \begin{column}{0.65\textwidth}
@@ -187,7 +233,7 @@ Image Classification on CIFAR-10 dataset\footnote{\url{https://arxiv.org/pdf/190
 
 \end{frame}
 
-\begin{frame}{Fair Models}
+\begin{frame}{Fair Models - The \texttt{Adult} dataset}
 \begin{columns}
 \begin{column}{0.4\textwidth}
 Dataset: \texttt{Adult}

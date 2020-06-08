@@ -10,6 +10,7 @@ task = tsk("oml", data_id = 1590)
 # remotes::install_github("ggobi/ggally")
 library(GGally)
 library(ggplot2)
+theme_set(theme_bw())
 pdata = mlr3viz::fortify(task)
 
 g = ggally_colbar(pdata, aes(x = race, y = class), size = 3, label_format = scales::label_percent(accuracy = 1))
