@@ -39,8 +39,9 @@
 \textbf{Efficient Models}:
     Balance \emph{predictive performance} with \emph{prediction time}, \emph{energy consumption} and/or \emph{model size}.
   \begin{itemize}
-    \item Time: Models in production models need to predict fast.
+    \item Time: Models in production need to predict fast.
     \item Size / Energy consumption: Models should be deployed on a mobile/edge device and not use much power.
+    % \item Complexity: A model should be explainable.
   \end{itemize}
 
 \textbf{Fair Models}:
@@ -77,7 +78,7 @@
               \item Acquisition function $\acq$: \emph{Confidence Bound} with $\alpha = 2$.
               \item Budget: $100$ evaluations
             \end{itemize}
-        \item Tuning is conducted on a training holdout and all hyperparameters configurations of the Pareto front are validated on an outer validation set.
+        \item Tuning is conducted on a training holdout and all hyperparameter configurations on the estimated Pareto front are validated on an outer validation set.
 \end{itemize}
 \end{column}
 \end{columns}
@@ -93,7 +94,7 @@
   \begin{itemize}
     \item Compared to the \emph{random search}: Many \emph{ParEGO} evaluations are on the estimated Pareto front.
     \item The Pareto front of \emph{ParEGO} dominates most points from the \emph{random search}.
-    \item The dominated hypervolume to the reference point $(1,1)$ is:
+    \item The dominated hypervolume to the reference point $(0,1)$ is:
     \begin{tabular}{rl}
     \emph{ParEGO:} & 0.965\\
     \emph{random search:} & 0.959\\
@@ -114,7 +115,7 @@
 
 \begin{columns}
 \begin{column}{0.45\textwidth}
-  We validate the configurations on the Pareto front on a holdout:
+  We validate the configurations on the estimated Pareto front on a holdout:
   \begin{itemize}
     \item<1-> The performance on the validation set varies slightly.
     \item<1-> The TPR got slightly better but the FPR got slightly worse.
@@ -149,25 +150,25 @@
   \end{itemize}
   \item Some hyperparameters have a strong impact on the efficiency of a model, e.g.,
   \begin{itemize}
-    \item Number of trees in Random Forests or gradient tree boosting,
-    \item Number, size and type of layers in neural networks,
+    \item Number of trees in \emph{random forests} or \emph{gradient tree boosting},
+    \item Number, size and type of layers in \emph{neural networks},
     \item L1 regularization penalties,
     \item ...
   \end{itemize}
-  \item Other hyperparameters can have no influence on efficiency.
-  \item Optimizing over multiple algorithms of varying efficiency at the same time.
+  \item Other hyperparameters might have no influence on efficiency.
+  \item Typical scenario: optimize jointly over multiple algorithms of varying efficiency.
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}{Efficient Models - Example: Feature Selection I}
 
-Goals of Feature Selection:
+Goals of \emph{feature selection}:
 \begin{itemize}
   \item Identify an informative feature subset
   \item with only a small drop in predictive performance.
 \end{itemize}
-Problem Statement:
+Goal: Find optimal hyperparameter setting $\conf$ and minimal feature subset $s$
 \[
 \min_{\conf \in \pcs, s \in \{0,1\}^p}\left( \widehat{GE}\left(\inducer(\dataset, \conf, s)\right), \frac{1}{p}\sum_{i=1}^p s_i \right)
 \] 
@@ -188,7 +189,7 @@ Idea: \emph{Multi-Objective Hyperparameter Tuning and Feature Selection  using F
 
 
   \begin{itemize}
-    \item Pre-calculate multiple \emph{feature filter} values.
+    \item Pre-calculate multiple ranked \emph{feature filter values} .
     
     \begin{figure}
       \centering
@@ -198,7 +199,7 @@ Idea: \emph{Multi-Objective Hyperparameter Tuning and Feature Selection  using F
     \item New joint hyperparameter vector: $\conf = (\tilde{\conf}, w_1, \ldots, w_p ,\tau )$
     \begin{itemize}
       \item Hyperparameters of learner: $\tilde{\conf}$
-      \item Weight of each \emph{feature filter value vector}: $(w_1, \ldots, w_p)$
+      \item Weight of each \emph{feature filter value} vector: $(w_1, \ldots, w_p)$
       \item Fraction of features to keep $\tau$
     \end{itemize}
     
@@ -309,12 +310,12 @@ Dataset: \texttt{Adult}
 %\end{column}%
 %\begin{column}{0.5\textwidth}
 %\begin{itemize}
-  \item "Is the rate of classified as high income equal amongst both subgroups given the prevalence in each subgroup?"
+  \item "Is the rate of classified as \emph{high income} equal amongst both subgroups given the prevalence in each subgroup?"
   \item Here, a simplified proxy for fairness is defined as the absolute difference in F1-Scores between female ($f$) and male ($m$) population (low is good):
   \[
   \loss_{\text{fair}} := |\loss_{\text{F1}}(y_f,\fh(\x_f)) - \loss_{\text{F1}}(y_m,\fh(\x_m))|
   \]
-  \item Optimizer: ParEGO with Random Forest surrogate and restricted range of projections to $[0.1, 0.9]$ (No interest in very unfair or bad configurations).
+  \item Optimizer: ParEGO with random forest surrogate and restricted range of projections to $[0.1, 0.9]$ (No interest in very unfair or bad configurations).
 \end{itemize}
 \vspace{1em}
 Note on this example:
