@@ -248,18 +248,15 @@ There are two basic approaches:
 
     \framebreak
 
-    As potential solution can be predicted beyond the real objective space, additive $\epsilon$-dominance ($\preceq_\epsilon$) is measured
-            $$
-                c_1(\conf^{(i)}) \le \epsilon+c_1(\conf^{(j)}), \dots, c_m(\conf^{(i)}) \le \epsilon+c_m(\conf^{(j)}),
-            $$
-            and a penalty is applied to these configurations
-            $$
-                \Psi(\conf) = -1 + \prod_{j=1}^m(1+u(\conf)_j - c_j).
-            $$
-
+    \textbf{Problem}: Based on the way the hypervolume contribution is measured large plateaus of zero improved are present.
     \begin{itemize}
-        \item This method is referred to as SMS-EGO~\litw{\href{https://doi.org/10.1007/978-3-540-87700-4_78}{Ponweiser et al. 2008}}.
+        \item These make optimization much harder.
+         \item An adaptive penalty is added to regions in which the lower confidence bound is dominated.
     \end{itemize}
+
+    \vspace{0.5cm}
+
+        This method is referred to as SMS-EGO~\litw{\href{https://doi.org/10.1007/978-3-540-87700-4_78}{Ponweiser et al. 2008}}.
 \end{frame}
 
 \begin{frame}{Further Hypervolume based Acquisition Functions}
