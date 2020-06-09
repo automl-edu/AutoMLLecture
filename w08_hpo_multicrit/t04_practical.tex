@@ -33,7 +33,7 @@
     \textbf{ROC Optimization}: Balance \emph{true positive} and \emph{false positive} rates
   \begin{itemize}
     \item Typically unbalanced classification tasks with unspecified costs.
-    \item Many related measures, e.g., \emph{positive predicted value} or \emph{false discovery rate}, exist and can be of interest as well.
+    \item Could also use other ROC metrics, e.g., \emph{positive predicted value} or \emph{false discovery rate}.
   \end{itemize}
 
 \textbf{Efficient Models}:
@@ -43,6 +43,8 @@
     \item Size / Energy consumption: Models should be deployed on a mobile/edge device and not use much power.
     % \item Complexity: A model should be explainable.
   \end{itemize}
+    
+\textbf{Sparse Models}: Balance \emph{predictive performance} and \emph{number of used features}, either for cost effieciency, but often also for interpretability.
 
 \textbf{Fair Models}:
   Balance \emph{predictive performance} and \emph{fairness}.
@@ -51,7 +53,6 @@
     \item Many different approaches to quantify fairness exist.
   \end{itemize}
 
-    \textbf{Sparse Models}: Balance \emph{predictive performance} and \emph{number of used features}.
 
 \end{frame}
 
@@ -92,9 +93,9 @@
 
 \begin{columns}
 \begin{column}{0.45\textwidth}
-  We notice here:
+  We notice:
   \begin{itemize}
-    \item Compared to the \emph{random search}: Many \emph{ParEGO} evaluations are on the Pareto front.
+    \item Compared to \emph{random search}: Many \emph{ParEGO} evaluations are on the Pareto front.
     \item The Pareto front of \emph{ParEGO} dominates most points from the \emph{random search}.
     \item The dominated hypervolume to the reference point $(0,1)$ is:
     \begin{tabular}{rl}
@@ -327,24 +328,20 @@ Dataset: \texttt{Adult}
     \texttt{alpha} & $[2^{-10},2^{10}]$ \\
     \texttt{subsample} & $[0.5,1]$ \\
   \end{tabular}
-  \item Objective: minimize \emph{missclassification error} and \emph{unfairness}
+  \item Objective: minimize \emph{misclassification error} and \emph{unfairness}
 %\end{itemize}
 %\end{column}%
 %\begin{column}{0.5\textwidth}
 %\begin{itemize}
-  \item Question: Is the rate of classified as \emph{high income} equal amongst both subgroups given the prevalence in each subgroup?
+  \item Careful: Usually this data would be used to model the relation between person characteristics and income, then to \textbf{discuss and study} by careful inference - to \textbf{figure out if} something like e.g. a "gender pay gap" exists.
+  \item Here, in our toy example we \textbf{pretend} now that we would like to create a automatic "assignment algorithm" for salary - maybe not totally unrealistic nowadays? In \textbf{such} a scenario, biasing the prediction by \textbf{incorporating fairness} might be of interest.
+  % \item Question: Is the rate of classified as \emph{high income} equal amongst both subgroups given the prevalence in each subgroup?
   \item Here, a simplified proxy for fairness is defined as the absolute difference in F1-Scores between female ($f$) and male ($m$) population (low is good):
   \[
   \loss_{\text{fair}} := |\loss_{\text{F1}}(y_f,\fh(\x_f)) - \loss_{\text{F1}}(y_m,\fh(\x_m))|
   \]
-  \item Optimizer: ParEGO with random forest surrogate and restricted range of projections to $[0.1, 0.9]$ (No interest in very unfair or bad configurations).
 \end{itemize}
 \vspace{1em}
-Note on this example:
-\begin{itemize}
-  \item Here, the hyperparameters actually have an effect on the defined \emph{fairness measure}.
-  \item However, this is often not the case or not enough to ensure a fair model.
-\end{itemize}
 %\end{column}
 %\end{columns}
 
@@ -354,9 +351,16 @@ Note on this example:
 
   \begin{figure}
     \centering
-    \includegraphics[scale=1.2]{images/Pfisterer_et_al_2019_Multi_Objective_fig4.pdf}
+    \includegraphics[scale=1.0]{images/Pfisterer_et_al_2019_Multi_Objective_fig4.pdf}
     \caption{Pareto fronts after 20, 70 and 120 tuning iterations.}
   \end{figure}
+
+\begin{itemize}
+  \item Optimizer: ParEGO with random forest surrogate and restricted range of projections to $[0.1, 0.9]$ (No interest in very unfair or bad configurations).
+  \item Here, the hyperparameters actually have an effect on the defined \emph{fairness measure}.
+  \item However, this is often not the case or not enough to ensure a fair model.
+\end{itemize}
+  
 
 \end{frame}
 

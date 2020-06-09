@@ -32,9 +32,7 @@
 
 \begin{frame}[allowframebreaks]{Recap: Bayesian Optimization}
 
-Remember the advantages of Bayesian optimization:
-
-\begin{block}{Advantages}
+\begin{block}{Advantages of BO}
 \begin{itemize}
   \item Sample efficient
   \item Can handle noise
@@ -44,7 +42,7 @@ Remember the advantages of Bayesian optimization:
 \end{itemize}
 \end{block}
 
-To achieve all these advantages for multi-criteria problems, we want to extend Bayesian optimization to multiple cost functions.
+We will now extend BO to multiple cost functions.
 
 \framebreak
 
@@ -118,15 +116,15 @@ There are two basic approaches:
                 \item Systematic variation?
                 \item Random variation?
             \end{itemize}
-        \item If expert knowledge is not available a-priori, we need to ensured that different trade-offs between the cost functions are explored.
-            \item Simplifies multi-criteria optimization problem to single-objective \\$\longrightarrow$ Bayesian optimization can be used without adaptions of the general algorithm.
+        \item If expert knowledge is not available a-priori, we need to ensure that different trade-offs between cost functions are explored.
+            \item Simplifies multi-criteria optimization problem to single-objective \\$\longrightarrow$ Bayesian optimization can be used without adaption of the general algorithm.
     \end{itemize}
 
 \end{frame}
 
 \begin{frame}{Scalarization: ParEGO~\litw{\href{https://doi.org/10.1109/TEVC.2005.851274}{Knowles et al. 2006}}}
 
-    Scalarize the cost functions using the augmented Tchebycheff norm
+    Scalarize the cost functions using the augmented Tchebycheff norm / achievement function
 
     $$
     c = \max_{i=1,\dots,m}\left(w_i \cost_i(\conf)\right) + \rho \sum_{i=1}^m w_i\cost_i(\conf),
@@ -148,13 +146,13 @@ There are two basic approaches:
 \begin{frame}{Why the Tchebycheff norm?}
 
     \begin{center}
-        \includegraphics[scale=0.1]{images/parego_viz}
+        \includegraphics[scale=0.08]{images/parego_viz}
     \end{center}
         %Example of 3 different ParEGO scalarizations of the two objective functions $\cost_1(\conf) = (\conf - 1)^2$ and $c_2(\conf) = 3(\conf - 2)^2$.
     $$
     c = \max_{i=1,\dots,m}\left(w_i \cost_i(\conf)\right) + \rho \sum_{i=1}^m w_i\cost_i(\conf),
     $$
-    \begin{scriptsize}
+    % \begin{scriptsize}
     \begin{itemize}
         \item The norm consists of two components:
             \begin{itemize}
@@ -163,8 +161,9 @@ There are two basic approaches:
             \end{itemize}
         \item $\rho$ describes the trade-off between these components.
         \item By the randomized weights in each iteration and the usually small value of $\rho = 0.05$, this allows exploration of extreme points of single cost functions.
+        \item One can prove: \textbf{Every solution of the scalarized problem is pareto-optimal!}
     \end{itemize}
-    \end{scriptsize}
+    % \end{scriptsize}
 \end{frame}
 
 \begin{frame}{ParEGO Algorithm}
@@ -221,7 +220,7 @@ There are two basic approaches:
 
 \begin{frame}{Hypervolume based Acquisition Functions}
 
-    \textbf{Idea:} Define acquisition function that directly models contribution to the dominated hypervolume.
+    \textbf{Idea:} Define acquisition function that directly models contribution to dominated HV.
 
             $$
             \max(0, S(\mathcal{P} \cup \conf, R) - S(\mathcal{P}, R))
@@ -248,7 +247,7 @@ There are two basic approaches:
 
     \framebreak
 
-    \textbf{Problem}: Based on the way the hypervolume contribution is measured large plateaus of zero improved are present.
+    \textbf{Problem}: Based on the way the hypervolume contribution is measured large plateaus of zero improvement are present.
     \begin{itemize}
         \item These make optimization much harder.
          \item An adaptive penalty is added to regions in which the lower confidence bound is dominated.
