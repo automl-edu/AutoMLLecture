@@ -1,0 +1,806 @@
+
+\input{../latex_main/main.tex}
+
+\newcommand{\a}[0]{\mathbf{a}}
+\newcommand{\y}[0]{\mathbf{y}}
+\newcommand{\q}[0]{\mathbf{q}}
+\newcommand{\Xspace}[0]{\mathcal{X}}
+
+\title[AutoML: Overview]{Multi-criteria Optimization}
+\subtitle{Overview for this Week}
+%TODO: change authors!
+\author[Bernd Bischl]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff \and \underline{Marius Lindauer}}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+
+	\maketitle
+
+
+\begin{frame}{Notation}
+
+\begin{itemize}
+\item Admissible set $\Xspace \subset \realnum^n$
+\item Target region $\realnum^m$
+\item Multi-criteria objective function $f: \Xspace \to \realnum^m$
+\item Objective function vector $f(\x) = \left(f_1(\x), ..., f_m(\x\right))^\top \in \realnum^m$, which maps $\x$ into the space $\realnum^m$.
+% \item $F:=f(\Xspace) = \left\{f(\x) ~|~ \x \in \Xspace\right\}$: Bild einer Funktion (Menge aller möglichen Funktionswerte)
+\end{itemize}
+
+w.l.o.g. we look at minimization problems.
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Introduction example}
+
+Often we want to solve optimization problems concerning several goals.
+
+\begin{itemize}
+\item Medicine: maximum effect, but minimum side effect of a drug.
+\item Finances: maximum return, but minimum risk of an equity portfolio.
+\item Production planning: maximum revenue, but minimum costs.
+\item Booking a hotel: maximum rating, but minimum costs.
+\end{itemize}
+
+A \textit{simple} approach would be to formulate all but one objective function simplified as a secondary condition.
+
+\vspace*{0.2cm}
+
+\framebreak
+
+\textbf{Example}:
+
+Maximize proceeds subject to costs $\le C, C \in \realnum$.
+
+\vspace*{0.2cm}
+
+ \textbf{Disadvantages}:
+\begin{itemize}
+ \item The result depends of course on how we select $C$ and usually returns different solutions for different values of $C$.
+ \item The more target functions we optimize, the more difficult such a formulation becomes.
+\end{itemize}
+
+\vspace*{0.2cm}
+
+\textbf{Target}: find a general approach to solving multi-criteria problems.
+
+
+\begin{center}
+\includegraphics[width = 0.35\linewidth]{images/booking1.png} ~~~ \includegraphics[width = 0.35\linewidth]{images/booking2.png}
+\end{center}
+
+When booking a hotel: find the hotel with
+
+\begin{itemize}
+\item Minimum price per night (\textbf{costs}) and
+\item Maximum user rating (\textbf{performance}).
+\end{itemize}
+
+\vfill
+
+\begin{footnotesize}
+Since we limit ourselves to minimizing problems, we minimize negative valuations.
+\end{footnotesize}
+
+\framebreak
+
+The goals often conflict with each other:
+
+\begin{itemize}
+\item Lower price $\to$ often lower hotel rating.
+\item Better rating $\to$ frequently higher price.
+\end{itemize}
+
+Example: (negative) average rating by hotel guests (1 - 5) vs. average price per night in USD from hotels on Expedia (excerpt).
+
+\vspace*{0.2cm}
+
+\centering \includegraphics[width=\maxwidth]{images/expedia-1-1}
+
+
+In addition, targets are often not comparable because they have different units, for example.
+
+\begin{itemize}
+\item Left: a hotel with rating $4$ for $89$ Euro ($\textcolor{green}{y_1} = \left(89, - 4.0\right)$ would be preferred to a hotel $\textcolor{red}{y_2} = \left(108, - 4.0\right)$ (left)
+\item Right: how to decide if $\textcolor{orange}{y_1} = \left(89, - 4.0\right)$ and $\textcolor{orange}{y_1} = \left(95, - 4.5\right)$?
+\item How much is a \textit{scoring point} worth?
+\end{itemize}
+
+\centering \includegraphics[width=\maxwidth]{images/expedia-2-1}
+
+\end{frame}
+
+
+\begin{frame}{Definition: multi-criteria optimization problem}
+
+Be $\Xspace \subset \realnum^n$ and $f: \Xspace \to \realnum^m$, $m \ge 2$. A \textbf{multi-criteria optimization problem} is defined by
+
+$$
+\min_{\x \in \Xspace}  f(\x) \Leftrightarrow \min_{\x \in \Xspace} \left(f_1(\x), f_2(\x), ..., f_m(\x)\right).
+$$
+
+\begin{itemize}
+\item \textbf{Aim: } minimize multiple target functions simultaneously.
+\item Objective functions are often contradictory here.
+\item Often no clearly best solution, but a set of solutions that are equally good.
+\item Synonym terms: multi-criteria optimization, multi-objective optimization, Pareto optimization
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[allowframebreaks]{How to define optimality?}
+
+Be still $\y = (\text{price}, - \text{evaluation})$. In some cases it is \textit{clear} which point is the better one:
+
+\begin{itemize}
+\item The solution $\textcolor{green}{\textbf{y}_1} = \left(89, - 4.0\right)$ dominates $\textcolor{red}{\textbf{y}_2} = \left(108, - 4.0\right)$: $\textcolor{green}{\textbf{y}_1}$ is not worse in any dimension and is better in one dimension. $\textcolor{red}{\textbf{y}_2}$ gets \textbf{dominated} of $\textcolor{green}{\textbf{y}_1}$
+$$
+\textcolor{red}{\textbf{y}_2} \prec \textcolor{green}{\textbf{y}_1}.
+$$
+\end{itemize}
+
+\centering \includegraphics[width=\maxwidth]{images/expedia-3-1}
+
+\framebreak
+
+For the points $\textcolor{orange}{\textbf{y}_1} = \left(89, - 4.0\right)$ and $\textcolor{orange}{\textbf{y}_2} = \left(95, - 4.5\right)$ we cannot say which point is the better one.
+
+\begin{itemize}
+\item We designate the points as \textbf{equivalent} and write
+
+$$
+\textcolor{orange}{\textbf{y}_1} \not\prec \textcolor{orange}{\textbf{y}_2} \text{ und } \textcolor{orange}{\textbf{y}_2} \not\prec \textcolor{orange}{\textbf{y}_1}.
+$$
+
+\centering \includegraphics[width=\maxwidth]{images/expedia-4-1}
+
+
+\item The set of all equivalent points that are not dominated by another point is called the \textbf{Pareto front}.
+
+\vspace*{0.3cm}
+
+\centering \includegraphics[width=\maxwidth]{images/expedia-5-1}
+
+
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Pareto sets und Pareto optimality}
+
+\textbf{Definition:}
+
+Given a multicriteria optimization problem $$\min_{\x \in \Xspace} f(\x) = \left(f_1(\x), ..., f_m(\x)\right), \quad f_i: \Xspace \to \R.$$
+
+\begin{itemize}
+\item A solution $\x_1$ \textbf{(Pareto-) dominates} $\x_2$, if $f(\x_1) \prec f(\x_2)$, i.e.
+\begin{enumerate}
+\item $f_i(\x_1) \le f_i(\x_2)$ for all $i \in \{1, 2, ..., m\}$ und
+\item $f_j(\x_1) < f_j(\x_2)$ for at least one $j \in \{1, 2, ..., m\}$
+\end{enumerate}
+\vspace*{0.1cm}
+\item A solution $\x^*$ that is not dominated by any other solution is called \textbf{Pareto optimal}.
+\vspace*{0.1cm}
+\item The set of all Pareto optimal solutions is called \textbf{Pareto set} $\mathcal{P} := \{\x \in \Xspace |\not \exists ~\tilde{\x} \text{ with } f(\tilde{\x}) \prec f(\x)\}$
+\item $\mathcal{F} = f(\mathcal{P}) = \{f(\x) | \x \in \mathcal{P}\}$ is called \textbf{Pareto front}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example: an objective function}
+
+We consider the minimization problem
+
+$$
+\min_{x} f(x) = (x - 1)^2, \qquad 0 \le x \le 3.
+$$
+
+The optimum is at $x^* = 1$.
+
+\vspace*{0.1cm}
+
+
+\centering \includegraphics[width=\maxwidth,height=0.5\textheight]{images/expedia-6-1}
+
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example: two target functions}
+
+We extend the above problem to two objective functions $f_1(x) = (x - 1)^2$ and $f_2(x) = 3(x - 2)^2$, thus
+
+$$
+\min_x f(x) := \left(f_1(x), f_2(x)\right), \qquad 0 \le x \le 3.
+$$
+
+\vspace*{0.1cm}
+
+
+\centering \includegraphics[width=\maxwidth,height=0.5\textheight]{images/expedia-7-1}
+
+
+\framebreak
+
+We consider the functions in the objective function space $f(\Xspace)$ by drawing the objective function values $\left(f_1(x), f_2(x)\right)$ for all $0 \le x \le 3$.
+
+\vspace*{0.1cm}
+
+
+\centering \includegraphics[width=\maxwidth,height=0.5\textheight]{images/expedia-8-1}
+
+    \vspace*{-0.3cm}
+
+The Pareto front is shown in green.
+The Pareto front cannot be \enquote{left} without getting worse in at least one objective function.
+
+\end{frame}
+
+
+% \begin{frame}[allowframebreaks]{Zusammenfassung}
+%
+% Bisher:
+% \begin{itemize}
+% \item Multikriterielle Optimierungsprobleme sind Probleme, in denen mehrere Funktionen gleichzeitig optimiert werden sollen.
+% \item Zielfunktionen sind häufig konkurrierend und lassen sich nicht auf derselben Skala vergleichen
+% \item $\to$ Einführung eines geeigneten Optimalitätsbegriffs: Pareto-Optimalität
+% \end{itemize}
+%
+% \begin{itemize}
+% \item Wie findet man eine Pareto-Front?
+% \item $\to$ Lösungsverfahren
+% \end{itemize}
+%
+% \end{frame}
+
+\section{Solvers}
+
+\begin{frame}[allowframebreaks]{Two solutions}
+
+\begin{itemize}
+\item The Pareto set is a set of equally optimal solutions.
+\item One is often interested in a \textbf{single} optimal solution.
+\item Without further information no unambiguous optimal solution can be determined \\
+$\to$ decision must be based on other criteria.
+\end{itemize}
+
+Basically, there are two possible solutions:
+\begin{itemize}
+\item \textbf{A-priori approach}: user preferences are considered \textbf{before} the optimization process
+\item \textbf{A-posteriori approach}: user preferences are considered \textbf{after} the optimization process
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{A-priori procedure}
+
+\textbf{Example: weighted total}
+
+
+\textbf{Previous knowledge: } one rating point is worth $50$ Euro to a customer. \\ $\to$ We optimize the weighted sum:
+
+$$
+\min_\text{Hotel} \text{(Price / Night)} - 50 \cdot \text{Rating}
+$$
+
+\centering \includegraphics[width=0.7\linewidth,height=0.4\textheight]{images/expedia-9-1}
+
+\framebreak
+
+A-priori approach: weighted sum
+
+\begin{eqnarray*}
+\min_{x \in \Xspace} && \sum_{i = 1}^m w_i f_i(\x) \\
+&\text{with}& w_i \ge 0
+ \end{eqnarray*}
+
+% Bei systematischem Variieren der Gewichte können alle Lösungen auf dem konvexen Zielbereich gefunden werden.
+
+\framebreak
+
+\textbf{Example: lexicographic method}
+
+\lz
+
+\textbf{Previous knowledge: } customer prioritizes rating over price. \\
+$\to$ optimize target functions one after the other.
+
+\lz
+
+\centering \includegraphics[width=0.8\linewidth,height=0.4\textheight]{images/expedia-10-1}
+
+\framebreak
+
+A-priori approach: lexicographic method
+
+\begin{eqnarray*}
+y_1^* &=& \min_{\x \in \Xspace} f_1(\x)\\
+y_2^* &=& \min_{\x \in \{\x ~|~ f_1(\x) = y_1^*\}} f_2(\x) \\
+y_3^* &=& \min_{\x \in \{\x ~|~ f_1(\x) = y_1^* \land f_2(\x) = y_2^*\}} f_3(\x) \\
+&\vdots&
+\end{eqnarray*}
+
+Also here: different sequences provide different solutions.
+
+\framebreak
+
+\textbf{Summary a-priori approach:}
+\begin{itemize}
+\item In a single application, only one solution is obtained, which depends on the a-priori selection of weights, order, etc.
+\item In case of repeated use, several solutions are obtained if weights, order, etc. are systematically varied.
+\item Usually there are solutions that remain hidden from these methods.
+\item Implicit assumption: monocritical optimization \enquote{simple}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{A-posteriori procedure}
+
+A-posteriori methods, on the other hand, have the goal to
+
+\begin{itemize}
+\item find the set of \textbf{all} optimal solutions (the Pareto set),
+\item select (if necessary) an optimal solution based on prior knowledge or individual preferences.
+\end{itemize}
+
+A-posteriori methods are therefore the more generic approach to solving a multi-criteria optimization problem.
+
+
+\framebreak
+
+\textbf{Example:}
+
+A user gets more detailed information about all Pareto optimal hotels (left) and chooses an optimal solution (right) based on previous knowledge or additional criteria (e.g. location of the hotel).
+
+\vspace*{0.3cm}
+
+
+\centering \includegraphics[width=0.8\linewidth,height=0.5\textheight]{images/expedia-11-1}
+
+
+\end{frame}
+
+
+\begin{frame}[allowframebreaks]{Evaluation of solutions}
+
+A common metric for evaluating a set of solutions $\mathcal{P} \subset \Xspace$ is the \textbf{dominated hypervolume} (S-metric), which we call $S(\mathcal{P}, R)$.
+
+\vspace*{-0.4cm}
+
+\begin{center}
+\includegraphics[width = 0.35\linewidth]{images/dominated_hypervolume.png}
+\end{center}
+
+\vspace*{-0.4cm}
+
+The dominated hypervolume of the set of points $\mathcal{P} \subset \Xspace$ (here: 5 black points) is the area in the target function space (regarding a reference point $R$) which is dominated by points $\mathcal{P}$.
+
+\end{frame}
+
+
+
+% \begin{frame}[allowframebreaks]{Skalarisierung}
+%
+% \textbf{Idee:} Führe mehrkriterielle Optimierung auf monokriterielle Optimierungsprobleme zurück.
+%
+% \lz
+%
+% Mögliches Verfahren: Optimiere eine gewichtete Summe
+%
+% $$
+% w_1 \cdot f_1(\x) + w_2 \cdot f_2(\x) + ... + w_m \cdot f_m(\x),
+% $$
+%
+% wobei $w_i \ge 0$ und $\sum_{i = 1}^m w_i = 1$ (Konvexkombination).
+%
+% \framebreak
+%
+% \textbf{Beispiel:} Es sei weiterhin $f_1(x) = (x - 1)^2$ und $f_2(x) = 3(x - 2)^2$. Wir lösen das skalare Ersatzproblem
+%
+% $$
+% z = w_1 f_1(x) + w_2 f_2(x) = w_1 y_1 + w_2y_2 \to \min!
+% $$
+%
+% Umformen ergibt hier eine Geradengleichung: $y_2 = -\frac{w_1}{w_2}y_1 + z$.
+%
+% \lz
+%
+% Grafisch finden wir das Optimum dieses skalaren Optimierungsproblems, indem wir
+%
+% \begin{itemize}
+% \item alle möglichen Geraden $y_2 = -\frac{w_1}{w_2}y_1 + z$ für unterschiedliche Werte von $z$ einzeichnen und
+% \item den Punkt finden, in dem sich die Gerade mit dem Bild der Funktion $F = f(\Xspace)$ berührt.
+% \end{itemize}
+%
+% Beispielhaft für $w_2 = \frac{2}{3}$ und $w_1 = \frac{1}{3}$.
+%
+
+
+% \end{frame}
+%
+% \begin{frame}[allowframebreaks]{Zusammenfassung: Skalarisierungsmethoden}
+%
+% Es gibt weitere Möglichkeiten, ein mehrkriterielles Problem durch eines oder mehrere skalare Ersatzprobleme approximativ zu löse (z.B. auch lexikografische Methode).
+%
+% \lz
+%
+% \textbf{Aber: }
+%
+% \begin{itemize}
+% \item Aber: Es gibt Lösungen, die diesen Methoden verborgen bleiben (insbesondere: bei einmaliger Anwendung nur eine Lösunge)
+% \item Auch monokriterielle Optimierung ist nicht immer \enquote{einfach}
+% \end{itemize}
+%
+% \end{frame}
+%
+% \begin{frame}[allowframebreaks]{Mehrkriterielles Abstiegsverfahren}
+%
+% Die Definition einer Abstiegsrichtung lässt sich auf den multikriteriellen Fall erweitern.
+%
+% \lz
+%
+% \textbf{Definition: } Abstiegsrichtung \\
+% Es sei $f: \R^n \to \R^m$ stetig differenzierbar.  Eine Richtung $\bm{v} \in \R^n$ heißt \textbf{Abstiegsrichtung} in $\x \in \R^n$, wenn
+%
+% $$
+% \nabla f_j(\x)^T\bm{v} < 0 \quad \forall ~ j = 1, ..., m.
+% $$
+%
+% \framebreak
+%
+% Problem: Das Finden einer Abstiegsrichtung ist per se schon ein nicht ganz einfach zu lösendes Problem.
+
+
+
+
+
+\section{Evolutionary multi-objective optimization algorithms (EMOA)}
+
+
+\begin{frame}[allowframebreaks]{A-posteriori methods and evolutionary algorithms}
+
+Evolutionary algorithms return as a solution a \textbf{population} of solution candidates. Evolutionary multi-objective (EMO) algorithms aim to provide a set of solution candidates that corresponds to the Pareto set \enquote{as well as possible}.
+
+\vspace*{-0.4cm}
+
+\begin{center}
+\includegraphics[width = 0.8\linewidth]{images/EA-steps.png}
+\end{center}
+
+\vspace*{-0.4cm}
+
+\begin{footnotesize}
+Image of the function (grey) and target function values $(f_1(\x), f_2(\x))$ for $\x \in \mathcal{P}_i, i = 1, 3, 10$.
+\end{footnotesize}
+
+\framebreak
+
+\begin{algorithm}[H]
+  \begin{center}
+  \caption{Evolutionary algorithm}
+    \begin{algorithmic}[1]
+    \State Initialize and rate population $P_0 \subset \Xspace$ with $|\mathcal{P}| = \mu$
+    \State $t \leftarrow 0$
+      \Repeat
+        \State Variation: generate offspring $Q_t$ with $|Q_t| = \lambda$
+        \State Rate fitness of offspring
+        \State Selection: select survivors $P_{t + 1}$
+ 		\State $t \leftarrow t + 1$
+      \Until{Stop criterion fulfilled}
+            \vspace*{-0.3cm}
+    \end{algorithmic}
+    \end{center}
+\end{algorithm}
+
+The population of solution candidates consists of $\x \in \Xspace$.
+
+\end{frame}
+
+
+\begin{frame}[allowframebreaks]{Objectives of an evolutionary strategy}
+
+The aim is to select the evolution strategy in such a way that the algorithm provides an approximation of the Pareto front, where
+
+\begin{enumerate}
+\item The individuals of the population (or the corresponding functional values in the target function space) \textbf{converge} to the Pareto front.
+\item The individuals of the population provide a \textbf{diverse} as possible approximation of the Pareto front.
+\end{enumerate}
+
+\vspace*{-0.3cm}
+
+\begin{center}
+\includegraphics[width = 0.25\linewidth]{images/EMO_goals.png}
+\end{center}
+
+\vspace*{-0.5cm}
+
+\begin{footnotesize}
+\textbf{Caution}: in this graphic the objective function values are exceptionally \textbf{maximized}.
+\end{footnotesize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{NSGA-II}
+
+The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by K. Deb in 2002.
+
+\begin{itemize}
+\item The NSGA-II follows a $(\mu + \lambda)$ strategy
+\item All previously discussed strategies can be used as a variation strategy; the original paper uses polynomial mutation and simulated binary crossover.
+\item The selection strategy is based on
+\begin{itemize}
+\item \textbf{Non-dominated sorting}
+\item \textbf{Crowding distance assignment}
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{NSGA-II: non-dominated sorting}
+
+% \begin{center}
+% \includegraphics[width = 0.5\linewidth]{images/NSGA2_1.png}
+% \end{center}
+
+% \framebreak
+
+\begin{footnotesize}
+We subdivide $R_t = P_t \cup Q_t$ into fronts $F_1, F_2, F_3, ...$ such that
+
+\begin{itemize}
+\item the points in the fronts are equivalent to each other, and
+\item that any point $\x \in F_1$ dominates any point from $F_2, F_3, F_4...$; any point $\x \in F_2$ dominates all points from $F_3, F_4, ...$, etc. \\
+We write $F_1 \prec F_2 \prec F_4 \prec ... $
+\end{itemize}
+\end{footnotesize}
+
+\begin{center}
+\includegraphics[width = 0.5\linewidth]{images/NSGA2_NDS.png}
+\end{center}
+
+\framebreak
+
+Which individuals survive? We fill $\mu$ \enquote{places} one by one with $F_1, F_2, ...$ until a front can no longer \textbf{fully} survive (here: $F_3$).
+
+\begin{center}
+\includegraphics[width = 0.45\linewidth]{images/NSGA2_2.png}
+\end{center}
+
+Which individuals survive from $F_3$? $\to$ \textbf{crowding sort}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{NSGA-II: crowding sort}
+
+\textbf{Idea:} add a \enquote{good} representative of the front $F_3$ if possible.
+
+
+\includegraphics[height = 0.5\textheight]{images/NSGA2_CS1.png}
+
+\begin{footnotesize}
+The points on the left (marked by a triangle) do not represent the front very well because they are very close together. The front is better represented by the points on the right plot.
+\end{footnotesize}
+
+\framebreak
+
+\textbf{Crowding sort} sorts the individuals based on their crowding distance:
+\end{itemize}
+
+\begin{center}
+\includegraphics[width = 0.5\linewidth]{images/NSGA2_CS2.png}
+\end{center}
+
+\begin{footnotesize}
+One point with high crowding distance (red) and one point with very small crowding distance (blue).
+\end{footnotesize}
+
+\framebreak
+
+\begin{algorithm}[H]
+
+  \begin{center}
+  \caption{NSGA-II}
+    \begin{algorithmic}[1]
+   	\begin{footnotesize}
+    \State Initialize population $P_0$, $t \leftarrow 0$
+    \State $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_0)$
+    \State Generate $Q_0$ by binary tournament selection, recombination and mutation
+      \Repeat
+        \State $F_1, F_2, F_3, ... \leftarrow \texttt{nondominated-sort}(P_t \cup Q_t)$
+        \State $i \leftarrow 1$
+        \While{$|P_{t + 1} \cup F_i| < \mu$}
+        	\State $P_{t + 1} = P_{t + 1} \cup F_i$
+        	\State $i \leftarrow i + 1$
+    	\EndWhile
+        \State $\tilde F_i = (\x_1, \x_2, ..., \x_k)= \texttt{SortByCrowdingDistance}(F_i)$
+        \While {$P_{t + 1} < \mu$}
+        	\State $P_{t + 1} = P_{t + 1} \cup \x_j$
+        	\State $j \leftarrow j + 1$
+        \EndWhile
+        \State Generate $Q_{t + 1}$ by binary tournament selection, recombination and mutation
+      \Until{Stop criterion fulfilled}
+      \vspace*{-0.3cm}
+      \end{footnotesize}
+    \end{algorithmic}
+    \end{center}
+\end{algorithm}
+
+\end{frame}
+
+% \begin{frame}[allowframebreaks]{SPEA-2}
+
+% Ebenso im Jahr 2002 wurde der \textbf{Strength Pareto EA} (SPEA-2) von Zitzler et al. veröffentlicht.
+
+% \lz
+
+% \begin{itemize}
+% \item Neben der aktuellen Population $P_t$ gibt es auch ein sogenanntes Archiv $A_t$, das lediglich zur Bewertung der aktuellen Population dient.
+
+% \begin{images}
+% 	\centering
+% 	\includegraphics[width=0.6\linewidth]{images/SPEA-archive}
+% \end{images}
+
+% \framebreak
+
+% \item Die Bewertung (und damit auch die Selektion) eines Individuums erfolgt anhand von
+
+% $$
+% \text{fitness}(x) = \text{raw}(x) + \text{density}(x).
+% $$
+
+% Hierbei ist
+
+% \begin{itemize}
+% \item $\text{raw}(x)$ die \enquote{Grundfitness} (bzgl. Population und Archiv)
+% \vspace*{-0.2cm}
+% $$
+% \text{raw}(x) = |\{y \in P_t: f(x) \prec f(y)\}| + |\{y \in A_t: f(x) \prec f(y)\}|,
+% $$
+
+% \item $\text{density}(x)$ die Dichte des Punktes
+% $$
+% \text{density}(x) = \frac{1}{\sigma^{(k)}(x) + 2},
+% $$
+% ($\sigma^{(k)}$ bezeichne den Abstand zum $k$-nächsten Nachbarn).
+% \end{itemize}
+% \end{itemize}
+
+% \framebreak
+
+% \begin{algorithm}[H]
+% \begin{footnotesize}
+%   \begin{center}
+%   \caption{SPEA-2}
+%     \begin{algorithmic}[1]
+%     \State Initialisiere Population $P_0$, $|P_0| = \lambda$ und ein leeres Archiv $A_0, |A_0| = \gamma$
+%       \Repeat
+%         \State Berechne Fitness der Individuen in $P_t$ und $A_t$ anhand der oben definierten Fitnessfunktion
+%         \State Fülle $A_{t+1}$ auf mit nichtdominierten Individuen aus $P_t \cup A_t$ $^{(*)}$
+%         \State Fülle \enquote{mating pool} durch binäre Turnierselektion mit Zurücklegen auf $A_{t + 1}$
+%         \State Generiere $P_{t + 1}$ durch Rekombination und Mutation
+%       \Until{Stoppkriterium erfüllt}
+%       \State Gib $A_t$ zurück
+%     \end{algorithmic}
+%     \end{center}
+% \end{footnotesize}
+% \end{algorithm}
+
+% \vfill
+% \begin{footnotesize}
+% $^{(*)}$ Wenn $|A_{t + 1}| > \gamma$, dann entferne solange Individuen mit kleinster Distanz zum Nachbarn, bis $|A_{t + 1}| = \gamma$. Sollte $|A_{t + 1}| < \gamma$, füge die besten dominierten Individuen aus $P_t \cup A_t$ hinzu.
+% \end{footnotesize}
+
+% \end{frame}
+
+\section{SMS-EMOA}
+
+\begin{frame}[allowframebreaks]{Selection criteria: contribution to the hypervolume}
+
+\begin{itemize}
+\item The SMS-EMOA (S-Metric-Selection-EMOA) evaluates the fitness of an individual $\x \in \mathcal{P} \subset \Xspace$ based on its contribution to the dominated hypervolume (S-Metric):
+$$
+\Delta s(\x, \mathcal{P}) = S(\mathcal{P}, R) - S(\mathcal{P} \setminus \{ \x\}, R).
+$$
+\end{itemize}
+% \framebreak
+
+% \textbf{Berechnung des Hypervolumens im 2 dimensionalen Fall:}
+% \begin{enumerate}
+% \item Sortiere die Zielfunktionsvektoren bzgl. eines Kriteriums (z.B. aufsteigend bzgl. $f_1$)\\
+% $\Rightarrow$ Da Pareto-Front (kein Punkt dominiert anderen): Punkte sind bzgl. $f_2$ absteigend sortiert .
+% \item Für das $j$-te Individuum $a^{(j)}, j\in \{2,..., |F_{\nu}|\}$ in der sortierten Sequenz der Front $F_{\nu}$ berechnet sich der Hypervolumensbeitrag als:
+% \medskip
+
+% $$
+% \Delta s(\y^{(j)}, F_{\nu}) = (y_{1}^{(j+1)} - y_{1}^{(j)}) (y_{2}^{(j-1)} - y_{2}^{(j)})
+% $$
+% \end{enumerate}
+
+\framebreak
+
+\begin{center}
+Hypervolume contribution in a 2-dimensional objective space:\\
+\includegraphics[width = 0.45\textwidth]{images/hypervolumenbeitrag.png}
+\end{center}
+
+\footnotesize
+\vspace*{-0.5cm}
+\begin{itemize}
+% \item Links: Punkte entsprechen Werten der Individuen in 2-dimensionalem Zielraum.
+% \item Links: Punkte ohne Füllung zeigen dominierte Lösungen. Gelbe Fläche zeigt Bereich in dem dominierende Lösungen liegen.
+\item Dark rectangles correspond to the hypervolume contribution of the black dots.
+\item Grey point is the so-called reference point and limits the space.
+\item The hypervolume contribution thus corresponds to the size of the space that is dominated only by the individual $\bm{a}$, and not to any other of the space.
+\item $a^\star$ has lowest S-metric contribution .
+\end{itemize}
+\end{frame}
+
+% \begin{frame}[allowframebreaks]{SMS-EMOA}
+% \textbf{Motivation:}
+% \begin{itemize}
+% \item Pareto-Front bildet Menge von optimalen Parameterkonbinationen ab.
+% \item Oft ist die Menge dieser Kombinationen noch sehr groß.
+% \item In Praxis ist es meist nicht möglich alle Pareto-Effizienten Lösungen zu prüfen
+% \end{itemize}
+% $\Rightarrow$ SMS-EMOA soll möglichst guten Kompromiss zwischen Aufwand der Überprüfung der Paretoeffizienten Lösungen bei gleichzeitig umfassender Abdeckung möglicher Kompromisslösungen darstellen.
+% \medskip
+
+% $\Rightarrow$ SMS-EMOA ist einfach handhabbar und verzichtet auf Erstellung eines Archivs um den Aufwand zu reduzieren.
+% \medskip
+
+% $\Rightarrow$ Optimierung wird allein auf Grundlage der Population durchgeführt.
+
+% \framebreak
+% \end{frame}
+
+\begin{frame}[allowframebreaks]{SMS-EMOA algorithm}
+
+\vspace*{-0.5cm}
+
+\begin{algorithm}[H]
+  \begin{center}
+  \caption{SMS-EMOA}
+    \begin{algorithmic}[1]
+    \begin{footnotesize}
+    \State Generate start population $P_0$ of size $\mu$
+    \State $t \leftarrow 0$
+      \Repeat
+        \State Generate \textbf{one} individual $\q \in \R^n$ by recombination and mutation of $\mathcal{P}_t$
+        \State $\{F_{1},..., F_k\} \leftarrow \text{fast-dominated-sort}(P_{t}\cup \q)$
+        \State $\bm{a}^\star \leftarrow \text{argmin}_{\bm{a} \in F_{k}}\Delta s(\bm{a}, F_{k})$
+        \State $P_{t+1} \leftarrow (P_t \cup \{\q\}) \setminus\{\bm{a}^\star\}$
+        \State $ t \leftarrow t+1$
+      \Until{Termination criterion fulfilled}
+    \end{footnotesize}
+    \vspace*{-0.3cm}
+    \end{algorithmic}
+    \end{center}
+\end{algorithm}
+
+\vspace*{-0.6cm}
+\footnotesize
+\begin{itemize}
+\item L5: the set of temporary $(\mu + 1)$ individuals is divided by \textbf{fast-dominated-sort} into $k$ fronts $F_{1},...,F_{k}$.
+\item L6: determine individual $\bm{a}^\star \in F_{k}$ with smallest hypervolume contribution.
+\item L7: the individual $\bm{a}^\star$ from the worst front with the smallest contribution to the dominated hypervolume does not survive.
+\item The fitness of an individual is therefore primarily the rank of its associated front and secondarily its contribution to hypervolume.
+\end{itemize}
+\end{frame}
+
+
+\end{frame}
+\end{document}
