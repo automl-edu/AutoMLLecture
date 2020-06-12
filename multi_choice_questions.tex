@@ -700,6 +700,113 @@
 			\choice maintain a model of bad configurations. % Correct
 			\choice when optimizing $l(\lambda)/g(\lambda)$ is equivalent to optimizing standard expected improvement in BO. % Correct
 		\end{choices}
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\section{Speedup Techniques for Hyperparameter Optimization}
+\question Black-box optimization ...
+\begin{choices}
+    \choice is the ideal view for HPO.
+    \choice is too slow for expensive models. % Correct
+    \choice can only handle up to $10$ parameters.
+    \choice requires differentiable models.
+\end{choices}
+
+\question One method of going beyond BBO is ...
+\begin{choices}
+    \choice Sum of little black boxes     % Correct
+    \choice Product of little black boxes  % A product would be too restrictive and could be dominated by only one of the little black boxes
+\end{choices}
+
+\question The best hyperparameter configuration ...
+\begin{choices}
+    \choice is highly dependent on the task and can not be transferred across tasks.
+    \choice tends to quite stable across tasks. % Correct
+    \choice can be transferred across tasks. % Correct
+    \choice has to be determined only once and can be used on every new task.
+\end{choices}
+
+\question The goal of meta-learning is ...
+\begin{choices}
+    \choice to create descriptive features of datasets/tasks.
+    \choice use only prior knowledge about a configuration to speed up solving of a new task.
+    \choice is closely aligned with algorithm selection. %Correct
+    \choice to use prior knowledge of dataset/task similarity and configuration performance to improve learning on new tasks. %Correct
+\end{choices}
+
+\question Select \textit{simple} meta-features used for meta-learning in ML
+\begin{choices}
+    \choice time related measures
+    \choice standard deviation
+    \choice number of features % correct
+    \choice entropy
+    \choice shape of a decision tree
+    \choice number of classes % correct
+\end{choices}
+
+\question Model-Warmstarting ...
+\begin{choices}
+    \choice uses partially-trained models to determine which configuration to use.
+    \choice uses predictive models of prior HPO runs to speed up HPO. %
+\end{choices}
+
+\question Joint models for BO ...
+\begin{choices}
+    \choice learn meta-features on all tasks jointly but have independent predictions per task. % Correct
+    \choice learn the meta-features independently but have joint prediction (e.g. through voting).
+\end{choices}
+
+\question Learning a BBO algorithm ...
+\begin{choices}
+    \choice is impossible.
+    \choice directly gives a mapping from data to hyperparameters. %Correct
+    \choice always requires a differentiable black-box function.
+\end{choices}
+
+\question In the various meta-learning approaches, what will happen if all prior tasks are dissimilar to the target task?
+\begin{choices}
+    \choice A completely random hyperparameter configuration will be chosen.
+    \choice The chosen meta-learning approach will get stuck in a dead-lock.
+    \choice The chosen meta-learning approach will choose to apply a stable default configuration.
+    \choice The configuration that worked best on a training task that most closely resembles the target task will be chosen. % Correct
+\end{choices}
+
+\question Multi-fidelity optimization ...
+\begin{choices}
+    \choice requires differentiable target algorithms.
+    \choice only makes sense when dealing with large datasets.
+    \choice exploits cheap approximations of expensife bb-functions. % correct
+\end{choices}
+
+\question It is important that the performance on low budgets correlates with performance on high budgets.
+\begin{choices}
+    \choice True % Correct
+    \choice False
+\end{choices}
+
+\question How slow is Hyperband in the worst case?
+\begin{choices}
+    \choice As slow as Bayesian Optimization.
+    \choice $10\times$ slower than random search.
+    \choice as slow as random search. % Correct
+    \choice as slow as grid search.
+\end{choices}
+
+\question BOHB ...
+\begin{choices}
+    \choice interleaves bayesian optimization and random search.
+    \choice combines bayesian-optimization and hyperband. % Correct
+    \choice builds a models for each fidelity to determine well performing configurations. % Correct
+    \choice builds a model across all fidelities to determine well performing configurations.
+\end{choices}
+
+\question Partial learning curves ...
+\begin{choices}
+    \choice can be extrapolated to predict the final performance. % Correct
+    \choice are hard to extrapolate as performance typically does drastically change during training. % Only true for RL
+    \choice don't contain enogh information to be of use.
+\end{choices}
 		
 	\end{questions}
 \end{document}
