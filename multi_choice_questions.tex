@@ -17,6 +17,7 @@
 \newcommand{\x}[0]{\mathbf{x}}
 \newcommand{\variance}{\sigma^2}
 
+\usepackage{wrapfig}
 \newcommand{\lz}{\vspace{0.5cm}}
 \newcommand{\thetab}{\bm{\weights}}
 \newcommand{\zero}{\mathbf{0}}
@@ -807,6 +808,73 @@
     \choice are hard to extrapolate as performance typically does drastically change during training. % Only true for RL
     \choice don't contain enogh information to be of use.
 \end{choices}
-		
+
+\clearpage
+%-------------------------------------------------------------------------------
+\section{Multi-criteria Optimization}
+\question The goal of multi-criteria optimization is ...
+\begin{choices}
+    \choice to optimize multiple target functions sequentially.
+    \choice to optimize multiple target functions simultaneously. % Correct
+    \choice to optimize multiple target functions independently in parallel.
+    \choice to find the unique single best solution to a multi-class problem.
+\end{choices}
+
+\question Pareto front and Pareto set mean the same thing.
+\begin{choices}
+    \choice True
+    \choice False % Correct
+\end{choices}
+
+\question A candidate $\lambda_1$ (Pareto-) dominates $\lambda_2$ if
+\begin{choices}
+    \choice $c_i(\lambda_1)\leq c_i(\lambda_2) \land c_j(\lambda_1) < c_j(\lambda_2)\quad\forall i \in \left\{1, 2, \ldots, m\right\} \exists j \in \left\{1, 2, \ldots, m\right\}$
+    \choice $c_i(\lambda_1)\leq c_i(\lambda_2) \land c_j(\lambda_1) < c_j(\lambda_2)\quad\exists i \in \left\{1, 2, \ldots, m\right\} \forall j \in \left\{1, 2, \ldots, m\right\}$ % Correct
+\end{choices}
+
+\question Points on the Pareto front ...
+\begin{choices}
+    \choice are incomparable.
+    \choice are dominated by all other datapoints.
+    \choice dominate all other datapoints. % Correct
+    \choice are equivalent. % COrrect
+\end{choices}
+
+\question Which of the following sections of the multi-objective cost-curve describe the pareto front?\\
+(Hint: both objectives have to be minimized)
+\begin{choices}
+\begin{minipage}{\linewidth} 
+\begin{wrapfigure}{r}{12.5cm}\vspace*{-.6cm}
+    \includegraphics[width=.25\textwidth]{pareto_multi_choice.png}
+\end{wrapfigure}
+    \choice Blue
+    \choice Green  % Correct
+    \choice Orange
+\end{minipage}
+\end{choices}
+\hfill\\
+
+\question A-priori approaches ...
+\begin{choices}
+    \choice considers user preferences before the optimization process. % Correct
+    \choice considers user preferences after the optimization process.
+\end{choices}
+
+\question The hypervolume ...
+\begin{choices}
+    \choice can only be used with EMOA ant not MO-BO.
+    \choice can only be used with MO-BO ant not EMOA.
+    \choice is useful to select the next query point. % Correct.
+    \choice quickly becomes too expensive for ML applications to be used in practice.
+\end{choices}
+
+\question Drawbacks of scalarization (aggregation of all cost functions into one) include ...
+\begin{choices}
+    \choice requires expert knowledge to determine the best tradeoff. % Correct
+    \choice difficult to implement.
+    \choice simplification of multi-criteria optimization problem to single-objective
+    \choice need to ensure that different trade-offs
+between cost functions are explored. % Correct
+\end{choices}		
 	\end{questions}
 \end{document}
