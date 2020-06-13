@@ -24,7 +24,7 @@
 
 \begin{center}
 \begin{minipage}{0.8\textwidth}
-\begin{block}{Definition: NAS Benchmark \lit{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}
+\begin{block}{Definition: NAS Benchmark \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}
 \textit{A NAS benchmark consists of a dataset (with a predifiend training-test split), a search space, and available runnable code with pre-defined hyperparameters for training the architectures.}
 \end{block}
 \end{minipage}
@@ -38,11 +38,11 @@
 
 \centering
 \myit{
-	\item Cell-structured search space consisting of all directed acyclic graphs (DAGs) on $V=5$ nodes, where each possible node has $L$ operation choices.
+	\item Cell-structured search space consisting of all directed acyclic graphs (DAGs) \\ on $V$ nodes, where each possible node has $L$ operation choices.
 	\pause
 	\item To limit the number of architectures, NAS-Bench-101 has the following constraints:
 	\myit{
-		\item $L = 3$:
+		\item $L = 3$ operators:
 			\begin{columns}
 			\column{.18\textwidth}
 			- $3 \times 3$ convolution
@@ -51,8 +51,8 @@
 			\column{.2\textwidth}
 			- $3 \times 3$ max-pooling			
 			\end{columns}
-		\item $V \leq 7$
-		\item A maximum of 9 number of edges
+		\item $V \leq 7$ nodes
+		\item A maximum of 9 edges
 	}
 }
 
@@ -66,35 +66,41 @@
 
 \centering
 \myit{
-	\item Exhaustively trained and evaluated all possible models on CIFAR-10 to create a tabular (queryable) benchmark
-	\pause
+	\item \alert{Tabular benchmark}: we exhaustively trained and evaluated all possible models on CIFAR-10 to create a tabular (look-up table) benchmark
+	\item Based on this table, anyone can now run NAS experiments in seconds without a GPU.
 }
 
 \begin{columns}
 \column{.6\textwidth}
-\vspace{-3.2cm}
+\vspace{-2.7cm}
 \myit{
-	\item around 423k \alert{unique} cells
-	\myit{
-		\item[--] 4 epoch budgets: 4, 12, 36, 108
-		\item[--] 3 repeats
-		\item[--] around 5M trained and evaluated models
-		\item[--] 120 TPU years of computation
-		\item[--] the best architecture mean test accuracy: 94.32\%
-		}
+	\onslide<2->{
+		\item Around 423k \alert{unique} cells
+		\myit{
+			\item[--] 4 epoch budgets: 4, 12, 36, 108
+			\item[--] 3 repeats
+			\item[--] around 5M trained and evaluated models
+			\item[--] 120 TPU years of computation
+			\item[--] the best architecture mean test accuracy: 94.32\%
+			}
+	}
 	\medskip
-	\item Given an architecture encoding $A$, budget $E_{stop}$ and trial number, one can query from NAS-Bench-101 the following quantities:
-	\myit{
-		\item[--] training/validation/test accuracy
-		\item[--] training time in seconds
-		\item[--] number of trainable model parameters
+	\onslide<3->{
+		\item Given an architecture encoding $A$, budget $E_{stop}$ and trial number, one can query from NAS-Bench-101 the following quantities:
+		\myit{
+			\item[--] training/validation/test accuracy
+			\item[--] training time in seconds
+			\item[--] number of trainable model parameters
 		}
+	}
 }
 
-\column{.36\textwidth}
-%\vspace{-3cm}
-\includegraphics[width=.63\textwidth]{images/nasbench101_stat1.png}\\
-\includegraphics[width=.66\textwidth]{images/nasbench101_stat2.png}
+\column{.375\textwidth}
+\onslide<2->{
+	%\vspace{-3cm}
+	\includegraphics[width=.5\textwidth]{images/nasbench101_stat1.png}\\
+	\includegraphics[width=.53\textwidth]{images/nasbench101_stat2.png}
+}
 \end{columns}
 
 }
@@ -109,7 +115,7 @@
 	}
 	\centering
 	\medskip
-	\includegraphics[width=.6\textwidth]{images/NAS-Bench-101-results-with-labels}
+	\includegraphics[width=0.65\textwidth]{images/NAS-Bench-101-results-with-labels}
 
 \pause
 	\myit{
