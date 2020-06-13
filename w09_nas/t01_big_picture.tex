@@ -133,78 +133,78 @@
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{Brief history and early approaches}{
-\centering
-
-\begin{itemize}
-\footnotesize{
-	\item The very first works (to the best of our knowledge):
-	\begin{itemize}
-		\item Self Organizing Neural Networks \href{https://papers.nips.cc/paper/149-self-organizing-neural-networks-for-the-identification-problem}{\lit{Tenorio and Lee, NeurIPS 1988}}
-		\item The Cascade-Correlation Learning Architecture \href{https://papers.nips.cc/paper/207-the-cascade-correlation-learning-architecture}{\lit{Fahlman and Lebiere, NeurIPS 1989}}
-	\end{itemize}
-}
-\end{itemize}
-
-\pause
-
-\begin{columns}
-\column{0.57\textwidth}
-\centering
-
-\vspace{-2cm}
-\begin{itemize}
-\footnotesize{
-	\item \alert{Neuroevolution} (already since the 1990s)
-	\begin{itemize}
-		\item Some authors used evolutionary algorithms to optimize the
-		architecture and backpropagation for weights \lit{\href{https://www.complex-systems.com/abstracts/v04_i04_a06/}{Kitano 1990}}
-		\item In neuroevolution both architecture and weights are optimized with
-		evolutionary methods \lit{\href{http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf}{Stanley and Miikkulainen, 2002}; \href{https://link.springer.com/article/10.1007/s12065-007-0002-4}{Floreano et al. 2008}}	
-	\end{itemize}	
-}
-\end{itemize}
-
-\column{0.4\textwidth}
-\centering
-\includegraphics[width=0.6\textwidth]{images/neat.png}\\
-\includegraphics[width=0.6\textwidth]{images/neat_2.png}
-\end{columns}
-
-}
+%\myframe{Brief history and early approaches}{
+%\centering
+%
+%\begin{itemize}
+%\footnotesize{
+%	\item The very first works (to the best of our knowledge):
+%	\begin{itemize}
+%		\item Self Organizing Neural Networks \href{https://papers.nips.cc/paper/149-self-organizing-neural-networks-for-the-identification-problem}{\lit{Tenorio and Lee, NeurIPS 1988}}
+%		\item The Cascade-Correlation Learning Architecture \href{https://papers.nips.cc/paper/207-the-cascade-correlation-learning-architecture}{\lit{Fahlman and Lebiere, NeurIPS 1989}}
+%	\end{itemize}
+%}
+%\end{itemize}
+%
+%\pause
+%
+%\begin{columns}
+%\column{0.57\textwidth}
+%\centering
+%
+%\vspace{-2cm}
+%\begin{itemize}
+%\footnotesize{
+%	\item \alert{Neuroevolution} (already since the 1990s)
+%	\begin{itemize}
+%		\item Some authors used evolutionary algorithms to optimize the
+%		architecture and backpropagation for weights \lit{\href{https://www.complex-systems.com/abstracts/v04_i04_a06/}{Kitano 1990}}
+%		\item In neuroevolution both architecture and weights are optimized with
+%		evolutionary methods \lit{\href{http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf}{Stanley and Miikkulainen, 2002}; \href{https://link.springer.com/article/10.1007/s12065-007-0002-4}{Floreano et al. 2008}}	
+%	\end{itemize}	
+%}
+%\end{itemize}
+%
+%\column{0.4\textwidth}
+%\centering
+%\includegraphics[width=0.6\textwidth]{images/neat.png}\\
+%\includegraphics[width=0.6\textwidth]{images/neat_2.png}
+%\end{columns}
+%
+%}
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{Brief history and early approaches}{
-\centering
-
-\begin{itemize}
-\footnotesize{
-	\item \alert{Bayesian optimization (BO)}
-	\begin{itemize}
-		\item Encode the architecture as a categorical space
-		\begin{itemize}
-			\item[-] i.e. optimize number of layers, number of filters, kernel width, etc.		
-		\end{itemize}
-		\item Use BO to search in this categorical space \lit{\href{http://proceedings.mlr.press/v28/bergstra13.pdf}{Bergstra et al. 2013}, \href{https://ml.informatik.uni-freiburg.de/papers/15-IJCAI-Extrapolation_of_Learning_Curves.pdf}{Domhan et al. 2015}, \href{https://ml.informatik.uni-freiburg.de/papers/16-AUTOML-AutoNet.pdf}{Mendoza et al. 2015}, \href{https://arxiv.org/abs/1807.06906}{Zela et al. 2018}}
-	\end{itemize}
-}
-	\pause
-	\item Reinforcement Learning \& Evolution for NAS \lit{\href{https://arxiv.org/abs/1611.02167}{Baker et al. 2016}, \href{https://arxiv.org/abs/1611.01578}{Zoph and Le 2017}, \href{https://arxiv.org/abs/1707.07012}{Zoph et al. 2018}, \href{https://arxiv.org/abs/1703.01041}{Real et al. 2017}, \href{https://arxiv.org/abs/1802.01548}{Real et al. 2018}}
-
-	\pause
-	\item \alert{Recent work aims for efficiency}
-		\begin{itemize}
-			\begin{footnotesize}
-			\item Weight sharing \lit{Pham et al,’18; Bender et al, ’18; Liu et al, ‘19; Xie et al. ’19; Cai et al. ’19, Zhang et al. ’19}
-			\item Network morphisms \lit{Chen et al, ’16; Cai et al, ’17 \& ‘18; Elsken et al, ’17 \& 18}
-			\item Multi-fidelity optimization \lit{Klein et al, ‘16; Li et al, ‘18; Falkner et al, ‘18}
-			\end{footnotesize}
-		\end{itemize}
-	\end{itemize}
-
-TODO: add hrefs to recent work
-}
+%\myframe{Brief history and early approaches}{
+%\centering
+%
+%\begin{itemize}
+%\footnotesize{
+%	\item \alert{Bayesian optimization (BO)}
+%	\begin{itemize}
+%		\item Encode the architecture as a categorical space
+%		\begin{itemize}
+%			\item[-] i.e. optimize number of layers, number of filters, kernel width, etc.		
+%		\end{itemize}
+%		\item Use BO to search in this categorical space \lit{\href{http://proceedings.mlr.press/v28/bergstra13.pdf}{Bergstra et al. 2013}, \href{https://ml.informatik.uni-freiburg.de/papers/15-IJCAI-Extrapolation_of_Learning_Curves.pdf}{Domhan et al. 2015}, \href{https://ml.informatik.uni-freiburg.de/papers/16-AUTOML-AutoNet.pdf}{Mendoza et al. 2015}, \href{https://arxiv.org/abs/1807.06906}{Zela et al. 2018}}
+%	\end{itemize}
+%}
+%	\pause
+%	\item Reinforcement Learning \& Evolution for NAS \lit{\href{https://arxiv.org/abs/1611.02167}{Baker et al. 2016}, \href{https://arxiv.org/abs/1611.01578}{Zoph and Le 2017}, \href{https://arxiv.org/abs/1707.07012}{Zoph et al. 2018}, \href{https://arxiv.org/abs/1703.01041}{Real et al. 2017}, \href{https://arxiv.org/abs/1802.01548}{Real et al. 2018}}
+%
+%	\pause
+%	\item \alert{Recent work aims for efficiency}
+%		\begin{itemize}
+%			\begin{footnotesize}
+%			\item Weight sharing \lit{Pham et al,’18; Bender et al, ’18; Liu et al, ‘19; Xie et al. ’19; Cai et al. ’19, Zhang et al. ’19}
+%			\item Network morphisms \lit{Chen et al, ’16; Cai et al, ’17 \& ‘18; Elsken et al, ’17 \& 18}
+%			\item Multi-fidelity optimization \lit{Klein et al, ‘16; Li et al, ‘18; Falkner et al, ‘18}
+%			\end{footnotesize}
+%		\end{itemize}
+%	\end{itemize}
+%
+%TODO: add hrefs to recent work
+%}
 %-----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
@@ -230,8 +230,8 @@ TODO: add hrefs to recent work
 	\myit{
 		\item Repetition:\\ \alert{For the most common NAS search space, how important is the NAS component
 		compared to the importance of the training pipeline used?}\medskip
-%\medskip
-		\item Repetition:\\ \alert{How are the weight optimized in neuroevolution?}
+\medskip
+%		\item Repetition:\\ \alert{How are the weights optimized in neuroevolution?}
 		\item Repetition:\\ \alert{List three major components of NAS methods.}
 \medskip
 		\item Discussion:\\ \alert{Which problems would you like to apply NAS to?}
