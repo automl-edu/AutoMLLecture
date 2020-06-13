@@ -1,0 +1,392 @@
+\input{../latex_main/main.tex}
+
+%The following might look confusing but allows us to switch the notation of the optimization problem independently from the notation of the hyper parameter optimization
+\newcommand{\xx}{\conf} %x of the optimizer
+\newcommand{\xxi}[1][i]{\lambda_{#1}} %i-th component of xx (not confuse with i-th individual)
+\newcommand{\XX}{\pcs} %search space / domain of f
+\newcommand{\f}{\cost} %objective function
+\newcommand{\yy}{\cost} %outcome of objective function
+
+\title[AutoML: Overview]{Multi-criteria Optimization}
+\subtitle{Introduction}
+\author[Bernd Bischl]{\underline{Bernd Bischl} \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+
+	\maketitle
+
+
+
+\begin{frame}[allowframebreaks]{Introductory example}
+
+Often we want to solve optimization problems concerning several goals.
+
+    \vspace{0.5cm}
+    \textbf{General applications:}
+\begin{itemize}
+\item Medicine: maximum effect, but minimum side effect of a drug.
+\item Finances: maximum return, but minimum risk of an equity portfolio.
+\item Production planning: maximum revenue, but minimum costs.
+\item Booking a hotel: maximum rating, but minimum costs.
+\end{itemize}
+
+\vspace{0.5cm}
+    \textbf{In machine learning:}
+\begin{itemize}
+\item Sparse models: maximum predictive performance, but minimal number of features.
+\item Fast models: maximum predictive performance, but short prediction time.
+\item ...
+\end{itemize}
+
+%A \textit{simple} approach would be to formulate all but one objective function simplified as a secondary condition.
+
+\vspace*{0.2cm}
+
+\framebreak
+
+\textbf{Example}:
+
+Choose the best hotel to stay at by maximizing ratings subject to a maximum price per night.
+
+\vspace*{0.5cm}
+
+ \textbf{Problems}:
+
+\begin{itemize}
+ \item The result depends on how we select the maximum price and usually returns different solutions for different maximum price values.
+ \item We could also choose a minimum rating and optimize the price per night.
+ \item The more objectives we optimize, the more difficult such a definition becomes.
+\end{itemize}
+
+\vspace*{0.5cm}
+
+\textbf{Goal}:
+
+Find a more general approach to solve multi-criteria problems.
+
+
+\begin{center}
+\includegraphics[width = 0.35\linewidth]{images/booking1.png} ~~~ \includegraphics[width = 0.35\linewidth]{images/booking2.png}
+\end{center}
+
+When booking a hotel: find the hotel with
+
+\begin{itemize}
+\item minimum price per night (\textbf{costs}) and
+\item maximum user rating (\textbf{performance}).
+\end{itemize}
+
+\vfill
+
+\begin{footnotesize}
+Since our standard is to minimize objectives, we minimize negative ratings.
+\end{footnotesize}
+
+\framebreak
+
+The objectives often conflict with each other:
+
+\begin{itemize}
+\item Lower price $\to$ usually lower hotel rating.
+\item Better rating $\to$ usually higher price.
+\end{itemize}
+
+Example: (negative) average rating by hotel guests (1 - 5) vs. average price per night (excerpt).
+
+\vspace*{0.2cm}
+
+\begin{center}
+\includegraphics[scale=1]{images/expedia-1-1}
+\end{center}
+
+\framebreak
+
+Often, objectives are not directly comparable as they are measured on different scales:
+
+\begin{itemize}
+    \item Left: A hotel with rating $4$ for $89$ Euro ($\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$) would be preferred to a hotel for $108$ Euro with the same rating ($\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$).
+\item Right: How to decide if $\textcolor{orange}{\cost^{(1)}} = \left(89, - 4.0\right)$ or $\textcolor{orange}{\cost^{(1)}} = \left(95, - 4.5\right)$ is preferred?
+\item How much is one \textit{rating point} worth?
+\end{itemize}
+
+\centering \includegraphics[scale=1]{images/expedia-2-1}
+
+\end{frame}
+
+
+\begin{frame}{Definition: multi-criteria optimization problem}
+
+A \textbf{multi-criteria optimization problem} is defined by
+
+$$
+\min_{\conf \in \pcs}  \cost(\conf) \Leftrightarrow \min_{\conf \in \pcs} \left(\cost_1(\conf), \cost_2(\conf), ..., \cost_m(\conf)\right),
+$$
+
+with $\pcs \subset \realnum^n$ and multi-criteria objective function $\cost: \pcs \to \realnum^m$, $m \ge 2$.
+
+\begin{itemize}
+\item \textbf{Goal:} minimize multiple target functions simultaneously.
+\item $\left(\cost_1(\conf), ..., \cost_m(\conf)\right)^\top$ maps each candidate $\conf$ into the objecive space $\realnum^m$.
+\item Often no clear best solution, as objective are usually conflicting and we cannot totally order in $\realnum^m$. 
+% \item Objective functions are often conflicting.
+\item W.l.o.g. we always minimize.
+\item Alternative names: multi-criteria optimization, multi-objective optimization, Pareto optimization.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Pareto sets and Pareto optimality}
+
+\textbf{Definition:}
+
+Given a multi-criteria optimization problem
+    $$\min_{\conf \in \pcs} \left(\cost_1(\conf), ..., \cost_m(\conf)\right), \quad \cost_i: \pcs \to \realnum.$$
+
+\begin{itemize}
+    \item A candidate $\conf^{(1)}$ \textbf{(Pareto-) dominates} $\conf^{(2)}$, if $\cost(\conf^{(1)}) \prec \cost(\conf^{(2)})$, i.e.
+\begin{enumerate}
+    \item $\cost_i(\conf^{(1)}) \le \cost_i(\conf^{(2)})$ for all $i \in \{1, 2, ..., m\}$ and
+    \item $\cost_j(\conf^{(1)}) < \cost_j(\conf^{(2)})$ for at least one $j \in \{1, 2, ..., m\}$
+\end{enumerate}
+\vspace*{0.1cm}
+\item A candidate $\optconf$ that is not dominated by any other candidate is called \textbf{Pareto optimal}.
+\vspace*{0.1cm}
+\item The set of all Pareto optimal candidates is called \textbf{Pareto set} $\mathcal{P} := \{\conf \in \pcs |\not \exists ~\tilde{\conf} \text{ with } \cost(\tilde{\conf}) \prec \cost(\conf)\}$
+\item $\mathcal{F} = \cost(\mathcal{P}) = \{\cost(\conf) | \conf \in \mathcal{P}\}$ is called \textbf{Pareto front}.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[allowframebreaks]{How to define optimality?}
+
+Let $\cost = (\text{price}, - \text{rating})$. For some cases it is \textit{clear} which point is the better one:
+
+\begin{itemize}
+    \item The candidate $\textcolor{green}{\cost^{(1)}} = \left(89, - 4.0\right)$ dominates $\textcolor{red}{\cost^{(2)}} = \left(108, - 4.0\right)$: $\textcolor{green}{\cost^{(1)}}$ is not worse in any dimension and is better in one dimension. Therefore, $\textcolor{red}{\cost^{(2)}}$ gets \textbf{dominated} by $\textcolor{green}{\cost^{(1)}}$
+$$
+\textcolor{red}{\cost^{(2)}} \prec \textcolor{green}{\cost^{(1)}}.
+$$
+\end{itemize}
+
+\centering \includegraphics[width=0.5\linewidth]{images/expedia-3-1}
+
+\framebreak
+
+For the points $\textcolor{orange}{\cost^{(1)}} = \left(89, - 4.0\right)$ and $\textcolor{orange}{\cost^{(2)}} = \left(95, - 4.5\right)$ we cannot say which one is better.
+
+\begin{itemize}
+\item We define the points as \textbf{equivalent} and write
+
+$$
+\textcolor{orange}{\cost^{(1)}} \not\prec \textcolor{orange}{\cost^{(2)}} \text{ and } \textcolor{orange}{\cost^{(2)}} \not\prec \textcolor{orange}{\cost^{(1)}}.
+$$
+
+\centering \includegraphics[width=0.5\linewidth]{images/expedia-4-1}
+
+
+\item The set of all equivalent points that are not dominated by another point is called the \textbf{Pareto front}.
+
+\vspace*{0.3cm}
+
+\centering \includegraphics[width=0.8\linewidth]{images/expedia-5-1}
+%FIXME: JR: I would prefer the pareto front as a step diagram, as this would be in accordance to the HV. Is the code to generate these plots checked in?
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Example: One objective function}
+
+
+We consider the minimization problem
+
+$$
+\min_{\conf} \cost(\conf) = (\conf - 1)^2, \qquad 0 \le \conf \le 3.
+$$
+
+The optimum is at $\optconf = 1$.
+
+\vspace*{0.1cm}
+
+
+\centering \includegraphics[scale=0.2]{images/graph1}
+
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example: Two target functions}
+
+We extend the above problem to two objective functions $\cost_1(\conf) = (\conf - 1)^2$ and $\cost_2(\conf) = 3(\conf - 2)^2$, thus
+
+$$
+    \min_{\conf} \cost(\conf) = \left(\cost_1(\conf), \cost_2(\conf)\right), \qquad 0 \le \conf \le 3.
+$$
+
+    \begin{center}
+    \includegraphics[scale=0.2]{images/graph2}
+    \end{center}
+
+\framebreak
+
+We consider the functions in the objective function space $\cost(\pcs)$ by drawing the objective function values $\left(\cost_1(\conf), \cost_2(\conf)\right)$ for all $0 \le \conf \le 3$.
+
+\vspace*{0.1cm}
+
+
+    \begin{center}
+    \includegraphics[scale=0.2]{images/graph3}
+    \end{center}
+    \vspace*{-0.3cm}
+
+The Pareto front is shown in green.
+    The Pareto front cannot be \emph{left} without getting worse in at least one objective function.
+
+\end{frame}
+
+
+\begin{frame}{A-priori vs. A-posteriori}
+
+\begin{itemize}
+\item The Pareto set is a set of equally optimal solutions.
+\item In many applications one is often interested in a \textbf{single} optimal solution.
+\item Without further information no unambiguous optimal solution can be determined. \\
+$\to$ The decision must be based on other criteria.
+\end{itemize}
+
+    \vspace{0.5cm}
+
+There are two possible approaches:
+\begin{itemize}
+\item \textbf{A-priori approach}: User preferences are considered \textbf{before} the optimization process
+\item \textbf{A-posteriori approach}: User preferences are considered \textbf{after} the optimization process
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{A-priori procedure}
+
+\textbf{Example: Weighted total}
+
+
+\textbf{Prior knowledge:} One rating point is worth $50$ Euro to a customer. \\
+    $\to$ We optimize the weighted sum:
+
+$$
+\min_\text{Hotel} \text{(Price / Night)} - 50 \cdot \text{Rating}
+$$
+
+    \begin{center}
+\includegraphics[scale=0.555555]{images/expedia-9-1}
+    \end{center}
+
+Alternative a weighted sum: $\min_{\conf \in \pcs} \sum_{i = 1}^m w_i \cost_i(\conf) \qquad \text{with} \quad w_i \ge 0 $
+
+\framebreak
+
+\textbf{Example: Lexicographic method}
+
+\textbf{Prior knowledge:} Customer prioritizes rating over price. \\
+$\to$ Optimize target functions one after the other.
+
+
+    \begin{center}
+\includegraphics[scale=1]{images/expedia-10-1}
+    \end{center}
+
+\framebreak
+
+A-priori approach: Lexicographic method
+
+\begin{eqnarray*}
+\yy_1^* &=& \min_{\conf \in \pcs} \cost_1(\conf)\\
+\yy_2^* &=& \min_{\conf \in \{\conf ~|~ \cost_1(\conf) = \yy_1^*\}} \cost_2(\conf) \\
+\yy_3^* &=& \min_{\conf \in \{\conf ~|~ \cost_1(\conf) = \yy_1^* \land \cost_2(\conf) = \yy_2^*\}} \cost_3(\conf) \\
+&\vdots&
+\end{eqnarray*}
+
+    \textbf{But:} Different sequences provide different solutions.
+
+\framebreak
+
+\textbf{Summary a-priori approach:}
+\begin{itemize}
+\item Implicit assumption: Single-objective optimization is \emph{easy}.
+\item Only one solution is obtained, which depends on a-priori weights, order, etc.
+\item Several solutions can be obtained if weights, order, etc. are systematically varied.
+\item Usually not all non-dominated candidates can be found by these methods.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{A-posteriori procedure}
+
+A-posteriori methods try to
+
+\begin{itemize}
+\item find the set of \textbf{all} optimal candidates (the Pareto set),
+\item select (if necessary) an optimal candidate based on prior knowledge or individual preferences.
+\item Implicit assumption: Specifying your hidden preferences / making a selection from a pool of candidates is easier, if you see the non-dominated solutions.
+\end{itemize}
+
+A-posteriori methods are therefore the more generic approach to solving a multi-criteria optimization problem.
+
+
+\framebreak
+
+\textbf{Example:} A user is displayed all Pareto optimal hotels (left) and chooses an optimal candidate (right) based on his hidden preferences or additional criteria (e.g. location of the hotel).
+
+\vspace*{0.1cm}
+
+
+\centering \includegraphics[scale=1]{images/expedia-11-1}
+
+
+\end{frame}
+
+
+\begin{frame}[allowframebreaks]{Evaluation of solutions}
+
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+
+A common metric for evaluating the performance of a set of candidates $\mathcal{P} \subset \pcs$ is the \textbf{dominated hypervolume}
+$$
+    S(\mathcal{P}, R) = \Lambda\left(\bigcup_{\tilde{\conf} \in \mathcal{P}}\left\{\conf | \tilde{\conf} \prec \conf \prec R\right\}\right),
+$$
+where $\Lambda$ is the Lebuesge measure.
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{images/dominated_hypervolume.png}
+\end{center}
+\end{column}
+\end{columns}
+    
+
+\framebreak
+
+\begin{itemize}
+            \item HV is calculated w.r.t the reference point $R$, which often reflects in each component the natural maximum of the respective objective -- if possible
+            \item The dominated hypervolume is also often called \textbf{S-Metric}.
+            \item Computation of HV scales exponentially in the number of objective functions $\mathcal{O}(n^{m-1})$.
+            \item Fast approximations exist for small values of $m$ and especially for machine learning applications we rarely optimize $m > 3$ objectives.
+    \end{itemize}
+
+\end{frame}
+
+\end{document}
