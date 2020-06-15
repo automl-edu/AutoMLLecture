@@ -1,11 +1,15 @@
 \input{../latex_main/main.tex}
 
 % FH: I created this command videotitle (and file title_slide.tex) to show a new title slide for each video without the need of any repeating boiler plate code. Please do not change this anymore.
-\newcommand{\videotitle}[1]{\subtitle{#1}\section{#1}\input{title_slide}}
+\newcommand{\videotitle}[1]{\subtitle{#1}\input{title_slide}}
+\newcommand{\fhpause}{\pause} % for taping
 
+% for final handout:
+\renewcommand{\videotitle}[1]{\subtitle{#1}\section{#1}\input{title_slide}}
+\renewcommand{\fhpause}{} % for final handout
 
-\title[AutoML: Bayesian Optimization for HPO]{AutoML: Bayesian Optimization for Hyperparameter Optimization} % week title
-\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\title[AutoML: Bayesian Optimization for HPO]{AutoML: Bayesian Optimization for HPO} % week title
+\author[Frank Hutter]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
@@ -22,20 +26,22 @@
 
 \begin{document}
 
+\videotitle{} % Week's title
+
   \begin{frame}{Outline}
     \bigskip
     \vfill
     \tableofcontents
   \end{frame}
-	
+
     \input{t01_introduction.tex}
     \input{t02_acq_functions_1.tex}
     \input{t03_acq_functions_2.tex}
     \input{t04_surrogate_models.tex}
-    \input{t05_high_dim_BO.tex}
-    \input{t06_extensions.tex}
-    \input{t07_tpe.tex}
-    \input{t08_success_stories.tex}
+    \input{t05_extensions.tex}
+    \input{t06_tpe.tex}
+    \input{t07_success_stories.tex}
+%%%    \input{t98_not_used_high_dim_BO.tex}
     \input{t99_bibliography}
     
 \end{document}

@@ -1,18 +1,81 @@
-\renewcommand{\lecturetitle}{NAS-Bench-101: The first NAS benchmark}
+\renewcommand{\lecturetitle}{Issues in NAS Research, and NAS-Bench-101}
 \renewcommand{\lecturetime}{Week 9, Video 4}
 \section{\lecturetitle}
 %-------------------------------------------------
 %-------------------------------------------------
 
+
+%-----------------------------------------------------------------------
+\myframe{Issues in NAS Research \& Evaluations}{
+
+	\begin{columns}[T]
+	\column{0.50\textwidth}
+	\begin{itemize}
+	  \item For benchmarks used in almost all NAS papers:
+	  \myit{
+	  	\item[-] \alert{Training pipeline matters much more than neural architecture}
+	  }
+\bigskip
+	  \onslide<2->{
+		  \item The final benchmark results reported in different papers are typically \alert{incomparable}
+		  \myit{
+		  	\item[-] \alert{Different training code\\ (often unavailable)}
+		  	\item[-] \alert{Different search spaces}
+		  	\item[-] Different evaluation schemes
+		  }
+	  }
+\bigskip
+	  \onslide<3->{
+	  	\item[$\rightarrow$] We emphasize \alert{concepts}, not published performance numbers
+	  }
+	\end{itemize}
+		
+	\column{0.02\textwidth}
+	\column{0.48\textwidth}
+		\includegraphics[width=.8\textwidth]{images/nas-eval-is-frustatingly-hard}\\
+		\centering
+		\href{https://openreview.net/forum?id=HygrdpVKvr}{\lit{Yang et al., ICLR 2020}}
+	\end{columns}
+	
+}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\myframe{Building a Scientific Community for NAS}{
+
+	\myit{
+	  \item \alert{Benchmarks}
+	  \myit{
+	  	\item[-] NAS-Bench-101 \href{https://arxiv.org/pdf/1902.09635.pdf}{\lit{Ying et al, ICML 2019}}
+	  	\item[-] NAS-Bench-201 \href{https://openreview.net/forum?id=HJxyZkBKDr}{\lit{Dong et al, ICML 2020}}
+	  	\item[-] NAS-Bench-1Shot1 \href{https://openreview.net/forum?id=SJx9ngStPH}{\lit{Zela et al, ICLR 2020}}
+	  }
+\medskip
+\pause
+	  \item \alert{Best Practice Checklist} for Scientific Research in NAS\\ \href{https://arxiv.org/abs/1909.02453}{\lit{Lindauer \& Hutter, arXiv 2019}}
+\medskip
+\pause
+	  \item \alert{Unifying open-source implementation} of modern NAS algorithms \\ \href{https://openreview.net/forum?id=SJx9ngStPH}{\lit{Zela et al, ICLR 2020}}
+	  \myit{
+	  	\item[-] Finally enables empirical comparisons without confounding factors	  	
+	  }
+\medskip
+\pause
+	  \item \alert{\href{https://sites.google.com/view/nas2020}{First NAS workshop}} at ICLR 2020
+	  
+	}
+}
+%-----------------------------------------------------------------------
+
 %----------------------------------------------------------------------
 \myframe{Reproducibility crisis in NAS and the necessity of NAS benchmarks}{
 
 \myit{
-	\item \textit{\color{red}{Problem:}} Most of the NAS methods we saw so far are \alert{extremely difficult to reproduce and compare} (see \lit{\href{https://arxiv.org/pdf/1902.07638.pdf}{Li \& Talwalkar, 2019}; \href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}) due to:
+	\item \textit{\color{red}{Problem:}} Most NAS methods we saw so far are \alert{extremely difficult to reproduce and compare} (see \lit{\href{https://arxiv.org/pdf/1902.07638.pdf}{Li \& Talwalkar, 2019}; \href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}) due to:
 	\myit{
 		\item[--] Different search spaces
 		\item[--] Different training pipelines
-		\item[--] Other confounding factors such as different hardwares, different deep learning library versions, etc.
+		\item[--] Other confounding factors, such as different hardwares, different deep learning library versions, etc.
 		\item[--] Industry-scale computational resources are not accessible to everyone	
 		\item[--] No publicly available code
 	}
@@ -24,7 +87,7 @@
 
 \begin{center}
 \begin{minipage}{0.8\textwidth}
-\begin{block}{Definition: NAS Benchmark \lit{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}
+\begin{block}{Definition: NAS Benchmark \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}
 \textit{A NAS benchmark consists of a dataset (with a predifiend training-test split), a search space, and available runnable code with pre-defined hyperparameters for training the architectures.}
 \end{block}
 \end{minipage}
@@ -38,11 +101,11 @@
 
 \centering
 \myit{
-	\item Cell-structured search space consisting of all directed acyclic graphs (DAGs) on $V=5$ nodes, where each possible node has $L$ operation choices.
+	\item Cell-structured search space consisting of all directed acyclic graphs (DAGs) \\ on $V$ nodes, where each possible node has $L$ operation choices.
 	\pause
 	\item To limit the number of architectures, NAS-Bench-101 has the following constraints:
 	\myit{
-		\item $L = 3$:
+		\item $L = 3$ operators:
 			\begin{columns}
 			\column{.18\textwidth}
 			- $3 \times 3$ convolution
@@ -51,8 +114,8 @@
 			\column{.2\textwidth}
 			- $3 \times 3$ max-pooling			
 			\end{columns}
-		\item $V \leq 7$
-		\item A maximum of 9 number of edges
+		\item $V \leq 7$ nodes
+		\item A maximum of 9 edges
 	}
 }
 
@@ -66,35 +129,41 @@
 
 \centering
 \myit{
-	\item Exhaustively trained and evaluated all possible models on CIFAR-10 to create a tabular (queryable) benchmark
-	\pause
+	\item \alert{Tabular benchmark}: we exhaustively trained and evaluated all possible models on CIFAR-10 to create a tabular (look-up table) benchmark
+	\item Based on this table, anyone can now run NAS experiments in seconds without a GPU.
 }
 
 \begin{columns}
 \column{.6\textwidth}
-\vspace{-3.2cm}
+\vspace{-2.7cm}
 \myit{
-	\item around 423k \alert{unique} cells
-	\myit{
-		\item[--] 4 epoch budgets: 4, 12, 36, 108
-		\item[--] 3 repeats
-		\item[--] around 5M trained and evaluated models
-		\item[--] 120 TPU years of computation
-		\item[--] the best architecture mean test accuracy: 94.32\%
-		}
+	\onslide<2->{
+		\item Around 423k \alert{unique} cells
+		\myit{
+			\item[--] 4 epoch budgets: 4, 12, 36, 108
+			\item[--] 3 repeats
+			\item[--] around 5M trained and evaluated models
+			\item[--] 120 TPU years of computation
+			\item[--] the best architecture mean test accuracy: 94.32\%
+			}
+	}
 	\medskip
-	\item Given an architecture encoding $A$, budget $E_{stop}$ and trial number, one can query from NAS-Bench-101 the following quantities:
-	\myit{
-		\item[--] training/validation/test accuracy
-		\item[--] training time in seconds
-		\item[--] number of trainable model parameters
+	\onslide<3->{
+		\item Given an architecture encoding $A$, budget $E_{stop}$ and trial number, one can query from NAS-Bench-101 the following quantities:
+		\myit{
+			\item[--] training/validation/test accuracy
+			\item[--] training time in seconds
+			\item[--] number of trainable model parameters
 		}
+	}
 }
 
-\column{.36\textwidth}
-%\vspace{-3cm}
-\includegraphics[width=.63\textwidth]{images/nasbench101_stat1.png}\\
-\includegraphics[width=.66\textwidth]{images/nasbench101_stat2.png}
+\column{.375\textwidth}
+\onslide<2->{
+	%\vspace{-3cm}
+	\includegraphics[width=.5\textwidth]{images/nasbench101_stat1.png}\\
+	\includegraphics[width=.53\textwidth]{images/nasbench101_stat2.png}
+}
 \end{columns}
 
 }
@@ -109,7 +178,7 @@
 	}
 	\centering
 	\medskip
-	\includegraphics[width=.6\textwidth]{images/NAS-Bench-101-results-with-labels}
+	\includegraphics[width=0.65\textwidth]{images/NAS-Bench-101-results-with-labels}
 
 \pause
 	\myit{

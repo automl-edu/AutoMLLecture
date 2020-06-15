@@ -1,0 +1,206 @@
+
+\input{../latex_main/main.tex}
+
+
+\newcommand{\lz}{\vspace{0.5cm}}
+\newcommand{\thetab}{\bm{\weights}}
+\newcommand{\zero}{\mathbf{0}}
+\newcommand{\Xmat}{\mathbf{X}}
+\newcommand{\ydat}{\mathbf{y}}
+\newcommand{\id}{\boldsymbol{I}}
+\newcommand{\Amat}{\mathbf{A}}
+\newcommand{\Xspace}{\mathcal{X}}                                           
+\newcommand{\Yspace}{\mathcal{Y}}
+\newcommand{\ls}{\ell}
+\newcommand{\natnum}{\mathbb{N}}
+\newcommand{\intnum}{\mathbb{Z}}
+
+\usepackage{fontawesome}
+\usepackage{dirtytalk}
+\usepackage{csquotes}
+
+%\begin{frame}[c]{}
+%\centering
+%\huge
+%\textbf{}
+%\end{frame}
+
+
+%\item[\faLightbulbO]
+\title[AutoML: GPs]{AutoML: Gaussian Processes} % week title
+\subtitle{Covariance Functions for GPs - Advanced} % video title
+\author[Marius Lindauer]{\underline{Bernd Bischl} \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+\begin{document}
+\maketitle
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c,allowframebreaks]{MS-Continuity and Differentiability}
+
+We wish to describe a Gaussian process in terms of its smoothness. There are several notions of continuity for random variables. One is the continuity/differentiability in mean square (MS).
+
+\begin{block}{Definition}
+A Gaussian process $f(\x)$ is said to be \textbf{MS continuous} at $\x_*$, if
+\vspace{-3mm}
+$$\expectation[|f(\xI{k}) - f(\x_*)|^2] \overset{k \to \infty}{\longrightarrow} 0 \text{ for all converging sequences } \xI{k} \overset{k \to \infty}{\longrightarrow} \x_*.$$
+
+\vspace{5mm}
+A Gaussian process $f(\x)$ is said to be \textbf{MS differentiable} along the $i$ direction, if the following limit exists, with $\bm{e}_i = (0,\dots,0,1,0,\dots,0)^\top$ being the unit vector along the $i$-th axis. $$\lim_{h\to 0}\expectation[|\frac{f(\x + h\,\bm{e}_i) - f(\x)}{h}|]$$ 
+\end{block}
+
+
+ 
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{itemize}
+\item The MS continuity/differentiability do not necessarily lead to the continuity/differentiability of sampled functions!
+\vspace{.5cm}
+
+\item The MS continuity/differentiability of a Gaussian process can be derived from the smoothness properties of the kernel.
+\vspace{.5cm}
+
+\item The GP is continuous in MS iff the covariance function $k(\x, \x^\prime)$ is continuous.
+\vspace{.5cm}
+
+\item The MS derivative of a Gaussian process exists iff the second derivative $\frac{\partial^{2} k(\x, \x^\prime)}{\partial \x\partial \x^\prime}$ exists.
+
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c]{Squared Exponential Covariance Function}
+
+The squared exponential function is one of the most commonly used covariance functions.
+$$
+k(\x, \x^\prime) = \exp\biggl(- \frac{\|\x - \x^\prime\|^2}{2\ls^2}\biggr).
+$$
+
+\textbf{Properties}:
+\begin{itemize}
+\item[\faLightbulbO] It depends merely on the distance $r = \|\x - \x^\prime\|$ $\to$ isotropic and stationary.\lz
+\item[\faLightbulbO] Infinitely differentiable $\to$ the corresponding GP is too smooth.\lz
+\item[\faLightbulbO] It utilizes strong smoothness assumptions $\to$ unrealistic for modeling most of the physical processes.
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[c,allowframebreaks]{Upcrossing Rate and Characteristic Length-Scale}
+
+\begin{itemize}
+\item Another way to describe a Gaussian process is the expected number of up-crossings at level-0 on the unit interval, which we denote by $N_0$.
+\vspace{3mm}
+\begin{figure}
+	\includegraphics[width = 0.45\textwidth]{figure/upcrossings-1.pdf}
+\end{figure}
+
+\item For an isotropic covariance function $k(r)$, the expected number of up-crossings can be calculated explicitly:
+$$
+\expectation[N_0] = \frac{1}{2\pi} \sqrt{\frac{- k^{\prime\prime}(0)}{k(0)}}.
+$$
+
+\end{itemize}
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Example (squared exponential):
+\vspace{-3mm}
+\begin{eqnarray*}
+k(r) &=& \exp\biggl(-\frac{r^2}{2\ls^2}\biggr)\\
+k^\prime(r) &=& - k(r) \cdot \frac{r}{\ls^2} \\
+k^{\prime\prime}(r) &=&  k(r) \cdot \frac{r^2}{\ls^4} - k(r) \cdot \frac{1}{\ls^2}
+\end{eqnarray*}
+
+\vspace{5mm}
+The expected number of upcrossings at level-0 is
+
+$$
+\E[N_0] = \frac{1}{2\pi} \sqrt{\frac{- k^{\prime\prime}(0)}{k(0)}} = \frac{1}{2\pi} \sqrt{\frac{1}{\ls^2}} = (2\pi \ls)^{-1}.
+$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$\ls$ is called \textbf{characteristic length-scale}. Loosely speaking, the characteristic length-scale describes how far you need to move in input space for the function values to become uncorrelated. 
+
+\begin{itemize}
+\item[\faLightbulbO] Left plot: for higher $\ls$ the correlation between function values (for unchanged distance of input points) is also higher
+\item[\faLightbulbO] Right plot: a higher $\ls$ induces a smoother function and thus fewer level-0 upcrossings
+\end{itemize}
+
+\vspace{3mm}
+\begin{figure}
+	\includegraphics[width = .8\textwidth]{figure/lengthscale-1.pdf}
+\end{figure}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+For more than $p = 2$ dimensions, the squared exponential can be parameterized as follows:
+
+$$
+k(\xI{i}, \xI{j}) = \variance_f \exp\,\biggl(- \frac{1}{2}\left(\xI{i} - \xI{j}\right)^\top\bm{M}\left(\xI{i} - \xI{j}\right)\biggr)
+$$
+
+\vspace{7mm}
+
+Possible choices for the matrix $\bm{M}$ include
+
+$$
+\bm{M}_1 = \ls^{-2}\id \qquad \bm{M}_2 = \text{diag}(\bm{\ls})^{-2} \qquad \bm{M}_3 = \Gamma \Gamma^\top + \text{diag}(\bm{\ls})^{-2}
+$$
+
+where $\bm{\ls}$ is a $p$-vector of positive values and $\Gamma$ is a $p \times k$ matrix. 
+
+\lz 
+\lz
+
+Here again, $\bm{\ls} = (\ls_1,\dots, \ls_p)$ are characteristic length-scales for each dimension. 
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+What is the benefit of learning an individual hyperparameter $\ls_i$ for each dimension?
+
+\vspace{4mm}
+
+\begin{itemize} 
+\item The $\ls_1,\dots, \ls_p$ hyperparameters play the role of \textbf{characteristic length-scales}.
+\vspace{2mm}
+\item Losely speaking, $\ls_i$ describes how far you need to move along axis $i$ in input space for the function values to be uncorrelated.
+\vspace{2mm}
+\item Such a covariance function implements \textbf{automatic relevance determination} (ARD), since the inverse of the length-scale $\ls_i$ determines the relevancy of input feature $i$ to the regression.
+\vspace{2mm}
+\item If $\ls_i$ is very large, the covariance will become almost independent of that input, effectively removing it from inference.
+\vspace{2mm}
+\item If the features are on different scales, the data can be automatically \textbf{rescaled} by estimating $\ls_1,\dots, \ls_p$ 
+
+\end{itemize}
+
+
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{figure}
+	\includegraphics[width = .8\textwidth]{figure_man/covariance2D.png}
+\end{figure}
+
+\vspace{3mm}
+%\begin{footnotesize}
+For the first plot, we have chosen $\bm{M} = \id$: the function varies the same in all directions. The second plot is for $\bm{M} = \text{diag}(\bm{\ls})^{-2}$ and $\bm{\ls} = \left(1, 3 \right)$: The function varies less rapidly as a function of $x_2$ than $x_1$ as the length-scale for $x_1$ is less. In the third plot $\bm{M} = \Gamma \Gamma^T + \text{diag}(\bm{\ls})^{-2}$ for $\Gamma = (1, -1)^\top$ and $\bm{\ls} = (6, 6)^\top$. Here $\Gamma$ gives the direction of the most rapid variation. (Image from Rasmussen \& Williams, 2006)
+%\end{footnotesize}
+
+
+\end{frame}
+
+\end{document}

@@ -1,0 +1,35 @@
+\input{../latex_main/main.tex}
+
+% Bayesian Optimization SS 2020 macros
+\def\Put(#1,#2)#3{\leavevmode\makebox(0,0){\put(#1,#2){#3}}}
+
+% FH: I created this command videotitle (and file title_slide.tex) to show a new title slide for each video without the need of any repeating boiler plate code. Please do not change this anymore.
+\newcommand{\videotitle}[1]{\subtitle{#1}\input{title_slide}}
+\newcommand{\fhpause}{\pause} % for taping
+
+\title[Speedup Techniques for Hyperparameter Optimization]{Speedup Techniques for Hyperparameter Optimization} % week title
+\author[Frank Hutter]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+%\AtBeginSection[]{}
+
+% for final handout:
+\renewcommand{\videotitle}[1]{\subtitle{#1}\section{#1}\input{title_slide}}
+\renewcommand{\fhpause}{} % for final handout
+\AtBeginSection[]{\begin{frame}{Outline}\bigskip\vfill\tableofcontents[currentsection]\end{frame}}
+
+
+\begin{document}
+	
+\maketitle
+\input{t01_intro.tex}
+\input{t02_meta_learning.tex}
+\input{t03_mf_overview.tex}
+\input{t04_hyperband.tex}	
+\input{t05_bohb}
+\input{t06_mf_bo.tex}
+\input{t07_learning_curve.tex}
+\input{t08_success_stories.tex}
+\input{t99_bibliography.tex}
+\end{document}

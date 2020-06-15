@@ -182,70 +182,68 @@
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{Case study: NASBOT \litw{\href{https://arxiv.org/abs/1802.07191}{Kandasamy et al., NeurIPS 2018}}}{
-
-\centering
-\includegraphics[width=.9\textwidth]{images/nasbot_1.png}
-\myit{
-\footnotesize
-		\item Gaussian Process BO is not that straighforward in non-Euclidian spaces such as the space of neural architectures
-		\myit{
-		\footnotesize
-			\item How to define a kernel (which entails the distance) in the architecture space?
-			\item How to optimize the acquisition function?
-		}
-\pause
-\medskip
-		\item \alert{NASBOT}
-		\myit{
-		\footnotesize
-			\item defines a distance metric based on Optimal Transport (\alert{OTMANN})
-			\item optimizes the acquisition function using \alert{evolution}
-			
-		}		
-}
-
-}
-
-%----------------------------------------------------------------------
-\myframe{Case study: NASBOT \litw{\href{https://arxiv.org/abs/1802.07191}{Kandasamy et al., NeurIPS 2018}}}{
-
-\centering
-
-\begin{columns}
-\column{.6\textwidth}
-\vspace{-7cm}
-\myit{
-		\item The kernel: $\kappa = e^{-\beta d^{p}}$, where $d$ is the OTMANN distance
-		\myit{
-			\item[--] To compute $d$ between two architectures $G_1$, $G_2$: match computation (layer mass) in layers in $G_1$ to $G_2$
-		}
-}
-\pause
-\medskip
-
-\myit{
-	\item $Z \in \mathtt{R}^{n_1 \times n_2}$
-	\myit{
-		\item $Z_{ij} \longleftarrow$ \alert{amount of matched mass} between layer $i\in G_1$ and $j \in G_2$
-	}
-	\medskip
-	\item $d \triangleq \argminA_Z \phi_{lmm}(Z) + \phi_{str}(Z) + \phi_{nas}(Z)$
-	\myit{
-		\item[--] $\phi_{lmm}(Z)$: label mismatch penalty
-		\item[--] $\phi_{str}(Z)$: structural penalty
-		\item[--] $\phi_{nas}(Z)$: non-assignment penalty
-	}
-
-}
-
-\column{.4\textwidth}
-\includegraphics[width=\textwidth]{images/nasbot_2.png}
-
-\end{columns}
-
-}
-%-----------------------------------------------------------------------
+%\myframe{Case study: NASBOT \litw{\href{https://arxiv.org/abs/1802.07191}{Kandasamy et al., NeurIPS 2018}}}{
+%
+%\centering
+%\includegraphics[width=.9\textwidth]{images/nasbot_1.png}
+%\myit{
+%\footnotesize
+%		\item Gaussian Process BO is not that straighforward in non-Euclidian spaces such as the space of neural architectures
+%		\myit{
+%		\footnotesize
+%			\item How to define a kernel (which entails the distance) in the architecture space?
+%			\item How to optimize the acquisition function?
+%		}
+%\pause
+%\medskip
+%		\item \alert{NASBOT}
+%		\myit{
+%		\footnotesize
+%			\item defines a distance metric based on Optimal Transport (\alert{OTMANN})
+%			\item optimizes the acquisition function using \alert{evolution}
+%		}		
+%}
+%
+%}
+%
+%%----------------------------------------------------------------------
+%\myframe{Case study: NASBOT \litw{\href{https://arxiv.org/abs/1802.07191}{Kandasamy et al., NeurIPS 2018}}}{
+%
+%\centering
+%
+%\begin{columns}
+%\column{.6\textwidth}
+%\vspace{-7cm}
+%\myit{
+%		\item The kernel: $\kappa = e^{-\beta d^{p}}$, where $d$ is the OTMANN distance
+%		\myit{
+%			\item[--] To compute $d$ between two architectures $G_1$, $G_2$: match computation (layer mass) in layers in $G_1$ to $G_2$
+%		}
+%}
+%\pause
+%\medskip
+%
+%\myit{
+%	\item $Z \in \mathtt{R}^{n_1 \times n_2}$
+%	\myit{
+%		\item $Z_{ij} \longleftarrow$ \alert{amount of matched mass} between layer $i\in G_1$ and $j \in G_2$
+%	}
+%	\medskip
+%	\item $d \triangleq \argminA_Z \phi_{lmm}(Z) + \phi_{str}(Z) + \phi_{nas}(Z)$
+%	\myit{
+%		\item[--] $\phi_{lmm}(Z)$: label mismatch penalty
+%		\item[--] $\phi_{str}(Z)$: structural penalty
+%		\item[--] $\phi_{nas}(Z)$: non-assignment penalty
+%	}
+%}
+%
+%\column{.4\textwidth}
+%\includegraphics[width=\textwidth]{images/nasbot_2.png}
+%
+%\end{columns}
+%
+%}
+%%-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
 \myframe{Questions to Answer for Yourself / Discuss with Friends}{

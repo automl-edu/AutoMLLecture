@@ -1,31 +1,30 @@
-\videotitle{Introduction to Bayesian Optimization}
+\videotitle{Overview of Bayesian Optimization}
     
 %-----------------------------------------------------------------------
-\myframetop{Global Blackbox Optimization for Hyperparameter Optimization}{
+\myframetop{Global Blackbox Optimization}{
   
     \myit{
         \item Consider the \alert{global optimization problem} of finding: 
         \[\conf^* \in \argmin_{\conf \in \confs} f(\conf)\]
         
-\pause
+\fhpause
         \item In the most general form, function $f$ is a \alert{blackbox function}:
     	\begin{center}
 \scalebox{0.5}{\input{images/intro_images/blackbox_HPO.tex}}
     	\end{center}
     	\myit{
     		\item Only mode of interaction with $f$: querying $f$'s value at a given $\conf$ 
-            \item Function $f$ may not be available in closed form, not differentiable, noisy, etc. 
+            \item Function $f$ may not be available in closed form, not convex, not differentiable, noisy, etc. 
     	}   
 \medskip
-\pause
+\fhpause
 
         \item Today, we'll discuss a \alert{Bayesian} approach for solving such blackbox optimization problems
 \medskip
-\pause
+\fhpause
         \item Blackbox optimization can be used for hyperparameter optimization (HPO)
         \myit{
             \item Define \alert{$f(\conf) := \mathcal{L}( \mathcal{A}_{\conf}, \mathcal{D}_{train}, \mathcal{D}_{valid} )$}
-    \pause
             \item Note: for formulations of HPO that go beyond blackbox optimization, see next lecture
         }
     }
@@ -37,9 +36,9 @@
 %We know that:
 %\begin{itemize}
 %    \item The function $\cost$ is Lipschitz continuous and differentiable.
-%    \pause
+%    \fhpause
 %    \item The minimizer of $\cost$ is in the interval [0,1].
-%    \pause
+%    \fhpause
 %    \item We have observed 3 evaluations of $\cost$.
 %\end{itemize}
 
@@ -243,7 +242,7 @@ General approach
 %	1978}}}{ \myit{
 %		  	\item Efficient in \# function evaluations 
 %		  	\item Works when objective is nonconvex, noisy, has unknown derivatives, etc
-%			\pause
+%			\fhpause
 %			\item Recent convergence results\\ \lit{Srinivas et al, 2010; Bull 2011;
 %			de Freitas et al, 2012; Kawaguchi et al, 2015}
 %			%TODO: sorry, I don't know these papers
@@ -262,9 +261,9 @@ General approach
 %\onslide<2->{
 %	%\includegraphics[width=1\textwidth]{../images/bo.png}
 %	\includegraphics[width=0.9\textwidth]{plots_and_scripts/plots/bo_pic1.png}\\
-%	\pause
+%	\fhpause
 %	\includegraphics[width=0.9\textwidth]{plots_and_scripts/plots//bo_pic2.png}\\
-%	\pause
+%	\fhpause
 %	\includegraphics[width=0.9\textwidth]{plots_and_scripts/plots//bo_pic3.png}\\
 %	\footnotesize{Image source: \lit{\href{https://arxiv.org/abs/1012.2599}{Brochu et al, 2010}}}
 %}
@@ -335,7 +334,7 @@ General approach
         \begin{equation*}
             P(\func \vert \dataset_{1:\bocount}) \propto P(\dataset_{1:\bocount} \vert \func) \times P(\func), \text{~~~~ where } \dataset_{1:\bocount} = \left \{ \conf_{1:\bocount}, \cost(\conf_{1:\bocount}) \right\}
         \end{equation*} 
-\pause
+\fhpause
 \vspace*{-0.5cm}
     \item Meaning of the individual terms:
         \begin{itemize}
@@ -366,14 +365,14 @@ General approach
 \end{column}%
 
 \hfill%
-\pause 
+\fhpause 
 \begin{column}{.48\textwidth}
 
 \begin{block}{Disadvantages}
 \begin{itemize}
   \item Overhead because of model training in each iteration 
   \item Crucially relies on robust surrogate model
-  \item Inherently sequential (in its basic form)
+%  \item Inherently sequential (in its basic form)
 \end{itemize}
 \end{block}
 
@@ -381,6 +380,20 @@ General approach
 \end{columns}
 
 \end{frame}
+
+%-----------------------------------------------------------------------
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+
+\begin{itemize}
+    \item \alert{Repetition.} What is Bayesian about Bayesian optimization?
+\medskip
+    \item \alert{Repetition.} Write down the steps of the BO loop.
+\medskip
+    \item \alert{Discussion.} Can you think of an expensive blackbox optimization problem other than hyperparameter optimization?
+\end{itemize}
+
+\end{frame}
+
 %-----------------------------------------------------------------------
 \begin{frame}[c]{Learning Goals of this Lecture}
 \framesubtitle{After this lecture, students can ...}
@@ -388,7 +401,7 @@ General approach
 \begin{itemize}
     \item Explain the basics of Bayesian optimization
     \item Derive \alert{simple acquisition functions}
-    \item Describe \alert{advanced acquisition functions}
+    \item Describe \alert{complex lookahead acquisition functions}
     \item Describe possible \alert{surrogate models} and their pros and cons 
     \item Discuss the \alert{limits of Bayesian optimization} and extensions to tackle these
 %    \item Describe the \alert{alternative Bayesian optimization approach of TPE}
@@ -406,9 +419,9 @@ General approach
 %    \begin{itemize}
 %        \item Use a probabilistic model with well-calibrated uncertainty predictions.
 %    \end{itemize}
-%    \pause
+%    \fhpause
 %    \item Define a utility function to guide the search for new data points.
-%    \pause
+%    \fhpause
 %    \item Use the optimization of the utility function as a decision procedure to provide inference on where to evaluate next.
 %
 %\end{itemize}

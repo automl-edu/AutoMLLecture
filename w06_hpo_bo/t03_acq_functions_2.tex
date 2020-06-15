@@ -125,9 +125,9 @@ fit at iteration $\bocount$}
     \end{split}
     \]
 %\bigskip 
-%\pause
+%\fhpause
 %    \item Approximating the expectation is the expensive step; for an efficient approach, see \lit{\href{https://arxiv.org/pdf/1807.02811.pdf}{Frazier 2018}}
-\pause
+\fhpause
 \bigskip
 \[
     \boxed{\text{Choose}\;\;\bonextsample = \argmax_{\conf\in\pcs}(\iter{\acq}_{KG}(\conf))}
@@ -174,7 +174,7 @@ fit at iteration $\bocount$}
 \end{algorithm}
 \end{minipage}
 
-\pause
+\fhpause
 \bigskip
 This sampling view is useful for intuition;\\ but in practice, there are more efficient ways to optimize KG \lit{\href{https://arxiv.org/pdf/1807.02811.pdf}{Frazier 2018}}
 
@@ -187,12 +187,12 @@ This sampling view is useful for intuition;\\ but in practice, there are more ef
 \begin{itemize}
     \item Key idea: Evaluate $\conf$ which most \alert{reduces our uncertainty about the location of $\optconf$}
 \bigskip    
-\pause    
-    \item We'll use the $p_{min}$ distribution to characterize the location of $\optconf$: \alert{\[p_{min}(\conf^*|\dataset) = p(\conf^* \in \argmin_{\conf' \in \pcs} (\surro(\conf') | \dataset))\]}
+\fhpause    
+    \item We'll use the $p_{min}$ distribution to characterize the location of $\optconf$: \alert{\[p_{min}(\conf|\dataset) = p(\conf \in \argmin_{\conf' \in \pcs} (\surro(\conf') | \dataset))\]}
 \medskip
-\pause
+\fhpause
     \item Our uncertainty is then captured by the \alert{entropy $H( p_{min}(\cdot |\dataset))$ of the $p_{min}$ distribution}
-\pause
+\fhpause
 \bigskip    
     \item Minimizing $H( p_{min}(\cdot |\dataset))$ yields a peaked $p_{min}$ distribution, i.e., strong knowledge about the location of $\optconf$
     
@@ -254,10 +254,10 @@ This sampling view is useful for intuition;\\ but in practice, there are more ef
 
     \item The $p_{min}$ distribution characterizes the location of $\optconf$: \alert{\[p_{min}(\conf^*|\dataset) = p(\conf^* \in \argmin_{\conf' \in \pcs} (\surro(\conf') | \dataset))\]}
 \smallskip
-\pause
+\fhpause
     \item Our uncertainty about the location of $\optconf$ is captured by the \alert{entropy $H( p_{min}(\cdot |\dataset))$ of the $p_{min}$ distribution}
 \bigskip    
-\pause
+\fhpause
 \item \alert{Entropy search aims to minimize $H(p_{min})$}, to yield a peaked $p_{min}$ distribution:
     %, i.e., strong knowledge about the location of $\optconf$:
     
