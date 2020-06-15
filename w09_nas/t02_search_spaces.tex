@@ -65,7 +65,7 @@ Source: \lit{\href{http://openaccess.thecvf.com/content_cvpr_2018/html/Zoph_Lear
 %----------------------------------------------------------------------
 \myframe{Pros and Cons of Cell Search Space}{
 \centering
-What are some pros and cons of the cell search space compared to the chain-structured one?\\~\\
+What are some pros and cons of the cell search space compared to the basic one?\\~\\
 Please think about this for a few minutes before continuing.
 }
 %----------------------------------------------------------------------
@@ -130,13 +130,51 @@ Please think about this for a few minutes before continuing.
 %----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
+\myframe{Pros and Cons of Hierarchical Search Space}{
+\centering
+What are some pros and cons of a hierarchical search space compared to the cell search space?\\~\\
+Please think about this for a few minutes before continuing.
+}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\myframe{Pros and Cons of Hierarchical Search Space}{
+	\centering
+	\alert{Pros:}
+	\begin{itemize}
+		\item \alert{Flexibility} of \alert{constructing building blocks and reusing them many times}
+		\myit{
+			\item like a cell search space
+		}
+		\item \alert{Flexibility} of using different building blocks in different parts of the network
+		\myit{
+			\item like a basic search space
+		}
+		\item Ability to \alert{reuse building blocks at various levels of abstraction}
+		\myit{
+			\item again, this pattern has been used in manual design, e.g., in Inception nets
+		}
+	\end{itemize}
+	\pause
+	\bigskip
+	\alert{Cons:}
+	\begin{itemize}
+		\item \alert{Larger} than cell search space
+		\item Vastly more expressive than cell search space $\rightarrow$ \alert{potentially much harder to search}
+	\end{itemize}
+}
+%----------------------------------------------------------------------
+
+
+%----------------------------------------------------------------------
 \myframe{Questions to Answer for Yourself / Discuss with Friends}{
 
 	\myit{
-		\item Repetition:\\ \alert{What are some pros and cons of the cell search space compared to the chain-structured one?
-}
+		\item Repetition:\\ \alert{What are some pros and cons of the cell search space compared to the basic one?}
+\bigskip
+		\item Repetition:\\ \alert{Explain the way in which level-3 motivs in the hierarchical search space use level-2 motivs.}
 \medskip
-		\item Discussion:\\ \alert{What are some pros and cons of the hierarchical search space compared to the other ones?}
+		\item Repetition:\\ \alert{What are some pros and cons of the hierarchical search space compared to the other ones?}
 	}	 
 }
 %-----------------------------------------------------------------------
