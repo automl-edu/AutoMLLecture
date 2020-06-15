@@ -1,11 +1,47 @@
-\renewcommand{\lecturetitle}{Motivation and Overview}
-\renewcommand{\lecturetime}{Week 9, Video 1}
-\section{\lecturetitle}
+\videotitle{Overview}
+
 %-------------------------------------------------
 %-------------------------------------------------
 
+
 %-----------------------------------------------------------------------
-\myframe{Motivation for Neural Architecture Search}{
+\myframe{Neural Architecture Search (NAS)}{
+
+	\myit{
+		\item Goal: \alert{automatically find neural architectures with strong performance}
+		\myit{
+			\item Optionally, subject to a resource constraint 
+	    }
+	}
+
+	\begin{columns}
+%	\column{0.0\textwidth}
+	\column{0.6\textwidth}
+\bigskip
+	\vspace*{-0.5cm}
+		\myit{
+			\onslide<2->{
+				\item A decade-old problem, but main stream since 2017 and now intensely researched
+			  	\item One of the main problems AutoML is known for
+			}
+\bigskip
+			\onslide<3->{
+			  \item Initially extremely expensive
+			  \item By now several methods promise low overhead over a single model training
+			}
+		}
+	\column{0.37\textwidth}
+		\onslide<2->{
+			~\\
+			\includegraphics[width=.9\textwidth]{images/NAS-papers.png}
+			~\\
+			}
+	\end{columns}
+}
+%-----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+\myframe{Motivation for NAS}{
 
 	\centering
 	\begin{itemize}
@@ -24,11 +60,11 @@
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframetop{Motivation for Neural Architecture Search}{
+\myframetop{Motivation for NAS}{
 
 \begin{itemize}
 	\item Manual design of architectures is \alert{time consuming}
-	\item Complex state-of-the-art architectures are a result of \alert{years of trial} and errors by experts.
+	\item Complex state-of-the-art architectures are a result of \alert{years of trial} and errors by experts
 \end{itemize}
 
 \centering
@@ -42,13 +78,13 @@
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframetop{Motivation for Neural Architecture Search}{
+\myframetop{Motivation for NAS}{
 
 \begin{itemize}
 	\item Manual design of architectures is \alert{time consuming}
-	\item Complex state-of-the-art architectures are a result of \alert{years of trial} and errors by experts.
+	\item Complex state-of-the-art architectures are a result of \alert{years of trial} and errors by experts
 	\begin{itemize}
-		\item[-] Main pattern: Repeated blocks with same structure (topology).
+		\item[-] Main pattern: Repeated blocks with same structure (topology)
 	\end{itemize}
 \end{itemize}
 \bigskip
@@ -154,7 +190,7 @@
 
 \begin{itemize}
 	\item \alert{Search Space:} the types of architectures we consider; micro, macro, hierarchical, etc.
-	\item \alert{Search Strategy:} RL, ES, BO, gradient-based, etc.
+	\item \alert{Search Strategy:} Reinforcement learning, evolutionary strategies, \\ Bayesian optimization, gradient-based, etc.
 	\item \alert{Performance Estimation Strategy:} validation performance, \\ lower fidelity estimates, one-shot model performance, etc.
 \end{itemize}
 
@@ -166,13 +202,10 @@
 \myframe{Questions to Answer for Yourself / Discuss with Friends}{
 
 	\myit{
-		\item Repetition:\\ \alert{For the most common NAS search space, how important is the NAS component
-		compared to the importance of the training pipeline used?}\medskip
-\medskip
 %		\item Repetition:\\ \alert{How are the weights optimized in neuroevolution?}
 		\item Repetition:\\ \alert{List three major components of NAS methods.}
 \medskip
-		\item Discussion:\\ \alert{Which problems would you like to apply NAS to?}
+		\item Discussion:\\ \alert{Is there a problem for which you would like to apply NAS yourself?}
 	}	 
 }
 %-----------------------------------------------
