@@ -1,4 +1,4 @@
-\renewcommand{\lecturetitle}{Reproducibility and Benchmarks in NAS}
+\renewcommand{\lecturetitle}{Issues and Best Practices in NAS Research}
 \renewcommand{\lecturetime}{Week 9, Video 4}
 \section{\lecturetitle}
 %-------------------------------------------------
@@ -9,8 +9,11 @@
 \myframe{Issues in NAS Research \& Evaluations}{
 
 	\begin{columns}[T]
-	\column{0.50\textwidth}
+	\column{0.56\textwidth}
 	\begin{itemize}
+	  
+	  
+	  \item Most NAS methods are \alert{extremely difficult to reproduce and compare} \lit{\href{https://arxiv.org/pdf/1902.07638.pdf}{Li \& Talwalkar, 2019}}
 	  \item For benchmarks used in almost all NAS papers:
 	  \myit{
 	  	\item[-] \alert{Training pipeline matters much more than neural architecture}
@@ -24,14 +27,14 @@
 		  	\item[-] Different evaluation schemes
 		  }
 	  }
-\bigskip
+\medskip
 	  \onslide<3->{
 	  	\item[$\rightarrow$] We emphasize \alert{concepts}, not published performance numbers
 	  }
 	\end{itemize}
 		
 	\column{0.02\textwidth}
-	\column{0.48\textwidth}
+	\column{0.42\textwidth}
 		\includegraphics[width=.8\textwidth]{images/nas-eval-is-frustatingly-hard}\\
 		\centering
 		\href{https://openreview.net/forum?id=HygrdpVKvr}{\lit{Yang et al., ICLR 2020}}
@@ -68,22 +71,22 @@
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{Reproducibility crisis in NAS and the necessity of NAS benchmarks}{
+\myframe{Best Practice Checklist for NAS Research \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}{
 
 \myit{
-	\item \textit{\color{red}{Problem:}} Most NAS methods we saw so far are \alert{extremely difficult to reproduce and compare} (see \lit{\href{https://arxiv.org/pdf/1902.07638.pdf}{Li \& Talwalkar, 2019}; \href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}) due to:
+	\item Best practices for releasing code
 	\myit{
-		\item[--] Different search spaces
-		\item[--] Different training pipelines
-		\item[--] Other confounding factors, such as different hardwares, different deep learning library versions, etc.
-		\item[--] Industry-scale computational resources are not accessible to everyone	
-		\item[--] No publicly available code
-	}
+		\item Code for the training pipeline used to evaluate the final architectures
+		\item Code for the search space
+		\item Code for your NAS method
 \pause
-\medskip
-	\item \textit{\color{red}{Solution:}} A benchmark for NAS methods
+		\item Hyperparameters used for the final evaluation pipeline, as well as random seeds
+		\item Hyperparameters for your NAS method, as well as random seeds
+	} 
+\pause
+\bigskip
+	\item Note that the easiest way to satisfy the first three is to use existing NAS benchmarks
 }
-
 
 \begin{center}
 \begin{minipage}{0.8\textwidth}
@@ -97,10 +100,94 @@
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{NAS-Bench-101: The first NAS benchmark \litw{\href{http://proceedings.mlr.press/v97/ying19a.html}{Ying et al, 2018}}}{
+\myframe{Best Practice Checklist for NAS Research \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}{
+
+\myit{
+	\item Best practices for comparing NAS methods
+	\myit{
+		\item For all NAS methods you compare, did you use exactly the same NAS bench-
+mark, including the same dataset (with the same training-test split), search
+space and code for training the architectures and hyperparameters for that
+code?
+\pause
+		\item Did you control for confounding factors (different hardware, versions of DL
+libraries, different runtimes for the different methods)?
+\pause
+		\item Did you run ablation studies?
+\pause
+		\item Did you use the same evaluation protocol for the methods being compared?
+\pause
+		\item Did you compare performance over time?
+\pause
+		\item Did you compare to random search?
+\pause
+		\item Did you perform multiple runs of your experiments and report seeds?
+\pause
+		\item Did you use tabular or surrogate benchmarks for in-depth evaluations?
+	}
+}
+}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\myframe{Best Practice Checklist for NAS Research \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}{
+
+\myit{
+	\item Best practices for reporting important details
+	\myit{
+		\item Did you report how you tuned hyperparameters, and what time and resources
+this required?
+\pause
+		\item Did you report the time for the entire end-to-end NAS method
+(rather than, e.g., only for the search phase)?
+\pause
+		\item Did you report all the details of your experimental setup?
+	}
+
+\pause
+\bigskip
+	\item It might not always be possible to satisfy all these best practices, but being aware of them is the first step \ldots 
+
+}
+}
+%-----------------------------------------------------------------------
+
+
+%%----------------------------------------------------------------------
+%\myframe{Reproducibility crisis in NAS and the necessity of NAS benchmarks}{
+%
+%\myit{
+%	\item \textit{\color{red}{Problem:}} Most NAS methods we saw so far are \alert{extremely difficult to reproduce and compare} (see \lit{\href{https://arxiv.org/pdf/1902.07638.pdf}{Li \& Talwalkar, 2019}; \href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}) due to:
+%	\myit{
+%		\item[--] Different search spaces
+%		\item[--] Different training pipelines
+%		\item[--] Other confounding factors, such as different hardware, different deep learning library versions, etc.
+%		\item[--] Industry-scale computational resources are not accessible to everyone	
+%		\item[--] No publicly available code
+%	}
+%\pause
+%\medskip
+%	\item \textit{\color{red}{Solution:}} A benchmark for NAS methods
+%}
+%
+%
+%\begin{center}
+%\begin{minipage}{0.8\textwidth}
+%\begin{block}{Definition: NAS Benchmark \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}
+%\textit{A NAS benchmark consists of a dataset (with a predifiend training-test split), a search space, and available runnable code with pre-defined hyperparameters for %training the architectures.}
+%\end{block}
+%\end{minipage}
+%\end{center}
+%}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\myframe{NAS-Bench-101: The First NAS Benchmark \litw{\href{http://proceedings.mlr.press/v97/ying19a.html}{Ying et al, 2018}}}{
 
 \centering
 \myit{
+	\item Dataset: CIFAR-10, with the standard training/test split
+	\item Runnable open-source code provided in Tensorflow
 	\item Cell-structured search space consisting of all directed acyclic graphs (DAGs) \\ on $V$ nodes, where each possible node has $L$ operation choices.
 	\pause
 	\item To limit the number of architectures, NAS-Bench-101 has the following constraints:
@@ -119,13 +206,13 @@
 	}
 }
 
-\includegraphics[width=.5\textwidth]{images/nasbench101_graph.png}
+\includegraphics[width=.4\textwidth]{images/nasbench101_graph.png}
 
 }
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{NAS-Bench-101: The first NAS benchmark \litw{\href{http://proceedings.mlr.press/v97/ying19a.html}{Ying et al, 2018}}}{
+\myframe{NAS-Bench-101: The First Tabular NAS Benchmark \litw{\href{http://proceedings.mlr.press/v97/ying19a.html}{Ying et al, 2018}}}{
 
 \centering
 \myit{
@@ -199,6 +286,9 @@
 \bigskip
 		\item Repetition:\\
 		\alert{What does a NAS benchmark subsume?}
+\bigskip
+		\item Repetition:\\
+		\alert{List all best practices for NAS you remember.}
 	}	 
 }
 %-----------------------------------------------------------------------
