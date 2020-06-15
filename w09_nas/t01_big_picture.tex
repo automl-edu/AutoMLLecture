@@ -70,68 +70,6 @@
 }
 %-----------------------------------------------------------------------
 
-%-----------------------------------------------------------------------
-\myframe{Meta-Remark: Issues in NAS Research \& Evaluations}{
-
-	\begin{columns}[T]
-	\column{0.50\textwidth}
-	\begin{itemize}
-	  \item For benchmarks used in almost all NAS papers:
-	  \myit{
-	  	\item[-] \alert{Training pipeline matters much more than neural architecture}
-	  }
-\bigskip
-	  \onslide<2->{
-		  \item The final benchmark results reported in different papers are typically \alert{incomparable}
-		  \myit{
-		  	\item[-] \alert{Different training code\\ (often unavailable)}
-		  	\item[-] \alert{Different search spaces}
-		  	\item[-] Different evaluation schemes
-		  }
-	  }
-\bigskip
-	  \onslide<3->{
-	  	\item[$\rightarrow$] We will emphasize \alert{concepts}, not published performance numbers
-	  }
-	\end{itemize}
-		
-	\column{0.02\textwidth}
-	\column{0.48\textwidth}
-		\includegraphics[width=.8\textwidth]{images/nas-eval-is-frustatingly-hard}\\
-		\centering
-		\href{https://openreview.net/forum?id=HygrdpVKvr}{\lit{Yang et al., ICLR 2020}}
-	\end{columns}
-	
-}
-%-----------------------------------------------------------------------
-
-%-----------------------------------------------------------------------
-\myframe{Meta-Remark: Building a Scientific Community for NAS}{
-
-	\myit{
-	  \item \alert{Benchmarks}
-	  \myit{
-	  	\item[-] NAS-Bench-101 \href{https://arxiv.org/pdf/1902.09635.pdf}{\lit{Ying et al, ICML 2019}}
-	  	\item[-] NAS-Bench-201 \href{https://openreview.net/forum?id=HJxyZkBKDr}{\lit{Dong et al, ICML 2020}}
-	  	\item[-] NAS-Bench-1Shot1 \href{https://openreview.net/forum?id=SJx9ngStPH}{\lit{Zela et al, ICLR 2020}}
-	  }
-\medskip
-\pause
-	  \item \alert{Best Practice Checklist} for Scientific Research in NAS\\ \href{https://arxiv.org/abs/1909.02453}{\lit{Lindauer \& Hutter, arXiv 2019}}
-\medskip
-\pause
-	  \item \alert{Unifying open-source implementation} of modern NAS algorithms \\ \href{https://openreview.net/forum?id=SJx9ngStPH}{\lit{Zela et al, ICLR 2020}}
-	  \myit{
-	  	\item[-] Finally enables empirical comparisons without confounding factors	  	
-	  }
-\medskip
-\pause
-	  \item \alert{\href{https://sites.google.com/view/nas2020}{First NAS workshop}} at ICLR 2020
-	  
-	}
-}
-%-----------------------------------------------------------------------
-
 %----------------------------------------------------------------------
 %\myframe{Brief history and early approaches}{
 %\centering
