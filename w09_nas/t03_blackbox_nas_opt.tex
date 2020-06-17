@@ -1,7 +1,103 @@
 \videotitle{Blackbox Optimization Methods}
 
-%-------------------------------------------------
-%-------------------------------------------------
+%--------------------------------------------g-----
+
+
+\myframe{NAS as Hyperparameter Optimization}{
+	\myit{
+		\item \alert{NAS can be formulated as a HPO problem}
+	}
+\medskip
+
+\begin{columns}[T]
+\column{0.00\textwidth}
+\column{0.73\textwidth}
+	\myit{
+		\item E.g., cell search space by \lit{\href{http://openaccess.thecvf.com/content_cvpr_2018/html/Zoph_Learning_Transferable_Architectures_CVPR_2018_paper.html}{Zoph et al. 2018}} \\ has 5 categorical choices per block
+		
+		\myit{
+			\item 2 categorical choices of hidden states
+			\myit{
+				\item For block $N$, the domain of these categorical variables is $\{h_i, h_{i-1}, \text{output of block } 1, ..., \text{output of block } N-1\}$
+			}
+			\item 2 categorical variables choosing between operations
+			\item 1 categorical variable choosing the combination method
+			\item Total number of hyperparameters for the cell: \\ 5B (with B=5 by default)
+		}
+	}
+\column{0.27\textwidth}
+	\includegraphics[width=\textwidth]{images/nasnet_reduce.png}
+\end{columns}
+
+\pause
+\vspace*{-1.5cm}
+	\myit{
+		\item \alert{In general: one may require conditional hyperparameters}
+		\myit{
+			\item E.g., chain-structured search space
+			\myit{
+				\item Top-level hyperparameter: number of layers L
+				\item Hyperparameters of layer k conditional on L $\ge$ k
+			}
+		}
+		
+	}
+}
+%-----------------------------------------------------------------------
+
+
+
+
+
+\myframe{Early NAS Methods}{
+	\myit{
+		\item \alert{Neuroevolution} (already since the 1990s) 
+		\lit{\href{https://www.complex-systems.com/abstracts/v04_i04_a06/}{Kitano 1990}; \href{http://www.demo.cs.brandeis.edu/papers/ieeenn.pdf}{Angeline et al. 1994}; \href{http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf}{Stanley and Miikkulainen, 2002}; 
+		\href{http://people.idsia.ch/~juergen/icann2009bayer.pdf}{Bayer et al, 2009};
+		\href{https://link.springer.com/article/10.1007/s12065-007-0002-4}{Floreano et al. 2008}}
+		\myit{
+			\item Evolves architectures \& often also their weights
+			\item Typical approach: 
+			\myit{
+				\item Initialize a population of $N$ random architectures
+				\item Sample $N$ individuals from that population (with replacement) according to their fitness
+				\item Apply mutations to those $N$ individuals to produce the next generation's population
+			}
+			\item Mutations include adding, changing or removing a layer
+		}
+	}
+
+\bigskip
+\pause
+
+	\myit{
+		\item \alert{Bayesian optimization} (since 2013)
+		\myit{
+			\item With TPE: 
+			\myit{
+				\item \alert{Joint optimization of a vision architecture with 238 hyperparameters} \lit{\href{http://proceedings.mlr.press/v28/bergstra13.pdf}{Bergstra et al, 2013}}
+			}
+			\item With SMAC: joint architecture and hyperparameter search, yielding 
+			\myit{
+				\item \alert{New state-of-the-art performance on CIFAR-10 w/o data augmentation} \lit{\href{https://ml.informatik.uni-freiburg.de/papers/15-IJCAI-Extrapolation_of_Learning_Curves.pdf}{Domhan et al. 2015}}
+				\item \alert{First Auto-DL system to win competition dataset against human experts} \lit{\href{https://ml.informatik.uni-freiburg.de/papers/16-AUTOML-AutoNet.pdf}{Mendoza et al. 2016}}
+			}
+			\item With Gaussian processes: 
+			\myit{
+				\item Arc kernel \lit{\href{https://ml.informatik.uni-freiburg.de/papers/13-BayesOpt_Arc-Kernel.pdf}{Swersky et al, 2013}}
+			}
+		}
+	}
+}
+%-----------------------------------------------------------------------
+
+
+
+
+
+
+
+
 \myframe{Reinforcement Learning \litw{\href{https://arxiv.org/abs/1611.01578}{Zoph \& Le, 2017}}}{
 
 {\begin{center}
@@ -10,7 +106,7 @@
 }
 \medskip
 \begin{itemize}
-	\item Use RNN ("\alert{Controller}") to generate a NN architecture piece-by-piece
+	\item Use RNN (``\alert{Controller}'') to generate a NN architecture piece-by-piece
 	\item Train this NN ("\alert{Child Network}") and evaluate it on a validation set
 	\item Use \alert{Reinforcement Learning (RL)} to update the parameters of the Controller 
 	RNN to optimize the performance of the child models
@@ -57,7 +153,7 @@
 
 %----------------------------------------------------------------------
 
-\myframetop{Learning CNN cells with RL \litw{\href{http://openaccess.thecvf.com/content_cvpr_2018/html/Zoph_Learning_Transferable_Architectures_CVPR_2018_paper.html}{Zoph et al. ’18}}}{
+\myframetop{Learning CNN cells with RL \litw{\href{http://openaccess.thecvf.com/content_cvpr_2018/html/Zoph_Learning_Transferable_Architectures_CVPR_2018_paper.html}{Zoph et al. 2018}}}{
 	\centering
 	
 	\begin{itemize}
@@ -81,7 +177,7 @@
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-\myframetop{NAS as Hyperparameter Optimization}{
+\myframetop{Learning CNN cells with evolution \litw{\href{https://arxiv.org/abs/1802.01548}{Real et al, 2019}}}{
 	\begin{itemize}
 		\item 2 types of cells: normal and reduction cells
 		\item For each type of cell: $B$ blocks, each with 5 choices
@@ -95,28 +191,29 @@
 	\bigskip
 	
 	\begin{itemize}
-	  \item This can be modelled as a HPO problem with 2$\times$5$\times$B variables:
+	  \item Evolution simply tackles this as a HPO problem with 2$\times$5$\times$B variables:
 	\end{itemize}
-	~~~~~~\hspace*{0.08cm}\includegraphics[width=0.613\textwidth]{images/NAS-RL-space_as_HPO}
+	~~~~~~~~\vspace*{0.20cm}\includegraphics[width=0.616\textwidth]{images/NAS-RL-space_as_HPO}
 	
 }
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
-\myframe{Evolution}{
+%\myframe{Evolution}{
+%
+%\centering
+%\begin{enumerate}
+%	\footnotesize
+%	\item Initialize a \alert{population} of randomly sampled architectures.
+%	\item Sample pairs and select the architecture to mutate based on the \emph{fitness} function (e.g. validation error). \alert{Remove} the other from the population.
+%	\item Apply \alert{mutation} steps to the selected architecture, such as adding, changing or removing a layer. Add the new child architecture to the population. \lit{\href{https://arxiv.org/abs/1703.01041}{Real et al. 2017}; \href{https://openreview.net/forum?id=BJQRKzbA-}{Liu et al. 2017}; \href{https://arxiv.org/pdf/1703.00548.pdf}{Miikkulainen et al. 2017}}
+%\end{enumerate}
+%
+%\includegraphics[width=.7\textwidth]{images/neuroevolution.png}\\
+%}
+% Narrative: One approach that has been used to search in such NAS spaces is Neuroevolution. This has already been studied since the 1990s in the Neuroevolution literature. Typically, it optimized both the architecture and the weights of the neural network with evolutionary methods. For example, it used a mutation step, such as adding layers or changing a layer or removing a layer. In this visualization here, you can see that you start with a pretty simple network and then over time the network gets more complicated and at the end you actually get a fairly complicated and well performing model. In the meantime, people have realized that for optimizing the weights of the neural network, the evolutionary methods are not typically competitive. If you have supervised learning and you have clean gradients, then to optimize in the space of potentially millions of different weights, stochastic gradient descent is just far better than evolutionary methods. So nowadays, the typical evolution methods would only use evolution for the architecture and not for the weights. For the weights, you would use the same type of black-box optimization that has been used for RL.
 
-\centering
-\begin{enumerate}
-	\footnotesize
-	\item Initialize a \alert{population} of randomly sampled architectures.
-	\item Sample pairs and select the architecture to mutate based on the \emph{fitness} function (e.g. validation error). \alert{Remove} the other from the population.
-	\item Apply \alert{mutation} steps to the selected architecture, such as adding, changing or removing a layer. Add the new child architecture to the population. \lit{\href{https://arxiv.org/abs/1703.01041}{Real et al. 2017}; \href{https://openreview.net/forum?id=BJQRKzbA-}{Liu et al. 2017}; \href{https://arxiv.org/pdf/1703.00548.pdf}{Miikkulainen et al. 2017}}
-\end{enumerate}
-
-\includegraphics[width=.7\textwidth]{images/neuroevolution.png}\\
-
-}
 %----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
@@ -124,28 +221,26 @@
 
 \centering
 \begin{itemize}
-	\footnotesize
-	\item Standard evolutionary algorithm, but oldest solutions are dropped from
-	population, instead of the worst.
-	\item \alert{Evolution only for architectures; standard SGD for training weights}
-	\item \alert{Same fixed-length (HPO) search space} as used for RL \lit{\href{http://openaccess.thecvf.com/content_cvpr_2018/html/Zoph_Learning_Transferable_Architectures_CVPR_2018_paper.html}{Zoph et al. ’18}}
+	\item Quite standard evolutionary algorithm
+	\myit{
+		But oldest solutions are dropped from population, instead of the worst
+	}
+	\item Standard SGD for training weights (\alert{optimizing the same blackbox as RL})
+	\item \alert{Same fixed-length (HPO) search space} as used for RL \lit{\href{http://openaccess.thecvf.com/content_cvpr_2018/html/Zoph_Learning_Transferable_Architectures_CVPR_2018_paper.html}{Zoph et al. 2018}}
 \end{itemize}
 
 \bigskip
 \begin{columns}[T]
 
-\column{0.4\textwidth}
-\onslide<2->{
+\column{0.36\textwidth}
 \centering
 \includegraphics[width=\textwidth]{images/aging_evolution_mutations.png}
 \footnotesize{Different types of mutations in cell search space}
-}
-\column{0.4\textwidth}
-\onslide<3->{
+\pause
+\column{0.36\textwidth}
 \centering
 \includegraphics[width=.9\textwidth]{images/aging_evolution_results.png}
-\footnotesize{State-of-the-art performance in apples-to-apples comparison\\ $\rightarrow$ \alert{AmoebaNet}}
-}
+\footnotesize{\alert{State-of-the-art performance in apples-to-apples comparison}\\ $\rightarrow$ \alert{AmoebaNet}}
 \end{columns}
 
 }
@@ -156,15 +251,29 @@
 	\myit{
 		\item Encode the architecture as a vector space (like regularized evolution)
 		\lit{\href{http://proceedings.mlr.press/v28/bergstra13.pdf}{Bergstra et al. 2013}, \href{https://ml.informatik.uni-freiburg.de/papers/15-IJCAI-Extrapolation_of_Learning_Curves.pdf}{Domhan et al. 2015}, \href{https://ml.informatik.uni-freiburg.de/papers/16-AUTOML-AutoNet.pdf}{Mendoza et al. 2015}, \href{https://arxiv.org/abs/1807.06906}{Zela et al. 2018}}
+	}
 \pause
-\medskip
-		\item Joint optimization of architecture and hyperparameters, already in Auto-Net \lit{\href{https://ml.informatik.uni-freiburg.de/papers/16-AUTOML-AutoNet.pdf}{Mendoza et al. 2016}}
+%\medskip
+\begin{columns}[T]
+\column{0.00\textwidth}
+\column{0.73\textwidth}
+	\myit{
+		\item Auto-Net \lit{\href{https://ml.informatik.uni-freiburg.de/papers/16-AUTOML-AutoNet.pdf}{Mendoza et al. 2016}}
 		\myit{
-			\item[-] Based on BO with a random forest model (SMAC \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al, 2011}}) 
-			\item[-] \alert{First automated deep learning (Auto-DL) method to win a machine learning competition dataset against human experts}
+			\item Using BO with a random forest model (SMAC \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al, 2011}}) 
+			\item Already won several datasets against human experts
+			\myit{
+				\item E.g., human action recognition data set in 2015: 54491 data points, 5000 features, 18 classes 
+				\item \alert{First automated deep learning (Auto-DL) method to win a machine learning competition dataset against human experts}
+			}
 		}
+	}
+\column{0.27\textwidth}
+\includegraphics[width=.9\textwidth]{images/autonet-performance-competition.png}
+\end{columns}
 \pause
 \medskip
+	\myit{
 		\item Kernels for GP-based NAS
 		\myit{
 			\item[-] Arc kernel \lit{\href{https://ml.informatik.uni-freiburg.de/papers/13-BayesOpt_Arc-Kernel.pdf}{Swersky et al, 2013}}
@@ -180,6 +289,30 @@
 	}
 }
 %-----------------------------------------------------------------------
+
+
+%----------------------------------------------------------------------
+\myframe{Current State of the Art: Differential Evolution}{
+	\myit{
+		\item Comprehensive experiments on a wide range of 12 different NAS benchmarks\\
+		\lit{\href{https://drive.google.com/file/d/1kxhLeXnwiAkarkXU15GrU3vyodKETWQw/view?usp=sharing}{Awad, Mallik and Hutter, AutoML 2020}} 
+\bigskip
+		\item Results:
+		\myit{
+			\item \alert{Regularized evolution is very robust}, typically amongst best of the methods discussed so far
+			\item Evolution variant of \alert{differential evolution is yet better}; most efficient and robust method
+		}
+	}	 
+\begin{center}
+\includegraphics[width=.9\textwidth]{images/DE_results_NB101.png}
+\end{center}	
+	
+%	\myit{
+%		\item Possible explanation: quite greedy method, locality in the search space
+%	}
+}
+%-----------------------------------------------------------------------
+
 
 %----------------------------------------------------------------------
 %\myframe{Case study: NASBOT \litw{\href{https://arxiv.org/abs/1802.07191}{Kandasamy et al., NeurIPS 2018}}}{
@@ -260,7 +393,10 @@
 \medskip
 		\item Discussion:\\ \alert{Given enough resources, will blackbox NAS approaches always improve performance?}
 \medskip
-		\item Discussion:\\ \alert{Why does discarding the oldest individual (rather than the worst) help in Regularized/Aging evolution?}
+		\item Discussion:\\ \alert{Why does discarding the oldest individual (rather than the worst) help in regularized/aging evolution?}
+\medskip
+		\item Transfer:\\ 
+		\alert{How would you write NAS with the hierarchical search space as a HPO problem?}
 	}	 
 }
 %-----------------------------------------------------------------------
