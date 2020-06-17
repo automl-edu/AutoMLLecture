@@ -76,10 +76,11 @@
 	\item Best practices for releasing code
 	\myit{
 		\item Code for the training pipeline used to evaluate the final architectures
-		\item Code for the search space
-		\item Code for your NAS method
-\pause
 		\item Hyperparameters used for the final evaluation pipeline, as well as random seeds
+		\item Code for the search space
+\medskip
+\pause
+		\item Code for your NAS method
 		\item Hyperparameters for your NAS method, as well as random seeds
 	} 
 \pause
@@ -104,10 +105,9 @@
 \myit{
 	\item Best practices for comparing NAS methods
 	\myit{
-		\item For all NAS methods you compare, did you use exactly the same NAS bench-
-mark, including the same dataset (with the same training-test split), search
-space and code for training the architectures and hyperparameters for that
-code?
+		\item For all NAS methods you compare, did you use exactly the same NAS benchmark, 
+		including the same dataset (with the same training-test split), search space and code 
+		for training the architectures and hyperparameters for that code?
 \pause
 		\item Did you control for confounding factors (different hardware, versions of DL
 libraries, different runtimes for the different methods)?
@@ -147,7 +147,22 @@ this required?
 \bigskip
 	\item It might not always be possible to satisfy all these best practices, but being aware of them is the first step \ldots 
 
+
+\bigskip
+\pause
+	\item We believe the community would benefit a lot from:
+	\myit{
+		\item Clean NAS benchmarks for new applications
+		\myit{
+			\item Including all details for the application. No need to also develop a new method.
+		}
+		\item Open-source library of NAS methods to compare methods without confounding factors
+		\myit{
+			\item First version already developed: NASlib \lit{Zela et al, under review}
+		}
+	}
 }
+
 }
 %-----------------------------------------------------------------------
 
@@ -287,7 +302,7 @@ this required?
 		\alert{Why do we need proper benchmarking of NAS algorithms?}
 \bigskip
 		\item Repetition:\\
-		\alert{What does a NAS benchmark subsume?}
+		\alert{What does a NAS benchmark consist of?}
 \bigskip
 		\item Repetition:\\
 		\alert{List all best practices for NAS you remember.}
