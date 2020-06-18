@@ -1,0 +1,86 @@
+%\videotitle{One-shot Neural Architecture Search}
+
+%-------------------------------------------------
+%-------------------------------------------------
+
+%-----------------------------------------------------------------------
+\myframetop{Basic Principle}{
+	\centering
+	\includegraphics[width=0.7\textwidth]{images/snas_oneshot.png}
+	
+	\only<1>{
+	\begin{itemize}
+	\footnotesize
+		\item The \textbf{one-shot model} is a multi-graph containing all possible DAGs
+		\myit{
+		\footnotesize
+			\item[-] Every DAG represents a single architecture $Z^{(\cdot)}$ in the search space
+			\item[-] Nodes represent aggregating operations (e.g. summation, concatenation) for incoming tensors.
+			\item[-] Edges represent operations $O^i$ (in the figure: one color per operation)
+			}
+		\item The row labels in the matrix above represent a pair of nodes $(j,k)$ in the graph and the column labels the operations $O^i$. A value of $1$ means that that operaration is active in the edge connecting node $j$ to $k$.
+	\end{itemize}
+	}
+	
+	\only<2>{
+	\begin{itemize}
+	\footnotesize
+		\item The most important principle in one-shot models is \textbf{weight-sharing} between graphs.
+		\myit{
+		\footnotesize
+			\item[-] The one-shot model is trained as a normal neural network, i.e. with mini-batch training. The question is how to distinguish single architectures in the one-shot model during this training?
+			\item[-] One way is that for each sampled mini-batch also sample stochastically an architecture (DAG) and update only the parameters of that architecture.
+			\item[-] For all subsequent iterations in case a new sampled architecture has common edges (i.e. some entries in the matrices are the same) in the DAG, the weights are shared.
+			}
+	\end{itemize}
+	}
+}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\myframe{Convolutional Neural Fabrics \litw{\href{https://arxiv.org/pdf/1606.02492.pdf}{Saxena and Verbeek, 2017}}}{
+	\centering
+	\includegraphics[width=0.7\textwidth]{images/conv_fabric.png}
+	
+	\begin{itemize}
+	\footnotesize
+		\item One path from the input to the output of the lattice determines the network structure.
+		\item Paths (architectures) that overlap also share the parameters.
+	\end{itemize}
+	
+}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+
+\myframetop{Impact of DropPath \litw{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al., 2018}}}{
+	\centering
+	
+	\includegraphics[width=0.9\textwidth]{images/bender_1.png}
+	
+	\begin{itemize}
+	%\footnotesize
+		\item One other way to distinguish the single architectures in the one-shot model is as follows:
+		\begin{enumerate}
+			\item Train the one-shot model as a normal network without sampling any individual path (a matrix with only ones "Basic Principle" slide).
+			\item Sample $K$ individual architectures after training the one-shot model and evaluate those on the validation set with the one-shot model weight.
+			\item Choose the best on validation and re-train that from scratch and return the test error.
+		\end{enumerate}
+	\end{itemize}
+	
+}
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\myframe{Questions to Answer for Yourself / Discuss with Friends}{
+
+	\myit{
+		\item Repetition:\\ \alert{What are some pros and cons of the cell search space compared to the basic one?}
+\bigskip
+		\item Repetition:\\ \alert{Explain the way in which level-3 motivs in the hierarchical search space use level-2 motivs.}
+\medskip
+		\item Repetition:\\ \alert{What are some pros and cons of the hierarchical search space compared to the other ones?}
+	}	 
+}
+%-----------------------------------------------------------------------
+
