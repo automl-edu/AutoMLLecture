@@ -8,6 +8,7 @@
 		\item \alert{NAS can be formulated as a HPO problem}
 	}
 \medskip
+\pause
 
 \begin{columns}[T]
 \column{0.00\textwidth}
@@ -49,51 +50,83 @@
 
 
 
-\myframe{Early NAS Methods}{
-	\myit{
-		\item \alert{Neuroevolution} (already since the 1990s) 
-		\lit{\href{https://www.complex-systems.com/abstracts/v04_i04_a06/}{Kitano 1990}; \href{http://www.demo.cs.brandeis.edu/papers/ieeenn.pdf}{Angeline et al. 1994}; \href{http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf}{Stanley and Miikkulainen, 2002}; 
+\myframe{Early Work on Neuroevolution (already since the 1990s)\\ \litw{\href{https://www.complex-systems.com/abstracts/v04_i04_a06/}{Kitano 1990}; \href{http://www.demo.cs.brandeis.edu/papers/ieeenn.pdf}{Angeline et al. 1994}; \href{http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf}{Stanley and Miikkulainen, 2002}; 
 		\href{http://people.idsia.ch/~juergen/icann2009bayer.pdf}{Bayer et al, 2009};
-		\href{https://link.springer.com/article/10.1007/s12065-007-0002-4}{Floreano et al. 2008}}
-		\myit{
-			\item Evolves architectures \& often also their weights
-			\item Typical approach: 
-			\myit{
-				\item Initialize a population of $N$ random architectures
-				\item Sample $N$ individuals from that population (with replacement) according to their fitness
-				\item Apply mutations to those $N$ individuals to produce the next generation's population
-			}
-			\item Mutations include adding, changing or removing a layer
-		}
-	}
-
-\bigskip
-\pause
-
+		\href{https://link.springer.com/article/10.1007/s12065-007-0002-4}{Floreano et al. 2008}}}{
 	\myit{
-		\item \alert{Bayesian optimization} (since 2013)
+		\item Evolves architectures \& often also their weights
+\medskip
+\pause
+		\item Typical approach: 
 		\myit{
-			\item With TPE: 
-			\myit{
-				\item \alert{Joint optimization of a vision architecture with 238 hyperparameters} \lit{\href{http://proceedings.mlr.press/v28/bergstra13.pdf}{Bergstra et al, 2013}}
-			}
-			\item With SMAC: joint architecture and hyperparameter search, yielding 
-			\myit{
-				\item \alert{New state-of-the-art performance on CIFAR-10 w/o data augmentation} \lit{\href{https://ml.informatik.uni-freiburg.de/papers/15-IJCAI-Extrapolation_of_Learning_Curves.pdf}{Domhan et al. 2015}}
-				\item \alert{First Auto-DL system to win competition dataset against human experts} \lit{\href{https://ml.informatik.uni-freiburg.de/papers/16-AUTOML-AutoNet.pdf}{Mendoza et al. 2016}}
-			}
-			\item With Gaussian processes: 
-			\myit{
-				\item Arc kernel \lit{\href{https://ml.informatik.uni-freiburg.de/papers/13-BayesOpt_Arc-Kernel.pdf}{Swersky et al, 2013}}
-			}
+			\item Initialize a population of $N$ random architectures
+			\item Sample $N$ individuals from that population (with replacement) according to their fitness
+			\item Apply mutations to those $N$ individuals to produce the next generation's population
+			\item Optionally: \alert{elitism} to keep best individuals in the population
 		}
+\medskip
+\pause
+		\item Mutations include adding, changing or removing a layer
 	}
 }
 %-----------------------------------------------------------------------
 
+\myframe{Early Work on Bayesian Optimization (since 2013)}{
+
+\vspace*{-0.6cm}
+\begin{columns}
+\column{0.00\textwidth}
+\column{0.77\textwidth}
+	\myit{
+		\item With TPE \lit{\href{https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf}{Bergstra et al. 2011}}: 
+		\myit{
+			\item \alert{Joint optimization of a vision architecture with 238 hyperparameters} \lit{\href{http://proceedings.mlr.press/v28/bergstra13.pdf}{Bergstra et al, 2013}}
+			\item State-of-the-art performance on 3 disparate problems:
+			\myit{
+				\item Face matching, face identification, and object recognition
+			}
+		}
+	}
+
+\column{0.23\textwidth}
+~\\\vspace*{0.2cm}
+\includegraphics[width=.96\textwidth]{images/TPE_search_space.png}
+\end{columns}
+\pause
 
 
+\begin{columns}
+\column{0.00\textwidth}
+\column{0.77\textwidth}
+\vspace*{-0.4cm}
+	\myit{
+		\item With SMAC \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al, 2011}}:
+		\myit{
+			\item \alert{New state-of-the-art performance on CIFAR-10 w/o data augmentation} \lit{\href{https://ml.informatik.uni-freiburg.de/papers/15-IJCAI-Extrapolation_of_Learning_Curves.pdf}{Domhan et al. 2015}}
+			\item Joint architecture and hyperparameter search, yielding Auto-Net \lit{\href{https://ml.informatik.uni-freiburg.de/papers/16-AUTOML-AutoNet.pdf}{Mendoza et al. 2016}}
+\pause
+			\item In 2015, Auto-Net already had several successes in ML competitions
+			\myit{
+				\item E.g., human action recognition:\\54491 data points, 5000 features, 18 classes 
+				\item \alert{First automated deep learning (Auto-DL) method to win a machine learning competition dataset against human experts}
+			}
+		}
+	}
+\column{0.23\textwidth}
+~\\~\\~\\~\\
+\includegraphics[width=.96\textwidth]{images/autonet-performance-competition.png}
+\end{columns}
 
+\pause
+\smallskip
+
+	\myit{
+		\item With Gaussian processes: 
+		\myit{
+			\item Arc kernel \lit{\href{https://ml.informatik.uni-freiburg.de/papers/13-BayesOpt_Arc-Kernel.pdf}{Swersky et al, 2013}}
+		}
+	}
+}
 
 
 
@@ -225,6 +258,7 @@
 	\myit{
 		\item But oldest solutions are dropped from population, instead of the worst
 	}
+\pause
 	\item Standard SGD for training weights (\alert{optimizing the same blackbox as RL})
 	\item \alert{Same fixed-length (HPO) search space} as used for RL \lit{\href{http://openaccess.thecvf.com/content_cvpr_2018/html/Zoph_Learning_Transferable_Architectures_CVPR_2018_paper.html}{Zoph et al. 2018}}
 \end{itemize}
@@ -249,28 +283,15 @@
 %----------------------------------------------------------------------
 \myframe{Bayesian Optimization (BO)}{
 	\myit{
-		\item Encode the architecture as a vector space (like regularized evolution)
-		\lit{\href{http://proceedings.mlr.press/v28/bergstra13.pdf}{Bergstra et al. 2013}, \href{https://ml.informatik.uni-freiburg.de/papers/15-IJCAI-Extrapolation_of_Learning_Curves.pdf}{Domhan et al. 2015}, \href{https://ml.informatik.uni-freiburg.de/papers/16-AUTOML-AutoNet.pdf}{Mendoza et al. 2015}, \href{https://arxiv.org/abs/1807.06906}{Zela et al. 2018}}
-	}
-\pause
-%\medskip
-\begin{columns}[T]
-\column{0.00\textwidth}
-\column{0.73\textwidth}
-	\myit{
-		\item Auto-Net \lit{\href{https://ml.informatik.uni-freiburg.de/papers/16-AUTOML-AutoNet.pdf}{Mendoza et al. 2016}}
+		\item Encode the architecture space by categorical hyperparameters (like regularized evolution)
+\medskip
+		\item \alert{Strong performance with tree-based models} 
 		\myit{
-			\item Using BO with a random forest model (SMAC \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al, 2011}}) 
-			\item Already won several datasets against human experts
-			\myit{
-				\item E.g., human action recognition data set in 2015: 54491 data points, 5000 features, 18 classes 
-				\item \alert{First automated deep learning (Auto-DL) method to win a machine learning competition dataset against human experts}
-			}
+			\item TPE \lit{\href{http://proceedings.mlr.press/v28/bergstra13.pdf}{Bergstra et al. 2013}}
+			\item SMAC \lit{\href{https://ml.informatik.uni-freiburg.de/papers/15-IJCAI-Extrapolation_of_Learning_Curves.pdf}{Domhan et al. 2015}, \href{https://ml.informatik.uni-freiburg.de/papers/16-AUTOML-AutoNet.pdf}{Mendoza et al. 2016}, \href{https://arxiv.org/abs/1807.06906}{Zela et al. 2018}}
 		}
 	}
-\column{0.27\textwidth}
-\includegraphics[width=.9\textwidth]{images/autonet-performance-competition.png}
-\end{columns}
+
 \pause
 \medskip
 	\myit{
@@ -281,10 +302,13 @@
 		}
 \pause
 \medskip		
+
 		\item There are also several recent promising BO approaches based on neural networks
 		\myit{
 			\item[-] BANANAS \lit{\href{https://arxiv.org/abs/1910.11858}{White et al. 2020}}
 		}
+\pause
+\medskip
 		\item BO is very competitive, has been shown to outperform RL \lit{\href{http://proceedings.mlr.press/v97/ying19a.html}{Ying et al, 2019}}
 	}
 }
@@ -297,6 +321,7 @@
 		\item Comprehensive experiments on a wide range of 12 different NAS benchmarks\\
 		\lit{\href{https://drive.google.com/file/d/1kxhLeXnwiAkarkXU15GrU3vyodKETWQw/view?usp=sharing}{Awad, Mallik and Hutter, AutoML 2020}} 
 \bigskip
+\pause
 		\item Results:
 		\myit{
 			\item \alert{Regularized evolution is very robust}, typically amongst best of the methods discussed so far
