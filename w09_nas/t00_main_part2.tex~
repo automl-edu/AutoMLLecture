@@ -1,11 +1,7 @@
 \input{../latex_main/main.tex}
-\usepackage{amssymb}
-\usepackage{wrapfig}
-\newcommand{\argminA}{\mathop{\mathrm{argmin}}}
-
 
 \title[AutoML: NAS]{AutoML: Neural Architecture Search} % week title
-\subtitle{Part 2: One-shot Neural Architecture Search} % video title
+\subtitle{Part 1: Introduction and Black-box approaches} % video title
 \author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
@@ -23,9 +19,12 @@
 \maketitle
 
 %----------------------------------------------------------------------
-\newcommand{\lecturetitle}{Neural Architecture Search (NAS)}
-\newcommand{\lecturetime}{Week 9}
+%----------------------------------------------------------------------
+\begin{frame}[c]{TODO}
 
-\input{t07_oneshot_nas.tex}
+TODO
+
+\end{frame}
+%-----------------------------------------------------------------------
 
 \end{document}
