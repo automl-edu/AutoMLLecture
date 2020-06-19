@@ -78,9 +78,9 @@
 \medskip
     	\item \alert{Only little work on meta-learning for NAS}
     	\myit{
+    		\item[-] Find a set of good architectures to initialize BOHB in Auto-Pytorch \lit{Zimmer et al, under review}
     		\item[-] Learn RL agent's policy network on previous datasets \lit{\href{https://papers.nips.cc/paper/8056-transfer-learning-with-neural-automl)}{Wong et al, 2018}}
     		\item[-] Learn neural architecture that can be quickly adapted \lit{\href{https://openreview.net/forum?id=r1eowANFvr}{Lian et al, 2019}; \href{https://arxiv.org/abs/1911.11090}{Elsken et al, 2019}}
-    		\item[-] Find a set of good architectures to initialize BOHB in Auto-Pytorch \lit{Zimmer et al, under review}
     	}
     }
 }
@@ -93,8 +93,9 @@
     	\item \alert{Network Morphisms} \lit{Chen et al. '16; Wei et al. '16; Cai et al. '17}
 	\begin{itemize}
 		\item[--] \alert{Change the network structure, but not the modelled function}
-		\item[--] i.e., for every input the network yields the same output as before applying
-		some network morphisms operations, such as ``Net2DeeperNet'', ``Net2WiderNet'', etc.
+		\item[--] I.e., for every input the network yields the same output as before applying
+		the network morphisms operations
+		\item[--] Examples: ``Net2DeeperNet'', ``Net2WiderNet'', etc.
 	\end{itemize}
     \end{itemize}
     
@@ -130,53 +131,45 @@
 %----------------------------------------------------
 
 %----------------------------------------------------
-\myframe{Network Morphisms for Multi-objective NAS \litw{\href{https://openreview.net/forum?id=ByME42AqK7}{Elsken et al. '19}}}{
+\myframetop{Network Morphisms for Multi-objective NAS \litw{\href{https://openreview.net/forum?id=ByME42AqK7}{Elsken et al. '19}}}{
 
-{\small\alert{LEMONADE}: \alert{L}amarckian \alert{E}volution for \alert{M}ulti-\alert{O}bjective \alert{N}eural \alert{A}rch. \alert{De}sign}
-    \begin{itemize}
-    	\item Maintain a \alert{Pareto front} of the \alert{2 or more objectives}
-    	\myit{
-			\item Evolve a population of Pareto-optimal architectures over time
-			\item ``Lamarckian'': children inherit the weights of the parent's architecture 
-		}
-    \end{itemize}
-\vspace*{-0.1cm}
-    \begin{figure}[t]
-        \begin{centering}
-    \includegraphics[scale=0.25]{images/lemonade_2.png}
-        \end{centering}
-    \end{figure}
-	\vspace*{-0.5cm}
 	\myit{
-		\onslide<2->{
-			\item Also include operators to shrink the network
-			\myit{
-				\item[--] Dropping layers, dropping units within a layer, etc.
-				\item[--] Use \alert{approximate network morphisms} (function not preserved perfectly)
-%				\item[--] Still cheap through weight inheritance (e.g., 1 week on 8 GPUs)
-	    	}
-		}
+		\item To trade off error vs. resource consumption (e.g, \#parameters): 
+		\myit{
+			\item Maintain a \alert{Pareto front} of the two objectives
+			\item Evolve a population of Pareto-optimal architectures over time
+		}			
 	}
+    \begin{center}
+    \only<1>{
+    	\vspace*{0.35cm}
+    	\includegraphics[width=0.78\textwidth]{images/lemonade_generation1.png}
+    }
+    \only<2>{
+    \hspace*{-0.15cm}
+    	\includegraphics[width=0.8\textwidth]{images/lemonade.png}
+	}
+    \end{center}
 }
 %----------------------------------------------------
 
 
-%----------------------------------------------------
-\myframetop{NAS Speedup Technique 5: Weight Sharing and One-shot Models \litw{\href{https://arxiv.org/abs/1802.03268}{Pham et al, 2018}; \href{http://proceedings.mlr.press/v80/bender18a}{Bender et al, 2018}}}{
 
+%----------------------------------------------------
+\myframe{Network Morphisms for Multi-objective NAS \litw{\href{https://openreview.net/forum?id=ByME42AqK7}{Elsken et al. '19}}}{
 	\myit{
-		\item DAG (Multigraph) representation
-		\begin{itemize}
-	            \item[$\Rightarrow$] \alert{Nodes} - latent representations.
-	            \item[$\Rightarrow$] \alert{Edges} (dashed) - operations.
-	        \end{itemize}
-	        \item Architecture optimization problem: \alert{Find optimal path from the input to the output}
-    }
-	
-	\begin{centering}
-    	\includegraphics[scale=0.47]{images/cell_space.png}
-	\end{centering}
-	
+		\item \alert{LEMONADE}: \alert{L}amarckian \alert{E}volution for \alert{M}ulti-\alert{O}bjective \alert{N}eural \alert{A}rchitecture \alert{De}sign
+  		\item Weight inheritance through approximate morphisms (ANMs)
+		\myit{
+			\item Dropping layers, dropping units within a layer, etc (function not preserved perfectly)
+%			\item Still cheap: e.g., 1 week on 8 GPUs
+		}
+	}
+    \begin{figure}[t]
+        \begin{center}
+    \includegraphics[scale=0.30]{images/lemonade_2.png}
+        \end{center}
+    \end{figure}
 }
 %----------------------------------------------------
 
@@ -188,8 +181,10 @@
 		\item All possible architectures are subgraphs of a large supergraph: 
 		the \alert{one-shot model}
 \medskip
-		\item \alert{Weights are shared} between different architectures with common edges/nodes in the supergraph
+\pause
+		\item \alert{Weights are shared} between different architectures with common edges in the supergraph
 \medskip
+\pause
 		\item \alert{Search costs are reduced} drastically since one only has to train a single model (the one-shot model).\\
 	}
 
@@ -205,6 +200,30 @@
 %	\end{itemize}
 	
 }
+
+
+%----------------------------------------------------
+\myframetop{NAS Speedup Technique 5: Weight Sharing and One-shot Models \litw{\href{https://arxiv.org/abs/1802.03268}{Pham et al, 2018}; \href{http://proceedings.mlr.press/v80/bender18a}{Bender et al, 2018}}}{
+
+	\myit{
+		\item The one-shot model can be seen as a \alert{directed acyclic multigraph}
+		\begin{itemize}
+	            \item[$\Rightarrow$] \alert{Nodes} - latent representations.
+	            \item[$\Rightarrow$] \alert{Edges} (dashed) - operations.
+	        \end{itemize}
+    }
+	
+	\begin{centering}
+    	\includegraphics[scale=0.47]{images/cell_space.png}
+	\end{centering}
+	
+	\myit{
+		\item Architecture optimization problem: \alert{Find optimal path from the input to the output}
+	}
+	
+}
+%----------------------------------------------------
+
 
 
 %----------------------------------------------------------------------

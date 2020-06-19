@@ -3,31 +3,33 @@
 \usepackage{wrapfig}
 \newcommand{\argminA}{\mathop{\mathrm{argmin}}}
 
-\title[AutoML: NAS]{AutoML: Neural Architecture Search} % week title
-\subtitle{Part 1: Introduction and Black-box Approaches} % video title
+% FH: I created this command videotitle (and file title_slide.tex) to show a new title slide for each video without the need of any repeating boiler plate code. Please do not change this anymore.
+\newcommand{\videotitle}[1]{\subtitle{#1}\input{title_slide}}
+\newcommand{\fhpause}{\pause} % for taping
+
+\title[AutoML: NAS]{AutoML: Neural Architecture Search (NAS)} % week title
+\subtitle{Part 1: Search Spaces, Blackbox Methods, Speedup Techniques, and Best Practices} % video title
 \author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
-\AtBeginSection[] % Do nothing for \section*
-{
-  \begin{frame}{Outline}
-    \bigskip
-    \vfill
-    \tableofcontents[currentsection]
-  \end{frame}
-}
+\AtBeginSection[]{}
+
+% for final handout:
+%\renewcommand{\videotitle}[1]{\subtitle{#1}\section{#1}\input{title_slide}}
+%\renewcommand{\fhpause}{} % for final handout
+%\AtBeginSection[]{\begin{frame}{Outline}\bigskip\vfill\tableofcontents[currentsection]\end{frame}}
 
 \begin{document}	
-\maketitle
+%\maketitle
 
 \newcommand{\lecturetitle}{Neural Architecture Search (NAS)}
 \newcommand{\lecturetime}{Week 9}
 
-\input{t01_big_picture.tex}
-\input{t02_search_spaces.tex}
-\input{t03_blackbox_nas_opt.tex}
+%\input{t01_big_picture.tex}
+%\input{t02_search_spaces.tex}
+%\input{t03_blackbox_nas_opt.tex}
 \input{t04_speedup_techniques.tex}
-\input{t05_best_practices.tex}
+%\input{t05_best_practices.tex}
 
 \end{document}
