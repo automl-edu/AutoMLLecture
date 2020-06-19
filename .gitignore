@@ -9,3 +9,5 @@
 *.toc
 *.vrb
 /tmp
+/.texlipse
+/.project
