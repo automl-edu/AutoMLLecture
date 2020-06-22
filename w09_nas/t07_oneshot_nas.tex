@@ -18,37 +18,54 @@
 %----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
-\myframetop{Basic Principle}{
+\myframetop{Weight sharing and one-shot models}{
+
+\myit{
+	\item All possible architectures are subgraphs of a large supergraph (the \alert{one-shot model})
+	\item This one-shot model is \alert{trained as a standard neural network} with mini-batches and stochastic optimizers.
+	\item At each mini-batch iteration \alert{weights are shared} between different architectures with common edges/nodes in the supergraph
+	}
+	
 	\centering
-	\includegraphics[width=0.7\textwidth]{images/snas_oneshot.png}
-	
-	\only<1>{
-	\begin{itemize}
-	\footnotesize
-		\item The \textbf{one-shot model} is a multi-graph containing all possible DAGs
-		\myit{
-		\footnotesize
-			\item[-] Every DAG represents a single architecture $Z^{(\cdot)}$ in the search space $\mathcal{A}$.
-			\item[-] Nodes represent aggregating operations (e.g. summation, concatenation) for incoming tensors.
-			\item[-] Edges represent operations $O^i$ (in the figure: one color per operation)
-			}
-		\item The row labels in the matrix above represent a pair of nodes $(j,k)$ in the graph and the column labels the operations $O^i$. A value of $1$ means that that operaration is active in the edge connecting node $j$ to $k$.
-	\end{itemize}
-	}
-	
-	\only<2>{
-	\begin{itemize}
-	\footnotesize
-		\item The most important principle in one-shot models is \textbf{weight-sharing} between graphs.
-		\myit{
-		\footnotesize
-			\item[-] The one-shot model is trained as a normal neural network, i.e. with mini-batch training. The question is how to distinguish single architectures in the one-shot model during this training?
-			\item[-] One way is that for each sampled mini-batch also sample stochastically an architecture (DAG) and update only the parameters of that architecture.
-			\item[-] For all subsequent iterations in case a new sampled architecture has common edges (i.e. some entries in the matrices are the same) in the DAG, the weights are shared.
-			}
-	\end{itemize}
-	}
+	\includegraphics[width=0.2\textwidth]{images/one_shot_model_1.png}\quad\quad
+	\includegraphics[width=0.2\textwidth]{images/one_shot_model_2.png}\quad\quad
+	\includegraphics[width=0.2\textwidth]{images/one_shot_model_3.png}
+
 }
+%----------------------------------------------------------------------
+
+%-----------------------------------------------------------------------
+%\myframetop{Basic Principle}{
+%	\centering
+%	\includegraphics[width=0.7\textwidth]{images/snas_oneshot.png}
+%	
+%	\only<1>{
+%	\begin{itemize}
+%	\footnotesize
+%		\item The \textbf{one-shot model} is a multi-graph containing all possible DAGs
+%		\myit{
+%		\footnotesize
+%			\item[-] Every DAG represents a single architecture $Z^{(\cdot)}$ in the search space $\mathcal{A}$.
+%			\item[-] Nodes represent aggregating operations (e.g. summation, concatenation) for incoming tensors.
+%			\item[-] Edges represent operations $O^i$ (in the figure: one color per operation)
+%			}
+%		\item The row labels in the matrix above represent a pair of nodes $(j,k)$ in the graph and the column labels the operations $O^i$. A value of $1$ means that that operaration is active in the edge connecting node $j$ to $k$.
+%	\end{itemize}
+%	}
+%	
+%	\only<2>{
+%	\begin{itemize}
+%	\footnotesize
+%		\item The most important principle in one-shot models is \textbf{weight-sharing} between graphs.
+%		\myit{
+%		\footnotesize
+%			\item[-] The one-shot model is trained as a normal neural network, i.e. with mini-batch training. The question is how to distinguish single architectures in the one-shot model during this training?
+%			\item[-] One way is that for each sampled mini-batch also sample stochastically an architecture (DAG) and update only the parameters of that architecture.
+%			\item[-] For all subsequent iterations in case a new sampled architecture has common edges (i.e. some entries in the matrices are the same) in the DAG, the weights are shared.
+%			}
+%	\end{itemize}
+%	}
+%}
 %----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
