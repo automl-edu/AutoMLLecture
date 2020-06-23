@@ -1,35 +1,62 @@
-%\videotitle{One-shot Neural Architecture Search}
+\videotitle{The One-Shot Model}
 
 %-------------------------------------------------
 %-------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{Convolutional Neural Fabrics \litw{\href{https://arxiv.org/pdf/1606.02492.pdf}{Saxena and Verbeek, 2017}}}{
+\myframe{One-shot models: convolutional neural fabrics \litw{\href{https://arxiv.org/pdf/1606.02492.pdf}{Saxena and Verbeek, 2017}}}{
 	\centering
-	\includegraphics[width=0.7\textwidth]{images/conv_fabric.png}
+	\includegraphics[width=0.7\textwidth]{images/conv_fabric_1.png}\\
 	
-	\begin{itemize}
-	\footnotesize
-		\item One path from the input to the output of the lattice determines the network structure.
-		\item Paths (architectures) that overlap also share the parameters.
-	\end{itemize}
+\bigskip
+	\myit{
+		\item A \alert{convolutional neural fabric} / \alert{lattice} / \alert{one-shot model} 
+		is a big model that comprises an exponential number of architectures
+	\medskip
+		\myit{
+			\item \alert{Each path} from the input to the output \alert{represents an architecture}
+	\pause
+	\smallskip
+			\item The \alert{nodes represent tensors}
+			\item The \alert{edges represent computations} (e.g., convolution / strided convolution)
+	\pause
+	\smallskip
+		\item \alert{Weights for the operation on an edge are shared}\\ across all (exponentially many) architectures that have that edge
+		}
+	}
+%\pause
+%\bigskip
+%	\includegraphics[width=0.7\textwidth]{images/conv_fabric_2.png}
 	
 }
 %----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
-\myframetop{Weight sharing and one-shot models}{
+\myframetop{One-shot models for cell search spaces}{
 
+\vspace*{-0.2cm}
 \myit{
-	\item All possible architectures are subgraphs of a large supergraph (the \alert{one-shot model})
-	\item This one-shot model is \alert{trained as a standard neural network} with mini-batches and stochastic optimizers.
-	\visible<2->{\item At each mini-batch iteration \alert{weights are shared} between different architectures with common edges/nodes in the supergraph}
+	\item \alert{Directed acyclic multigraph} to capture all (exponentially many) cell architectures		
+		\myit{
+			\item The \alert{nodes represent tensors}
+			\item The \alert{edges represent computations} (e.g., 3x3 conv, 5x5 conv, max pool, \ldots)
+			\item The results of operations on multiple edges between two nodes are combined (addition/concatenation) 
+		}
+\bigskip
+\visible<2->{
+	\item Individual architectures are subgraphs of this multigraph
+	\myit{
+		\item \alert{Weights for the operation on an edge are shared}\\ across all (exponentially many) architectures that have that edge
+	}		
+}
+%	\item This one-shot model is \alert{trained as a standard neural network} with mini-batches and stochastic optimizers.
+%	\visible<2->{\item At each mini-batch iteration \alert{weights are shared} between different architectures with common edges/nodes in the supergraph}
 	}
-	
+\medskip	
 	\centering
-	\visible<1->{\includegraphics[width=0.2\textwidth]{images/one_shot_model_1.png}\quad\quad}
-	\visible<2->{\includegraphics[width=0.2\textwidth]{images/one_shot_model_2.png}\quad\quad}
-	\visible<3->{\includegraphics[width=0.2\textwidth]{images/one_shot_model_3.png}}
+	\visible<1->{\includegraphics[width=0.19\textwidth]{images/one_shot_model_1.png}\quad\quad\quad\quad\quad\quad}
+	\visible<2->{\includegraphics[width=0.19\textwidth]{images/one_shot_model_2.png}\quad\quad}
+	\visible<2->{\includegraphics[width=0.19\textwidth]{images/one_shot_model_3.png}}
 
 }
 %----------------------------------------------------------------------
@@ -52,7 +79,7 @@
 %		\item The row labels in the matrix above represent a pair of nodes $(j,k)$ in the graph and the column labels the operations $O^i$. A value of $1$ means that that operaration is active in the edge connecting node $j$ to $k$.
 %	\end{itemize}
 %	}
-%	
+%
 %	\only<2>{
 %	\begin{itemize}
 %	\footnotesize
@@ -68,24 +95,60 @@
 %}
 %----------------------------------------------------------------------
 
+
+\myframetop{Training the one-shot model -- standard SGD \litw{\href{https://arxiv.org/pdf/1606.02492.pdf}{Saxena and Verbeek, 2017}}}{
+
+	\myit{
+\visible<1->{
+		\item One-shot model is an acyclic graph; thus, backpropagation applies
+		\myit{
+			\item Simplest method: standard training with SGD
+			\item This implicitly trains \alert{an exponential number of architectures}
+%			\item Used by convolutional neural fabrics		
+		}
+}
+\medskip
+
+%		\myit{
+%			\item They did not aim at extracting a strong single architecure
+%			\item Rather, they aimed for a good ensemble
+%		}
+%\pause
+%\medskip
+\visible<2->{
+		\item Potential issue: co-adaptation of weights
+		\myit{
+			\item Weights need to work well on average across all architectures
+			\item They are not optimized for the top-performing architecture
+		}
+}
+	}
+\bigskip
+	\centering
+	\visible<1->{\includegraphics[width=0.2\textwidth]{images/one_shot_model_1.png}}
+}
 %----------------------------------------------------------------------
 
-\myframetop{Training the one-shot model -- ScheduledDropPath \litw{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al., 2018}}}{
+\myframetop{Training the one-shot model -- DropPath \litw{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al., 2018}}}{
 	\centering
 	
 	\begin{itemize}
 	%\footnotesize
-		\item One way to train the one-shot model is as a normal neural network and use \alert{ScheduledDropPath}
+		\item To avoid coadaptation of weights, we can use \alert{DropPath}, a technique analogous to Dropout \lit{\href{http://jmlr.org/papers/v15/srivastava14a.html}{Srivastava et al., 2014}}:
 		\myit{
-			\item[-] Analogous to Dropout \lit{\href{http://jmlr.org/papers/v15/srivastava14a.html}{Srivastava et al., 2014}} in standard neural networks.
-			\item[-] At each mini-batch iteration \alert{zero out every operation} connecting 2 nodes with probability $p$.
-			\item[-] ScheduledDropPath starts with $p=0$ and increases that linearly throughout training until a maximum $p_{max}$ in the end.
+\visible<2->{
+			\item[-] At each mini-batch iteration:\\ for each operation connecting 2 nodes, zero it out with probability $p$
+}
+\smallskip
+\visible<3->{
+			\item[-] \alert{ScheduledDropPath}: starts with $p=0$ and increases $p$ linearly to $p_{max}$ at the end of training
+}
 			}
 	\end{itemize}
-	
+\bigskip	
 	\centering
-	\visible<1->{\includegraphics[width=0.2\textwidth]{images/one_shot_model_1.png}\quad\quad}
-	\visible<1->{\includegraphics[width=0.2\textwidth]{images/drop_path_1.png}\quad\quad}
+	\visible<1->{\includegraphics[width=0.2\textwidth]{images/one_shot_model_1.png}\quad\quad\quad\quad\quad\quad}
+	\visible<2->{\includegraphics[width=0.2\textwidth]{images/drop_path_1.png}\quad\quad}
 	\visible<2->{\includegraphics[width=0.2\textwidth]{images/drop_path_2.png}}
 	
 }
@@ -119,12 +182,17 @@
 			\item[-] \textbf{ENAS} \lit{\href{https://arxiv.org/pdf/1802.03268.pdf}{Pham et al., 2018}} $\longrightarrow$ sample from the learned policy of a RNN controller
 		}
 		}
-		\item \alert{Update the parameters of the one-shot model} corresponding to only that architecture.
+		\item \alert{Update the parameters of the one-shot model} corresponding to only that architecture
 	\end{itemize}
 	
-	\only<1->{
-	\includegraphics[width=.75\textwidth]{images/snas_oneshot.png}
-	}
+	\centering
+	\includegraphics[width=0.19\textwidth]{images/one_shot_model_1.png}\quad\quad\quad\quad\quad\quad
+	\includegraphics[width=0.19\textwidth]{images/one_shot_model_2.png}\quad\quad
+	\includegraphics[width=0.19\textwidth]{images/one_shot_model_3.png}
+%	
+%	\only<1->{
+%	\includegraphics[width=.75\textwidth]{images/snas_oneshot.png}
+%	}
 }
 %---------------------------------------------------------------
 
@@ -160,27 +228,33 @@
 	\centering
 	
     \begin{itemize}
-		\item After training the one-shot model we have to \alert{select the best individual architecture} from that.
+		\item After training the one-shot model we have to \alert{select the best individual architecture} from it
 		\item There are multiple ways one can approach this. Some of these are:
 		\myit{
-			\item[$1$] Sample uniformly at random $M$ architectures and rank them based on the the validation error \alert{using the one-shot model parameters} (retraining from scratch is computationaly expensive).
+\pause
+			\item[$1$.] Sample uniformly at random $M$ architectures and rank them based on their validation error \alert{using the one-shot model parameters} (retraining from scratch is computationaly expensive)
 			%\item[-] Select the top $K$, where $K < M$, and evaluate those on the full validation set, again using the one-shot parameters.
-			\item[$1b$] (Optional) Select top $K$ ($K<M$) and retrain them from scratch for a couple of epochs.
-			\item[$2$] Return the top performing architecture to \alert{retrain from scratch} for longer.
+\pause
+			\item[$1b$.] (Optional) Select top $K$ ($K<M$) and retrain them from scratch for a couple of epochs
+\pause
+			\item[$2$.] Return the top performing architecture to \alert{retrain from scratch} for longer
 		}
 	\end{itemize}
 	
-	\only<2>{
+	\onslide<5>{
     	\begin{minipage}{0.4\textwidth}
         	\begin{itemize}
 				\footnotesize
-				\item \textbf{Pitfall:} the correlation between architectures evaluated with the one-shot weights and retrained from scratch (stand-alone models) should be high.
+				\item \textbf{Pitfall:} the correlation between architectures evaluated with the one-shot weights and retrained from scratch (stand-alone models) should be high
 				\item If not, \textbf{selecting the best architecture based on the one-shot weights} is sub-optimal.
 			\end{itemize}
 	    \end{minipage}
 	    \hspace{1cm}
     	\begin{minipage}{0.5\textwidth}
-	        \includegraphics[width=.75\textwidth]{images/bender_correlation_1.png}    	
+\begin{center}
+	        \includegraphics[width=.7\textwidth]{images/bender_correlation_1.png}\\
+	        \scriptsize{From \smaller{\lit{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al., 2018}}}}
+\end{center}
     	\end{minipage}
 	}
 }
@@ -194,7 +268,7 @@
 \bigskip
 		\item Repetition:\\ \alert{What is the difference between Random Search with Weight Sharing and ENAS?}
 \medskip
-		\item Repetition:\\ \alert{What are some pros and cons of using the one-shot model for NAS?}
+		\item Discussion:\\ \alert{What migth be some downsides of using the one-shot model for NAS?}
 	}	 
 }
 %-----------------------------------------------------------------------
