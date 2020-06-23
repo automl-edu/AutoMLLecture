@@ -154,13 +154,13 @@ DARTS requires keeping the whole one-shot model together with its computed tenso
 \myframetop{Issues -- Non-robust behaviour}{
 
 \small
-DARTS requires keeping the whole one-shot model together with its computed tensors in memory.
+DARTS has its own hyperparameters, e.g. one-shot learning rate, $L_2$ regularization, etc.
     \myit{
     	\visible<2->{
-    	\item[-] Constraints the search space size and the fidelity one uses to train the one-shot model.
+    	\item[-] The default ones are not always optimal. Tuning these hyperparameters for every new task/search space is computationally expensive.
     	}
     	\visible<3->{
-    	\item[-] Not possible to run on large datasets as ImageNet.
+    	\item[-] DARTS may return degenerate architectures, e.g. cells composed with only skip connections
     	}
     }
 
@@ -168,27 +168,43 @@ DARTS requires keeping the whole one-shot model together with its computed tenso
 
 \begin{minipage}{.45\textwidth}
 \small
-\visible<4->{A lot of research done to fix this issue:}
-
 \myit{
-\visible<5->{
-	\item \alert{ProxylessNAS} \lit{\href{https://openreview.net/pdf?id=HylVB3AqYm}{Cai et al, 2019}} -- keeps only two edges at a time in memory
-	}
-\visible<6->{
-	\item \alert{GDAS} \lit{\href{https://arxiv.org/pdf/1910.04465.pdf}{Dong et al, 2019}} -- by using a Gumbel Softmax it allows to keep only a single architecture in memory
-	}
-\visible<7->{
-	\item \alert{PC-DARTS} \lit{\href{https://arxiv.org/pdf/1907.05737.pdf}{Xu et al, 2020}} -- perform the search on a subset of the total computed channels in the one-shot model
+\visible<4->{
+	\item \alert{RobustDARTS} \lit{\href{https://openreview.net/forum?id=H1gDNyrKDS}{Zela et al, 2020}} -- tracks the curvature of the validation loss and early stops the search based on that.
 	}
 }
 \end{minipage}
 \hspace{.5cm}
-\begin{minipage}{.2\textwidth}
-\visible<6->{
-\includegraphics[scale=0.35]{images/gdas.png}
+\begin{minipage}{.45\textwidth}
+\only<3>{
+	\includegraphics[scale=0.3]{images/normal_DARTS_S3.pdf}
 }
+\myit{
+\visible<5->{
+	\item \alert{SmoothDARTS} \lit{\href{https://arxiv.org/pdf/2002.05283.pdf}{Chen and Hsieh, 2020}} -- applies random perturbation and adversarial training to avoid bad regions
+	}
+	}
 \end{minipage}
+
+\medskip
+
+\centering
+\visible<4->{
+	\includegraphics[scale=0.28]{images/valid_eigenvalues_traj.pdf}
+}
 
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%----------------------------------------------------------------------
+\myframe{Questions to Answer for Yourself / Discuss with Friends}{
+
+	\myit{
+		\item Repetition:\\ \alert{What is the main difference between DARTS and with the previous one-shot NAS methods we saw?}
+\bigskip
+		\item Repetition:\\ \alert{How does DARTS optimize the architectural weights and one-shot weights?}
+\medskip
+		\item Discussion:\\ \alert{RobustDARTS early stops to a better architecture before the curvature of the validation loss becomes high. What is the intuition behind that? \textbf{HINT: think about the discretization step after the DARTS search.}}
+	}	 
+}
+%-----------------------------------------------------------------------
