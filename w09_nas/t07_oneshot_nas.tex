@@ -5,13 +5,22 @@
 
 %----------------------------------------------------------------------
 \myframe{One-shot models: convolutional neural fabrics \litw{\href{https://arxiv.org/pdf/1606.02492.pdf}{Saxena and Verbeek, 2017}}}{
+	\myit{
+		\item A \alert{one-shot model} is a big model that has all architectures in a search space as submodels
+		\myit{
+			\item This allows weights sharing across architectures
+			\item One \alert{only needs to train the single one-shot model}, \\ rather than an exponential number of individual architectures
+		}
+	}
+\pause
+
+\bigskip
+	\myit{
+		\item The first type of one-shot models: \alert{convolutional neural fabrics} %/ \alert{lattice} 
+
 	\centering
 	\includegraphics[width=0.7\textwidth]{images/conv_fabric_1.png}\\
 	
-\bigskip
-	\myit{
-		\item A \alert{convolutional neural fabric} / \alert{lattice} / \alert{one-shot model} 
-		is a big model that comprises an exponential number of architectures
 	\medskip
 		\myit{
 			\item \alert{Each path} from the input to the output \alert{represents an architecture}
@@ -118,8 +127,8 @@
 \visible<2->{
 		\item Potential issue: co-adaptation of weights
 		\myit{
-			\item Weights need to work well on average across all architectures
-			\item They are not optimized for the top-performing architecture
+			\item Weights are implicitly optimized to work well on average across all architectures
+			\item They are \alert{not} optimized specifically for the top-performing architecture
 		}
 }
 	}
