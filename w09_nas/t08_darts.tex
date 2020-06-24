@@ -1,15 +1,18 @@
-%\videotitle{DARTS: Differentiable Architecture Search}
+\videotitle{DARTS: Differentiable Architecture Search}
 
 
 %----------------------------------------------------
 \myframetop{DARTS: Differentiable Architecture Search \litw{\href{https://openreview.net/forum?id=S1eYHoC5FX}{Liu et al, 2018}}}{
 	\myit{
-		\footnotesize
 		\item Use one-shot model with continuous architecture weight $\alpha$ for each operator
+\onslide<2->{
         \myit{
-			\item[] $x^{(j)} = \sum_{i<j}\tilde{o}^{(i,j)}(x^{(i)}) = \sum_{i<j}\sum_{o\in\mathcal{O}}\frac{exp(\alpha_{o}^{(i,j)})}{\sum_{o^{\prime}\in\mathcal{O}}exp(\alpha_{o^{\prime}}^{(i,j)})}o(x^{(i)})$
+			\item[] $x^{(j)} = \sum_{i<j}\tilde{o}^{(i,j)}(x^{(i)}) = \sum_{i<j}\sum_{o\in\mathcal{O}}
+%			\text{softmax}(\alpha)
+			\frac{exp(\alpha_{o}^{(i,j)})}{\sum_{o^{\prime}\in\mathcal{O}}exp(\alpha_{o^{\prime}}^{(i,j)})}o(x^{(i)})$
 %            \item[-] $o^{(i,j)} \in \argmax_{o\in\mathcal{O}}\alpha_{o}^{(i,j)}$
 		}
+}
 
 		\begin{columns}
 			\column{0.05\textwidth}
@@ -18,13 +21,13 @@
 			    {\includegraphics[scale=0.7]{images/dartsA.pdf}}\\
 			    {\scriptsize (a) Initialization}
 			\column{0.3\textwidth}
-\onslide<2->{
+\onslide<1->{
 			    \centering
 			    {\includegraphics[scale=0.7]{images/dartsB.pdf}}\\
 			    {\scriptsize (b) Search end}
 }
 			\column{0.3\textwidth}
-\onslide<3->{
+\onslide<4->{
 			    \centering
 			    {\includegraphics[scale=0.7]{images/dartsC.pdf}}\\
 			    {\scriptsize (c) Final cell}
@@ -34,17 +37,18 @@
 			
 		\medskip
 		\pause
-\onslide<2->{
-		\footnotesize
-		\item By optimizing architecture weights $\alpha$ DARTS assigns importance to each operation.
+\onslide<3->{
+		\item By optimizing the architecture weights $\alpha$, DARTS assigns importance to each operation
+		\myit{
+			\item Since the $\alpha$ are continuous, we can optimize them with gradient descent
+		}
 }		
 \medskip	
 \pause
 	
 \vspace*{-0.2cm}
-\onslide<3->{
-	\footnotesize
-	\item In the end, discretize to obtain a single architecture (c)
+\onslide<4->{
+	\item In the end, DARTS discretizes to obtain a single architecture (c)
 }
 	
 	}
@@ -56,34 +60,42 @@
 
 \myframe{DARTS: Architecture Optimization}{
 
+	\myit{
+		\item The optimization problem (a $\rightarrow$ b) is a bi-level optimization problem:
+		\begin{center}
+		\footnotesize{
+					\begin{tcolorbox}[width = 8cm,halign=center,valign=center]
+		%		\begin{eqnarray}
+					%\nonumber			
+					$\text{min}_{\alpha} \mathcal{L}_{\text{\alert{val}}}(w^*(\alpha), \alert{\alpha})$\\
+					%\nonumber			
+					$s.t.\ w^*(\alpha) \in \text{argmin}_{w} \mathcal{L}_{\text{\alert{train}}}(\alert{w},\alpha)$
+		%		\end{eqnarray}
+			\end{tcolorbox}
+		}
+		\end{center}	
+		\medskip
+		\pause
+		\item This is solved using alternating SGD steps on architectural parameters $\alpha$ and weights $w$ 
+	}
+	
+	\begin{algorithm}[H]
+	 %\footnotesize%
+	 %create mixed ops $\tilde{o}$ parametrized by $\alpha_{o}^{(i,j)}$ for each edge $(i,j)$\\
+	 \TitleOfAlgo{DARTS 1st order\vspace*{-0.3cm}\\\rule{\textwidth}{0.5pt}}
 
-\begin{algorithm}[H]
- %\footnotesize
- create mixed ops $\tilde{o}$ parametrized by $\alpha_{o}^{(i,j)}$ for each edge $(i,j)$\\
- \While{\textit{not converged}}{
-  Update one-shot weights $\vec{w}$ by $\nabla_{\vec{w}}\mathcal{L}_{train}(\vec{w}, \vec{\alpha})$\\
-  Update architectural parameters $\alpha$ by $\nabla_{\alpha}\mathcal{L}_{valid}(\vec{w}, \vec{\alpha})$\;
- }
- return $\argmax_{o\in\mathcal{O}}\alpha_{o}^{(i,j)}$ for each edge $(i,j)$\;
- \caption{DARTS 1st order}
-\end{algorithm}
-
-\centering
-
-\myit{
-	\item Solve a bi-level optimization problem (a $\rightarrow$ b) to optimize architecture $\alpha$ and weights $w$, using alternating SGD steps
-}
-
-\footnotesize{
-			\begin{tcolorbox}[width = 8cm,halign=center,valign=center]
-%		\begin{eqnarray}
-			%\nonumber			
-			$\text{min}_{\alpha} \mathcal{L}_{\text{val}}(w^*(\alpha), \alpha)$\\
-			%\nonumber			
-			$s.t.\ w^*(\alpha) \in \text{argmin}_{w} \mathcal{L}_{\text{train}}(w,\alpha)$
-%		\end{eqnarray}
-	\end{tcolorbox}
-}
+	 \While{\textit{not converged}}{
+	  Update one-shot weights $\vec{w}$ by $\nabla_{\vec{w}}\mathcal{L}_{train}(\vec{w}, \vec{\alpha})$\\
+	  Update architectural parameters $\alpha$ by $\nabla_{\alpha}\mathcal{L}_{valid}(\vec{w}, \vec{\alpha})$\;
+	 }
+	 return $\argmax_{o\in\mathcal{O}}\alpha_{o}^{(i,j)}$ for each edge $(i,j)$\;
+	\end{algorithm}
+	
+	\medskip
+	\pause
+	\myit{
+		\item Note: there is no theory showing that this process converges
+	}
 
 }
 %----------------------------------------------------
@@ -109,50 +121,6 @@
 \includegraphics[scale=0.35]{images/darts_normal_cell.png}
 \hspace{1cm}
 \includegraphics[scale=0.35]{images/darts_reduction_cell.png}
-
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\myframetop{Issues -- Memory constraints}{
-
-\vspace*{-0.15cm}
-	\myit{
-		\item DARTS keeps the \alert{entire one-shot model in memory}, together with its computed tensors 
-    	\visible<2->{
-	    	\myit{
-	    	   	\item[-] This constrains the search space size and the fidelity used to train the one-shot model
-		    	\item[-] \alert{Impossible} to run on large datasets as ImageNet
-	    	}
-		}
-	}
-
-\bigskip
-
-\begin{minipage}{.55\textwidth}
-\visible<3->{A lot of research aims to fix this issue:}
-
-\myit{
-\visible<4->{
-	\item \alert{ProxylessNAS} \lit{\href{https://openreview.net/pdf?id=HylVB3AqYm}{Cai et al, 2019}} -- computes approximate gradients on $\alpha$ keeping only two edges in memory at a time 
-	}
-\smallskip
-\visible<5->{
-	\item \alert{GDAS} \lit{\href{https://arxiv.org/pdf/1910.04465.pdf}{Dong et al, 2019}} -- samples from a Gumbel Softmax distribution to keep only a single architecture in memory
-	}
-\smallskip
-\visible<6->{
-	\item \alert{PC-DARTS} \lit{\href{https://arxiv.org/pdf/1907.05737.pdf}{Xu et al, 2020}} -- performs the search on a subset of the total computed channels in the one-shot model
-	}
-}
-\end{minipage}
-\hspace{.5cm}
-\begin{minipage}{.2\textwidth}
-\visible<5->{
-\includegraphics[scale=0.3]{images/gdas.png}
-}
-\end{minipage}
 
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,6 +158,7 @@
 \begin{minipage}{.45\textwidth}
 \myit{
 \visible<5->{
+\small
 	\item \alert{SmoothDARTS} \lit{\href{https://arxiv.org/pdf/2002.05283.pdf}{Chen and Hsieh, 2020}} -- applies random perturbation and adversarial training to avoid bad regions
 	}
 	}
@@ -205,6 +174,52 @@
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\myframetop{Issues -- Memory constraints}{
+
+\vspace*{-0.15cm}
+	\myit{
+		\item DARTS keeps the \alert{entire one-shot model in memory}, together with its computed tensors 
+    	\visible<2->{
+	    	\myit{
+	    	   	\item[-] This constrains the search space size and the fidelity used to train the one-shot model
+		    	\item[-] \alert{Impossible} to run on large datasets as ImageNet
+	    	}
+		}
+	}
+
+\bigskip
+
+\begin{minipage}{.55\textwidth}
+\visible<3->{A lot of research aims to fix this issue:}
+
+\myit{
+\visible<4->{
+	\item \alert{GDAS} \lit{\href{https://arxiv.org/pdf/1910.04465.pdf}{Dong et al, 2019}} -- samples from a Gumbel Softmax distribution to keep only a single architecture in memory
+	}
+\smallskip
+\visible<5->{
+	\item \alert{ProxylessNAS} \lit{\href{https://openreview.net/pdf?id=HylVB3AqYm}{Cai et al, 2019}} -- computes approximate gradients on $\alpha$ keeping only 2 edges between two nodes in memory at a time 
+	}
+\smallskip
+\visible<6->{
+	\item \alert{PC-DARTS} \lit{\href{https://arxiv.org/pdf/1907.05737.pdf}{Xu et al, 2020}} -- performs the search on a subset of the 
+	%total computed 
+	channels in the one-shot model
+	}
+}
+\end{minipage}
+\hspace{.5cm}
+\begin{minipage}{.2\textwidth}
+\visible<4->{
+\includegraphics[scale=0.3]{images/gdas.png}
+}
+\end{minipage}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 %----------------------------------------------------------------------
 \myframe{Questions to Answer for Yourself / Discuss with Friends}{
 
@@ -216,7 +231,7 @@
 		\item Repetition:\\ \alert{What are DARTS' main issues and how can they be fixed?}
 \medskip
 		\item Discussion:\\ \alert{RobustDARTS stops the architecture optimization early, before the curvature of the validation loss becomes high. Why do you think this works? 
-		{[Hint: think about the discretization step after the DARTS search.]}}
+		\\{[Hint: think about the discretization step after the DARTS search.]}}
 	}	 
 }
 %-----------------------------------------------------------------------
