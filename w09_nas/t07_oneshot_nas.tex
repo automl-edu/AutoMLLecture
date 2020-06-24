@@ -4,12 +4,12 @@
 %-------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{One-shot models: convolutional neural fabrics \litw{\href{https://arxiv.org/pdf/1606.02492.pdf}{Saxena and Verbeek, 2017}}}{
+\myframetop{One-shot models: convolutional neural fabrics \litw{\href{https://arxiv.org/pdf/1606.02492.pdf}{Saxena and Verbeek, 2017}}}{
 	\myit{
 		\item A \alert{one-shot model} is a big model that has all architectures in a search space as submodels
 		\myit{
 			\item This allows weights sharing across architectures
-			\item One \alert{only needs to train the single one-shot model}, \\ rather than an exponential number of individual architectures
+			\item One \alert{only needs to train the single one-shot model}, \\ and implicitly trains an exponential number of individual architectures
 		}
 	}
 \pause
@@ -19,8 +19,11 @@
 		\item The first type of one-shot models: \alert{convolutional neural fabrics} %/ \alert{lattice} 
 
 	\centering
-	\includegraphics[width=0.7\textwidth]{images/conv_fabric_1.png}\\
+	\only<2-5>{\includegraphics[width=0.7\textwidth]{images/conv_fabric_1.png}\\}
+	\only<6>{\hspace*{-0.91cm}\vspace*{0.3cm}\includegraphics[width=1.02\textwidth]{images/conv_fabric_3.png}\vspace*{-0.5cm}}
 	
+	\only<2>{\bigskip\bigskip\includegraphics[width=0.7\textwidth]{images/conv_fabric_2.png}}
+\pause
 	\medskip
 		\myit{
 			\item \alert{Each path} from the input to the output \alert{represents an architecture}
@@ -138,6 +141,23 @@
 }
 %----------------------------------------------------------------------
 
+%----------------------------------------------------------------------
+
+%\myframetop{Impact of DropPath \litw{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al., 2018}}}{
+%	\centering
+%	
+%	\includegraphics[width=0.8\textwidth]{images/droppath.png}
+%	
+%    \begin{itemize}
+%		\item DropPath zeros out one a subset of the operations at each mini-batch training iteration with probability $p$.
+%		\item ScheduledDropPath starts with $p=0$ and increases that linearly throughout training until a maximum $p_{max}$ in the end.
+%	\end{itemize}
+%}
+%---------------------------------------------------------------
+
+
+
+%----------------------------------------------------------------------
 \myframetop{Training the one-shot model -- DropPath \litw{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al., 2018}}}{
 	\centering
 	
@@ -154,50 +174,90 @@
 }
 			}
 	\end{itemize}
-\bigskip	
-	\centering
-	\visible<1->{\includegraphics[width=0.2\textwidth]{images/one_shot_model_1.png}\quad\quad\quad\quad\quad\quad}
-	\visible<2->{\includegraphics[width=0.2\textwidth]{images/drop_path_1.png}\quad\quad}
-	\visible<2->{\includegraphics[width=0.2\textwidth]{images/drop_path_2.png}}
 	
+\vspace*{-0.5cm}
+\begin{columns}
+	\column{0.01\textwidth}
+	\column{0.33\textwidth}
+	
+	\begin{center}
+	\includegraphics[width=0.6\textwidth]{images/one_shot_model_1.png}\\
+	One-shot model
+	\end{center}
+	
+	\column{0.02\textwidth}
+	\column{0.33\textwidth}	
+	\begin{center}
+\visible<2->{	\includegraphics[width=0.6\textwidth]{images/drop_path_1.png}\\
+	Architecture for batch 1
 }
-%----------------------------------------------------------------------
+	\end{center}
+	
+	\column{0.33\textwidth}	
+	\begin{center}
+\visible<2->{
+	\includegraphics[width=0.6\textwidth]{images/drop_path_2.png}\\
+	Architecture for batch 2
+}
+	\end{center}	
 
-%----------------------------------------------------------------------
-
-%\myframetop{Impact of DropPath \litw{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al., 2018}}}{
-%	\centering
+	\column{0.02\textwidth}	
+\end{columns}
 %	
-%	\includegraphics[width=0.8\textwidth]{images/droppath.png}
-%	
-%    \begin{itemize}
-%		\item DropPath zeros out one a subset of the operations at each mini-batch training iteration with probability $p$.
-%		\item ScheduledDropPath starts with $p=0$ and increases that linearly throughout training until a maximum $p_{max}$ in the end.
-%	\end{itemize}
-%}
+%	\only<1->{
+%	\includegraphics[width=.75\textwidth]{images/snas_oneshot.png}
+%	}
+}
 %---------------------------------------------------------------
 
 
 %----------------------------------------------------------------------
-
 \myframetop{Training the one-shot model -- Sampling}{
 	\centering
 	
     \begin{itemize}
-		\item At each mini-batch iteration during the training of the one-shot model sample one architecture $Z$ from the search space $\mathcal{A}$.
-		\visible<2->{
+		\item At each mini-batch iteration during the training of the one-shot model \alert{sample a single architecture} 
+		%$Z$ 
+		from the search space 
+		%$\mathcal{A}$.
+		\visible<3->{
 		\myit{
 			\item[-] \textbf{Random Search with Weight Sharing} \lit{\href{https://arxiv.org/pdf/1902.07638.pdf}{Li and Talwalkar, 2020}} $\longrightarrow$ sample from uniform distribution
 			\item[-] \textbf{ENAS} \lit{\href{https://arxiv.org/pdf/1802.03268.pdf}{Pham et al., 2018}} $\longrightarrow$ sample from the learned policy of a RNN controller
 		}
 		}
+\pause
+\medskip
 		\item \alert{Update the parameters of the one-shot model} corresponding to only that architecture
 	\end{itemize}
 	
-	\centering
-	\includegraphics[width=0.19\textwidth]{images/one_shot_model_1.png}\quad\quad\quad\quad\quad\quad
-	\includegraphics[width=0.19\textwidth]{images/one_shot_model_2.png}\quad\quad
-	\includegraphics[width=0.19\textwidth]{images/one_shot_model_3.png}
+\vspace*{-0.5cm}
+\begin{columns}
+	\column{0.01\textwidth}
+	\column{0.33\textwidth}
+	
+	\begin{center}
+	\includegraphics[width=0.6\textwidth]{images/one_shot_model_1.png}\\
+	One-shot model
+	\end{center}
+	
+	\column{0.02\textwidth}
+	\column{0.33\textwidth}	
+	\begin{center}
+	\smallskip
+	\includegraphics[width=0.6\textwidth]{images/one_shot_model_2.png}\\
+	Architecture for batch 1
+	\end{center}
+	
+	\column{0.33\textwidth}	
+	\begin{center}
+	\smallskip
+	\includegraphics[width=0.6\textwidth]{images/one_shot_model_3.png}\\
+	Architecture for batch 2
+	\end{center}	
+
+	\column{0.02\textwidth}	
+\end{columns}
 %	
 %	\only<1->{
 %	\includegraphics[width=.75\textwidth]{images/snas_oneshot.png}
@@ -241,7 +301,8 @@
 		\item There are multiple ways one can approach this. Some of these are:
 		\myit{
 \pause
-			\item[$1$.] Sample uniformly at random $M$ architectures and rank them based on their validation error \alert{using the one-shot model parameters} (retraining from scratch is computationaly expensive)
+			\item[$1$.] Sample uniformly at random $M$ architectures and rank them based on their validation error \alert{using the one-shot model parameters} 
+			%(retraining from scratch is computationaly expensive)
 			%\item[-] Select the top $K$, where $K < M$, and evaluate those on the full validation set, again using the one-shot parameters.
 \pause
 			\item[$1b$.] (Optional) Select top $K$ ($K<M$) and retrain them from scratch for a couple of epochs
