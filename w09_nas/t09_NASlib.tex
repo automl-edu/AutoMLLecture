@@ -33,23 +33,47 @@
 %----------------------------------------------------------------------
 \myframe{NASLib building blocks: Search Spaces}{
 	\centering
-	TODO
+	\myit{
+		\item NASLib's main building block is the graph object represented as a NetworkX~\footnote{https://networkx.github.io/} graph.
+		\myit{
+			\item[-] This is done in order to easily manipulate the graph by adding/removing nodes/edges without dealing with the complexity of the PyTorch computational graph.
+			\item[-] NetworkX offers an easy high-level way of creating complex structures, e.g. hierarchical search spaces.
+			}
+		\item After the NetworkX object has been built then an optimizer object interacts with it and builds the PyTorch computational graph, which can be a one-shot model or also a single architecture (depending one the optimizer, i.e. black-box optimizers will sample single architectures).
+	}
+	
+	\includegraphics[width=0.1\textwidth]{images/naslib_space.png}
+	\quad\quad
+	\includegraphics[width=0.11\textwidth]{images/naslib_oneshot_model.png}	
 	
 }
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\myframe{NASLib building blocks: Optimizers}{
+\myframe{NASLib building blocks: Optimizers and Evaluators}{
 	\centering
-	TODO
+	\myit{
+		\item NASLib supports both one-shot and black-box NAS optimizers
+		\item All of them are agnostic to the search space (with NASLib's language) they run on
+		\item The NAS optimizers in NASLib are also responsible for building the PyTorch computational graph by transforming the operation choices in each edge of the NetworkX graph to a:
+		\myit{
+				\item[-] $\texttt{MixedOp}$ -- In case the NAS optimizer is one-shot. e.g. DARTS
+				\item[-] $\texttt{CategoricalOp}$ -- In case the NAS optimizer is black-box, e.g. Random Search
+		}
+		\item The modularized nature of these optimizers allows to transform e.g. DARTS to GDAS or PC-DARTS by just a method call.
+		
+		\bigskip
+		\item After the one-shot model is built NASLib runs the NAS optimization routine, e.g. the bi-level loop, by using an $\texttt{Evaluator}$ object.
+		\item The final returned architecture is then ran using the same object to evaluate on the test set.
+	}
 	
 }
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\myframe{NASLib building blocks: Evaluators}{
-	\centering
-	TODO
+%\myframe{NASLib building blocks: Evaluators}{
+%	\centering
+%	TODO
 	
-}
+%}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 \myframe{Tabular benchmarks for one-shot NAS}{
