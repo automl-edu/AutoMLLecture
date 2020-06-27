@@ -875,6 +875,92 @@
     \choice simplification of multi-criteria optimization problem to single-objective
     \choice need to ensure that different trade-offs
 between cost functions are explored. % Correct
-\end{choices}		
+\end{choices}	
+
+\section{NAS - Part I}
+\question Hierarchical search spaces are easier to search than cell-search spaces.
+\begin{choices}
+    \choice True
+    \choice False % Correct
+\end{choices}
+
+\question In cell-structured search-spaces we search both the cell and the macro architecture.
+\begin{choices}
+    \choice True
+    \choice False % Correct
+\end{choices}
+
+\question In Regularized Evolution we drop the oldest individual in a population.
+\begin{choices}
+    \choice True  % Correct
+    \choice False
+\end{choices}
+
+\question Increasing the depth/width via a network morphism step, does not change the network’s performance.
+\begin{choices}
+    \choice True % Correct
+    \choice False
+\end{choices}
+
+\question In lemonade an approximate network morphism leads to no change in the function expressed by the neural network.
+\begin{choices}
+    \choice True
+    \choice False % Correct
+\end{choices}
+
+\question The approximate network morphism in Lemonade is used to increase the number of parameters in the model.
+\begin{choices}
+    \choice True
+    \choice False % Correct
+\end{choices}
+
+\question Which of the following make the comparison of the results of NAS algorithms difficult.
+\begin{choices} % All of them are correct
+    \choice Different random seeds
+    \choice Different evaluation schemes
+    \choice Different training pipelines
+    \choice Different search spaces
+\end{choices}
+
+\question A NAS benchmark has to consist of
+\begin{choices}
+    \choice Dataset % Correct
+    \choice Available code for training architectures with predefined hyperparameters % Correct
+    \choice A fully evaluated search space
+    \choice A fully trained RL agent
+\end{choices}
+
+\question Pros of the Cell Search space include:
+\begin{choices}
+    \choice Design choice of macro architecture
+    \choice Reduced search space size % Correct
+    \choice Flexibility of constructing building blocks and reusing them many times % Correct
+    \choice Easy to design
+\end{choices}
+
+\question Hierarchical representation of search space
+\begin{choices}
+    \choice Allows for cycles in the architecture
+    \choice Cannot reuse building blocks at various levels of abstraction
+    \choice Combines different levels of motives % Correct
+    \choice Represents architectures as directed acyclic graphs % Correct
+\end{choices}
+
+\question Neural Architecture Search is far too expensive to be performed with Bayesian Optimization.
+\begin{choices}
+    \choice True
+    \choice False % Correct
+\end{choices}
+
+\question Speedup techniques for NAS include:
+\begin{choices} % All of them are correct
+    \choice Multi-fidelity optimization
+    \choice Learning curve prediction
+    \choice Meta-learning across datasets
+    \choice Network morphisms
+    \choice weight inheritance
+    \choice Weight sharing
+    \choice one-shot model
+\end{choices}
 	\end{questions}
 \end{document}
