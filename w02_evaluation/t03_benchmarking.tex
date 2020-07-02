@@ -99,8 +99,10 @@
 
     \begin{frame}[c,allowframebreaks]{McNemar Test}
     \begin{itemize}
-    \item non-parametric test used on paired nominal data, does not make any distributional assumptions
-    \item pairs are e.g.\ performance numbers of different models on the same data
+    \item non-parametric test used on paired dichotomous nominal data, does not
+        make any distributional assumptions beyond statistical independence of
+        samples
+    \item pairs are e.g.\ binary labels predicted by different models on the same data
     \item can be applied to compare the performance of two \textbf{models}
         when the considered performance measure is based on an outer loss with a
         nominal or binary output, e.g.\ accuracy is based on a binary outer loss
