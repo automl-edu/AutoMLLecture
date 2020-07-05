@@ -962,5 +962,75 @@ between cost functions are explored. % Correct
     \choice Weight sharing
     \choice one-shot model
 \end{choices}
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\section{NAS - Part II}
+\question One-shot models ...
+\begin{choices}
+    \choice are trained from a single/only a few data-points.
+    \choice train only a fixed/specific architecture.
+    \choice implicitly train an exponential number of architectures. % Correct
+    \choice are generally very small to facilitate fast training.
+\end{choices}
+
+\question One-shot models on cell search spaces ...
+\begin{choices}
+    \choice are directed acyclic multigraphs. % Correct
+    \choice are directed cyclic multigraphs.
+    \choice share weights across architectures that use the same edge. % Correct
+    \choice optimize weights to work well on average for all architectures. % Correct
+\end{choices}
+
+\question One-shot model training can not be adapted to avoid coadaptation of weights.
+\begin{choices}
+    \choice True
+    \choice False
+\end{choices}
+
+\question When selecting an architecture from a one-shot model ...
+\begin{choices}
+    \choice you always trust your one-shot model performance and select the architecture solely based on the one-shot models performance.
+    \choice you always have to retrain the selected architectures as the one-shot model fundamentally optimizes a different goal.
+    \choice selecting the best architecture based on the one-shot weights can be sub-optimal. % Correct
+\end{choices}
+
+\question DARTS ...
+\begin{choices}
+    \choice employs a one-shot model. % Correct
+    \choice architecture weights are discrete.
+    \choice can not be trained with gradient descent due to the architecture weights.
+    \choice does not suffer from coadaptation of weights.
+    \choice keeps the whole one-shot model in memory. % Correct
+\end{choices}
+
+\question NAS methods are ...
+\begin{choices}
+    \choice easy to compare as they generally all use the same search space.
+    \choice easy to combine in NASLib. % Corret
+\end{choices}
+
+\question NASLib ...
+\begin{choices}
+    \choice is a library of NAS-benchmarks to evaluate on. % Correct
+    \choice is a library of common NAS methods. % Correct
+    \choice modularizes NAS methods. % Correct
+    \choice only considers 1-shot NAS methods.
+\end{choices}
+
+\question The biggest gains typically comes from ...
+\begin{choices}
+    \choice architecture search.
+    \choice HPO. % Correct
+\end{choices}
+
+\question On a new dataset ...
+\begin{choices}
+    \choice always run HPO. % Correct
+    \choice always run NAS.
+    \choice jointly optimize them if you have enough budget. % Correct
+    \choice if you have well performing hyperparameters run NAS without fine-tuning the hyperparameters afterwards.
+\end{choices}
 	\end{questions}
 \end{document}
