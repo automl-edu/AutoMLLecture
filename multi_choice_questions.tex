@@ -1032,5 +1032,105 @@ between cost functions are explored. % Correct
     \choice jointly optimize them if you have enough budget. % Correct
     \choice if you have well performing hyperparameters run NAS without fine-tuning the hyperparameters afterwards.
 \end{choices}
+
+
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\section{DAC and L2L}
+\question Black Box vs. Grey Box vs. White Box
+\begin{choices}
+    \choice The black-box view is still most commonly used. % Correct
+    \choice Grey-box approaches replace algorithm components by learned policies.
+    \choice The grey-box view uses more available information than the black-box view. % Correct
+    \choice White-box approaches learn a proposal mechanism from data.
+\end{choices}
+
+\question Iterative optimization heuristics ...
+\begin{choices}
+    \choice use the black-box view.
+    \choice propose a set of solution candidates in each iteration of an algorithm, based on previous evaluations. % Correct
+    \choice aim to improve the solution quality in each iteration. % Correct
+    \choice only take the final solution quality into account.
+\end{choices}
+
+\question Dynamic Algorithm Configuration and Dynamic Adaptation of Hyperparameters are different names for the same problem.
+\begin{choices}
+    \choice True
+    \choice False % Correct
+\end{choices}
+
+\question Components of DAC are ...
+\begin{choices}
+    \choice an algorithm $\mathcal{A}$ to configure, % Correct
+    \choice a configuration space $\Lambda$, % Correct
+    \choice a probability distribution $p(\mathcal{D})$ over meta datasets $\mathcal{D}\in\mathbf{D}$, % Correct
+    \choice a schedule of parameter values $\lambda^{(t)}\in\Lambda$ to configure the algorithm at each time-step $t$,
+    \choice a state description $s^{(t)}$,
+    \choice an environment,
+    \choice a reinforcement learning method to learn a policy,
+    \choice a cost metric $c$ assessing the cost of a control policy. % Correct
+\end{choices}
+
+\question A contextual MDP is ...
+\begin{choices}
+    \choice much simpler to learn than a standard MDP.
+    \choice necessary to learn across datasets. % correct
+    \choice a collection of standard MDPs with different action and state spaces.
+    \choice a collection of standard MDPS with shared action and state spaces but different reward and transition functions.
+\end{choices}
+
+\question The order in which individual MDPs of a cMDP are learned ...
+\begin{choices}
+    \choice does not influence the learning problem.
+    \choice does potentially make it much easier to learn a successful policy. %Correct
+    \choice does potentially make it much harder to learn a successful policy. %Correct
+    \choice can be learned via self-paced learning. % Correct
+\end{choices}
+
+\question Population based training ...
+\begin{choices}
+    \choice is an evolutionary approach to dynamic algorithm configuration.
+    \choice requires an offline learning phase.
+    \choice requires substantial parallel compute resources. % Correct
+    \choice only makes use of online information. % Correct
+\end{choices}
+
+\question Population based training can not be combined with BO.
+\begin{choices}
+    \choice True
+    \choice False % Correct
+\end{choices}
+
+\question Learning to learn ...
+\begin{choices}
+    \choice does not require an offline learning phase.
+    \choice aims to learn hyperparameter schedules.
+    \choice learns algorithms directly from data. % Correct
+    \choice uses the grey-box view.
+\end{choices}
+
+\question "L2L by gradient descent by gradient descent" approaches the L2L setting ...
+\begin{choices}
+    \choice as a supervised learning problem. % Correct
+    \choice as an unsupervised learning problem.
+    \choice as a reinforcement learning problem.
+\end{choices}
+
+\question Learning to optimize via RL ...
+\begin{choices}
+    \choice is state-less.
+    \choice can only take the final objective value as reward signal.
+    \choice can only learn algorithms that iterate for at most $10$ steps.
+    \choice optimizes the cumulative cost. % Correct
+\end{choices}
+
+\question Learning acquisition functions ...
+\begin{choices}
+    \choice is too expensive to be used in practice.
+    \choice replaces the design choice of "Which acquisition function should be chosen", by a learned acquisition function. % Correct
+    \choice uses algorithm selection to choose the best acquisition function for the task at hand.
+\end{choices}
 	\end{questions}
 \end{document}
