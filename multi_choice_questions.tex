@@ -1132,5 +1132,125 @@ between cost functions are explored. % Correct
     \choice replaces the design choice of "Which acquisition function should be chosen", by a learned acquisition function. % Correct
     \choice uses algorithm selection to choose the best acquisition function for the task at hand.
 \end{choices}
+
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\section{Analysis/Interpretability}
+\question Interpretability of AutoML systems is ...
+\begin{choices}
+    \choice worse than standard ML systems due to the double black box view. % Correct
+    \choice not as bad as standard ML due to the use of the gray or white box view.
+    \choice equal to that of standard ML systems.
+    \choice not an issue as the as it is only a concern for standard ML systems.
+\end{choices}
+
+\question Plotting data on a log scale ...
+\begin{choices}
+    \choice allows to see more detail in the final stages.
+    \choice allows to see more detail in the beginning. % COrrect
+    \choice can hide a lot of information.
+    \choice should only ever be done on the $x$-axis.
+\end{choices}
+
+\question Visual analysis of the sampling behaviour of an AutoML method 
+\begin{choices}
+    \choice can only be done in up to 2D.
+    \choice can be done for at most 10 parameters.
+    \choice is possible for $N$-Dimensional spaces through a multi dimensional scaling. % Correct
+    \choice is possible for $N$-Dimensional spaces through the use of principle component analysis.
+\end{choices}
+
+\question Parallel Coordinate Plots ...
+\begin{choices}
+    \choice show patterns in the configuration space. % Correct
+    \choice are another form of plotting learning curves.
+    \choice are hard to interpret due to the number of parameters in the configuration space. % Correct
+    \choice can be combined with parameter importance methods to make patterns more apparent. % Correct
+\end{choices}
+
+\question Multi-Fidelity Checks allow to ...
+\begin{choices}
+    \choice measure the distance between budgets.
+    \choice gain insights into the usefulness of the chosen fidelities. % Correct
+    \choice are another form of "visual analysis of sampling behaviours of AutoML methods".
+    \choice see if performances of configurations across the chosen budgets is similar/correlated. % Correct
+\end{choices}
+
+\question Select all local hyperparameter importance methods.
+\begin{choices}
+    \choice Ablation % Correct
+    \choice fANOVA
+    \choice LPI % Correct
+    \choice GP
+\end{choices}
+
+\question Which hyperparameter importance methods quantify the importance of a hyperparameter through the variance in performance it causes
+\begin{choices}
+    \choice Ablation
+    \choice fANOVA % Correct
+    \choice LPI % Correct
+\end{choices}
+
+\question Given the following performance table with configuration $<0,0,0,0>$ as starting point and $<1,1,1,1>$ as end point, what is the parameter importance order (i.e. the ablation path) when trying to minimize a loss $L$?
+
+    %\begin{center}
+      \begin{tabular}{c|cccc}
+          & \multicolumn{4}{c}{$\Lambda$} \\
+          $L$ & $\lambda_1$ & $\lambda_2$ & $\lambda_3$ & $\lambda_4$ \\
+          \hline
+          1.0 & $0$ & $0$ & $0$ & $0$ \\
+          0.6 & $1$ & $0$ & $0$ & $0$ \\
+          0.7 & $0$ & $1$ & $0$ & $0$ \\
+          0.5 & $1$ & $1$ & $0$ & $0$ \\
+          0.8 & $0$ & $0$ & $1$ & $0$ \\
+          0.4 & $1$ & $0$ & $1$ & $0$ \\
+          0.6 & $0$ & $1$ & $1$ & $0$ \\
+          0.2 & $1$ & $1$ & $1$ & $0$ \\
+          0.5 & $0$ & $0$ & $0$ & $1$ \\
+          0.5 & $1$ & $0$ & $0$ & $1$ \\
+          0.4 & $0$ & $1$ & $0$ & $1$ \\
+          1.0 & $1$ & $1$ & $0$ & $1$ \\
+          0.2 & $0$ & $0$ & $1$ & $1$ \\
+          0.1 & $1$ & $0$ & $1$ & $1$ \\
+          0.3 & $0$ & $1$ & $1$ & $1$ \\
+          0.1 & $1$ & $1$ & $1$ & $1$ \\
+      \end{tabular}
+    %\end{center}
+\begin{choices}
+    \choice $\lambda_3$, $\lambda_2$, $\lambda_4$, $\lambda_1$
+    \choice $\lambda_2$, $\lambda_4$, $\lambda_1$, $\lambda_3$
+    \choice $\lambda_4$, $\lambda_3$, $\lambda_1$, $\lambda_2$ % Correct
+    \choice $\lambda_1$, $\lambda_2$, $\lambda_3$, $\lambda_4$
+\end{choices}
+
+\question Given the table below, compute the local importance around configuration $1, 0, 1, 1$. What is the importance order according to LPI?
+
+    %\begin{center} % To answer this students only have to look at the loss and don't have to compute exact values. I've given the exact values anyways
+      \begin{tabular}{c|cccc}
+          & \multicolumn{4}{c}{$\Lambda$} \\
+          $L$ & $\lambda_1$ & $\lambda_2$ & $\lambda_3$ & $\lambda_4$ \\
+          \hline % total variance = 0.065
+          0.4 & $1$ & $0$ & $1$ & $0$ \\ % -> 4 has 0.0225 variance -> ~35% of total variance
+          0.5 & $1$ & $0$ & $0$ & $1$ \\ % -> 3 has 0.04 variance -> ~62% of total variance
+          0.2 & $0$ & $0$ & $1$ & $1$ \\ % -> 1 has 0.0025 variance -> ~4% of total
+          0.1 & $1$ & $0$ & $1$ & $1$ \\
+          0.1 & $1$ & $1$ & $1$ & $1$ \\ % -> 2 has no importance
+      \end{tabular}
+    %\end{center}
+\begin{choices}
+    \choice $\lambda_3$, $\lambda_2$, $\lambda_4$, $\lambda_1$
+    \choice $\lambda_2$, $\lambda_4$, $\lambda_1$, $\lambda_3$
+    \choice $\lambda_4$, $\lambda_3$, $\lambda_1$, $\lambda_2$
+    \choice $\lambda_3$, $\lambda_4$, $\lambda_1$, $\lambda_2$ % Correct
+\end{choices}
+
+\question In fANOVA ...
+\begin{choices}
+    \choice we can easily compute higher-order interaction effects as we can cheaply query the surrogate.
+    \choice higher-order interaction effects quickly become too expensive to compute even with the use of a surrogate. % Correct
+\end{choices}
+
 	\end{questions}
 \end{document}
