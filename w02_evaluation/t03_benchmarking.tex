@@ -115,8 +115,8 @@
     \begin{minipage}{0.74\textwidth}
     \begin{itemize}
     \item A: $\#$obs.\ correctly classified by both
-    \item B: $\#$obs.\ misclassified by model 1 but not by model 2
-    \item C: $\#$obs.\ misclassified by model 2 but not by model 1
+    \item B: $\#$obs.\ misclassified by model 2 but not by model 1
+    \item C: $\#$obs.\ misclassified by model 1 but not by model 2
     \item D: $\#$obs.\ misclassified by both
     \end{itemize}
     \end{minipage}
@@ -126,8 +126,8 @@
     \begin{minipage}[c]{0.625\linewidth}
     Error of each model can be computed as follows:
     \begin{itemize}
-      \item Model 1: (A+B)/(A+B+C+D)
-      \item Model 2: (A+C)/(A+B+C+D)
+      \item Model 1: (C+D)/(A+B+C+D)
+      \item Model 2: (B+D)/(A+B+C+D)
     \end{itemize}
 
     Even if the models have the \textbf{same} errors (indicating equal performance), cells B and C may be different because the models may misclassify different instances.
