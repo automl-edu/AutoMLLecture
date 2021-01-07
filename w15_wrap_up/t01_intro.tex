@@ -1,0 +1,104 @@
+\input{t00_template.tex}
+\subtitle{Wrap Up}
+
+
+\begin{document}
+
+\maketitle
+
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
+\begin{frame}[containsverbatim,allowframebreaks]{Preprocessing}
+    Typical ML Pipeline steps for AutoML Systems:
+    \begin{itemize}
+      \item Data Cleaning
+      \item Feature Engineering
+      \begin{itemize}
+        \item Feature Selection
+        \item Feature Preprocessing
+        \item Feature Construction  
+      \end{itemize}
+    \end{itemize}
+    \begin{center}
+      \includegraphics[width = 0.5\linewidth]{images/AutoMLPipeline.jpg}  
+    \end{center}
+\end{frame}
+
+\begin{frame}{Data Cleaning}
+    
+\end{frame}
+
+\begin{frame}{Feature Selection}
+  Combined Feature Selection and HPO: mosmafs: Multi-Objective Simultaneous Model and Feature Selection
+    
+\end{frame}
+
+\begin{frame}{Feature Preprocessing}
+  \begin{itemize}
+    \item Handling categorical values
+    \begin{itemize}
+      \item Impact Encoding (aka Target Encoding)
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Feature Construction}
+  \begin{itemize}
+    \item Often not needed for DL/NAS.
+    \item Generic:
+    \begin{itemize}
+      \item Polynomial Features
+      \item Normalize 
+      \item PCA
+    \end{itemize}
+    \item Heuristisc
+    \begin{itemize}
+      \item Detecting Dates, Hours: Transofrm to "circular" features within year, month, day, or whatever periodicity we assume \\
+      e.g.\ $\tilde x_1 = sin(2\pi \cdot x /24)$ and $\tilde x_2 = cos(2\pi \cdot x /24)$
+    \end{itemize}
+    Combione with external data:
+    \begin{itemize}
+      \item Names $\leftarrow$ gender, ethnicity, age
+      \item Home Adress $\leftarrow$ Household Income
+      \item Location + Date $\leftarrow$ Weather
+    \end{itemize}
+  \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Pipelining}
+  
+\end{frame}
+
+\begin{frame}{Optimizing Pipelines}
+  \begin{itemize}
+    \item Pipelines represent hierarchical search space
+  \end{itemize}
+
+  Suitable optimizers:
+  \begin{itemize}
+    \item BO with RF surrogate
+    \item Evolutionary Aproaches (similar to NAS)
+  \end{itemize}
+    
+\end{frame}
+
+\begin{frame}[containsverbatim,allowframebreaks]{Software}
+
+\begin{itemize}
+  \item DataRobot (comercial, gui)
+  \item H20.ai (comercial but open source, r, python)
+  \item TPOT, Tree-based Pipeline Optimization Tool  (2016-cont, open source, evolutionary approach) % show plot https://github.com/EpistasisLab/tpot
+  \item AutoWEKA (2016, open source)
+  \item mlr3automl (2020, prelim)
+  \item Hyperopt-Sklearn (2014-cont) Only HPO
+  \item Auto-Sklearn (2.0) (2015-cont) BO, ensembles, meta-learning
+\end{itemize}
+
+\end{frame}
+
+
+
+\end{document}
