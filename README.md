@@ -32,6 +32,7 @@ The course is targeted at students and practitioners with solid background in ma
 * University of Hannover, Germany:
   * Marius Lindauer
   * Difan Deng
+  * Carolin Benjamins
 * Ludwig Maximilian University of Munich:
   * Bernd Bischl
   * Janek Thomas (Fraunhofer)
