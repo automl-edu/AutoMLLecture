@@ -182,18 +182,34 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{}
-    Data Cleaning can hardly be automatized but a few heuristics exist:
-    \begin{itemize}
-      \item Remove ID Columns, Columns with mostly unique values
-      \item Outlier detection (in the feature space)
-      \item Detect time series or spatial data $\righarrow$ randomized validation might be flawed.
-    \end{itemize}
+\begin{frame}{Cleaning and Feature Selection}
+    \begin{columns}
+      \begin{column}{0.7\textwidth}
 
-    Feature Selection
-    \begin{itemize}
-      \item Combined Feature Selection and HPO: \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}
-    \end{itemize}
+        Data Cleaning can hardly be automatized but a few heuristics exist:
+        \begin{itemize}
+          \item Remove ID Columns, Columns with mostly unique values
+          \item Outlier detection (in the feature space)
+          \item Detect time series or spatial data $\rightarrow$ randomized validation might be flawed.
+        \end{itemize}
+
+        Feature Selection
+        \begin{itemize}
+          \item Seldom increases performance but decreases computational costs $\rightarrow$ Multi-criteria optimization.
+          \begin{itemize}
+            \item Combined Feature Selection and HPO: \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}
+          \end{itemize}
+          \item Happens indirectly in learning algorithm: random forest, lasso regression %FIXME More examples.
+        \end{itemize}
+      \end{column}%
+      \begin{column}{0.3\textwidth}
+        \begin{center}
+          \includegraphics[width = \linewidth]{images/Binder2020multiobjective_fig3.pdf}
+
+          {\tiny Taken from \href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}.}
+        \end{center}
+      \end{column}
+    \end{columns}
 \end{frame}
 
 \begin{frame}{Feature Preprocessing}
