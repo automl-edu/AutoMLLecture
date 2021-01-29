@@ -10,6 +10,100 @@
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
 
+\begin{frame}{From HPO to AutoML}
+  So far we covered
+  \begin{itemize}
+    \item Mechanisms to select promising ML Algorithms for a Dataset (Algorithm Selection)
+    \item HPO as Black-Box optimization
+    \begin{itemize}
+      \item Grid- and Random Search, Evolutionary Algorithms, Bayesian Optimization
+    \end{itemize}
+    \item HPO as a Grey-Box-Problem
+    \begin{itemize}
+      \item Hyperband, BOHB
+    \end{itemize}
+    \item Optimizing Neural Network Architectures (NAS)
+    \begin{itemize}
+      \item One-Shot Approaches, DART
+    \end{itemize}
+  \end{itemize}  
+\end{frame}
+
+\begin{frame}{From HPO to AutoML}
+    \begin{center}
+      \includegraphics[width = 0.9\linewidth]{images/drawing.pdf}  
+    \end{center}
+\end{frame}
+
+\begin{frame}{Automate HPO}
+
+  \begin{columns}
+    \begin{column}{0.59\textwidth}
+
+      For AutoML the user only supplies \ldots
+      \begin{itemize}
+        \item dataset
+        \item performance measure and
+        \item possibly a time limit
+      \end{itemize}
+
+      So far HPO additionally needs \ldots
+      \begin{itemize}
+        \item one learning algorithm (to generate Inducer $\inducer$),
+        \item search space $\pcs$ to chose $\conf$ from,
+        \item a resampling strategy to evaluate $\cost(\conf)$ and
+        \item optimization algorithm.
+      \end{itemize}
+
+      To build an AutoML System we have to make these choices automatically.
+
+    \end{column}%
+    \begin{column}{0.4\textwidth}
+      \begin{center}
+        \includegraphics[width = \linewidth]{images/tuning.pdf}    
+      \end{center}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\begin{frame}{Choice of learning algorithm}
+  \begin{itemize}
+    \item A good AutoML System should consider more than one learning algorithm. More on that later.
+    \item A plethora of learning algorithm exists.
+    \item Studies\footnote{\href{https://dl.acm.org/doi/10.5555/2627435.2697065}{Delgado et al., JMLR 2014}} and experience have shown that one representative of these categories usually reaches best performance (on tabular data):
+    \begin{itemize}
+      \item Penalized Regression, SVM, Gradient Boosting, Random Forests, Neural Networks
+      \item (tuned) random forests hardly beaten by current AutoML frameworks\footnote{\href{https://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
+      \item Example: Auto-Sklearn 2.0\footnote{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}} uses: Extra Trees, Gradient Boosting, Passive Aggressive, Random Forest, Linear Model
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Choice of Search Space for a Learning Algorithm}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+    Which hyperparameters should we consider for a given learning algorithm?
+    \begin{itemize}
+      \item Ranges often selected based on experience
+      \begin{itemize}
+        \item Compare to other AutoML Frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}, 
+      \end{itemize}
+      \item Sensitivity analysis does not exist for each learner
+      \item Solution: Analysis of previous HPO runs (Meta Learning)
+    \end{itemize}
+    \end{column}%
+    \begin{column}{0.4\textwidth}
+      \begin{center}
+        \includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab3.pdf}   
+
+        {\tiny Taken from \href{https://www.jmlr.org/papers/volume20/18-444/18-444.pdf}{Probst et al., 2019 JMLR}.}
+      \end{center}
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
 \begin{frame}[containsverbatim,allowframebreaks]{Preprocessing}
     Typical ML Pipeline steps for AutoML Systems:
     \begin{itemize}
@@ -39,7 +133,8 @@
   \begin{itemize}
     \item Handling categorical values
     \begin{itemize}
-      \item Impact Encoding (aka Target Encoding)
+      \item Impact Encoding (aka Target Encoding) \\
+            Important: Target Encoding has to be obtained throgh CV / with regularization to prevent target leakage
     \end{itemize}
   \end{itemize}
 \end{frame}
