@@ -87,46 +87,113 @@
     \begin{itemize}
       \item Ranges often selected based on experience
       \begin{itemize}
-        \item Compare to other AutoML Frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}, 
+        \item Compare to other AutoML Frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}} 
       \end{itemize}
-      \item Sensitivity analysis does not exist for each learner
-      \item Solution: Analysis of previous HPO runs (Meta Learning)
+      \item Sensitivity analysis does not exist for each learning algorithm
+      \item Solution: Analysis of previous HPO runs and learn mapping $\datasets \rightarrow \mathcal{P}(\pcs)$ is risky (leaving out important ranges) and complicated.
+      \item Instead: Use big search space $\pcs$ and try to predict good initial design (e.g.\ for Bayesian Optimization).
     \end{itemize}
     \end{column}%
     \begin{column}{0.4\textwidth}
       \begin{center}
-        \includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab3.pdf}   
+        \only<1>{
+          \includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab1.pdf}
+        }
+        \only<2>{
+          \includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab3.pdf}   
+        }
 
         {\tiny Taken from \href{https://www.jmlr.org/papers/volume20/18-444/18-444.pdf}{Probst et al., 2019 JMLR}.}
       \end{center}
     \end{column}
   \end{columns}
-  
 \end{frame}
 
-\begin{frame}[containsverbatim,allowframebreaks]{Preprocessing}
-    Typical ML Pipeline steps for AutoML Systems:
+\begin{frame}{Choice of Resampling Strategy}
     \begin{itemize}
-      \item Data Cleaning
-      \item Feature Engineering
+      \item Default: 10-fold CV
+      \item Huge datasets: Holdout
+      \item Tiny datasets: LOO
+      \item For class imbalances:
       \begin{itemize}
-        \item Feature Selection
-        \item Feature Preprocessing
-        \item Feature Construction  
+        \item use stratification.
+        \item ensure that validation split includes minority class.
       \end{itemize}
     \end{itemize}
-    \begin{center}
-      \includegraphics[width = 0.5\linewidth]{images/AutoMLPipeline.jpg}  
-    \end{center}
+    $\rightarrow$ Create heuristic or let the user decide.
 \end{frame}
 
-\begin{frame}{Data Cleaning}
-    
+\begin{frame}{Choice of Optimization Algorithm}
+  Choose optimization algorithm based on \ldots
+  \begin{itemize}
+    \item complexity of search space and
+    \item estimated number of possible evaluations
+  \end{itemize}
+
+  \begin{itemize}
+    \item Complex search space and many possible evaluations $\rightarrow$ Random Search, TPE, BO with RF as Surrogate
+    \begin{itemize}
+      \item Make use of Grey-Box Optimizers: Hyperband, BOHB
+    \end{itemize}
+    \item Simple search space and few possible Evaluations $\rightarrow$ BO with Kriging as Surrogate
+    \begin{itemize}
+      \item Grey-Box: BOHB
+    \end{itemize}
+    \item Complex search space and few possible evaluations $\rightarrow$ Use good defaults, Meta-Learning
+    \item Deep Neural Network Architecture Search $\rightarrow$ NAS Algorithms and possibly HPO on found architecture
+  \end{itemize}
 \end{frame}
 
-\begin{frame}{Feature Selection}
-  Combined Feature Selection and HPO: mosmafs: Multi-Objective Simultaneous Model and Feature Selection
-    
+
+
+\begin{frame}[containsverbatim,allowframebreaks]{Preprocessing}
+  \begin{center}
+    \includegraphics[width = 0.5\linewidth]{images/AutoMLPipeline.jpg}  
+  \end{center}
+
+  Ideal ML Pipeline steps for AutoML Systems:
+  \begin{itemize}
+    \item Data Cleaning
+    \item Feature Engineering
+    \begin{itemize}
+      \item Feature Selection
+      \item Feature Preprocessing
+      \item Feature Construction  
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Preprocessing not the strength of Non-commercial AutoML}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \vspace*{-1cm}
+      \begin{center}
+        \includegraphics[width = \linewidth]{images/Truong2019Towards_fig2.pdf}
+      \end{center}
+    \end{column}%
+    \begin{column}{0.3\textwidth}
+    \small
+      Taken from \href{https://doi.org/10.1109/ICTAI.2019.00209}{Truong et al., 2019 ICTAI}.
+      \vspace{1em}
+
+      Highlighted: Non-commercial AutoML Frameworks
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{}
+    Data Cleaning can hardly be automatized but a few heuristics exist:
+    \begin{itemize}
+      \item Remove ID Columns, Columns with mostly unique values
+      \item Outlier detection (in the feature space)
+      \item Detect time series or spatial data $\righarrow$ randomized validation might be flawed.
+    \end{itemize}
+
+    Feature Selection
+    \begin{itemize}
+      \item Combined Feature Selection and HPO: \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{Feature Preprocessing}
