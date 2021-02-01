@@ -24,7 +24,11 @@
     \end{itemize}
     \item Optimizing Neural Network Architectures (NAS)
     \begin{itemize}
-      \item One-Shot Approaches, DART
+      \item One-Shot approaches, DART
+    \end{itemize}
+    \item Dynamic Algorithm Configuration (Learning to Learn)
+    \begin{itemize}
+      \item Adapt hyperparameter during training. 
     \end{itemize}
   \end{itemize}  
 \end{frame}
@@ -44,7 +48,7 @@
       \begin{itemize}
         \item dataset
         \item performance measure and
-        \item possibly a time limit
+        \item possibly a time limit.
       \end{itemize}
 
       So far HPO additionally needs \ldots
@@ -199,7 +203,7 @@
           \begin{itemize}
             \item Combined Feature Selection and HPO: \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}
           \end{itemize}
-          \item Happens indirectly in learning algorithm: random forest, lasso regression %FIXME More examples.
+          \item Happens indirectly in learning algorithm: random forest, lasso regression, \ldots %FIXME More examples.
         \end{itemize}
       \end{column}%
       \begin{column}{0.3\textwidth}
@@ -212,70 +216,129 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}{Feature Preprocessing}
+\begin{frame}{Preprocessing}
   \begin{itemize}
-    \item Handling categorical values
+    \item categorical values:
     \begin{itemize}
       \item Impact Encoding (aka Target Encoding) \\
-            Important: Target Encoding has to be obtained throgh CV / with regularization to prevent target leakage
+      \vspace*{-0.5cm}  
+        \begin{align*}
+          \text{Regression:} \operatorname{Impact}(x) &= \E(\bm{y} | x) - \E(\bm{y}) \\
+          \text{Classification:} \operatorname{Impact}(x) &= \operatorname{logit}(P( y = \text{target} | x)) - \operatorname{logit}(P( y = \text{target}))
+        \end{align*}
+        \vspace*{-0.5cm}  
+        \begin{itemize}
+          \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/abs/1611.09477}{Zumel et al., 2019}}
+          \item Advantage: Handles unknown categorical levels on test data.
+        \end{itemize}
+    \end{itemize}
+    \item missing values:
+    \begin{itemize}
+      \item Additional factor column indicating missigness
+      \item Replace missing values with out of range or median/mode
+      \item Advanced imutation strategies seldomly advantageous (also because data mostly not missing at random)
+    \end{itemize}
+    \item imbalanced classes:
+    \begin{itemize}
+      \item over-sampling of minority class
+      \item seldomly: under-sampling of majority class
     \end{itemize}
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Feature Construction}
   \begin{itemize}
-    \item Often not needed for DL/NAS.
     \item Generic:
     \begin{itemize}
       \item Polynomial Features
-      \item Normalize 
+      \item Normalization (Box-Cox-Transformation)
       \item PCA
     \end{itemize}
-    \item Heuristisc
+    \item Heuristiscs:
     \begin{itemize}
-      \item Detecting Dates, Hours: Transofrm to "circular" features within year, month, day, or whatever periodicity we assume \\
+      \item Detecting Dates, Hours: Transofrm to ``circular'' features within year, month, day, or whatever periodicity we assume \\
       e.g.\ $\tilde x_1 = sin(2\pi \cdot x /24)$ and $\tilde x_2 = cos(2\pi \cdot x /24)$
     \end{itemize}
-    Combione with external data:
+    \item Combine with external data:
     \begin{itemize}
-      \item Names $\leftarrow$ gender, ethnicity, age
-      \item Home Adress $\leftarrow$ Household Income
-      \item Location + Date $\leftarrow$ Weather
+      \item names $\rightarrow$ gender, ethnicity, age
+      \item home adress $\rightarrow$ household income
+      \item location + date $\rightarrow$ weather
     \end{itemize}
   \end{itemize}
     
 \end{frame}
 
 \begin{frame}{Pipelining}
-  
+
+Most preprocessing steps have parameters or can be switched on/off in the pipeline.
+
+\textbf{Goal:} Find optimal preprocessing parameters $\rightarrow$ HPO
+
+\begin{columns}
+  \begin{column}{0.5\textwidth}
+  \begin{itemize}
+    \item Most prepocessing methods have states similar to the model of an inducer.
+    \item Applying preprocessing to the whole dataset leads to overfitting.
+    \item Pipeline has to be optimized as a whole: $\pcs = \pcs_{\text{pipeline}} \times \pcs_\inducer$ within the resampling procedure.
+  \end{itemize}
+  \end{column}%
+  \begin{column}{0.5\textwidth}
+    \begin{center}
+      \includegraphics[page=19, width=\textwidth, trim=20 60 30 35, clip]{images/mlr3Pipelines_graphics}
+    \end{center}
+  \end{column}
+\end{columns}
+
 \end{frame}
 
 \begin{frame}{Optimizing Pipelines}
-  \begin{itemize}
-    \item Pipelines represent hierarchical search space
-  \end{itemize}
 
-  Suitable optimizers:
-  \begin{itemize}
-    \item BO with RF surrogate
-    \item Evolutionary Aproaches (similar to NAS)
-  \end{itemize}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \vspace*{-0.5em}
+      \begin{itemize}
+        \item Introducing different choices for preprocessing
+        \item Tuning over multiple learning algorithms
+      \end{itemize}
+      $\rightarrow$ $\pcs$ becomes hierarchical search space!
+      
+      \vspace*{0.5em}
+
+      Suitable optimizers:
+      \begin{itemize}
+        \item Random Search
+        \item BO with RF surrogate
+        \item Evolutionary approaches (similar to NAS)
+      \end{itemize}
+
+      Possible improvements:
+      \begin{itemize}
+        \item Instead of only keeping best setting: build ensemble of good configurations (e.g. \lit{\href{https://www.automl.org/wp-content/uploads/2020/07/AutoML_2020_paper_61.pdf}{H2O AutoML, LeDell et al., 2020}})
+      \end{itemize}
+    \end{column}%
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        \includegraphics[page=7, width=\textwidth, trim=160 0 30 160, clip]{images/mlr3Pipelines_graphics}
+      \end{center}
+    \end{column}
+  \end{columns}
     
 \end{frame}
 
-\begin{frame}[containsverbatim,allowframebreaks]{Software}
+% \begin{frame}[containsverbatim,allowframebreaks]{Software}
 
-\begin{itemize}
-  \item DataRobot (comercial, gui)
-  \item H20.ai (comercial but open source, r, python)
-  \item TPOT, Tree-based Pipeline Optimization Tool  (2016-cont, open source, evolutionary approach) % show plot https://github.com/EpistasisLab/tpot
-  \item AutoWEKA (2016, open source)
-  \item mlr3automl (2020, prelim)
-  \item Hyperopt-Sklearn (2014-cont) Only HPO
-  \item Auto-Sklearn (2.0) (2015-cont) BO, ensembles, meta-learning
-\end{itemize}
+% \begin{itemize}
+%   \item DataRobot (comercial, gui)
+%   \item H20.ai (comercial but open source, r, python)
+%   \item TPOT, Tree-based Pipeline Optimization Tool  (2016-cont, open source, evolutionary approach) % show plot https://github.com/EpistasisLab/tpot
+%   \item AutoWEKA (2016, open source)
+%   \item mlr3automl (2020, prelim)
+%   \item Hyperopt-Sklearn (2014-cont) Only HPO
+%   \item Auto-Sklearn (2.0) (2015-cont) BO, ensembles, meta-learning
+% \end{itemize}
 
-\end{frame}
+% \end{frame}
 
 
 
