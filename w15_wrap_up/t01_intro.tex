@@ -1,4 +1,8 @@
 \input{t00_template.tex}
+
+\usepackage{ulem}
+\usepackage{pifont}
+
 \subtitle{Wrap Up}
 
 
@@ -39,6 +43,44 @@
     \end{center}
 \end{frame}
 
+\section{The Missing Building Blocks}
+
+\begin{frame}{What is missing?}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+        What do I need to know as an AutoML user?
+        \begin{itemize}
+          \item \sout{Nothing, because it is automatic.}
+          \item Understand limitations of the framework you are using.
+          \item Know how to interpret the results.
+          \item Preprocessing of the data.
+        \end{itemize}
+
+        \vspace{1em}
+
+        What do I need to implement an AutoML framework?
+        \begin{itemize}
+          \item Fill in the missing components of HPO \ldots
+        \end{itemize}
+    \end{column}%
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        Academical view:
+        \scalebox{0.45}{
+          \input{tikz/automl_overview.tex}
+        }
+
+        \vspace{1em}
+
+        Practitioners view:
+        \scalebox{0.45}{
+          \input{tikz/true_automl_overview.tex}
+        }
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 \begin{frame}{Automate HPO}
 
   \begin{columns}
@@ -59,7 +101,7 @@
         \item optimization algorithm.
       \end{itemize}
 
-      To build an AutoML System we have to make these choices automatically.
+      To build an AutoML System we have to make these choices automatically $\rightarrow$ Following slides.
 
     \end{column}%
     \begin{column}{0.4\textwidth}
@@ -71,14 +113,14 @@
 
 \end{frame}
 
-\begin{frame}{Choice of learning algorithm}
+\begin{frame}{Choice of Learning Algorithm}
   \begin{itemize}
     \item A good AutoML System should consider more than one learning algorithm. More on that later.
     \item A plethora of learning algorithm exists.
     \item Studies\footnote{\href{https://dl.acm.org/doi/10.5555/2627435.2697065}{Delgado et al., JMLR 2014}} and experience have shown that one representative of these categories usually reaches best performance (on tabular data):
     \begin{itemize}
       \item Penalized Regression, SVM, Gradient Boosting, Random Forests, Neural Networks
-      \item (tuned) random forests hardly beaten by current AutoML frameworks\footnote{\href{https://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
+      \item (tuned) random forests only beaten on few datasets by current AutoML frameworks\footnote{\href{https://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
       \item Example: Auto-Sklearn 2.0\footnote{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}} uses: Extra Trees, Gradient Boosting, Passive Aggressive, Random Forest, Linear Model
     \end{itemize}
   \end{itemize}
@@ -114,17 +156,26 @@
 \end{frame}
 
 \begin{frame}{Choice of Resampling Strategy}
+  For the calculation of the generalization error / cost
+  \begin{equation}
+    \cost(\conf) = \frac{1}{R}\sum_{i = 1}^R \widehat{GE}_{\dataset_{\text{val}, i}}\left(\inducer(\dataset_{\text{train}, i}, \conf)\right)
+  \end{equation}
+  that defines the objective of the black-box optimization we need a resampling strategy.
+
+  \vspace{1em}
+
+  A heuristic to select a suitable resampling strategy may follow this rule of thumb:
     \begin{itemize}
-      \item Default: 10-fold CV
+      \item Default: 10-fold CV ($R=10$)
       \item Huge datasets: Holdout
       \item Tiny datasets: LOO
       \item For class imbalances:
       \begin{itemize}
-        \item use stratification.
+        \item use stratification,
         \item ensure that validation split includes minority class.
       \end{itemize}
     \end{itemize}
-    $\rightarrow$ Create heuristic or let the user decide.
+    Or let the user decide.
 \end{frame}
 
 \begin{frame}{Choice of Optimization Algorithm}
@@ -134,39 +185,57 @@
     \item estimated number of possible evaluations
   \end{itemize}
 
+  \vspace{0.5em}
+
+  Complex search space and many possible evaluations 
   \begin{itemize}
-    \item Complex search space and many possible evaluations $\rightarrow$ Random Search, TPE, BO with RF as Surrogate
-    \begin{itemize}
-      \item Make use of Grey-Box Optimizers: Hyperband, BOHB
-    \end{itemize}
-    \item Simple search space and few possible Evaluations $\rightarrow$ BO with Kriging as Surrogate
-    \begin{itemize}
-      \item Grey-Box: BOHB
-    \end{itemize}
-    \item Complex search space and few possible evaluations $\rightarrow$ Use good defaults, Meta-Learning
-    \item Deep Neural Network Architecture Search $\rightarrow$ NAS Algorithms and possibly HPO on found architecture
+    \item[$\rightarrow$] Random Search, TPE, BO with RF as Surrogate
+    \item[$\rightarrow$] Make use of Grey-Box Optimizers: Hyperband, BOHB
   \end{itemize}
-\end{frame}
-
-
-
-\begin{frame}[containsverbatim,allowframebreaks]{Preprocessing}
-  \begin{center}
-    \includegraphics[width = 0.5\linewidth]{images/AutoMLPipeline.jpg}  
-  \end{center}
-
-  Ideal ML Pipeline steps for AutoML Systems:
+  Simple search space and few possible Evaluations 
   \begin{itemize}
-    \item Data Cleaning
-    \item Feature Engineering
-    \begin{itemize}
-      \item Feature Selection
-      \item Feature Preprocessing
-      \item Feature Construction  
-    \end{itemize}
+    \item[$\rightarrow$] BO with Kriging as Surrogate
+    \item[$\rightarrow$] Grey-Box: BOHB
+  \end{itemize}
+  Complex search space and few possible evaluations
+  \begin{itemize}
+    \item[$\rightarrow$]Use good defaults, Meta-Learning
+  \end{itemize}
+  Deep Neural Network Architecture Search 
+  \begin{itemize}
+    \item[$\rightarrow$]NAS Algorithms and possibly HPO on found architecture
   \end{itemize}
 
 \end{frame}
+
+
+
+\begin{frame}{Preprocessing}
+  \begin{columns}
+    \begin{column}{0.5\textwidth} 
+      Ideal AutoML system would automatically optimize the following steps wrt.\ given cost function:
+      \begin{itemize}
+        \item[\ding{55}] Data cleaning
+        \item[\ding{55}] Feature engineering
+        \begin{itemize}
+          \item Feature selection
+          \item Feature preprocessing
+          \item Feature construction  
+        \end{itemize}
+        \item[\ding{51}] Model training
+      \end{itemize}
+    We already know how to optimize the ml algorithm. How about the preprocessing steps?
+    \end{column}%
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        \includegraphics[width = \linewidth]{images/AutoMLPipeline.jpg}  
+      \end{center}
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\section{Common Preprocessing Steps}
 
 \begin{frame}{Preprocessing not the strength of Non-commercial AutoML}
   \begin{columns}
@@ -216,37 +285,39 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}{Preprocessing}
+\begin{frame}{Common Preprocessing Steps}
+
+  Categorical values:
   \begin{itemize}
-    \item categorical values:
-    \begin{itemize}
-      \item Impact Encoding (aka Target Encoding) \\
+    \item Impact Encoding (aka Target Encoding) \\
+    \vspace*{-0.5cm}  
+      \begin{align*}
+        \text{Regression:} \operatorname{Impact}(x) &= \E(\bm{y} | x) - \E(\bm{y}) \\
+        \text{Classification:} \operatorname{Impact}(x) &= \operatorname{logit}(P( y = \text{target} | x)) - \operatorname{logit}(P( y = \text{target}))
+      \end{align*}
       \vspace*{-0.5cm}  
-        \begin{align*}
-          \text{Regression:} \operatorname{Impact}(x) &= \E(\bm{y} | x) - \E(\bm{y}) \\
-          \text{Classification:} \operatorname{Impact}(x) &= \operatorname{logit}(P( y = \text{target} | x)) - \operatorname{logit}(P( y = \text{target}))
-        \end{align*}
-        \vspace*{-0.5cm}  
-        \begin{itemize}
-          \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/abs/1611.09477}{Zumel et al., 2019}}
-          \item Advantage: Handles unknown categorical levels on test data.
-        \end{itemize}
-    \end{itemize}
-    \item missing values:
-    \begin{itemize}
-      \item Additional factor column indicating missigness
-      \item Replace missing values with out of range or median/mode
-      \item Advanced imutation strategies seldomly advantageous (also because data mostly not missing at random)
-    \end{itemize}
-    \item imbalanced classes:
-    \begin{itemize}
-      \item over-sampling of minority class
-      \item seldomly: under-sampling of majority class
-    \end{itemize}
+      \begin{itemize}
+        \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/abs/1611.09477}{Zumel et al., 2019}}
+        \item Advantage: Handles unknown categorical levels on test data.
+      \end{itemize}
   \end{itemize}
+  
+  Missing values:
+  \begin{itemize}
+    \item Additional factor column indicating missingness
+    \item Replace missing values with out of range or median/mode
+    \item Advanced imputation strategies seldom advantageous (also because data mostly not missing at random)
+  \end{itemize}
+  
+  Imbalanced classes:
+  \begin{itemize}
+    \item over-sampling of minority class
+    \item seldom: under-sampling of majority class
+  \end{itemize}
+
 \end{frame}
 
-\begin{frame}{Feature Construction}
+\begin{frame}{Common Feature Construction Methods}
   \begin{itemize}
     \item Generic:
     \begin{itemize}
@@ -254,20 +325,22 @@
       \item Normalization (Box-Cox-Transformation)
       \item PCA
     \end{itemize}
-    \item Heuristiscs:
+    \item Heuristics:
     \begin{itemize}
-      \item Detecting Dates, Hours: Transofrm to ``circular'' features within year, month, day, or whatever periodicity we assume \\
+      \item Detecting Dates, Hours: Transform to ``circular'' features within year, month, day, or whatever periodicity we assume \\
       e.g.\ $\tilde x_1 = sin(2\pi \cdot x /24)$ and $\tilde x_2 = cos(2\pi \cdot x /24)$
     \end{itemize}
     \item Combine with external data:
     \begin{itemize}
       \item names $\rightarrow$ gender, ethnicity, age
-      \item home adress $\rightarrow$ household income
+      \item home address $\rightarrow$ household income
       \item location + date $\rightarrow$ weather
     \end{itemize}
   \end{itemize}
     
 \end{frame}
+
+\section{Combined Preprocessing and Model Building: Pipelining}
 
 \begin{frame}{Pipelining}
 
@@ -300,14 +373,14 @@ Most preprocessing steps have parameters or can be switched on/off in the pipeli
       \begin{itemize}
         \item Introducing different choices for preprocessing
         \item Tuning over multiple learning algorithms
+        \item[$\rightarrow$] $\pcs$ becomes hierarchical search space!
       \end{itemize}
-      $\rightarrow$ $\pcs$ becomes hierarchical search space!
       
       \vspace*{0.5em}
 
       Suitable optimizers:
       \begin{itemize}
-        \item Random Search
+        \item Random Search, Hyperband
         \item BO with RF surrogate
         \item Evolutionary approaches (similar to NAS)
       \end{itemize}
