@@ -53,19 +53,22 @@
           \item \sout{Nothing, because it is automatic.}
           \item Understand limitations of the framework you are using.
           \item Know how to interpret the results.
-          \item Preprocessing of the data.
+          \item Possibly, how to preprocess the data.
         \end{itemize}
 
         \vspace{1em}
 
         What do I need to implement an AutoML framework?
         \begin{itemize}
-          \item Fill in the missing components of HPO \ldots
+          \item HPO Algorithm
+          \item ML Algorithm (= Design Space)
+          \item Resampling
+          \item (Preprocessing)
         \end{itemize}
     \end{column}%
     \begin{column}{0.5\textwidth}
       \begin{center}
-        Academical view:
+        Academic view:
         \scalebox{0.45}{
           \input{tikz/automl_overview.tex}
         }
@@ -88,17 +91,18 @@
 
       For AutoML the user only supplies \ldots
       \begin{itemize}
-        \item dataset
+        \item dataset,
         \item performance measure and
         \item possibly a time limit.
       \end{itemize}
 
-      So far HPO additionally needs \ldots
+      To do HPO we need to \ldots
       \begin{itemize}
-        \item one learning algorithm (to generate Inducer $\inducer$),
-        \item search space $\pcs$ to chose $\conf$ from,
-        \item a resampling strategy to evaluate $\cost(\conf)$ and
-        \item optimization algorithm.
+        \item preprocessing manually,
+        \item decide on an optimization algorithm,
+        \item an ML algorithm (to generate Inducer $\inducer$),
+        \item a search space $\pcs$ and
+        \item a resampling strategy to evaluate $\cost(\conf)$.
       \end{itemize}
 
       To build an AutoML System we have to make these choices automatically $\rightarrow$ Following slides.
@@ -194,7 +198,7 @@
   \end{itemize}
   Simple search space and few possible Evaluations 
   \begin{itemize}
-    \item[$\rightarrow$] BO with Kriging as Surrogate
+    \item[$\rightarrow$] BO with Kriging as surrogate
     \item[$\rightarrow$] Grey-Box: BOHB
   \end{itemize}
   Complex search space and few possible evaluations
@@ -218,8 +222,8 @@
         \item[\ding{55}] Data cleaning
         \item[\ding{55}] Feature engineering
         \begin{itemize}
+          \item Preprocessing
           \item Feature selection
-          \item Feature preprocessing
           \item Feature construction  
         \end{itemize}
         \item[\ding{51}] Model training
@@ -255,19 +259,57 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{Cleaning and Feature Selection}
+\begin{frame}{Cleaning}
+  Data cleaning can hardly be automatized but a few heuristics exist:
+  \begin{itemize}
+    \item Remove ID Columns, Columns with mostly unique values
+    \item Outlier detection (in the feature space)
+    \item Detect time series or spatial data $\rightarrow$ randomized validation might be flawed.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Categorical Features}
+  Goals:
+  \begin{itemize}
+    \item Convert all categorical features
+    \item Avoid high cardinality categorical features
+  \end{itemize}
+  ML algorithm does not support categorical features + few unique values:
+  \begin{itemize}
+    \item Use dummy encoding
+  \end{itemize}
+  High cardinality categorical features problematic for all ML algorithms:
+  \begin{itemize}
+    \item Use Impact Encoding (also Target Encoding) \\
+    \vspace*{-0.5cm}  
+    \begin{align*}
+    \text{Regression:} \operatorname{Impact}(x) &= \E(\bm{y} | x) - \E(\bm{y}) \\
+    \text{Classification:} \operatorname{Impact}(x) &= \operatorname{logit}(P( y = \text{target} | x)) - \operatorname{logit}(P( y = \text{target}))
+    \end{align*}
+    \vspace*{-0.5cm}  
+    \begin{itemize}
+      \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/abs/1611.09477}{Zumel et al., 2019}}
+      \item Advantage: Handles unknown categorical levels on test data.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Common Preprocessing Steps: Missing Values}
+  Missing values:
+  \begin{itemize}
+    \item Additional factor column indicating missingness
+    \item Replace missing values with out of range or median/mode
+    \item Advanced imputation strategies seldom advantageous (also because data mostly not missing at random)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Feature Selection}
     \begin{columns}
-      \begin{column}{0.7\textwidth}
-
-        Data Cleaning can hardly be automatized but a few heuristics exist:
+      \begin{column}{0.4\textwidth}
+        Feature selection:
         \begin{itemize}
-          \item Remove ID Columns, Columns with mostly unique values
-          \item Outlier detection (in the feature space)
-          \item Detect time series or spatial data $\rightarrow$ randomized validation might be flawed.
-        \end{itemize}
-
-        Feature Selection
-        \begin{itemize}
+          \item Filter
+          \item Stepwise selection methods: Needs to be applied on the whole pipeline (impractical!)
           \item Seldom increases performance but decreases computational costs $\rightarrow$ Multi-criteria optimization.
           \begin{itemize}
             \item Combined Feature Selection and HPO: \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}
@@ -275,104 +317,101 @@
           \item Happens indirectly in learning algorithm: random forest, lasso regression, \ldots %FIXME More examples.
         \end{itemize}
       \end{column}%
-      \begin{column}{0.3\textwidth}
+      \begin{column}{0.6\textwidth}
         \begin{center}
-          \includegraphics[width = \linewidth]{images/Binder2020multiobjective_fig3.pdf}
+          \includegraphics[width=0.35\textwidth, trim=450 100 110 60, clip]{images/feat_extr_vs_selection.pdf}%
+          \includegraphics[width=0.55\linewidth]{images/Binder2020multiobjective_fig3.pdf}
 
-          {\tiny Taken from \href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}.}
+          {\tiny \hfill Taken from \href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}.}
         \end{center}
       \end{column}
     \end{columns}
+    
 \end{frame}
 
-\begin{frame}{Common Preprocessing Steps}
+\begin{frame}{Common Feature Construction Methods}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+    Reduction:
+    \begin{itemize}
+      \item PCA, ICA, autoencoder
+    \end{itemize}
 
-  Categorical values:
-  \begin{itemize}
-    \item Impact Encoding (aka Target Encoding) \\
-    \vspace*{-0.5cm}  
-      \begin{align*}
-        \text{Regression:} \operatorname{Impact}(x) &= \E(\bm{y} | x) - \E(\bm{y}) \\
-        \text{Classification:} \operatorname{Impact}(x) &= \operatorname{logit}(P( y = \text{target} | x)) - \operatorname{logit}(P( y = \text{target}))
-      \end{align*}
-      \vspace*{-0.5cm}  
-      \begin{itemize}
-        \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/abs/1611.09477}{Zumel et al., 2019}}
-        \item Advantage: Handles unknown categorical levels on test data.
-      \end{itemize}
-  \end{itemize}
-  
-  Missing values:
-  \begin{itemize}
-    \item Additional factor column indicating missingness
-    \item Replace missing values with out of range or median/mode
-    \item Advanced imputation strategies seldom advantageous (also because data mostly not missing at random)
-  \end{itemize}
-  
+    Feature extraction:
+    \begin{itemize}
+      \item Polynomial Features: $x_j \longrightarrow x_j, x_j^2, x_j^3, ...$
+      \item Interactions: $x_j, x_k \longrightarrow x_j, x_k, x_j \cdot x_k$
+    \end{itemize}
+
+    Feature generation:
+    \begin{itemize}
+      \item Transform to ``circular'' features (year, month, day) \\
+      e.g.\ $\tilde x_1 = sin(2\pi \cdot x /24)$ and $\tilde x_2 = cos(2\pi \cdot x /24)$
+    \end{itemize}
+    
+    Combine with external data:
+    \begin{itemize}
+      \item names $\longrightarrow$ gender, ethnicity, age
+      \item home address $\longrightarrow$ household income
+      \item location + date $\longrightarrow$ weather
+    \end{itemize}
+
+    \end{column}%
+    \begin{column}{0.4\textwidth}
+      \begin{center}
+        \includegraphics[width= \textwidth, trim=0 100 390 60, clip]{images/feat_extr_vs_selection.pdf}
+      \end{center}
+    \end{column}
+  \end{columns}
+    
+\end{frame}
+
+
+\begin{frame}{Imbalanced Classes}
   Imbalanced classes:
   \begin{itemize}
     \item over-sampling of minority class
     \item seldom: under-sampling of majority class
+    \item Influence of more advanced methods (e.g.\ SMOTE) on the predictive accuracy questionable.
   \end{itemize}
-
 \end{frame}
 
-\begin{frame}{Common Feature Construction Methods}
-  \begin{itemize}
-    \item Generic:
-    \begin{itemize}
-      \item Polynomial Features
-      \item Normalization (Box-Cox-Transformation)
-      \item PCA
-    \end{itemize}
-    \item Heuristics:
-    \begin{itemize}
-      \item Detecting Dates, Hours: Transform to ``circular'' features within year, month, day, or whatever periodicity we assume \\
-      e.g.\ $\tilde x_1 = sin(2\pi \cdot x /24)$ and $\tilde x_2 = cos(2\pi \cdot x /24)$
-    \end{itemize}
-    \item Combine with external data:
-    \begin{itemize}
-      \item names $\rightarrow$ gender, ethnicity, age
-      \item home address $\rightarrow$ household income
-      \item location + date $\rightarrow$ weather
-    \end{itemize}
-  \end{itemize}
-    
-\end{frame}
 
 \section{Combined Preprocessing and Model Building: Pipelining}
 
 \begin{frame}{Pipelining}
 
-Most preprocessing steps have parameters or can be switched on/off in the pipeline.
+  Most preprocessing steps have parameters or can be switched on/off in the pipeline.
 
-\textbf{Goal:} Find optimal preprocessing parameters $\rightarrow$ HPO
+  \vspace{1em}
 
-\begin{columns}
-  \begin{column}{0.5\textwidth}
-  \begin{itemize}
-    \item Most prepocessing methods have states similar to the model of an inducer.
-    \item Applying preprocessing to the whole dataset leads to overfitting.
-    \item Pipeline has to be optimized as a whole: $\pcs = \pcs_{\text{pipeline}} \times \pcs_\inducer$ within the resampling procedure.
-  \end{itemize}
-  \end{column}%
-  \begin{column}{0.5\textwidth}
-    \begin{center}
-      \includegraphics[page=19, width=\textwidth, trim=20 60 30 35, clip]{images/mlr3Pipelines_graphics}
-    \end{center}
-  \end{column}
-\end{columns}
+  \textbf{Goal:} Find optimal preprocessing parameters $\rightarrow$ HPO
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+    \begin{itemize}
+      \item Most preprocessing methods have states similar to the model of an inducer.
+      \item Applying preprocessing to the whole dataset leads to overfitting.
+      \item Pipeline has to be optimized as a whole: $\pcs = \pcs_{\text{pipeline}} \times \pcs_\inducer$ within the resampling procedure.
+    \end{itemize}
+    \end{column}%
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        \includegraphics[page=19, width=\textwidth, trim=20 60 30 35, clip]{images/mlr3Pipelines_graphics}
+      \end{center}
+    \end{column}
+  \end{columns}
 
 \end{frame}
 
 \begin{frame}{Optimizing Pipelines}
 
   \begin{columns}
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.6\textwidth}
       \vspace*{-0.5em}
       \begin{itemize}
-        \item Introducing different choices for preprocessing
-        \item Tuning over multiple learning algorithms
+        \item Introducing different choices for preprocessing.
+        \item Tuning over multiple learning algorithms.
         \item[$\rightarrow$] $\pcs$ becomes hierarchical search space!
       \end{itemize}
       
@@ -380,22 +419,32 @@ Most preprocessing steps have parameters or can be switched on/off in the pipeli
 
       Suitable optimizers:
       \begin{itemize}
-        \item Random Search, Hyperband
+        \item Random Search, TPE, Hyperband
         \item BO with RF surrogate
         \item Evolutionary approaches (similar to NAS)
       \end{itemize}
 
-      Possible improvements:
-      \begin{itemize}
-        \item Instead of only keeping best setting: build ensemble of good configurations (e.g. \lit{\href{https://www.automl.org/wp-content/uploads/2020/07/AutoML_2020_paper_61.pdf}{H2O AutoML, LeDell et al., 2020}})
-      \end{itemize}
     \end{column}%
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.4\textwidth}
       \begin{center}
-        \includegraphics[page=7, width=\textwidth, trim=160 0 30 160, clip]{images/mlr3Pipelines_graphics}
+        %\includegraphics[page=7, width=\textwidth, trim=160 0 30 160, clip]{images/mlr3Pipelines_graphics}
+        %\includegraphics[width = \textwidth]{images/stacking.pdf}
+        \includegraphics[width = \textwidth, trim=160 0 160 5, clip]{images/dag.pdf}
       \end{center}
     \end{column}
   \end{columns}
+\end{frame}
+
+\begin{frame}{Obtaining Final Model}
+
+      Options:
+      \begin{itemize}
+        \item Choose the optimal path as linear pipeline.
+        \item Build ensemble of best configurations (e.g. \lit{\href{https://www.automl.org/wp-content/uploads/2020/07/AutoML_2020_paper_61.pdf}{H2O AutoML, LeDell et al., 2020}}).
+      \end{itemize}
+      \begin{center}
+        \includegraphics[width = 0.66\textwidth]{images/stacking.pdf}
+      \end{center}
     
 \end{frame}
 
