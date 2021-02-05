@@ -5,6 +5,8 @@
   
   \node (hb) [activity, right of=dataset, node distance=6cm, yshift=-0.0cm] {ML System};
   \node (kde) [activity, above of=hb, node distance=2cm] {AutoML Optimizer};
+  \node (resampling) [data, below of=hb, node distance=1cm] {Resampling};
+  \node (space) [data, above of=kde, node distance=1cm] {Design Space $\pcs$};
   
   \draw[myarrow] ($(kde.south)+(-0.3,0.0)$) -- ++(0.0,-0.6) node[left] {$\conf \in \pcs$} -- ($(hb.north)+(-0.3,+0.0)$);
   \draw[myarrow] ($(hb.north)+(0.3,+0.0)$) -- ++(0.0,0.6) node[right] {$\cost(\conf)$} -- ($(kde.south)+(0.3,0.0)$);
@@ -12,6 +14,9 @@
   \draw[myarrow] (function.east) -- ($(kde.west)+(-0.3,0.0)$);
   \draw[myarrow] (budgets.east) -- ($(kde.west)+(-0.3,-1.)$);
   \draw[myarrow] (dataset.east) -- ($(kde.west)+(-0.3,-2.)$);
+
+  \draw[myarrow] (space.south) -- ($(kde.north)+(-0.0,0.0)$);
+  \draw[myarrow] (resampling.north) -- ($(hb.south)+(-0.0,0.0)$);
   
   \node (perf) [activity, right of=kde, node distance=6.3cm] {Analysis};
   \node (budget) [activity, below of=perf, node distance=1.2cm] {Deployment};
@@ -23,10 +28,10 @@
   \begin{pgfonlayer}{background}
   
   % Configuration Process
-  \path (kde -| kde.west)+(-0.25,0.85) node (resUL) {};
-  \path (hb.east |- hb.south)+(0.25,-0.5) node(resBR) {};
+  \path (space -| space.west)+(-0.25,0.5) node (resUL) {};
+  \path (resampling.east |- resampling.south)+(0.25,-0.3) node(resBR) {};
   \path [rounded corners, draw=black!60, dashed] (resUL) rectangle (resBR);
-  \path (hb.east |- hb.south)+(-.5,-.3) node [text=black!60] {};
+  \path (resampling.east |- resampling.south)+(-.5,-.15) node [text=black!60] {};
   
   \path (perf -| perf.west)+(-0.25,0.85) node (resUL) {};
   \path (budget.east |- budget.south)+(0.25,-0.5) node(resBR) {};

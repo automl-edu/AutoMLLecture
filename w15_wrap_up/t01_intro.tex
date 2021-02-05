@@ -262,25 +262,65 @@
 \begin{frame}{Cleaning}
   Data cleaning can hardly be automatized but a few heuristics exist:
   \begin{itemize}
-    \item Remove ID Columns, Columns with mostly unique values
+    \item Remove ID Columns, Columns with mostly unique values.
     \item Outlier detection (in the feature space)
     \item Detect time series or spatial data $\rightarrow$ randomized validation might be flawed.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Categorical Features}
-  Goals:
+\begin{frame}{Categorical Features: Dummy Encoding}
+  % Goals:
+  % \begin{itemize}
+  %   \item Convert all categorical features.
+  %   \item Avoid high cardinality categorical features.
+  % \end{itemize}
+  ML algorithm does not support categorical features + few unique values $\rightarrow$ use dummy encoding.
+  \begin{center}
+    \resizebox{0.3\linewidth}{!}{
+    \begin{tabular}{r|l|l}
+    \hline
+    SalePrice & Central.Air & Bldg.Type\\
+    \hline
+    189900 & Y & 1Fam\\
+    \hline
+    195500 & Y & 1Fam\\
+    \hline
+    213500 & Y & TwnhsE\\
+    \hline
+    191500 & Y & TwnhsE\\
+    \hline
+    236500 & Y & TwnhsE\\
+    \hline
+    \end{tabular}
+    } \\
+    \begin{tikzpicture}
+      %\useasboundingbox (-2,0);
+      \node[single arrow,draw=black,fill=black!10,minimum height=1cm,shape border rotate=270] at (0,-1) {};
+    \end{tikzpicture} \\
+  \resizebox{0.9\linewidth}{!}{
+    \begin{tabular}{r|r|r|r|r|r}
+    \hline
+    SalePrice & Y & Bldg.Type.2fmCon & Bldg.Type.Duplex & Bldg.Type.Twnhs & Bldg.Type.TwnhsE\\
+    \hline
+    189900 & 1 & 0 & 0 & 0 & 0\\
+    \hline
+    195500 & 1 & 0 & 0 & 0 & 0\\
+    \hline
+    213500 & 1 & 0 & 0 & 0 & 1\\
+    \hline
+    191500 & 1 & 0 & 0 & 0 & 1\\
+    \hline
+    236500 & 1 & 0 & 0 & 0 & 1\\
+    \hline
+    \end{tabular}
+  }
+  \end{center}
+\end{frame}
+
+\begin{frame}{Categorical Features: Impact Encoding}
+  Avoid high cardinality categorical features because they are problematic for all ML algorithms $\rightarrow$ use Target Encoding (also Impact Encoding).
   \begin{itemize}
-    \item Convert all categorical features
-    \item Avoid high cardinality categorical features
-  \end{itemize}
-  ML algorithm does not support categorical features + few unique values:
-  \begin{itemize}
-    \item Use dummy encoding
-  \end{itemize}
-  High cardinality categorical features problematic for all ML algorithms:
-  \begin{itemize}
-    \item Use Impact Encoding (also Target Encoding) \\
+    \item \textbf{Goal}: Each categorical feature $\bm{x}$ should be encoded in a single numeric feature $\tilde{\bm{x}}$ \\
     \vspace*{-0.5cm}  
     \begin{align*}
     \text{Regression:} \operatorname{Impact}(x) &= \E(\bm{y} | x) - \E(\bm{y}) \\
@@ -292,13 +332,20 @@
       \item Advantage: Handles unknown categorical levels on test data.
     \end{itemize}
   \end{itemize}
+
+  Alternatives:
+  \begin{itemize}
+    \item Factorization Machines
+    \item clustering feature levels
+    \item feature hashing
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Common Preprocessing Steps: Missing Values}
   Missing values:
   \begin{itemize}
     \item Additional factor column indicating missingness
-    \item Replace missing values with out of range or median/mode
+    \item Replace missing values with \emph{out of range} or median/mode
     \item Advanced imputation strategies seldom advantageous (also because data mostly not missing at random)
   \end{itemize}
 \end{frame}
