@@ -317,28 +317,34 @@
   \end{center}
 \end{frame}
 
-\begin{frame}{Categorical Features: Impact Encoding}
+\begin{frame}{Categorical Features: Target Encoding}
   Avoid high cardinality categorical features because they are problematic for all ML algorithms $\rightarrow$ use Target Encoding (also Impact Encoding).
-  \begin{itemize}
-    \item \textbf{Goal}: Each categorical feature $\bm{x}$ should be encoded in a single numeric feature $\tilde{\bm{x}}$ \\
-    \vspace*{-0.5cm}  
-    \begin{align*}
-    \text{Regression:} \operatorname{Impact}(x) &= \E(\bm{y} | x) - \E(\bm{y}) \\
-    \text{Classification:} \operatorname{Impact}(x) &= \operatorname{logit}(P( y = \text{target} | x)) - \operatorname{logit}(P( y = \text{target}))
-    \end{align*}
-    \vspace*{-0.5cm}  
-    \begin{itemize}
-      \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/abs/1611.09477}{Zumel et al., 2019}}
-      \item Advantage: Handles unknown categorical levels on test data.
-    \end{itemize}
-  \end{itemize}
+  \begin{columns}
+    \begin{column}{0.7\textwidth}
 
-  Alternatives:
-  \begin{itemize}
-    \item Factorization Machines
-    \item clustering feature levels
-    \item feature hashing
-  \end{itemize}
+
+      \textbf{Goal}: Each categorical feature $\bm{x}$ should be encoded in a single numeric feature $\tilde{\bm{x}}$
+      
+      \vspace*{-0.5cm}  
+      {\footnotesize
+      \begin{align*}
+      \text{Regression:} \operatorname{Impact}(x) &= \E(\bm{y} | x) - \E(\bm{y}) \\
+      \text{Classification:} \operatorname{Impact}(x) &= \operatorname{logit}(P( y = \text{target} | x)) - \operatorname{logit}(P( y = \text{target}))
+      \end{align*}
+      }
+      \vspace*{-0.5cm}  
+      \begin{itemize}
+        \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/abs/1611.09477}{Zumel et al., 2019}}
+        \item Advantage: Handles unknown categorical levels on test data.
+      \end{itemize}
+      Alternatives: Factorization Machines, clustering feature levels, feature hashing
+    \end{column}%
+    \begin{column}{0.3\textwidth}
+      \begin{center}
+        \includegraphics[width = \textwidth]{images/scetch_impact_encoding.pdf}
+      \end{center}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Common Preprocessing Steps: Missing Values}
