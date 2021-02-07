@@ -169,7 +169,7 @@
   
   For computation of generalization error / cost:
   \begin{equation}
-    \cost(\conf) = \frac{1}{R}\sum_{i = 1}^R \widehat{GE}_{\dataset_{\text{val}, i}}\left(\inducer(\dataset_{\text{train}, i}, \conf)\right)
+    \cost(\conf) = \frac{1}{k}\sum_{i = 1}^k \widehat{GE}_{\dataset_{\text{val}}^i}\left(\inducer(\dataset_{\text{train}}^i, \conf)\right)
   \end{equation}
   % that defines the objective of the black-box optimization we need a resampling strategy.
 
@@ -256,7 +256,7 @@
 
 \section{Common Preprocessing Steps}
 
-\begin{frame}{Preprocessing not the strength of Non-commercial AutoML}
+\begin{frame}{Preprocessing capabilities differ heavily}
   \begin{columns}
     \begin{column}{0.6\textwidth}
       \vspace*{-1cm}
@@ -270,6 +270,13 @@
       \vspace{1em}
 
       Highlighted: Non-commercial AutoML Frameworks
+
+      \begin{itemize}
+        \item detection of feature types: some
+        \item preprocess categorical values: some
+        \item missing values: all
+        \item imbalances: all
+      \end{itemize}
     \end{column}
   \end{columns}
 \end{frame}
