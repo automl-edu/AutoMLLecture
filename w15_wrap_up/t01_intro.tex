@@ -17,22 +17,23 @@
 \begin{frame}{From HPO to AutoML}
   So far we covered
   \begin{itemize}
-    \item Mechanisms to select promising ML Algorithms for a Dataset (Algorithm Selection)
-    \item HPO as Black-Box optimization
+    \item Mechanisms to select ML algorithms for a data set (algorithm selection)
+        SOLLTE DAS RAUS?
+    \item HPO as black-box optimization
     \begin{itemize}
-      \item Grid- and Random Search, Evolutionary Algorithms, Bayesian Optimization
+      \item Grid- and random search, EAs, BO
     \end{itemize}
-    \item HPO as a Grey-Box-Problem
+    \item HPO as a grey box problem
     \begin{itemize}
       \item Hyperband, BOHB
     \end{itemize}
-    \item Optimizing Neural Network Architectures (NAS)
+    \item Neural Architecture Search (NAS)
     \begin{itemize}
       \item One-Shot approaches, DART
     \end{itemize}
-    \item Dynamic Algorithm Configuration (Learning to Learn)
+    \item Dynamic algorithm configuration (learning to learn)
     \begin{itemize}
-      \item Adapt hyperparameter during training. 
+      \item Adapt configuration during training
     \end{itemize}
   \end{itemize}  
 \end{frame}
@@ -51,19 +52,20 @@
         What do I need to know as an AutoML user?
         \begin{itemize}
           \item \sout{Nothing, because it is automatic.}
-          \item Understand limitations of the framework you are using.
+          \item Understand limitations of AutoML and framework.
           \item Know how to interpret the results.
-          \item Possibly, how to preprocess the data.
+          \item Maybe: Preprocessing and feature extraction.
         \end{itemize}
 
         \vspace{1em}
 
-        What do I need to implement an AutoML framework?
+        Ingredients to implement an AutoML?
         \begin{itemize}
-          \item HPO Algorithm
-          \item ML Algorithm (= Design Space)
-          \item Resampling
-          \item (Preprocessing)
+          \item HPO algorithm
+          \item ML / Pipeline framework 
+          \item Parallelization / Multifidelity
+          \item Process encapsulation and time capping 
+          % \item (Preprocessing)
         \end{itemize}
     \end{column}%
     \begin{column}{0.5\textwidth}
@@ -93,7 +95,7 @@
       \begin{itemize}
         \item dataset,
         \item performance measure and
-        \item possibly a time limit.
+        \item usually a time budget
       \end{itemize}
 
       To do HPO we need to \ldots
@@ -119,13 +121,15 @@
 
 \begin{frame}{Choice of Learning Algorithm}
   \begin{itemize}
-    \item A good AutoML System should consider more than one learning algorithm. More on that later.
-    \item A plethora of learning algorithm exists.
-    \item Studies\footnote{\href{https://dl.acm.org/doi/10.5555/2627435.2697065}{Delgado et al., JMLR 2014}} and experience have shown that one representative of these categories usually reaches best performance (on tabular data):
+    % \item A good AutoML System should consider more than one learning algorithm. More on that later.
+    \item A plethora of learners exists, for different data sets different models
+        are likely needed.
+    \item Studies\footnote{\href{https://dl.acm.org/doi/10.5555/2627435.2697065}{Delgado et al., JMLR 2014}} and experience have shown one the following 
+        is usually good -- on tabular data:
     \begin{itemize}
-      \item Penalized Regression, SVM, Gradient Boosting, Random Forests, Neural Networks
-      \item (tuned) random forests only beaten on few datasets by current AutoML frameworks\footnote{\href{https://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
-      \item Example: Auto-Sklearn 2.0\footnote{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}} uses: Extra Trees, Gradient Boosting, Passive Aggressive, Random Forest, Linear Model
+      \item Penalized regression, SVM, gradient boosting, random forests, neural networks
+      \item Random forests only beaten on few datasets by current AutoML frameworks\footnote{\href{https://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
+      \item Example: Auto-Sklearn 2.0\footnote{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}} uses: extra trees, gradient boosting, passive aggressive, random forest, linear model
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -133,15 +137,17 @@
 \begin{frame}{Choice of Search Space for a Learning Algorithm}
   \begin{columns}
     \begin{column}{0.6\textwidth}
-    Which hyperparameters should we consider for a given learning algorithm?
+    % Which hyperparameters should we consider for a given learning algorithm?
     \begin{itemize}
       \item Ranges often selected based on experience
       \begin{itemize}
-        \item Compare to other AutoML Frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}} 
+        \item Compare to other AutoML Frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}}
+            WAS SOLL DAS HEISSEN
       \end{itemize}
-      \item Sensitivity analysis does not exist for each learning algorithm
+      \item Sensitivity analysis often does not exist for learners
       \item Solution: Analysis of previous HPO runs and learn mapping $\datasets \rightarrow \mathcal{P}(\pcs)$ is risky (leaving out important ranges) and complicated.
       \item Instead: Use big search space $\pcs$ and try to predict good initial design (e.g.\ for Bayesian Optimization).
+          NAJA WEISS NICHT OB ICH DEM SO ZUSTIMME
     \end{itemize}
     \end{column}%
     \begin{column}{0.4\textwidth}
@@ -160,54 +166,65 @@
 \end{frame}
 
 \begin{frame}{Choice of Resampling Strategy}
-  For the calculation of the generalization error / cost
+  
+  For computation of generalization error / cost:
   \begin{equation}
     \cost(\conf) = \frac{1}{R}\sum_{i = 1}^R \widehat{GE}_{\dataset_{\text{val}, i}}\left(\inducer(\dataset_{\text{train}, i}, \conf)\right)
   \end{equation}
-  that defines the objective of the black-box optimization we need a resampling strategy.
+  % that defines the objective of the black-box optimization we need a resampling strategy.
 
   \vspace{1em}
-
-  A heuristic to select a suitable resampling strategy may follow this rule of thumb:
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+    Rules of thumb:
     \begin{itemize}
       \item Default: 10-fold CV ($R=10$)
       \item Huge datasets: Holdout
-      \item Tiny datasets: LOO
-      \item For class imbalances:
-      \begin{itemize}
-        \item use stratification,
-        \item ensure that validation split includes minority class.
-      \end{itemize}
+      \item Tiny datasets: 10x10 repeated CV
+      \item Stratification for imbalanced classes
     \end{itemize}
-    Or let the user decide.
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+ Watch out for this:       
+    \begin{itemize}
+      \item Small sample size situation because of imbalancies    
+      \item Leave-one-object out
+      \item Time dependencies
+      \item A good AutoML system should let you customize resampling
+          % errors here can mean: garbage in, garbvgae out
+    \end{itemize}
+    \end{column}
+    \end{columns}
+    
 \end{frame}
 
 \begin{frame}{Choice of Optimization Algorithm}
   Choose optimization algorithm based on \ldots
   \begin{itemize}
-    \item complexity of search space and
-    \item estimated number of possible evaluations
+    \item complexity of search space / budget
+    \item time-costs of evals
   \end{itemize}
 
   \vspace{0.5em}
 
-  Complex search space and many possible evaluations 
+  Complex search space
   \begin{itemize}
-    \item[$\rightarrow$] Random Search, TPE, BO with RF as Surrogate
-    \item[$\rightarrow$] Make use of Grey-Box Optimizers: Hyperband, BOHB
+    \item[$\rightarrow$] Random Search, TPE, BO with RF 
+    % \item[$\rightarrow$] Make use of Grey-Box Optimizers: Hyperband, BOHB
   \end{itemize}
-  Simple search space and few possible Evaluations 
+  Numerical (lower-dim) search space and tight budget
   \begin{itemize}
-    \item[$\rightarrow$] BO with Kriging as surrogate
-    \item[$\rightarrow$] Grey-Box: BOHB
+    \item[$\rightarrow$] BO with GP
   \end{itemize}
-  Complex search space and few possible evaluations
+  Expensive evals
   \begin{itemize}
-    \item[$\rightarrow$]Use good defaults, Meta-Learning
+    \item[$\rightarrow$] Hyperband, BOHB
   \end{itemize}
-  Deep Neural Network Architecture Search 
+  Deep Learning 
   \begin{itemize}
-    \item[$\rightarrow$]NAS Algorithms and possibly HPO on found architecture
+    \item[$\rightarrow$]Parametrize architectures, then HPO, see above
+    \item[$\rightarrow$]NAS 
   \end{itemize}
 
 \end{frame}
@@ -217,18 +234,16 @@
 \begin{frame}{Preprocessing}
   \begin{columns}
     \begin{column}{0.5\textwidth} 
-      Ideal AutoML system would automatically optimize the following steps wrt.\ given cost function:
+      Ideal AutoML systems should also optimize: 
+      % the following steps wrt.\ given cost function:
       \begin{itemize}
-        \item[\ding{55}] Data cleaning
+        \item[\ding{55}] Data preprocessing
         \item[\ding{55}] Feature engineering
-        \begin{itemize}
-          \item Preprocessing
-          \item Feature selection
-          \item Feature construction  
-        \end{itemize}
+        \item[\ding{55}] Feature selection
+          % \item Feature construction  
         \item[\ding{51}] Model training
       \end{itemize}
-    We already know how to optimize the ml algorithm. How about the preprocessing steps?
+    % We already know how to optimize the ml algorithm. How about the preprocessing steps?
     \end{column}%
     \begin{column}{0.5\textwidth}
       \begin{center}
