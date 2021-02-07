@@ -1,0 +1,33 @@
+
+wir brauchen wirklich eine folie zu "practical ugliness",
+stability von AutoML
+zu parallel, multifid und capping wäre toll wenn wir noch was hätten
+
+wgat is missing: 
+im plot "bugdets" ohne 2
+
+
+automate HPO. ist die slide nicht total redundant mit dem davor?
+das HPO bild könnte auch auf die "from HPO to automl" slide
+
+choice of learning: 
+- kann da noch ein bild rein? 
+
+wir erwähnen da den automl benchmark. soll der nicht auf eine extra folie
+and ende der VL
+
+choice of SS:
+- stimme den aussagen da so nicht zu
+
+choice of resampling:
+- sicher dass das unsere notation ist? mindestens das R ist komisch?
+- wieso hat die eq eine (nr)?
+- paper von matthias einbeziehen? benchmark
+
+AutoML als multicrit?
+
+AutoML mit user inputs?
+
+was sagen zu hierarchischen räumen (!!!)
+
+
