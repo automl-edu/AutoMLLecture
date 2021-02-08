@@ -86,38 +86,38 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{Automate HPO}
+% \begin{frame}{Automate HPO}
 
-  \begin{columns}
-    \begin{column}{0.59\textwidth}
+%   \begin{columns}
+%     \begin{column}{0.59\textwidth}
 
-      For AutoML the user only supplies \ldots
-      \begin{itemize}
-        \item dataset,
-        \item performance measure and
-        \item usually a time budget
-      \end{itemize}
+%       For AutoML the user only supplies \ldots
+%       \begin{itemize}
+%         \item dataset,
+%         \item performance measure and
+%         \item usually a time budget
+%       \end{itemize}
 
-      To do HPO we need to \ldots
-      \begin{itemize}
-        \item preprocessing manually,
-        \item decide on an optimization algorithm,
-        \item an ML algorithm (to generate Inducer $\inducer$),
-        \item a search space $\pcs$ and
-        \item a resampling strategy to evaluate $\cost(\conf)$.
-      \end{itemize}
+%       To do HPO we need to \ldots
+%       \begin{itemize}
+%         \item preprocessing manually,
+%         \item decide on an optimization algorithm,
+%         \item an ML algorithm (to generate Inducer $\inducer$),
+%         \item a search space $\pcs$ and
+%         \item a resampling strategy to evaluate $\cost(\conf)$.
+%       \end{itemize}
 
-      To build an AutoML System we have to make these choices automatically $\rightarrow$ Following slides.
+%       To build an AutoML System we have to make these choices automatically $\rightarrow$ Following slides.
 
-    \end{column}%
-    \begin{column}{0.4\textwidth}
-      \begin{center}
-        \includegraphics[width = \linewidth]{images/tuning.pdf}    
-      \end{center}
-    \end{column}
-  \end{columns}
+%     \end{column}%
+%     \begin{column}{0.4\textwidth}
+%       \begin{center}
+%         \includegraphics[width = \linewidth]{images/tuning.pdf}    
+%       \end{center}
+%     \end{column}
+%   \end{columns}
 
-\end{frame}
+% \end{frame}
 
 \begin{frame}{Choice of Learning Algorithm}
   \begin{itemize}
@@ -141,7 +141,7 @@
     \begin{itemize}
       \item Ranges often selected based on experience
       \begin{itemize}
-        \item Compare to other AutoML Frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}}
+        \item refer to other AutoML frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}}
             WAS SOLL DAS HEISSEN
       \end{itemize}
       \item Sensitivity analysis often does not exist for learners
@@ -168,9 +168,9 @@
 \begin{frame}{Choice of Resampling Strategy}
   
   For computation of generalization error / cost:
-  \begin{equation}
+  \begin{equation*}
     \cost(\conf) = \frac{1}{k}\sum_{i = 1}^k \widehat{GE}_{\dataset_{\text{val}}^i}\left(\inducer(\dataset_{\text{train}}^i, \conf)\right)
-  \end{equation}
+  \end{equation*}
   % that defines the objective of the black-box optimization we need a resampling strategy.
 
   \vspace{1em}
@@ -178,7 +178,7 @@
     \begin{column}{0.5\textwidth}
     Rules of thumb:
     \begin{itemize}
-      \item Default: 10-fold CV ($R=10$)
+      \item Default: 10-fold CV ($k=10$)
       \item Huge datasets: Holdout
       \item Tiny datasets: 10x10 repeated CV
       \item Stratification for imbalanced classes
@@ -269,7 +269,7 @@
       Taken from \href{https://doi.org/10.1109/ICTAI.2019.00209}{Truong et al., 2019 ICTAI}.
       \vspace{1em}
 
-      Highlighted: Non-commercial AutoML Frameworks
+      Highlighted: Non-commercial AutoML frameworks
 
       \begin{itemize}
         \item detection of feature types: some
@@ -451,6 +451,56 @@
   \end{itemize}
 \end{frame}
 
+\section{Practical Problems}
+
+\begin{frame}{Practical Problems: Stability}
+  AutoML system should: 
+  \begin{itemize}
+    \item never fail to return a result
+    \item or at least have intermediate results that can be used to continue optimization
+    \item terminate within a given time
+  \end{itemize}
+
+  Failure points:
+  \begin{itemize}
+    \item optimizer can crash (e.g.\ the surrogate of MBO) $\longrightarrow$ return intermediate result, continue with warmstart / random search
+    \item training can crash $\longrightarrow$ train robust fallback learner (e.g.\ majority/mean predictor)
+    \item prediction can crash $\longrightarrow$ use prediction of fallback learner
+  \end{itemize}
+
+  Failure classes:
+  \begin{itemize}
+    \item ``simple'' error $\longrightarrow$ TryCatch
+    \item segfault $\longrightarrow$ encapsulation in separate process
+    \item no termination $\longrightarrow$ encapsulation with time-out
+    \item out-of-memory $\longrightarrow$ problematic because it can affect the whole system if garbage collection fails
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Practical Problems: Parallelization}
+  Parallelization should consider:
+  \begin{itemize}
+    \item multiple cores
+    \item multiple nodes (complicated, because no unified API)
+  \end{itemize}
+
+  Possible parallelization levels:
+  \begin{itemize}
+    \item training step of the ML algorithm (usually on CPU level)
+    \item resampling iterations
+    \item multiple hyperparameter configuration candidates
+  \end{itemize}
+
+  Possible problems
+  \begin{itemize}
+    \item heterogeneous runtimes cause idling $\longrightarrow$ use more jobs then workers or asynchronous strategies / kill runtime outliers
+    \item main memory or CPU-cache becomes bottleneck
+    \item communication 
+  \end{itemize}
+
+\end{frame}
+
 
 \section{Combined Preprocessing and Model Building: Pipelining}
 
@@ -521,6 +571,27 @@
         \includegraphics[width = 0.66\textwidth]{images/stacking.pdf}
       \end{center}
     
+\end{frame}
+
+\begin{frame}{Current Benchmark}
+  \begin{columns}
+    \begin{column}{0.43\textwidth}
+      \vspace{-0.7cm}
+      \begin{center}
+        \includegraphics[width = \textwidth]{images/gijsbers_open_2019_tab2.pdf}
+      \end{center}
+    \end{column}%
+    \begin{column}{0.57\textwidth}
+      Table taken from \lit{\href{http://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
+
+      \begin{itemize}
+        \item On some datasets AutoML yields big performance improvements
+        \item On many datasets RF is equally good
+        \item This table does not consider stochasticity of results
+      \end{itemize}
+
+    \end{column}
+  \end{columns}
 \end{frame}
 
 % \begin{frame}[containsverbatim,allowframebreaks]{Software}
