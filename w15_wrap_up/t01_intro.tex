@@ -311,7 +311,7 @@
   \vspace{1cm}
 
   It is highly unclear how much of this is required input by the user
-  (last point is more ore less task specification),
+  (last point is more or less task specification),
   and what should be automated by the system. 
 
 \end{frame}
@@ -389,12 +389,12 @@
       \vspace*{-0.5cm}  
       \begin{itemize}
         \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/abs/1611.09477}{Zumel et al., 2019}}
-        \item Advantage: Handles unknown categorical levels on test data.
+        \item Advantage: Handles unknown categorical levels on test data
       \end{itemize}
       Alternatives: 
       \begin{itemize}
-    \item factorization machines, 
-    \item clustering feature levels, 
+    \item factorization machines 
+    \item clustering feature levels 
     \item feature hashing
       \end{itemize}
     \end{column}%
@@ -528,8 +528,8 @@
               learners are used, but quite expensive 
           \item Embedded: CART, lasso, \ldots 
           \item Selection interesting when predictive performance vs. sparseness
-              should be optimized $\rightarrow$ Multi-criteria optimization
-            \item Combined Feature Selection and HPO: \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}
+              should be optimized $\rightarrow$ multi-criteria optimization
+            \item Combined feature selection and HPO: \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}
         \end{itemize}
       \end{column}%
       \begin{column}{0.6\textwidth}
@@ -617,10 +617,10 @@
 
   Ways out
   \begin{itemize}
-    \item Encapsulate train/predict in separate process
-    \item Ressource limit mem and time of that process by OS
+    \item Encapsulate train/predict in separate process from HPO
+    \item Ressource limit time and memory of that process by OS
     \item If learner crashes, run robust fallback (constant predictor)   
-    \item Robustify your HPO, run random config as last resort if proposal fails (exploration)
+    \item Use "robust" HPO, run random config as last resort if proposal fails (exploration)
   \end{itemize}
 
 \end{frame}
@@ -664,13 +664,13 @@
   \begin{columns}
     \begin{column}{0.5\textwidth}
     \begin{itemize}
-      \item Applying preprocessing to the whole dataset leads to data leakage.
+      \item Applying preprocessing to the whole dataset leads to data leakage
       \item Preprocessing should have train and predict steps, too
       \item Can add it to learner, and embed it in CV    
-      \item Preprocessing has hyperparameters 
+      \item Surprise: Preproc has hyperparameters 
       \item Optimize pipeline jointly: $\pcs = \pcs_{\text{preproc}} \times \pcs_\inducer$ 
       \item Still HPO, not much different than for single learner
-      \item $\pcs$ simply of higher dimension
+      \item $\pcs$ "simply" of higher dimension
     \end{itemize}
     \end{column}%
     \begin{column}{0.5\textwidth}
