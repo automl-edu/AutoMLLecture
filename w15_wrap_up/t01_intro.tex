@@ -269,7 +269,7 @@
         \includegraphics[width = \linewidth]{images/Truong2019Towards_fig2.pdf}
       \end{center}
     \end{column}%
-    \begin{column}{0.3\textwidth}
+    \begin{column}{0.4\textwidth}
     \small
       Taken from~\lit{\href{https://doi.org/10.1109/ICTAI.2019.00209}{Truong et al., 2019 ICTAI}}.
       \vspace{1em}
@@ -277,31 +277,41 @@
       Highlighted: Non-commercial AutoML frameworks
 
       \begin{itemize}
-        \item Detection of feature types: some
-        \item Preprocess categorical values: some
-        \item Missing values: all
-        \item Imbalances: all
+        \item Auto-Detection of feature types: some
+        \item Preprocess categoricals: some
+        \item Imputation: all
+        \item Class imbalance handling: all
       \end{itemize}
     \end{column}
   \end{columns}
 \end{frame}
 
 \begin{frame}{Cleaning}
-  Data cleaning can hardly be automatized but a few heuristics exist:
+  Data cleaning is hard to fully automate, but a few heuristics exist:
   \begin{itemize}
     \item Remove ID columns, columns with mostly unique values.
-    \item Outlier detection (in the feature space)
-    \item Detect time series or spatial data $\rightarrow$ randomized validation might be flawed.
+    \item Outlier detection 
+    \item Detect time series or spatial data $\rightarrow$ 
+        at the very least, evaluation and resampling needs to be adapted,
+        but feature extraction likely as well
   \end{itemize}
+
+  \vspace{1cm}
+
+  It is highly unclear how much of this is required input by the user
+  (last point is more ore less task specification),
+  and what should be automated by the system. 
+
 \end{frame}
 
 \begin{frame}{Categorical Features: Dummy Encoding}
   % Goals:
-  % \begin{itemize}
-  %   \item Convert all categorical features.
-  %   \item Avoid high cardinality categorical features.
-  % \end{itemize}
-  ML algorithm does not support categorical features + few unique values $\rightarrow$ use dummy encoding.
+  \begin{itemize}
+    \item Most simple encoding
+    \item Works well with low cardinality categoricals
+  \end{itemize}
+  % ML algorithm does not support categorical features + few unique values $\rightarrow$ use dummy encoding.
+  % Most simple technique to encode categ
   \begin{center}
     \resizebox{0.3\linewidth}{!}{
     \begin{tabular}{r|l|l}
@@ -344,13 +354,18 @@
   \end{center}
 \end{frame}
 
-\begin{frame}{Categorical Features: Target Encoding}
-  Avoid high cardinality categorical features because they are problematic for all ML algorithms $\rightarrow$ use target encoding (also impact encoding).
+\begin{frame}{Categorical Features: Target / Impact Encoding}
+  \begin{itemize}
+    \item Well known from CART
+    \item Handles high cardinality categoricals, too
+  \end{itemize}
+
+  % Avoid high cardinality categorical features because they are problematic for all ML algorithms $\rightarrow$ use target encoding (also impact encoding).
   \begin{columns}
     \begin{column}{0.7\textwidth}
 
 
-      \textbf{Goal}: Each categorical feature $\bm{x}$ should be encoded in a single numeric feature $\tilde{\bm{x}}$
+      \textbf{Goal}: Encodes each categorical $\bm{x}$ as a single numeric $\tilde{\bm{x}}$
       
       \vspace*{-0.5cm}  
       {\footnotesize
@@ -364,7 +379,12 @@
         \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/abs/1611.09477}{Zumel et al., 2019}}
         \item Advantage: Handles unknown categorical levels on test data.
       \end{itemize}
-      Alternatives: factorization machines, clustering feature levels, feature hashing
+      Alternatives: 
+      \begin{itemize}
+    \item factorization machines, 
+    \item clustering feature levels, 
+    \item feature hashing
+      \end{itemize}
     \end{column}%
     \begin{column}{0.3\textwidth}
       \vspace{-1cm}
@@ -418,11 +438,19 @@
 \begin{frame}{Common Preprocessing Steps: Missing Values}
   \begin{columns}
     \begin{column}{0.7\textwidth}
-      Missing values:
       \begin{itemize}
-        \item Additional factor column indicating missingness
-        \item Replace missing values with \emph{out of range} or median/mode
-        \item Advanced imputation strategies seldom advantageous (also because data mostly not missing at random)
+        \item Replace missings with imputed values, try not to 
+            disturb distribution too much
+        \item Examples: mean, median, mode, sample from histogram,
+            predict value based on other features
+        \item Additional factor column indicating missingness can help
+            if NA-state carries information for target
+        \item \emph{Out-Of-Range} works often well for tree-based techniques
+            (RF and boosting!), saves extra missingness col
+        \item For inference, simple imputation is often shunned, 
+            and multiple, model-based imputation recommended; 
+            for prediction naive imputation often works remarkably well
+
       \end{itemize}
     \end{column}%
     \begin{column}{0.3\textwidth}
@@ -471,7 +499,7 @@
         }
         \end{center}
         {\footnotesize
-        \emph{Out of range} imputation, useful for tree-based ML algorithms.
+        \emph{Out of range} imputation
         }
     \end{column}
   \end{columns}
@@ -480,15 +508,16 @@
 \begin{frame}{Feature Selection}
     \begin{columns}
       \begin{column}{0.4\textwidth}
-        Feature selection:
         \begin{itemize}
-          \item Filter
-          \item Stepwise selection methods: Needs to be applied on the whole pipeline (impractical!)
-          \item Seldom increases performance but decreases computational costs $\rightarrow$ Multi-criteria optimization.
-          \begin{itemize}
+          \item Filter; for ultra-highdim tasks
+          \item Stepwise / wrapper methods; 
+              % m: Needs to be applied on the whole pipeline (impractical!)
+          seldom increases performance when well-regularized 
+              learners are used, but quite expensive 
+          \item Embedded: CART, lasso, \ldots 
+          \item Selection interesting when predictive performance vs. sparseness
+              should be optimized $\rightarrow$ Multi-criteria optimization
             \item Combined Feature Selection and HPO: \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}
-          \end{itemize}
-          \item Happens indirectly in learning algorithm: decision tree, lasso regression, \ldots %FIXME More examples.
         \end{itemize}
       \end{column}%
       \begin{column}{0.6\textwidth}
@@ -513,7 +542,7 @@
 
     Feature extraction:
     \begin{itemize}
-      \item Polynomial Features: $x_j \longrightarrow x_j, x_j^2, x_j^3, ...$
+      \item Polynomial features: $x_j \longrightarrow x_j, x_j^2, x_j^3, ...$
       \item Interactions: $x_j, x_k \longrightarrow x_j, x_k, x_j \cdot x_k$
     \end{itemize}
 
@@ -542,12 +571,14 @@
 
 
 \begin{frame}{Imbalanced Classes}
-  Imbalanced classes:
   \begin{itemize}
     \item Over-sampling of minority class
     \item Seldom: under-sampling of majority class
-    \item Intelligent over-sampling strategies (e.g.\ SMOTE) can lead to improvement in predictive accuracy
+    \item Intelligent over-sampling strategies which create
+        synthetic observations (SMOTE) 
+        % can lead to improvement in predictive accuracy
   \end{itemize}
+  %FIXME: HIER SOLLTE SMOTE PIC REIN
 \end{frame}
 
 \section{Practical Problems}
