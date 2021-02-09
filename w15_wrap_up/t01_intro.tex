@@ -638,20 +638,24 @@
 
 \section{Combined Preprocessing and Model Building: Pipelining}
 
-\begin{frame}{Pipelining}
+\begin{frame}{Linear Pipelining}
 
-  Most preprocessing steps have parameters or can be switched on/off in the pipeline.
+  % Most preprocessing steps have parameters or can be switched on/off in the pipeline.
 
-  \vspace{1em}
+  % \vspace{1em}
 
-  \textbf{Goal:} Find optimal preprocessing parameters $\rightarrow$ HPO
+  % \textbf{Goal:} Find optimal preprocessing parameters $\rightarrow$ HPO
 
   \begin{columns}
     \begin{column}{0.5\textwidth}
     \begin{itemize}
-      \item Most preprocessing methods have internal parameters similar to the model of an inducer.
       \item Applying preprocessing to the whole dataset leads to data leakage.
-      \item Pipeline has to be optimized as a whole: $\pcs = \pcs_{\text{pipeline}} \times \pcs_\inducer$ within the resampling procedure.
+      \item Preprocessing should have train and predict steps, too
+      \item Can add it to learner, and embed it in CV    
+      \item Preprocessing has hyperparameters 
+      \item Optimize pipeline jointly: $\pcs = \pcs_{\text{preproc}} \times \pcs_\inducer$ 
+      \item Still HPO, not much different than for single learner
+      \item $\pcs$ simply of higher dimension
     \end{itemize}
     \end{column}%
     \begin{column}{0.5\textwidth}
@@ -663,15 +667,16 @@
 
 \end{frame}
 
-\begin{frame}{Optimizing Pipelines}
+\begin{frame}{Nonlinear Pipelines}
 
   \begin{columns}
     \begin{column}{0.6\textwidth}
-      \vspace*{-0.5em}
+      Ideal to let HPO choose automatically:
       \begin{itemize}
-        \item Introducing different choices for preprocessing.
-        \item Tuning over multiple learning algorithms.
-        \item[$\rightarrow$] $\pcs$ becomes hierarchical search space!
+      \item preprocessing
+      \item feature extraction   
+      \item learner
+      \item[$\rightarrow$] $\pcs$ becomes hierarchical search space!
       \end{itemize}
       
       \vspace*{0.5em}
@@ -679,8 +684,8 @@
       Suitable optimizers:
       \begin{itemize}
         \item TPE
-        \item Random Search, Hyperband with sampler that follows the hierarchy
-        \item BO with RF surrogate, or GP with 
+        \item Random search, hyperband with sampler that follows the hierarchy
+        \item BO with RF (imputation or hierarchical trees)
         \item Evolutionary approaches (similar to NAS)
       \end{itemize}
 
@@ -700,7 +705,8 @@
   Options:
   \begin{itemize}
     \item Choose the optimal path as linear pipeline.
-    \item Build ensemble of best configurations (e.g. \lit{\href{https://papers.nips.cc/paper/2015/hash/11d0e6287202fced83f79975ec59a3a6-Abstract.html}{Feurer et al., NIPS 2015}}, \lit{\href{https://www.automl.org/wp-content/uploads/2020/07/AutoML_2020_paper_61.pdf}{H2O AutoML, LeDell et al., 2020}}).
+    \item Build ensemble of best configurations\\ 
+        (e.g. \lit{\href{https://papers.nips.cc/paper/2015/hash/11d0e6287202fced83f79975ec59a3a6-Abstract.html}{Feurer et al., NIPS 2015}}, \lit{\href{https://www.automl.org/wp-content/uploads/2020/07/AutoML_2020_paper_61.pdf}{H2O AutoML, LeDell et al., 2020}}).
   \end{itemize}
   \begin{center}
     \includegraphics[width = 0.60\textwidth]{images/stacking.pdf}
@@ -722,7 +728,7 @@
       \begin{itemize}
         \item On some datasets AutoML yields big performance improvements
         \item On many datasets RF is equally good
-        \item This table does not consider stochasticity of results
+        \item Need more and diverse benchmarks
       \end{itemize}
 
     \end{column}
