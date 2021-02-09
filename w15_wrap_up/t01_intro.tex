@@ -2,7 +2,8 @@
 
 \usepackage[normalem]{ulem}
 \usepackage{pifont}
-
+\usepackage{relsize}
+\renewcommand{\lit}[1]{{\smaller\color{black!60}[#1]}}
 \subtitle{Wrap Up}
 
 
@@ -18,7 +19,6 @@
   So far we covered
   \begin{itemize}
     \item Mechanisms to select ML algorithms for a data set (algorithm selection)
-        SOLLTE DAS RAUS?
     \item HPO as black-box optimization
     \begin{itemize}
       \item Grid- and random search, EAs, BO
@@ -124,12 +124,12 @@
     % \item A good AutoML System should consider more than one learning algorithm. More on that later.
     \item A plethora of learners exists, for different data sets different models
         are likely needed.
-    \item Studies\lit{\href{https://dl.acm.org/doi/10.5555/2627435.2697065}{Delgado et al., JMLR 2014}} and experience have shown one the following 
+    \item Studies~\lit{\href{https://dl.acm.org/doi/10.5555/2627435.2697065}{Delgado et al., JMLR 2014}} and experience have shown one the following 
         is usually good -- on tabular data:
     \begin{itemize}
       \item Penalized regression, SVM, gradient boosting, random forests, neural networks
-      \item Random forests only beaten on few tabular datasets by current AutoML frameworks\lit{\href{https://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
-      \item Example: Auto-Sklearn 2.0\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}} uses: extra trees, gradient boosting, passive aggressive, random forest, linear model
+      \item Random forests only beaten on few tabular datasets by current AutoML frameworks~\lit{\href{https://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
+      \item Example: Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}} uses: extra trees, gradient boosting, passive aggressive, random forest, linear model
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -160,7 +160,7 @@
           \includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab3.pdf}   
         }
 
-        {\tiny Taken from \href{https://www.jmlr.org/papers/volume20/18-444/18-444.pdf}{Probst et al., 2019 JMLR}.}
+        {\tiny Taken from \lit{\href{https://www.jmlr.org/papers/volume20/18-444/18-444.pdf}{Probst et al., 2019 JMLR}}.}
       \end{center}
     \end{column}
   \end{columns}
@@ -194,7 +194,7 @@
       \item Time dependencies
       \item A good AutoML system should let you customize resampling
           % errors here can mean: garbage in, garbvgae out
-      \item meta-learn good resampling strategy \lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}}
+      \item meta-learn good resampling strategy~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}}
     \end{itemize}
     \end{column}
     \end{columns}
@@ -270,7 +270,7 @@
     \end{column}%
     \begin{column}{0.3\textwidth}
     \small
-      Taken from \href{https://doi.org/10.1109/ICTAI.2019.00209}{Truong et al., 2019 ICTAI}.
+      Taken from~\lit{\href{https://doi.org/10.1109/ICTAI.2019.00209}{Truong et al., 2019 ICTAI}}.
       \vspace{1em}
 
       Highlighted: Non-commercial AutoML frameworks
@@ -495,7 +495,7 @@
           \includegraphics[width=0.35\textwidth, trim=450 100 110 60, clip]{images/feat_extr_vs_selection.pdf}%
           \includegraphics[width=0.55\linewidth]{images/Binder2020multiobjective_fig3.pdf}
 
-          {\tiny \hfill Taken from \href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}.}
+          {\tiny \hfill Taken from \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}.}
         \end{center}
       \end{column}
     \end{columns}
