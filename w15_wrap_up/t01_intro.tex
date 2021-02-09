@@ -587,45 +587,48 @@
   AutoML system should: 
   \begin{itemize}
     \item never fail to return a result
-    \item or at least have intermediate results that can be used to continue optimization
     \item terminate within a given time
+    \item save intermediate results and allow to continue
   \end{itemize}
 
   Failure points:
   \begin{itemize}
-    \item optimizer can crash (e.g.\ the surrogate of MBO) $\longrightarrow$ return intermediate result, continue with warmstart / random search
-    \item training can crash $\longrightarrow$ train robust fallback learner (e.g.\ majority/mean predictor)
-    \item prediction can crash $\longrightarrow$ use prediction of fallback learner
+    \item optimizer can crash (e.g.\ GP in BO) 
+        % $\longrightarrow$ return intermediate result, continue with warmstart / random search
+    \item training can crash (e.g. segfault) 
+    \item training can run "forever" 
+    % \item prediction can crash $\longrightarrow$ use prediction of fallback learner
   \end{itemize}
 
-  Failure classes:
+  Ways out
   \begin{itemize}
-    \item ``simple'' error $\longrightarrow$ TryCatch
-    \item segfault $\longrightarrow$ encapsulation in separate process
-    \item no termination $\longrightarrow$ encapsulation with time-out
-    \item out-of-memory $\longrightarrow$ problematic because it can affect the whole system if garbage collection fails
+    \item Encapsulate train/predict in separate process
+    \item Ressource limit mem and time of that process by OS
+    \item If learner crashes, run robust fallback (constant predictor)   
+    \item Robustify your HPO, run random config as last resort if proposal fails (exploration)
   \end{itemize}
 
 \end{frame}
 
 \begin{frame}{Practical Problems: Parallelization}
-  Parallelization should consider:
+  Parallelization should allow:
   \begin{itemize}
     \item multiple cores
-    \item multiple nodes (complicated, because no unified API)
+    \item multiple nodes 
   \end{itemize}
 
   Possible parallelization levels:
   \begin{itemize}
-    \item training step of the ML algorithm (usually on CPU level)
-    \item resampling iterations
-    \item multiple hyperparameter configuration candidates
+    \item training of learner (threading / GPU)
+    \item resampling
+    \item eval configurations (batch proposal of HPO)
   \end{itemize}
 
   Possible problems:
   \begin{itemize}
-    \item Sequential nature of HPO algorithms (e.g.\ Bayesian optimization)
-    \item Heterogeneous runtimes cause idling $\longrightarrow$ use more jobs then workers or asynchronous strategies / kill runtime outliers
+    \item Sequential nature of HPO algorithms (e.g.\ BO)
+    \item Heterogeneous runtimes cause idling $\longrightarrow$ 
+        asynchronous HPO attractive, but more complex
     \item Main memory or CPU-cache becomes bottleneck
     \item Communication between workers
   \end{itemize}
