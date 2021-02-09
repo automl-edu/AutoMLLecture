@@ -124,14 +124,26 @@
     % \item A good AutoML System should consider more than one learning algorithm. More on that later.
     \item A plethora of learners exists, for different data sets different models
         are likely needed.
-    \item Studies~\lit{\href{https://dl.acm.org/doi/10.5555/2627435.2697065}{Delgado et al., JMLR 2014}} and experience have shown one the following 
-        is usually good -- on tabular data:
+    \item Studies~\lit{\href{https://dl.acm.org/doi/10.5555/2627435.2697065}{Delgado et al., JMLR 2014}} and experience show:\\
+        One these is often good -- on tabular data:
     \begin{itemize}
-      \item Penalized regression, SVM, gradient boosting, random forests, neural networks
-      \item Random forests only beaten on few tabular datasets by current AutoML frameworks~\lit{\href{https://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
-      \item Example: Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}} uses: extra trees, gradient boosting, passive aggressive, random forest, linear model
-    \end{itemize}
+      \item penalized regression
+      \item SVM
+      \item gradient boosting
+       \item random forests
+     \item (neural networks)
   \end{itemize}
+      % \item Random forests only beaten on few tabular datasets by current AutoML frameworks~\lit{\href{https://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
+      \item Example: Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}} uses: 
+    \begin{itemize}
+        \item extra trees 
+         \item gradient boosting 
+         \item passive aggressive 
+        \item random forest 
+        \item linear model
+  \end{itemize}
+    \end{itemize}
+  % \end{itemize}
 \end{frame}
 
 \begin{frame}{Choice of Search Space for a Learning Algorithm}
@@ -572,13 +584,16 @@
 
 \begin{frame}{Imbalanced Classes}
   \begin{itemize}
-    \item Over-sampling of minority class
-    \item Seldom: under-sampling of majority class
-    \item Intelligent over-sampling strategies which create
+    \item Oversampling of minority class
+    \item Seldom: undersampling of majority class
+    \item Intelligent oversampling strategies which create
         synthetic observations (SMOTE) 
         % can lead to improvement in predictive accuracy
   \end{itemize}
   %FIXME: HIER SOLLTE SMOTE PIC REIN
+      \begin{center}
+        \includegraphics[width= 0.7\textwidth]{images/smote.png}
+      \end{center}
 \end{frame}
 
 \section{Practical Problems}
