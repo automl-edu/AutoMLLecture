@@ -140,14 +140,15 @@
     % Which hyperparameters should we consider for a given learning algorithm?
     Ranges often selected based on experience
     \begin{itemize}
-      \item see other AutoML frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}}
+      \item See other AutoML frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}}
       \item Sensitivity analysis often does not exist for ML algorithms
+      \item Check literature on specific ML algorithm
     \end{itemize}
-    Options:
+    Options for automation:
     \begin{itemize}
       \item Use huge search space to cover all possibilities \\ 
-            (combine with meta-learning for good initial design for Bayesian Optimization)
-      \item Use smaller search space that is known to work well for many cases
+            (combine with meta-learning for good initial design for Bayesian optimization)
+      \item Use results of meta-experiments to obtain smaller search space that is estimated to work well.
       % \item FIXME: Wollte Bernd hier nochwas spezielles?
     \end{itemize}
     \end{column}%
@@ -180,7 +181,7 @@
     Rules of thumb:
     \begin{itemize}
       \item Default: 10-fold CV ($k=10$)
-      \item Huge datasets: Holdout
+      \item Huge datasets: holdout
       \item Tiny datasets: 10x10 repeated CV
       \item Stratification for imbalanced classes
     \end{itemize}
@@ -194,7 +195,7 @@
       \item Time dependencies
       \item A good AutoML system should let you customize resampling
           % errors here can mean: garbage in, garbvgae out
-      \item meta-learn good resampling strategy~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}}
+      \item Meta-learn good resampling strategy~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}}
     \end{itemize}
     \end{column}
     \end{columns}
@@ -205,7 +206,7 @@
   Choose optimization algorithm based on \ldots
   \begin{itemize}
     \item complexity of search space / budget
-    \item time-costs of evals
+    \item time-costs of evaluations
   \end{itemize}
 
   \vspace{0.5em}
@@ -223,7 +224,7 @@
   \begin{itemize}
     \item[$\rightarrow$] Hyperband, BOHB
   \end{itemize}
-  Deep Learning 
+  Deep learning 
   \begin{itemize}
     \item[$\rightarrow$]Parametrize architectures, then HPO, see above
     \item[$\rightarrow$]NAS 
@@ -276,10 +277,10 @@
       Highlighted: Non-commercial AutoML frameworks
 
       \begin{itemize}
-        \item detection of feature types: some
-        \item preprocess categorical values: some
-        \item missing values: all
-        \item imbalances: all
+        \item Detection of feature types: some
+        \item Preprocess categorical values: some
+        \item Missing values: all
+        \item Imbalances: all
       \end{itemize}
     \end{column}
   \end{columns}
@@ -288,7 +289,7 @@
 \begin{frame}{Cleaning}
   Data cleaning can hardly be automatized but a few heuristics exist:
   \begin{itemize}
-    \item Remove ID Columns, Columns with mostly unique values.
+    \item Remove ID columns, columns with mostly unique values.
     \item Outlier detection (in the feature space)
     \item Detect time series or spatial data $\rightarrow$ randomized validation might be flawed.
   \end{itemize}
@@ -344,7 +345,7 @@
 \end{frame}
 
 \begin{frame}{Categorical Features: Target Encoding}
-  Avoid high cardinality categorical features because they are problematic for all ML algorithms $\rightarrow$ use Target Encoding (also Impact Encoding).
+  Avoid high cardinality categorical features because they are problematic for all ML algorithms $\rightarrow$ use target encoding (also impact encoding).
   \begin{columns}
     \begin{column}{0.7\textwidth}
 
@@ -363,7 +364,7 @@
         \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/abs/1611.09477}{Zumel et al., 2019}}
         \item Advantage: Handles unknown categorical levels on test data.
       \end{itemize}
-      Alternatives: Factorization Machines, clustering feature levels, feature hashing
+      Alternatives: factorization machines, clustering feature levels, feature hashing
     \end{column}%
     \begin{column}{0.3\textwidth}
       \vspace{-1cm}
@@ -487,7 +488,7 @@
           \begin{itemize}
             \item Combined Feature Selection and HPO: \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}
           \end{itemize}
-          \item Happens indirectly in learning algorithm: random forest, lasso regression, \ldots %FIXME More examples.
+          \item Happens indirectly in learning algorithm: decision tree, lasso regression, \ldots %FIXME More examples.
         \end{itemize}
       \end{column}%
       \begin{column}{0.6\textwidth}
@@ -543,9 +544,9 @@
 \begin{frame}{Imbalanced Classes}
   Imbalanced classes:
   \begin{itemize}
-    \item over-sampling of minority class
-    \item seldom: under-sampling of majority class
-    \item Influence of more advanced methods (e.g.\ SMOTE) on the predictive accuracy questionable.
+    \item Over-sampling of minority class
+    \item Seldom: under-sampling of majority class
+    \item Intelligent over-sampling strategies (e.g.\ SMOTE) can lead to improvement in predictive accuracy
   \end{itemize}
 \end{frame}
 
@@ -590,11 +591,12 @@
     \item multiple hyperparameter configuration candidates
   \end{itemize}
 
-  Possible problems
+  Possible problems:
   \begin{itemize}
-    \item heterogeneous runtimes cause idling $\longrightarrow$ use more jobs then workers or asynchronous strategies / kill runtime outliers
-    \item main memory or CPU-cache becomes bottleneck
-    \item communication 
+    \item Sequential nature of HPO algorithms (e.g.\ Bayesian optimization)
+    \item Heterogeneous runtimes cause idling $\longrightarrow$ use more jobs then workers or asynchronous strategies / kill runtime outliers
+    \item Main memory or CPU-cache becomes bottleneck
+    \item Communication between workers
   \end{itemize}
 
 \end{frame}
@@ -672,7 +674,7 @@
     
 \end{frame}
 
-\begin{frame}{Current Benchmark}
+\begin{frame}{Current Benchmark on Tabular Data}
   \begin{columns}
     \begin{column}{0.43\textwidth}
       \vspace{-0.7cm}
