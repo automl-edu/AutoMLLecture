@@ -92,7 +92,7 @@
 \begin{center}
     \includegraphics[width=.9\linewidth, height=0.9\textheight, keepaspectratio=true]{images/categ_cond_params/Conditional_Parameters_AutoML_Book.png}
     \newline
-    Example of a structured search space (Source: Figure 5.1 of the \lit{\href{https://www.automl.org/wp-content/uploads/2019/05/AutoML_Book.pdf}{AutoML book}})
+    Example of a structured search space \lit{\href{https://www.automl.org/wp-content/uploads/2019/05/AutoML_Book.pdf\#page=106&zoom=auto,-103,604}{Hutter et al. 2019}}
 \end{center}
 \end{frame}
 %-----------------------------------------------------------------------
@@ -123,14 +123,14 @@ This has to be taken into account by the surrogate model:
 \begin{itemize}
     \item Random Forests \alert{natively} handle categorical inputs \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al, 2011}}
     \item \emph{One-hot} encoding provides a simple general solution
-    \item Gaussian Processes can use a (weighted) \alert{Hamming Distance Kernel} \lit{\href{https://www.cs.ubc.ca/~hutter/papers/Hutter09PhD.pdf}{Hutter 2009}}:
+    \item Gaussian Processes can use a (weighted) \alert{Hamming Distance Kernel} \lit{\href{https://www.cs.ubc.ca/~hutter/papers/Hutter09PhD.pdf}{Hutter. 2009}}:
 \vspace*{-0.2cm}
 \begin{equation*}
     \kernel_{\theta}(\conf_i, \conf_j) = \exp{\sum_{l=1}^d (-\theta \cdot \delta(\hyperparam_{i,l} \neq \hyperparam_{j,l}))}
 \end{equation*}
 
 \vspace*{-0.2cm}
-\item Neural networks can learn \alert{entity embeddings} for categorical inputs \lit{\href{https://arxiv.org/pdf/1604.06737.pdf}{Guc et al. 2016}}
+\item Neural networks can learn \alert{entity embeddings} for categorical inputs \lit{\href{https://arxiv.org/pdf/1604.06737.pdf}{Guc and Berkhahn. 2016}}
 \end{itemize}
 %
 \end{frame}
@@ -158,8 +158,11 @@ Conditional hyperparameters:
 Modelling conditional hyperparameters:
 \myit{
     \item Setting the values for inactive hyperparameter to a specific value (e.g. $0$)
-    \item Random Forests \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011}} and Tree Parzen Estimators \lit{\href{http://papers.nips.cc/paper/4443-algorithms-for-hyper}{Bergstra et al. 2011}} can \alert{natively} handle conditional inputs
-    \item There exist \alert{several kernels for Gaussian Processes} to handle conditional inputs \lit{\href{https://arxiv.org/abs/1310.5738}{Hutter et al. 2013}} \lit{\href{https://www.etsmtl.ca/Unites-de-recherche/LIVIA/Recherche-et-innovation/Publications/Publications-2017/Levesque_ijcnn_2017.pdf}{Lévesque et al. 2017}} \lit{\href{http://proceedings.mlr.press/v70/jenatton17a.html}{Jenatton et al. 2017}} 
+    \item Random Forests \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011}} and Tree Parzen Estimators 
+    \lit{\href{https://proceedings.neurips.cc/paper/2011/file/86e8f7ab32cfd12577bc2619bc635690-Paper.pdf}{Bergstra et al. 2011}} can \alert{natively} handle conditional inputs
+    \item There exist \alert{several kernels for Gaussian Processes} to handle conditional inputs
+    
+    \lit{\href{https://arxiv.org/pdf/1310.5738.pdf}{Hutter and Osborne. 2013}; \href{https://www.etsmtl.ca/Unites-de-recherche/LIVIA/Recherche-et-innovation/Publications/Publications-2017/Levesque_ijcnn_2017.pdf}{ Lévesque et al. 2017}; \href{https://dl.acm.org/doi/pdf/10.5555/3305381.3305552}{ Jenatton et al. 2017}} 
 }
 %
 \fhpause
@@ -234,9 +237,9 @@ Overall, structured search spaces are \alert{still an active research topic} and
     \end{equation*}
 \fhpause
 \medskip
-    \item For EI and KG, this requires \emph{expensive-to-compute} q-dimensional Gaussian cumulative distributions \lit{\href{https://hal.archives-ouvertes.fr/hal-00260579/document}{Ginsbourger et al. 2007}}, \lit{\href{https://arxiv.org/pdf/1606.04414v4.pdf}{Wu et al. 2018}}, \lit{\href{https://arxiv.org/pdf/1602.05149.pdf}{Wang et al. 2019}}
+    \item For EI and KG, this requires \emph{expensive-to-compute} q-dimensional Gaussian cumulative distributions \lit{\href{https://hal.archives-ouvertes.fr/hal-00260579/document}{Ginsbourger et al. 2008}; \href{https://arxiv.org/pdf/1606.04414v4.pdf}{ Wu and Frazier. 2018}; \href{https://arxiv.org/pdf/1602.05149.pdf}{ Wang et al. 2019}}
     \fhpause
-    \item Nevertheless, multi-point acquisition functions can be optimized efficiently with gradient descent via the reparameterization trick \lit{\href{https://papers.nips.cc/paper/8194-maximizing-acquisition-functions-for-bayesian-optimization}{Wilson et al. 2018}}
+    \item Nevertheless, multi-point acquisition functions can be optimized efficiently with gradient descent via the reparameterization trick \lit{\href{https://papers.nips.cc/paper/2018/file/498f2c21688f6451d9f5fd09d53edda7-Paper.pdf}{Wilson et al. 2018}}
 }
 \end{frame}
 
@@ -413,7 +416,7 @@ Several types of constraints
 \begin{enumerate}
     \item \alert{Known constraints}:\\ can be accounted for when optimizing $\acq$
     %\item Policy constraints: function value is observed, but deemed forbidden~\lit{\href{https://www.soe.ucsc.edu/sites/default/files/technical-reports/UCSC-SOE-10-10.pdf}{Lee and Gramacy 2010}}
-    \item \alert{Hidden constraints}: no function value is observed due to a failed function evaluation~\lit{\href{https://www.soe.ucsc.edu/sites/default/files/technical-reports/UCSC-SOE-10-10.pdf}{Lee and Gramacy 2010}}
+    \item \alert{Hidden constraints}: no function value is observed due to a failed function evaluation~\lit{\href{https://www.soe.ucsc.edu/sites/default/files/technical-reports/UCSC-SOE-10-10.pdf}{Lee et al. 2010}}
     \item \alert{Unknown constraints}: there's an additional, but unknown constraint function (e.g., memory used), which can be observed and modeled
 \end{enumerate}
 \end{small}
@@ -430,7 +433,7 @@ Several types of constraints
 \vspace*{0.2cm}
 \fhpause
 
-Most general solution: \alert{Expected Constrained Improvement}~\lit{\href{https://www.soe.ucsc.edu/sites/default/files/technical-reports/UCSC-SOE-10-10.pdf}{Lee and Gramacy 2010}}:
+Most general solution: \alert{Expected Constrained Improvement}~\lit{\href{https://www.soe.ucsc.edu/sites/default/files/technical-reports/UCSC-SOE-10-10.pdf}{Lee et al. 2010}}:
 \vspace{-0.1cm}
 \begin{equation}
 \nonumber    \alert{ECI(\conf) = EI(\conf)h(\conf)},
@@ -439,7 +442,7 @@ Most general solution: \alert{Expected Constrained Improvement}~\lit{\href{https
 \noindent{}where $h(\conf)$ is the probability that $\conf$ is a valid configuration.
 
 \vspace{0.4cm}
-Further literature in \lit{\href{https://arxiv.org/abs/1807.02811}{Frazier 2018}} and \lit{\href{https://link.springer.com/chapter/10.1007/978-3-030-05318-5_1}{Feurer and Hutter 2019}}.
+Further literature in \lit{\href{https://arxiv.org/pdf/1807.02811.pdf}{Frazier. 2018}} and \lit{\href{https://www.automl.org/wp-content/uploads/2018/09/chapter1-hpo.pdf}{Feurer and Hutter 2019}}.
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -450,10 +453,10 @@ Bayesian optimization has been extended to numerous scenarios:
     \item Multi-objective Bayesian optimization $\rightarrow$ separate lecture
     \item Bayesian optimization with safety guarantees~\lit{\href{http://proceedings.mlr.press/v37/sui15.pdf}{Sui et al. 2015}}
     \item Directly optimizing for ensemble performance~\lit{\href{http://auai.org/uai2016/proceedings/papers/73.pdf}{Lévesque et al. 2016}}
-    \item Combination with local search methods~\lit{\href{https://www.researchgate.net/publication/241216681_Bayesian_Guided_Pattern_Search_for_Robust_Local_Optimization}{Taddy et al. 2009}}~\lit{\href{https://papers.nips.cc/paper/8788-scalable-global-optimization-via-local-bayesian-optimization.pdf}{Eriksson et al. 2019}}
+    \item Combination with local search methods~\lit{\href{https://www.researchgate.net/publication/241216681_Bayesian_Guided_Pattern_Search_for_Robust_Local_Optimization}{Taddy et al. 2009};\href{https://papers.nips.cc/paper/8788-scalable-global-optimization-via-local-bayesian-optimization.pdf}{ Eriksson et al. 2019}}
     \item Optimization of arbitrary spaces that can be described by a kernel (e.g., neural network architectures~\lit{\href{https://papers.nips.cc/paper/7472-neural-architecture-search-with-bayesian-optimisation-and-optimal-transport.pdf}{Kandasamy et al. 2018}} or 
     %a latent embedding, such as
-    molecules~\lit{\href{https://arxiv.org/abs/1709.05501}{Griffiths et al. 2017}})
+    molecules~\lit{\href{https://arxiv.org/pdf/1709.05501.pdf}{Griffiths and Hernández-Lobato. 2017}})
     \item Many more (too many to mention)
 \end{itemize}
   
