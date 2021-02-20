@@ -87,7 +87,7 @@ where, the denominator is independent of $\bm{f}$ and hence has been dropped.
 
 \vspace{15mm}
 
-\item Frm the GP assumption, we can assert that $p(\bm{f}\mid\Xmat) \sim \mathcal{N}\left(0, \bm{K}\right)$. Hence, we have:
+\item From the GP assumption, we can assert that $p(\bm{f}\mid\Xmat) \sim \mathcal{N}\left(0, \bm{K}\right)$. Hence, we have:
 \vspace{-2mm}
 $$\log p(\bm{f}\mid\Xmat, y) \propto \log p(\ydat\mid\bm{f}) - \frac{1}{2} \bm{f}^\top \bm{K}^{-1} \bm{f} - \frac{1}{2} \log |\bm{K}| - \frac{n}{2} \log 2 \pi.$$
 
@@ -123,16 +123,17 @@ $$\frac{1}{2} \bm{f}^\top \bm{K}^{-1}\bm{f} - \sumin\, \log\, p(\yI{i}\mid f^{(i
 \vspace{-2mm}
 $$\frac{1}{2} \|\thetab\|^2 + C \sumin \loss(\yI{i},f(\xI{i})),$$
 
-
-\vspace{.5cm}
-\item Plugging that in, the optimization objective would be:
-\vspace{-2mm}
-$$\frac{1}{2} \bm{f}^\top \bm{K}^{-1} \bm{f} + C \sumin \loss(\yI{i},f(\xI{i})),$$
 \vspace{-2mm}
 where $\loss(\y,f(\x))  = \max\{0, 1-f(\x)\cdot\y\}$ is the Hinge loss.
 
 
-\vspace{1cm}
+\vspace{.5cm}
+\item Plugging that in, the optimization objective would be:
+\vspace{-2mm}
+$$\frac{1}{2} \bm{f}^\top \bm{K}^{-1} \bm{f} + C \sumin \loss(\yI{i},f(\xI{i})).$$
+
+
+\vspace{.1cm}
 \item From the representer theorem: $\thetab = \sumin \beta_i\,\yI{i} k\left(\xI{i}, \cdot \right)$, and thus:
 \vspace{-2mm}
 $$\thetab^\top \thetab = \beta^\top \bm{K} \beta = \bm{f}^\top \bm{K}^{-1} \bm{f}$$. 
