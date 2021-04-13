@@ -99,13 +99,13 @@
 
     \begin{frame}[c,allowframebreaks]{McNemar Test}
     \begin{itemize}
-    \item non-parametric test used on paired nominal data, does not make any distributional assumptions
-    \item pairs are e.g.\ performance numbers of different models on the same data
-    \item can be applied to compare the performance of two \textbf{models}
-        when the considered performance measure is based on an outer loss with a
-        nominal or binary output, e.g.\ accuracy is based on a binary outer loss
-    \item both models trained on training set and evaluated on test set;
-        \textbf{contingency table} based on test set that compares the two models calculated
+    \item non-parametric test used on paired dichotomous nominal data; does not
+        make any distributional assumptions beyond statistical independence of
+        samples
+    \item pairs are e.g.\ labels predicted by different models on the same data
+    \item compares the classification accuracy of two \textbf{models}
+    \item both models trained and evaluated on the exact same training and test set;
+        \textbf{contingency table} based on two paired vectors that indicate whether each model predicted an observation correctly
     \end{itemize}
 
     \medskip
@@ -115,24 +115,24 @@
     \begin{minipage}{0.74\textwidth}
     \begin{itemize}
     \item A: $\#$obs.\ correctly classified by both
-    \item B: $\#$obs.\ misclassified by model 1 but not by model 2
-    \item C: $\#$obs.\ misclassified by model 2 but not by model 1
+    \item B: $\#$obs.\ only correctly classified by model 1
+    \item C: $\#$obs.\ only correctly classified by model 2
     \item D: $\#$obs.\ misclassified by both
     \end{itemize}
     \end{minipage}
 
     \framebreak
 
-    \begin{minipage}[c]{0.625\linewidth}
+    \begin{minipage}[c]{0.74\linewidth}
     Error of each model can be computed as follows:
     \begin{itemize}
-      \item Model 1: (A+B)/(A+B+C+D)
-      \item Model 2: (A+C)/(A+B+C+D)
+      \item Model 1: (C+D)/(A+B+C+D)
+      \item Model 2: (B+D)/(A+B+C+D)
     \end{itemize}
 
     Even if the models have the \textbf{same} errors (indicating equal performance), cells B and C may be different because the models may misclassify different instances.
     \end{minipage}
-    \begin{minipage}[c]{0.2\linewidth}
+    \begin{minipage}[c]{0.25\linewidth}
         \includegraphics[width=\textwidth]{mcnemar_1.png}
     \end{minipage}
 
