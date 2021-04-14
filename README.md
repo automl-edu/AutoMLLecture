@@ -32,6 +32,7 @@ The course is targeted at students and practitioners with solid background in ma
   * Marius Lindauer
   * Difan Deng
   * Carolin Benjamins
+  * Daniel Ritter
 * Ludwig Maximilian University of Munich, Germany:
   * Bernd Bischl
   * Janek Thomas (Fraunhofer)
