@@ -1,5 +1,7 @@
 # Course on Automated Machine Learning (AutoML)
 
+![KI-Campus_AutoML-Logo_400x200px_2-Colours_Light](https://user-images.githubusercontent.com/5947529/114671195-1accee00-9d04-11eb-93e9-3b981b007977.png)
+
 ## Introduction
 
 Based on machine learning (ML), AI achieved major breakthroughs in the last years. However, applying machine learning in practice is a challenging task and requires a lot of expertise. Among other things, the success of ML applications depends on many design decisions, including an appropriate preprocessing of the data, choosing a well-performing machine learning algorithm and tuning its hyperparameters, giving rise to a ML pipeline. Unfortunately, even experienced ML experts need days, weeks or even months to find well-performing ML pipelines. To support ML users, developers and researchers, automated machine learning (AutoML) was proposed. AutoML tools propose well-performing ML pipelines for a dataset at hand such that the development time of new ML applications will be reduced, the efficiency of the users increases and the required expertise in ML will be minimized. Therefore, AutoML helps to apply ML to new applications and fosters the democratization of machine learning.
