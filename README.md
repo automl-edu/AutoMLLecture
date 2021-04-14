@@ -1,6 +1,7 @@
 # Course on Automated Machine Learning (AutoML)
 
-![KI-Campus_AutoML-Logo_400x200px_2-Colours_Light](https://user-images.githubusercontent.com/5947529/114671195-1accee00-9d04-11eb-93e9-3b981b007977.png)
+<div style="text-align:center">![KI-Campus_AutoML-Logo_400x200px_2-Colours_Light](https://user-images.githubusercontent.com/5947529/114671195-1accee00-9d04-11eb-93e9-3b981b007977.png)</div>
+
 
 ## Introduction
 
