@@ -1,5 +1,4 @@
 # Add any directories, files, or patterns you don't want to be tracked by version control
-
 *.log
 *.aux
 *.nav
@@ -11,4 +10,3 @@
 /tmp
 /.texlipse
 /.project
-/w09_nas/
