@@ -59,7 +59,7 @@ The course is targeted at students and practitioners with solid background in ma
 
 ## Software Dependencies
 
-`slides.py` requires `pdft` (e.g., run `sudo apt install pdftk` on a Ubuntu). In addition, it requires Python 3.9 (or later).
+`slides.py` requires `pdftk` (e.g., run `sudo apt install pdftk` on a Ubuntu). In addition, it requires Python 3.9 (or later).
 
 ## License
 
