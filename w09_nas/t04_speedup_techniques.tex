@@ -32,17 +32,17 @@
 \pause
 		\item \alert{Compatible with any blackbox optimization method}
     	\myit{
-    		\item[-] Using random search: ASHA \lit{\href{https://arxiv.org/abs/1902.07638}{Li \& Talwalkar, 2019}}
-    		\item[-] Using Bayesian optimization: BOHB \lit{\href{https://arxiv.org/abs/1807.06906}{Zela et al, 2018}}
-    		\item[-] Using differential evolution: DEHB \lit{Awad et al, under review}
-    		\item[-] Using regularized evolution: progressive dynamic hurdles \lit{\href{http://proceedings.mlr.press/v97/so19a.html}{So et al, 2019}}
+    		\item[-] Using random search: ASHA \lit{\href{https://arxiv.org/pdf/1902.07638.pdf}{Li and Talwalkar. 2019}}
+    		\item[-] Using Bayesian optimization: BOHB \lit{\href{https://arxiv.org/pdf/1807.06906.pdf}{Zela et al. 2018}}
+    		\item[-] Using differential evolution: DEHB \lit{Awad et al. under review}
+    		\item[-] Using regularized evolution: progressive dynamic hurdles \lit{\href{https://arxiv.org/pdf/1901.11117.pdf}{So et al. 2019}}
 		}
 \medskip
 \pause
     	\item \alert{Often used for joint optimization of architecture \& hyperparameters}
     	\myit{
-    		\item[-] Auto-Pytorch \lit{\href{https://www.automl.org/wp-content/uploads/2019/05/AutoML_Book_Chapter7.pdf}{Mendoza et al, 2019}} \lit{Zimmer et al, under review}
-    		\item[-] ``Auto-RL'' \lit{\href{https://openreview.net/forum?id=ByfyHh05tQ}{Runge et al, 2019}}
+    		\item[-] Auto-Pytorch \lit{\href{https://www.automl.org/wp-content/uploads/2019/05/AutoML_Book_Chapter7.pdf}{Mendoza et al. 2019}; \href{https://arxiv.org/pdf/2006.13799.pdf}{Zimmer et al. 2020}}
+    		\item[-] ``Auto-RL'' \lit{\href{https://openreview.net/pdf?id=ByfyHh05tQ}{Runge et al. 2019}}
     	}
     	
 %    	LC prediction, extrapolation, multi-multi-fidelity, etc
@@ -64,8 +64,8 @@
 \medskip
 		\item \alert{Compatible with any blackbox optimization method}
 		\myit{
-			\item[-] Using random search and Bayesian optimization: \lit{\href{https://www.aaai.org/ocs/index.php/IJCAI/IJCAI15/paper/view/11468}{Domhan et al, 2015}}
-			\item[-] Using reinforcement learning: \lit{\href{https://openreview.net/forum?id=BJypUGZ0Z}{Baker et al, 2018}}
+			\item[-] Using random search and Bayesian optimization: \lit{\href{https://www.aaai.org/ocs/index.php/IJCAI/IJCAI15/paper/view/11468/11222}{Domhan et al. 2015}}
+			\item[-] Using reinforcement learning: \lit{\href{https://openreview.net/pdf?id=BJypUGZ0Z}{Baker et al. 2018}}
 		}
     }
 }
@@ -78,9 +78,9 @@
 \medskip
     	\item \alert{Only little work on meta-learning for NAS}
     	\myit{
-    		\item[-] Find a set of good architectures to initialize BOHB in Auto-Pytorch \lit{Zimmer et al, under review}
-    		\item[-] Learn RL agent's policy network on previous datasets \lit{\href{https://papers.nips.cc/paper/8056-transfer-learning-with-neural-automl)}{Wong et al, 2018}}
-    		\item[-] Learn neural architecture that can be quickly adapted \lit{\href{https://openreview.net/forum?id=r1eowANFvr}{Lian et al, 2019}; \href{https://arxiv.org/abs/1911.11090}{Elsken et al, 2019}}
+    		\item[-] Find a set of good architectures to initialize BOHB in Auto-Pytorch \lit{\href{https://arxiv.org/pdf/2006.13799.pdf}{Zimmer et al. 2020}}
+    		\item[-] Learn RL agent's policy network on previous datasets \lit{\href{https://papers.nips.cc/paper/2018/file/bdb3c278f45e6734c35733d24299d3f4-Paper.pdf}{Wong et al. 2018}}
+    		\item[-] Learn neural architecture that can be quickly adapted \lit{\href{https://openreview.net/pdf?id=r1eowANFvr}{Lian et al. 2019}; \href{https://arxiv.org/pdf/1911.11090.pdf}{Elsken et al. 2019}}
     	}
     }
 }
@@ -90,7 +90,7 @@
 %----------------------------------------------------
 \myframe{NAS Speedup Technique 4: Network Morphisms}{
     \begin{itemize}
-    	\item \alert{Network Morphisms} \lit{Chen et al. '16; Wei et al. '16; Cai et al. '17}
+    	\item \alert{Network Morphisms} \lit{Chen et al. 2016; Wei et al. 2016; Cai et al. 2017}
 	\begin{itemize}
 		\item[--] \alert{Change the network structure, but not the modelled function}
 		\item[--] I.e., for every input the network yields the same output as before applying
@@ -108,7 +108,7 @@
 }
 
 %----------------------------------------------------
-\begin{frame}{Network Morphisms Allow Efficient Moves in Architecture Space}
+\begin{frame}{Network Morphisms Allow Efficient Moves in Architecture Space }
 
     \begin{figure}[t]
         \begin{centering}
@@ -123,7 +123,7 @@
 \begin{center}
 \onslide<4->{
 	\alert{Weight inheritance} avoids expensive retraining from scratch\\
-	\lit{\href{http://proceedings.mlr.press/v70/real17a.html}{Real et al, 2017}, \href{https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/viewFile/16755/16568}{Cai et al, 2018}, \href{http://metalearning.ml/2017/papers/metalearn17_elsken.pdf}{Elsken et al, 2017}, \href{http://proceedings.mlr.press/v70/cortes17a/cortes17a.pdf}{Cortes et al, 2017}, \href{http://proceedings.mlr.press/v80/cai18a/cai18a.pdf}{Cai et al, 2018}, \href{https://openreview.net/forum?id=ByME42AqK7}{Elsken et al. '19}}
+	\lit{\href{https://arxiv.org/pdf/1703.01041.pdf}{Real et al. 2017}; \href{https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/viewFile/16755/16568}{Cai et al. 2018}; \href{http://metalearning.ml/2017/papers/metalearn17_elsken.pdf}{Elsken et al. 2017}; \href{http://proceedings.mlr.press/v70/cortes17a/cortes17a.pdf}{Cortes et al. 2017}; \href{http://proceedings.mlr.press/v80/cai18a/cai18a.pdf}{Cai et al. 2018}; \href{https://openreview.net/pdf?id=ByME42AqK7}{Elsken et al. 2019}}
 }
 \end{center}
 
@@ -131,7 +131,7 @@
 %----------------------------------------------------
 
 %----------------------------------------------------
-\myframetop{Network Morphisms for Multi-objective NAS \litw{\href{https://openreview.net/forum?id=ByME42AqK7}{Elsken et al. '19}}}{
+\myframetop{Network Morphisms for Multi-objective NAS \litw{\href{https://openreview.net/pdf?id=ByME42AqK7}{Elsken et al. 2019}}}{
 
 	\myit{
 		\item To trade off error vs. resource consumption (e.g, \#parameters): 
@@ -156,7 +156,7 @@
 
 
 %----------------------------------------------------
-\myframe{Network Morphisms for Multi-objective NAS \litw{\href{https://openreview.net/forum?id=ByME42AqK7}{Elsken et al. '19}}}{
+\myframe{Network Morphisms for Multi-objective NAS \litw{\href{https://openreview.net/pdf?id=ByME42AqK7}{Elsken et al. 2019}}}{
 	\myit{
 		\item \alert{LEMONADE}: \alert{L}amarckian \alert{E}volution for \alert{M}ulti-\alert{O}bjective \alert{N}eural \alert{A}rchitecture \alert{De}sign
   		\item Weight inheritance through approximate morphisms (ANMs)
@@ -175,7 +175,7 @@
 
 
 %----------------------------------------------------------------------
-\myframetop{NAS Speedup Technique 5: Weight Sharing and One-shot Models \litw{\href{https://arxiv.org/abs/1802.03268}{Pham et al, 2018}; \href{http://proceedings.mlr.press/v80/bender18a}{Bender et al, 2018}}}{
+\myframetop{NAS Speedup Technique 5: Weight Sharing and One-shot Models \\ \litw{\href{https://arxiv.org/pdf/1802.03268.pdf}{Pham et al. 2018}; \href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al. 2018}}}{
 \centering
 	\myit{
 		\item All possible architectures are subgraphs of a large supergraph: 
@@ -203,7 +203,7 @@
 
 
 %----------------------------------------------------
-\myframetop{NAS Speedup Technique 5: Weight Sharing and One-shot Models \litw{\href{https://arxiv.org/abs/1802.03268}{Pham et al, 2018}; \href{http://proceedings.mlr.press/v80/bender18a}{Bender et al, 2018}}}{
+\myframetop{NAS Speedup Technique 5: Weight Sharing and One-shot Models\\ \litw{\href{https://arxiv.org/pdf/1802.03268.pdf}{Pham et al. 2018}; \href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al. 2018}}}{
 
 	\myit{
 		\item The one-shot model can be seen as a \alert{directed acyclic multigraph}

@@ -124,7 +124,10 @@
     % \item A good AutoML System should consider more than one learning algorithm. More on that later.
     \item A plethora of learners exists, for different data sets different models
         are likely needed.
-    \item Studies~\lit{\href{https://dl.acm.org/doi/10.5555/2627435.2697065}{Delgado et al., JMLR 2014}} and experience show:\\
+
+        
+    \item Studies~\lit{{\href{https://jmlr.org/papers/volume15/delgado14a/delgado14a.pdf}{Fernandez-Delgado et al. 2014}}} and experience show:\\
+
         One these is often good -- on tabular data:
     \begin{itemize}
       \item penalized regression
@@ -134,7 +137,9 @@
      \item (neural networks)
   \end{itemize}
       % \item Random forests only beaten on few tabular datasets by current AutoML frameworks~\lit{\href{https://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
-      \item Example: Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}} uses: 
+
+      \item Example: Auto-Sklearn 2.0~\lit{{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}} uses: 
+
     \begin{itemize}
         \item extra trees 
          \item gradient boosting 
@@ -152,7 +157,9 @@
     % Which hyperparameters should we consider for a given learning algorithm?
     Ranges often selected based on experience
     \begin{itemize}
-      \item See other AutoML frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}}
+
+      \item See other AutoML frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}
+
       \item Sensitivity analysis often does not exist for ML algorithms
       \item Check literature on specific ML algorithm
     \end{itemize}
@@ -173,7 +180,8 @@
           \includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab3.pdf}   
         }
 
-        {\tiny Taken from \lit{\href{https://www.jmlr.org/papers/volume20/18-444/18-444.pdf}{Probst et al., 2019 JMLR}}.}
+        {\tiny Taken from \lit{\href{https://www.jmlr.org/papers/volume20/18-444/18-444.pdf}{Probst et al. 2019 }}.}
+
       \end{center}
     \end{column}
   \end{columns}
@@ -207,7 +215,7 @@
       \item Time dependencies
       \item A good AutoML system should let you customize resampling
           % errors here can mean: garbage in, garbvgae out
-      \item Meta-learn good resampling strategy~\lit{\href{https://arxiv.org/abs/2007.04074}{Feurer et al., 2020}}
+      \item Meta-learn good resampling strategy~\lit{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}
     \end{itemize}
     \end{column}
     \end{columns}
@@ -283,7 +291,9 @@
     \end{column}%
     \begin{column}{0.4\textwidth}
     \small
-      Taken from~\lit{\href{https://doi.org/10.1109/ICTAI.2019.00209}{Truong et al., 2019 ICTAI}}.
+
+      Taken from~\lit{\href{https://doi.org/10.1109/ICTAI.2019.00209}{Truong et al. 2019}}.
+
       \vspace{1em}
 
       Highlighted: Non-commercial AutoML frameworks
@@ -388,7 +398,9 @@
       }
       \vspace*{-0.5cm}  
       \begin{itemize}
-        \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/abs/1611.09477}{Zumel et al., 2019}}
+
+        \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/pdf/1611.09477.pdf}{Zumel et al. 2019}}
+
         \item Advantage: Handles unknown categorical levels on test data
       \end{itemize}
       Alternatives: 
@@ -521,6 +533,7 @@
     \begin{columns}
       \begin{column}{0.4\textwidth}
         \begin{itemize}
+
           \item Filter; for ultra-highdim tasks
           \item Stepwise / wrapper methods; 
               % m: Needs to be applied on the whole pipeline (impractical!)
@@ -529,7 +542,8 @@
           \item Embedded: CART, lasso, \ldots 
           \item Selection interesting when predictive performance vs. sparseness
               should be optimized $\rightarrow$ multi-criteria optimization
-            \item Combined feature selection and HPO: \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}
+            \item Combined feature selection and HPO: \lit{\href{https://arxiv.org/pdf/1912.12912.pdf}{Binder et al. 2020}}
+
         \end{itemize}
       \end{column}%
       \begin{column}{0.6\textwidth}
@@ -537,7 +551,8 @@
           \includegraphics[width=0.35\textwidth, trim=450 100 110 60, clip]{images/feat_extr_vs_selection.pdf}%
           \includegraphics[width=0.55\linewidth]{images/Binder2020multiobjective_fig3.pdf}
 
-          {\tiny \hfill Taken from \lit{\href{https://doi.org/10.1145/3377930.3389815}{Binder et al., 2020 GECCO}}.}
+
+          {\tiny \hfill Taken from \lit{\href{https://arxiv.org/pdf/1912.12912.pdf}{Binder et al. 2020}}.}
         \end{center}
       \end{column}
     \end{columns}
@@ -721,7 +736,8 @@
   \begin{itemize}
     \item Choose the optimal path as linear pipeline.
     \item Build ensemble of best configurations\\ 
-        (e.g. \lit{\href{https://papers.nips.cc/paper/2015/hash/11d0e6287202fced83f79975ec59a3a6-Abstract.html}{Feurer et al., NIPS 2015}}, \lit{\href{https://www.automl.org/wp-content/uploads/2020/07/AutoML_2020_paper_61.pdf}{H2O AutoML, LeDell et al., 2020}}).
+        (e.g. \lit{\href{https://papers.nips.cc/paper/2015/file/11d0e6287202fced83f79975ec59a3a6-Paper.pdf}{Feurer et al. 2015}}, \lit{\href{https://www.automl.org/wp-content/uploads/2020/07/AutoML_2020_paper_61.pdf}{LeDell and Poirier. 2020}}).
+
   \end{itemize}
   \begin{center}
     \includegraphics[width = 0.60\textwidth]{images/stacking.pdf}
@@ -733,12 +749,13 @@
   \begin{columns}
     \begin{column}{0.43\textwidth}
       \vspace{-0.7cm}
+
       \begin{center}
         \includegraphics[width = \textwidth]{images/gijsbers_open_2019_tab2.pdf}
       \end{center}
     \end{column}%
     \begin{column}{0.57\textwidth}
-      Table taken from \lit{\href{http://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
+      Table taken from \lit{\href{http://arxiv.org/pdf/1907.00909.pdf}{Gijsbers et al. 2019}}.
 
       \begin{itemize}
         \item On some datasets AutoML yields big performance improvements
