@@ -1,34 +1,52 @@
-\videotitle{Overview of Bayesian Optimization}
+\input{../latex_main/main.tex}
+
+
+\title{AutoML: Bayesian Optimization for HPO}
+\subtitle{Overview of Bayesian Optimization}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
     
+    
+    
+\begin{document}
+\maketitle
+   
 %-----------------------------------------------------------------------
-\myframetop{Global Blackbox Optimization}{
-  
-    \myit{
+\begin{frame}[c]{Global Blackbox Optimization}
+    
+    \begin{itemize}
         \item Consider the \alert{global optimization problem} of finding: 
         \[\conf^* \in \argmin_{\conf \in \confs} f(\conf)\]
         
-\fhpause
+\pause
         \item In the most general form, function $f$ is a \alert{blackbox function}:
+    	
     	\begin{center}
 \scalebox{0.5}{\input{images/intro_images/blackbox_HPO.tex}}
     	\end{center}
-    	\myit{
-    		\item Only mode of interaction with $f$: querying $f$'s value at a given $\conf$ 
-            \item Function $f$ may not be available in closed form, not convex, not differentiable, noisy, etc. 
-    	}   
+
+   %\end{itemize}
+    
+   \begin{itemize}
+    	\item Only mode of interaction with $f$: querying $f$'s value at a given $\conf$ 
+        \item Function $f$ may not be available in closed form, not convex, not differentiable, noisy, etc. 
+   \end{itemize}
+    	%}   
 \medskip
-\fhpause
+\pause
 
         \item Today, we'll discuss a \alert{Bayesian} approach for solving such blackbox optimization problems
 \medskip
-\fhpause
+\pause
         \item Blackbox optimization can be used for hyperparameter optimization (HPO)
-        \myit{
-            \item Define \alert{$f(\conf) := \mathcal{L}( \mathcal{A}_{\conf}, \mathcal{D}_{train}, \mathcal{D}_{valid} )$}
-            \item Note: for formulations of HPO that go beyond blackbox optimization, see next lecture
-        }
-    }
-}
+    %\end{itemize}
+   	 	\begin{itemize}
+         	\item Define \alert{$f(\conf) := \mathcal{L}( \mathcal{A}_{\conf}, \mathcal{D}_{train}, \mathcal{D}_{valid} )$}
+        	\item Note: for formulations of HPO that go beyond blackbox optimization, see next lecture
+        \end{itemize}
+    \end{itemize}    
+\end{frame}
 
 %----------------------------------------------------------------------
 %\begin{frame}[c]{Optimization problem example}
@@ -334,7 +352,7 @@ General approach
         \begin{equation*}
             P(\func \vert \dataset_{1:\bocount}) \propto P(\dataset_{1:\bocount} \vert \func) \times P(\func), \text{~~~~ where } \dataset_{1:\bocount} = \left \{ \conf_{1:\bocount}, \cost(\conf_{1:\bocount}) \right\}
         \end{equation*} 
-\fhpause
+\pause
 \vspace*{-0.5cm}
     \item Meaning of the individual terms:
         \begin{itemize}
@@ -365,7 +383,7 @@ General approach
 \end{column}%
 
 \hfill%
-\fhpause 
+\pause 
 \begin{column}{.48\textwidth}
 
 \begin{block}{Disadvantages}
@@ -429,4 +447,4 @@ General approach
 
 %-----------------------------------------------------------------------
 
-%\end{document}
+\end{document}

@@ -1,4 +1,15 @@
-\videotitle{Multi-fidelity Bayesian optimization}
+\input{../latex_main/main.tex}
+
+\title{Speedup Techniques for Hyperparameter Optimization}
+\subtitle{Multi-fidelity Bayesian optimization}
+\author[Frank Hutter]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+\begin{document}
+\maketitle
 %----------------------------------------------------------------------
 
 \begin{frame}[c]{Motivating example}
@@ -26,13 +37,14 @@
 
 \begin{itemize}
 	\item Recall: standard Bayesian optimization uses a model $\surro(\conf) \approx y$ to select the next $\conf$
-\fhpause
+\pause
 \medskip
 	\item \alert{Multi-fidelity} Bayesian optimization uses a model $\surro(\conf\alert{, z}) \approx y$ to select the next $(\conf\alert{, z})$
-	\myit{
+	
+	\begin{itemize}
 		\item Here, $z\in \mathcal{Z}$ is the fidelity; $\mathcal{Z}$ is the fidelity space, e.g., $\mathcal{Z} = [1, N_{\bullet}] \times  [1, T_{\bullet}]$
-	}	 
-    \fhpause
+	\end{itemize}	 
+    \pause
     \bigskip
 	
 %	\item BOCA - a general approach
@@ -53,14 +65,14 @@
             \optconf = \argmin_{\conf \in \pcs} \func(\conf) = \argmin_{\conf \in \pcs} \surro(\conf, \alert{z_{\bullet}})
         \end{equation*}
 
-    \fhpause
+    \pause
     \bigskip
 
     \item Implications for Bayesian optimization
-    \myit{
+    \begin{itemize}
     	\item Model $\surro$ needs to be good at \alert{extrapolating} from small to large $z$
 		\item Acquisition function now also needs to select $z$ (i.e., take into account cost of evaluations)
-	}
+	\end{itemize}
 \end{itemize}
 
 
@@ -155,11 +167,11 @@
 		$$p_{\text{min}}(\conf^* \mid \alert{\dataset}) := p(\conf^* \in \argmin_{\conf\in \pcs} \func(\conf) \mid \alert{\dataset})$$
 	
 		\item Entropy search \lit{\href{http://jmlr.csail.mit.edu/papers/volume13/hennig12a/hennig12a.pdf}{Hennig et al. 2012}} aims to minimize the entropy \alert{$\mathcal{H}[p_\text{min}]$}
-		\myit{
+		\begin{itemize}
 			\item It aims to be maximally certain about the location of $\conf^*$
-		}
+		\end{itemize}
 \bigskip
-\fhpause
+\pause
 		\item In a nutshell: select 
 %		\begin{enumerate}
 %			\item Estimate $p(\func \mid \dataset)$, e.g., using a GP 
@@ -185,7 +197,7 @@ $\conf$ that maximizes the following acquisition function:
 		$$p_{\text{min}}(\conf^* \mid \dataset) := p(\conf^* \in \argmin_{\conf\in \pcs} \func(\conf\alert{,z_{\bullet}}) \mid \dataset)$$
 	
 		\item We still want to minimize the entropy $\mathcal{H}[p_\text{min}]$
-\fhpause
+\pause
 \medskip
 		\item Now we aim for the biggest \alert{reduction in entropy per time spent}
 		\begin{itemize}
@@ -216,12 +228,12 @@ $\conf$ that maximizes the following acquisition function:
 			\item Observe performance $f(\conf,z)$ and cost $c(\conf,z)$ and update models for $f$ and $c$ 
 		\end{enumerate}
 
-\fhpause
+\pause
 
     \item The algorithm originally focussed on data subsets and is therefore dubbed \\ \alert{Fabolas}: 
     ``Fast Bayesian Optimization on Large Datasets''
 	
-\fhpause
+\pause
 
 \begin{columns}[T] % align columns
 \begin{column}{.48\textwidth}
@@ -233,7 +245,7 @@ $\conf$ that maximizes the following acquisition function:
     	\item 1\,000-fold speedups for optimizing SVMs on MNIST
     \end{itemize}
     \end{block}
-\fhpause
+\pause
 \end{column}%
 
 \hfill%
@@ -303,3 +315,4 @@ $\conf$ that maximizes the following acquisition function:
 \end{itemize}
 
 \end{frame}
+\end{document}

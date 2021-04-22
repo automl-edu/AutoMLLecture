@@ -1,4 +1,16 @@
-\videotitle{Success Stories}
+\input{../latex_main/main.tex}
+
+
+\title{AutoML: Bayesian Optimization for HPO}
+\subtitle{Success Stories}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+    
+    
+    
+\begin{document}
+\maketitle
 
 %----------------------------------------------------------------------
 \begin{frame}[c]{Spearmint \litw{\href{https://papers.nips.cc/paper/4522-practical-bayesian-optimization-of-machine-learning-algorithms.pdf}{Snoek et al. 2012}}}
@@ -53,11 +65,11 @@
         \item Usability off the shelf (robustness towards model's own hyperparameters)
     \end{itemize}
 
-\fhpause
+\pause
 \smallskip
     \item SMAC also handles a more general problem:
     $\argmin_{\conf\in\confs} \sum_{i=1}^N \cost(\conf,i)$
-\fhpause
+\pause
 \smallskip
     \item Maintained since 2011, now available in version 3: \url{https://github.com/automl/SMAC3}
 
@@ -165,3 +177,4 @@
 \end{itemize}
 
 \end{frame}
+\end{document}

@@ -1,4 +1,16 @@
-\videotitle{Predicting Learning Curves}
+\input{../latex_main/main.tex}
+
+\title{Speedup Techniques for Hyperparameter Optimization}
+\subtitle{Predicting Learning Curves}
+\author[Frank Hutter]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+\begin{document}
+\maketitle
+
 %----------------------------------------------------------------------
 
 \begin{frame}{Learning Curves}
@@ -27,9 +39,9 @@
 
 \begin{enumerate}
   \item Observe learning curve for the first $n$ steps (here $n=250$)
-  \fhpause
+  \pause
   \item \alert{Extrapolation}: fit parametric model on partial learning curve to predict remaining learning curve
-  \fhpause
+  \pause
   \begin{itemize}
       \item Various models can be used (see following slides) 
   \end{itemize}
@@ -73,25 +85,25 @@ $\rightarrow$ need for \alert{probabilistic predictions / quantification of unce
 \begin{frame}{Parametric Learning Curves \litw{\href{https://www.aaai.org/ocs/index.php/IJCAI/IJCAI15/paper/view/11468}{Domhan, Springenberg \& Hutter, IJCAI 2015}}}
 
 \vspace*{-0.25cm}
-\myit{
+\begin{itemize}
 	\item Use a parametric model $f_k$ with parameters $\boldsymbol{\theta}$ to model performance at step $t$ as:
 	\alert{$y_t = f_k(t|\boldsymbol{\theta}) + \epsilon$}, with $\epsilon \sim \mathcal{N}(0, \sigma^2)$.
-\fhpause
+\pause
 	\item Linear combination of $K=11$ parametric types of models:
 	\alert{$f_{comb}(t|\bm{\xi}) = \sum_{k=1}^K w_k f_k(t|\boldsymbol{\theta}_k)$},
 where $\bm{\xi} = (w_1, \dots, w_{K}, \boldsymbol{\theta}_1, \dots, \boldsymbol{\theta}_{K}, \sigma^2)$
 %	\item MSc Thesis in my group, 2015
-}
-\fhpause
+\end{itemize}
+\pause
 \begin{center}
 \includegraphics[width=0.9\textwidth]{../w07_hpo_speedup/images/learningcurve/Domhan_types_of_curves.png}\\
 \scriptsize{$K=11$ parametric families for modelling learning curves}
 \end{center}
 
-\fhpause
-\myit{
+\pause
+\begin{itemize}
 	\item Use Markov Chain Monte Carlo sampling of $\bm{\xi}$ to obtain uncertainties
-}
+\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -122,19 +134,19 @@ All learning curves vs. learning curves with early termination
 All learning curves vs. learning curves with early termination
 \end{center}
 }
-\myit{
+\begin{itemize}
 	\item Disadvantages of this model?
-\fhpause
-	\myit{
+\pause
+	\begin{itemize}
 		\item Relies on manually-selected parametric families of curves
 		\item Does not take into account hyperparameters used 
-		\myit{
+		\begin{itemize}
 			\item[$\rightarrow$] can't learn across hyperparameters
-		}
+		\end{itemize}
 %		\item Does not learn across curves; simply extrapolates one at a time
 %		\item Cannot quickly integrate new information from extending the curve
-	}
-}
+	\end{itemize}
+\end{itemize}
 
 \end{frame}
 
@@ -144,24 +156,24 @@ All learning curves vs. learning curves with early termination
 \vspace*{-0.25em}
 {
 	\rightimage[.4]{../w07_hpo_speedup/images/learningcurve/LC-Net-network.png}
-	\myit{
+	\begin{itemize}
 		\item \goleft[.45]{Make a layer out of the parametric learning curves by Domhan et al.}
 		\item \goleft[.45]{Also support hyperparameters as inputs (in the figure denoted by $x_1, \dots, x_d$)}
 %		\item \goleft[.45]{Work by my Phd student Aaron Klein and postdoc Stefan Falkner}
-	}
+	\end{itemize}
 }
 
-\fhpause
-\myit{
+\pause
+\begin{itemize}
 	\item Disadvantages of this model?
-	\fhpause
-	\myit{
+	\pause
+	\begin{itemize}
 		\item \goleft[.45]{Relies on manually-selected parametric families of curves}
 		\item \goleft[.45]{Cannot quickly integrate new information from extending the current curve \\ (or from new runs)}
-\fhpause
+\pause
 		\item Also, the model is very hard to train	
-	}
-}
+	\end{itemize}
+\end{itemize}
 \end{frame}
 %-----------------------------------------------------------------------
 
@@ -171,26 +183,26 @@ All learning curves vs. learning curves with early termination
 %-----------------------------------------------------------------------
 \begin{frame}{Sequence Models {\smaller{(e.g., Bayesian RNN)}} \litw{\href{https://www.automl.org/wp-content/uploads/2019/06/automlws2019_Paper24.pdf}{Gargiani et al, AutoML WS 2019}}}
 
-	\myit{
+	\begin{itemize}
 		\item Learning curves are \alert{sequences}
-		\myit{
+		\begin{itemize}
 			\item Previous models don't treat them like this
 			\item We can use an RNN (in particular, an LSTM) to predict the next value from a given sequence
 			\item We can use variational dropout to obtain uncertainty estimates:
-\fhpause
-		}
-	}
+\pause
+		\end{itemize}
+	\end{itemize}
 
 \begin{center}
 	\includegraphics[width=0.45\textwidth]{../w07_hpo_speedup/images/learningcurve/Gargiani-MNIST-extrapolations_1.png}\\
 	\includegraphics[width=0.45\textwidth]{../w07_hpo_speedup/images/learningcurve/Gargiani-MNIST-extrapolations_2.png}\\
 \end{center}	
 
-\fhpause
+\pause
 	Note: we can also use a simpler model
-	\myit{
+	\begin{itemize}
 		\item E.g., a random forest to map from a fixed-size window to the next value
-	}
+	\end{itemize}
 
 	
 \end{frame}
@@ -212,40 +224,39 @@ All learning curves vs. learning curves with early termination
 %-----------------------------------------------------------------------
 \begin{frame}{Compare: Baker et al, 2017 \litw{\href{https://openreview.net/forum?id=BJypUGZ0Z}{Baker et al, ICLR WS 2018}}}
 
-	\myit{
+	\begin{itemize}
 		\item Idea: map from configurations (including architectural hyperparameters) 
 		and partial learning curves to the final performance
 
 		\item Advantages
-		\myit{
+		\begin{itemize}
 			\item \alert{Much simpler idea} than all the approaches just discussed:\\ no need to model the entire learning curve
 			\item \alert{Much easier to implement}
-		}
-		\item Disadvantage? \fhpause
+		\end{itemize}
+		\item Disadvantage? \pause
 		\alert{$\rightarrow$ requires many (e.g., 100) fully-evaluated learning curves as training data}
-		\myit{
+		\begin{itemize}
 			\item After 100 full function evaluations we want to be pretty much converged in practice
 			\item But definitely helpful for speeding up RL
 			
-		}
-	}
-
+		\end{itemize}
+	\end{itemize}
 %Describe simple idea, and how that works extremely well when you have a budget of 10.000 of function evaluations.
 
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
 \begin{frame}{Freeze-Thaw Bayesian Optimization \litw{\href{https://arxiv.org/abs/1406.3896}{Swersky et al, arXiv 2014}}}
-\myit{
+\begin{itemize}
 	\item Use a Gaussian process with inputs $\conf$ and $t$; special kernel for $t$
 	\item For $N$ configurations and $T$ epochs each: $O(N^3 t^3)$ $\rightarrow$ approximation
 	\item Iteratively: either extend existing configuration or try new one
-\fhpause
+\pause
 	\item Result for probabilistic matrix factorization:
 	\includegraphics[width=0.8\textwidth]{../w07_hpo_speedup/images/learningcurve/FTBO.png}
-\fhpause
+\pause
 	\item Unfortunately, no results for DNNs; no code available
-}
+\end{itemize}
 
 
 \end{frame}
@@ -287,3 +298,4 @@ All learning curves vs. learning curves with early termination
 \end{itemize}
 
 \end{frame}
+\end{document}
