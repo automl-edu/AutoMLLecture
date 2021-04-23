@@ -26,8 +26,9 @@
     \item Training data for the models changes over time 
     \begin{itemize}
     	\item Hyperparameters are constantly re-optimized 
-    	\item For efficiency: meta-learning Bayesian optimization, as described in \lit{\href{https://arxiv.org/abs/1802.02219}{Feurer et al. 2018}}
+    	\item For efficiency: meta-learning Bayesian optimization, as described in \lit{\href{https://arxiv.org/pdf/1802.02219.pdf}{Feurer et al. 2018}}
      \end{itemize}   
+
 \medskip
     \begin{figure}
         \centering
@@ -40,7 +41,7 @@
 
 %-----------------------------------------------------------------------
 
-\begin{frame}[c]{Auto-sklearn \litw{\href{https://papers.nips.cc/paper/5872-efficient-and-robust-automated-machine-learning}{Feurer et al, NIPS 2015}}}
+\begin{frame}[c]{Auto-sklearn \litw{\href{https://papers.nips.cc/paper/2015/file/11d0e6287202fced83f79975ec59a3a6-Paper.pdf}{Feurer et al. 2015}}}
 Extension of Auto-WEKA with focus on speed improvements and robustness:
 \begin{figure}
     \centering
@@ -62,7 +63,7 @@ Available at \url{https://automl.github.io/auto-sklearn}; frequently used in ind
 \end{frame}
 
 %-----------------------------------------------------------------------
-\begin{frame}[c]{BOHB \litw{\href{http://proceedings.mlr.press/v80/falkner18a.html}{Falkner, Klein and Hutter, ICML 2018}}}
+\begin{frame}[c]{BOHB \litw{\href{http://proceedings.mlr.press/v80/falkner18a/falkner18a.pdf}{Falkner et al. 2018}}}
 
 \myit{
 	\item Robust and efficient 
@@ -145,10 +146,12 @@ Idea: integrate warmstarting and a BOHB-like approach for Auto-sklearn
 %-----------------------------------------------------------------------
 
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Practical Recommendations Which HPO Method to Use \litw{\href{https://link.springer.com/chapter/10.1007/978-3-030-05318-5_1}{Feurer \& Hutter, 2019}}}
+\begin{frame}[c]{Practical Recommendations Which HPO Method to Use \litw{\href{https://www.automl.org/wp-content/uploads/2018/09/chapter1-hpo.pdf}{Feurer and Hutter. 2019}}}
+
 
 \begin{itemize}
-	\item If multiple fidelities available: BOHB \lit{\href{http://proceedings.mlr.press/v80/falkner18a.html}{Falkner, Klein and Hutter, ICML 2018}}
+	\item If multiple fidelities available: BOHB \lit{\href{http://proceedings.mlr.press/v80/falkner18a/falkner18a.pdf}{Falkner et al. 2018}}
+
 \bigskip
 	\item Otherwise
 	\begin{itemize}
@@ -161,12 +164,14 @@ Idea: integrate warmstarting and a BOHB-like approach for Auto-sklearn
 			\item RF-based BO, e.g., SMAC \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011}}
 		\end{itemize}
 		\item Purely continuous, cheap function evaluations: 
+
 		\begin{itemize}
-			\item CMA-ES \lit{\href{https://arxiv.org/pdf/1604.00772.pdf}{Hansen et al., since 2001}};
+			\item CMA-ES \lit{\href{https://arxiv.org/pdf/1604.00772.pdf}{Hansen et al. 2001}};
 %			\item Strong performance for HPO with large, parallel resources 
-			evaluated for HPO by \lit{\href{https://arxiv.org/abs/1604.07269}{Loshchilov \& Hutter, ICLR WS 2016}}
+			evaluated for HPO by \lit{\href{https://arxiv.org/pdf/1604.07269.pdf}{Loshchilov and Hutter.  2016}}
 		\end{itemize}
 	\end{itemize}
+
 	\bigskip
 	\bigskip
 	\pause

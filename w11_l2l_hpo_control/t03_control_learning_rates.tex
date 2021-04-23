@@ -27,7 +27,7 @@
 	
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning Problem \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
+\begin{frame}[c]{Learning Problem \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763/11767}{Daniel et al. 2016}}}
 
 
 \begin{itemize}
@@ -53,7 +53,7 @@ F(\mathbf{X}; \weights) = \frac{1}{N} \sum_{i=1}^N f(\xI{i}; \weights) \nonumber
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning Step Size Policies \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
+\begin{frame}[c]{Learning Step Size Policies \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763/11767}{Daniel et al. 2016}}}
 
 \begin{itemize}
 \item \alert{Idea:} Learn the hyperparameters of the weight update (short notation)
@@ -103,7 +103,7 @@ To apply that, we need to define:
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Policies: State \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
+\begin{frame}[c]{RL for Step Size Policies: State \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763/11767}{Daniel et al. 2016}}}
 
 \textbf{Predictive change in function value:}
 
@@ -131,7 +131,7 @@ $$s_{K+i} \leftarrow \gamma s_{K+i} + (1-\gamma) (s_i - \hat{s}_i)^2$$
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Policies: Learning \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
+\begin{frame}[c]{RL for Step Size Policies: Learning \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763/11767}{Daniel et al. 2016}}}
 
 Reward (average loss improvement over time):
 
@@ -153,7 +153,7 @@ $$\policy^*(\lambda \mid \stateRL) \in \argmax_{\policy} \int \int p(\stateRL) \
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{RL for Step Size Policies: Training \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}}}
+\begin{frame}[c]{RL for Step Size Policies: Training \litw{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763/11767}{Daniel et al. 2016}}}
 
 \begin{itemize}
 \item Goal: obtain robust policies,\\ i.e., good performance for many different DNN architectures
@@ -169,7 +169,7 @@ $$\policy^*(\lambda \mid \stateRL) \in \argmax_{\policy} \int \int p(\stateRL) \
 \centering
 \includegraphics[width=0.55\textwidth]{images/l2stepsizecontroler_mnist_training.png}
 
-"Ours" refers to the approach by \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763}{Daniel et al'16}} and $\eta$ is the learning rate
+"Ours" refers to the approach by \lit{\href{https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11763/11767}{Daniel et al. 2016}} and $\eta$ is the learning rate
 
 \end{frame}
 %----------------------------------------------------------------------

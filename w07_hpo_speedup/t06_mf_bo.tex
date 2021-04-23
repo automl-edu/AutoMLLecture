@@ -32,7 +32,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Idea of Multi-fidelity Bayesian optimization \litw{\href{http://proceedings.mlr.press/v70/kandasamy17a.html}{Kandasamy et al, 2017}} \litw{\href{http://proceedings.mlr.press/v54/klein17a.html}{Klein et al, 2017}}}
+\begin{frame}[c]{Idea of Multi-fidelity Bayesian optimization \litw{\href{https://dl.acm.org/doi/pdf/10.5555/3305381.3305567}{Kandasamy et al. 2017};  \href{https://arxiv.org/pdf/1605.07079.pdf}{Klein et al. 2016}}}
 % https://papers.nips.cc/paper/6118-gaussian-process-bandit-optimisation-with-multi-fidelity-evaluations
 
 \begin{itemize}
@@ -166,10 +166,12 @@
 		\item Define the $p_{\text{min}}$ distribution given data $\dataset$:
 		$$p_{\text{min}}(\conf^* \mid \alert{\dataset}) := p(\conf^* \in \argmin_{\conf\in \pcs} \func(\conf) \mid \alert{\dataset})$$
 	
-		\item Entropy search \lit{\href{http://jmlr.csail.mit.edu/papers/volume13/hennig12a/hennig12a.pdf}{Hennig et al. 2012}} aims to minimize the entropy \alert{$\mathcal{H}[p_\text{min}]$}
+
+		\item Entropy search  aims to minimize the entropy \alert{$\mathcal{H}[p_\text{min}]$} \lit{\href{http://jmlr.csail.mit.edu/papers/volume13/hennig12a/hennig12a.pdf}{Hennig and Schuler. 2012}}
 		\begin{itemize}
 			\item It aims to be maximally certain about the location of $\conf^*$
 		\end{itemize}
+
 \bigskip
 \pause
 		\item In a nutshell: select 
@@ -190,7 +192,7 @@ $\conf$ that maximizes the following acquisition function:
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Entropy Search for Multi-Fidelity Optimization \litw{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein, Falkner \& Hutter, 2017}}}
+\begin{frame}[c]{Entropy Search for Multi-Fidelity Optimization \litw{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al. 2017}}}
 
 \begin{itemize}
 		\item We now care about the $p_{\text{min}}$ distribution for the maximal budget $z_{\bullet}$:
@@ -217,7 +219,7 @@ $\conf$ that maximizes the following acquisition function:
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Entropy Search for Multi-Fidelity Optimization \litw{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein, Falkner \& Hutter, 2017}}}
+\begin{frame}[c]{Entropy Search for Multi-Fidelity Optimization \litw{\href{http://proceedings.mlr.press/v54/klein17a/klein17a.pdf}{Klein et al. 2017}}}
 
 \begin{itemize}
     \item The entire algorithm iterates the following 2 steps until time is up:
