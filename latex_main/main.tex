@@ -68,10 +68,10 @@
 \setbeamercolor{alerted text}{fg=blue}
 \useoutertheme{infolines}
 \setbeamertemplate{navigation symbols}{\vspace{-5pt}} % to lower the logo
-\setbeamercolor{date in head/foot}{bg=white} % blue
+\setbeamercolor{date in head/foot}{bg=blue} % blue
 \setbeamercolor{date in head/foot}{fg=white}
-\setbeamercolor{author  in head/foot}{bg=white} %blue
-\setbeamercolor{title in head/foot}{bg=white} % blue
+\setbeamercolor{author in head/foot}{bg=blue} %blue
+\setbeamercolor{title in head/foot}{bg=blue} % blue
 \setbeamercolor{title}{fg=white, bg=blue}
 \setbeamercolor{block title}{fg=white,bg=blue}
 \setbeamercolor{block body}{bg=blue!10}
@@ -84,17 +84,23 @@
   \leavevmode%
   \hbox{%
   \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
-%    \usebeamerfont{author in head/foot}\insertshortauthor
+    \usebeamerfont{author in head/foot}\insertshortauthor
   \end{beamercolorbox}%
   \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
     \usebeamerfont{title in head/foot}\insertshorttitle
   \end{beamercolorbox}%
   \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
-    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \usebeamerfont{date in head/foot}Week \@week, Topic \@topicnumber, Slide \insertframenumber{}\hspace*{2em}
 %    \insertframenumber\hspace*{2ex} 
   \end{beamercolorbox}}%
   \vskip0pt%
 }
+
+\newcommand{\@week}{0}
+\newcommand{\@topicnumber}{0}
+\newcommand{\week}[1]{\renewcommand{\@week}{#1}}
+\newcommand{\topicnumber}[1]{\renewcommand{\@topicnumber}{#1}}
+
 \makeatother
 
 %\pgfdeclareimage[height=1.2cm]{automl}{images/logos/automl.png}
