@@ -99,10 +99,11 @@
     with measurement error $\epsilon$.
 
     \begin{center}
-    \includegraphics[width=.7\textwidth]{poly}
+    \includegraphics[width=.7\textwidth]{images/poly}
     \end{center}
 
-    Assume data generating process unknown. Approximate with $d$th-degree polynomial:
+    Assume data generating process unknown.
+    Approximate with $d$th-degree polynomial:
     \[ f(\mathbf{x} | \mathbf{\theta}) = \theta_0 + \theta_1 x + \cdots + \theta_d x^d = \sum_{j = 0}^{d} \theta_j x^j \]
 
     \framebreak
@@ -110,11 +111,12 @@
     How should we choose $d$?
 
     \begin{center}
-    \includegraphics[width=.5\textwidth]{poly-train}
+    \includegraphics[width=.5\textwidth]{images/poly-train}
     \end{center}
 
-    d=1: MSE = 0.036 -- clear underfitting, d=3: MSE = 0.003 -- ok?, d=9: MSE =
-    0.001 -- clear overfitting
+    d=1: MSE = 0.036 -- clear underfitting,
+    d=3: MSE = 0.003 -- ok?,
+    d=9: MSE = 0.001 -- clear overfitting
 
     Simply using the training error seems to be a bad idea.
 
@@ -123,7 +125,7 @@
     \begin{frame}[c,allowframebreaks]{Outer Loss Example: Polynomial Regression}
 
     \begin{center}
-    \includegraphics[width=.7\textwidth]{polyt}
+    \includegraphics[width=.7\textwidth]{images/polyt}
     \end{center}
 
     \framebreak
@@ -131,22 +133,23 @@
     How should we choose $d$?
 
     \begin{center}
-    \includegraphics[width=.5\textwidth]{poly-test}
+    \includegraphics[width=.5\textwidth]{images/poly-test}
     \end{center}
 
-    d=1: MSE = 0.038 -- clear underfitting, d=3: MSE = 0.002 -- ok?, d=9: MSE =
-    0.046 -- clear overfitting
+    d=1: MSE = 0.038 -- clear underfitting,
+    d=3: MSE = 0.002 -- ok?,
+    d=9: MSE = 0.046 -- clear overfitting
 
     \framebreak
 
     \begin{center}
-    \includegraphics[width=.9\textwidth]{bias-variance}
+    \includegraphics[width=.9\textwidth]{images/bias-variance}
     \end{center}
 
     \end{frame}
 
     \begin{frame}[c]{General Trade-Off Between Error and Complexity}
-    \includegraphics[width=\textwidth]{overfitting}
+    \includegraphics[width=\textwidth]{images/overfitting2}
     \end{frame}
 
     \begin{frame}[c]{Resampling}
@@ -172,7 +175,7 @@
 
     \begin{center}
     % FIGURE SOURCE: https://docs.google.com/presentation/d/1sKtnj5nIQrcOGU7rTisMsppUGOk7UX2gbjKhtQmTX7g/edit?usp=sharing
-    \includegraphics[height=.5\textheight]{crossvalidation.png}
+    \includegraphics[height=.5\textheight]{images/crossvalidation}
     \end{center}
     10-fold cross-validation is common.
     \end{frame}
@@ -257,7 +260,7 @@
     \end{itemize}
 
     \begin{center}
-    \includegraphics[height=.35\textheight]{learning-curve}
+    \includegraphics[height=.35\textheight]{images/learning-curve}
     \end{center}
 
     \framebreak
@@ -265,7 +268,7 @@
     Ideal learning curve:
 
     \begin{center}
-    \includegraphics[height=.7\textheight]{learning-curve-ideal}
+    \includegraphics[height=.7\textheight]{images/learning-curve-ideal}
     \end{center}
 
     \framebreak
@@ -281,7 +284,7 @@
     \end{itemize}
 
     \begin{center}
-    \includegraphics[width=.7\textwidth]{learning-curve-underfitting}
+    \includegraphics[width=.7\textwidth]{images/learning-curve-underfitting}
     \end{center}
 
     \framebreak
@@ -294,7 +297,7 @@
     \end{itemize}
 
     \begin{center}
-    \includegraphics[width=.7\textwidth]{learning-curve-overfitting}
+    \includegraphics[width=.7\textwidth]{images/learning-curve-overfitting}
     \end{center}
 
     \end{enumerate}
