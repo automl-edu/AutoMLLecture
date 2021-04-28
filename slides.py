@@ -4,6 +4,7 @@ from pathlib import Path
 import subprocess
 import multiprocessing
 
+
 try:
     subprocess.run("pdftk", capture_output=True)
     PDFTK_INSTALLED = True
@@ -34,6 +35,17 @@ def copy():
         with copy_destination.open("wb") as d:
             d.write(content)
 
+#sorts the values(paths) of the dict created in weekly and full slides
+def sort_paths(plist):
+    for i in range(1, len(plist)):
+        j = i-1
+        nxt_element = plist[i]
+        while (plist[j].name > nxt_element.name) and (j >= 0):
+            plist[j+1] = plist[j]
+            j=j-1
+        plist[j+1] = nxt_element
+    
+
 
 def weekly_slides():
     assert_pdftk()
@@ -44,7 +56,9 @@ def weekly_slides():
         if week_number not in sources:
             sources[week_number] = (file.parent.name, [])
         sources[week_number][1].append(file)
-
+    for key in sources:
+        sort_paths(sources[key][1])
+    
     for week_name, sources in sources.values():
         pdftk(sources, DST_FOLDER / f"{week_name}.pdf", Author=PDF_AUTHOR, Title=week_name.replace("_", " - ").title())
 
@@ -53,10 +67,21 @@ def full_slides():
     assert_pdftk()
     DST_FOLDER.mkdir(parents=True, exist_ok=True)
 
-    sources = []
+    sources = {}
     for file, week_number, slide_number in iter_all():
-        sources.append(file)
-    pdftk(sources, DST_FOLDER / f"{FULL_PDF_NAME}.pdf", Author=PDF_AUTHOR, Title=FULL_PDF_NAME)
+        if week_number not in sources:
+            sources[week_number]= (file.parent.name, [])
+        sources[week_number][1].append(file)
+    for key in sources:
+        sort_paths(sources[key][1])
+    
+    key_list= list(sources)
+    key_list.sort()
+    sources_list= list()
+    for i in key_list:
+        sources_list.extend(sources[i][1])
+    
+    pdftk(sources_list, DST_FOLDER / f"{FULL_PDF_NAME}.pdf", Author=PDF_AUTHOR, Title=FULL_PDF_NAME)
 
 
 def compile_all():
