@@ -1,4 +1,15 @@
-\videotitle{Success Stories and Practical Recommendations}
+\input{../latex_main/main.tex}
+
+\title{Speedup Techniques for Hyperparameter Optimization}
+\subtitle{Success Stories and Practical Recommendations}
+\author[Frank Hutter]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+\begin{document}
+\maketitle
 %----------------------------------------------------------------------
 
 
@@ -6,17 +17,18 @@
 
 \begin{itemize}
     \item Facebook has an internal self-service machine learning (ML) system
-    \myit{
+    \begin{itemize}
     	\item Non-ML departments can integrate highly optimized ML models into their workflow
     	\item Hyperparameters of the ML models are optimized with Bayesian optimization
-    }
+     \end{itemize}
 \bigskip
-\fhpause
+\pause
     \item Training data for the models changes over time 
-    \myit{
+    \begin{itemize}
     	\item Hyperparameters are constantly re-optimized 
     	\item For efficiency: meta-learning Bayesian optimization, as described in \lit{\href{https://arxiv.org/pdf/1802.02219.pdf}{Feurer et al. 2018}}
-    }    
+     \end{itemize}   
+
 \medskip
     \begin{figure}
         \centering
@@ -38,7 +50,7 @@ Extension of Auto-WEKA with focus on speed improvements and robustness:
 \begin{itemize}
     \item Uses meta-learning to warmstart Bayesian optimization
     \item Won the 1st AutoML challenge
-\fhpause
+\pause
     \item Open source (BSD) and trivial to use \includegraphics[width=0.5\textwidth]{images/success_stories/auto-sklearn-repo-stats.png}
 \end{itemize}
 \begin{figure}
@@ -78,19 +90,19 @@ Idea: integrate warmstarting and a BOHB-like approach for Auto-sklearn
     \centering
     \includegraphics[width=\textwidth]{images/success_stories/automl_bo_po_es.png}
 \end{figure}
-\fhpause
+\pause
 
 \begin{itemize}
     \item Uses task-independent meta-learning to warmstart Bayesian optimization
-    \myit{
+    \begin{itemize}
         \item Therefore, no need for (potentially unreliable) meta-features
-    }
-\fhpause
+    \end{itemize}
+\pause
     \item Uses successive halving to quickly go through proposed configurations
-    \myit{
+    \begin{itemize}
         \item Therefore, scales better to larger datasets
-    }
-\fhpause
+    \end{itemize}
+\pause
     \item Followed by BOHB-like approach (uses successive halving instead of Hyperband)
     \item Won the 2nd AutoML challenge
 \end{itemize}
@@ -136,31 +148,35 @@ Idea: integrate warmstarting and a BOHB-like approach for Auto-sklearn
 %-----------------------------------------------------------------------
 \begin{frame}[c]{Practical Recommendations Which HPO Method to Use \litw{\href{https://www.automl.org/wp-content/uploads/2018/09/chapter1-hpo.pdf}{Feurer and Hutter. 2019}}}
 
-\myit{
+
+\begin{itemize}
 	\item If multiple fidelities available: BOHB \lit{\href{http://proceedings.mlr.press/v80/falkner18a/falkner18a.pdf}{Falkner et al. 2018}}
+
 \bigskip
 	\item Otherwise
-	\myit{
+	\begin{itemize}
 		\item Low-dimensional continuous parameter space: 
-		\myit{
+		\begin{itemize}
 			\item GP-based BO, e.g., Spearmint \lit{\href{https://papers.nips.cc/paper/4522-practical-bayesian-optimization-of-machine-learning-algorithms.pdf}{Snoek et al. 2012}}
-		}
+		\end{itemize}
 		\item High-dimensional discrete parameter space: 
-		\myit{
+		\begin{itemize}
 			\item RF-based BO, e.g., SMAC \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011}}
-		}
+		\end{itemize}
 		\item Purely continuous, cheap function evaluations: 
-		\myit{
+
+		\begin{itemize}
 			\item CMA-ES \lit{\href{https://arxiv.org/pdf/1604.00772.pdf}{Hansen et al. 2001}};
 %			\item Strong performance for HPO with large, parallel resources 
 			evaluated for HPO by \lit{\href{https://arxiv.org/pdf/1604.07269.pdf}{Loshchilov and Hutter.  2016}}
-		}
-	}
+		\end{itemize}
+	\end{itemize}
+
 	\bigskip
 	\bigskip
-	\fhpause
+	\pause
 	\item Just submitted: \alert{DEHB} combines differential evolution and Hyperband and largely dominates BOHB. Especially good for high dimensions.
-}
+\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -175,4 +191,5 @@ Idea: integrate warmstarting and a BOHB-like approach for Auto-sklearn
 \end{itemize}
 
 \end{frame}
+\end{document}
 %----------------------------------------------------------------------

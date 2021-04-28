@@ -1,4 +1,15 @@
-\videotitle{Overview of Multi-Fidelity Optimization}
+\input{../latex_main/main.tex}
+
+\title{Speedup Techniques for Hyperparameter Optimization}
+\subtitle{Overview of Multi-Fidelity Optimization}
+\author[Frank Hutter]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+\begin{document}
+\maketitle
 %----------------------------------------------------------------------
 
 \myframetop{Motivating Example}{
@@ -83,9 +94,9 @@ Exploit cheap approximations of an expensive blackbox function $\rightarrow$ aff
 
 \begin{columns}[T]
     \begin{column}{.5\textwidth}
-        \myit{
+        \begin{itemize}
             \item Idea: eliminate poor configurations early, allocate more resources to promising ones.
-        }
+        \end{itemize}
     \end{column}
     
     \begin{column}{.4\linewidth}
@@ -99,31 +110,31 @@ Exploit cheap approximations of an expensive blackbox function $\rightarrow$ aff
 \begin{columns}
     \begin{column}{.9\linewidth}
     \vspace{-10em}
-\fhpause
+\pause
 \medskip
-    \myit{
+    \begin{itemize}
     	\item Possible Resources:
-    	\myit{
+    	\begin{itemize}
     	    \item Data subset size
     	    \item Runtime / \# epochs / \# iterations
-\fhpause
+\pause
 \smallskip
     	    \item Downsampled size of images in object recognition
     	    \item Depth / width of neural networks
-\fhpause
+\pause
 \smallskip
     	    \item Number of trees 
     	    \item Number of features
     	    \item Number of cross validation folds
-\fhpause
+\pause
 \bigskip
     	    \item General concept, applicable even in fields outside ML, e.g., fluid simulation:
-    	    \myit{
+    	    \begin{itemize}
     	        \item Number of particles
     	        \item Time scale of simulation
-    	    }
-    	}
-    }
+    	    \end{itemize}
+    	\end{itemize}
+    \end{itemize}
 \end{column}
 \begin{column}{0\linewidth}
 \end{column}
@@ -134,20 +145,20 @@ Exploit cheap approximations of an expensive blackbox function $\rightarrow$ aff
 %----------------------------------------------------------------------
 \begin{frame}[c]{General Remarks on Multi-Fidelity Optimization}
 
-\myit{
+\begin{itemize}
     \item Often, we have a \alert{choice} which resources we use as budget
 \bigskip
-\fhpause
+\pause
     \item For multi-fidelity optimization to be helpful, \alert{performance with low budgets should be informative about performance with high budgets}  
 \bigskip    
-\fhpause  
+\pause  
     \item In the simplest case: 
     good with low resources $\leftrightarrow$ good with high resources.
-    \myit{
+    \begin{itemize}
         \item In practice, this is of course not always true
-    }
+    \end{itemize}
     
-}
+\end{itemize}
 
 
 \end{frame}
@@ -158,27 +169,27 @@ Exploit cheap approximations of an expensive blackbox function $\rightarrow$ aff
 \begin{frame}{How Useful is the Cheap Approximation? The Rank Correlation}
 
 Given:
-\myit{
+\begin{itemize}
     \item A set of configurations $\pcs = \{\conf_1, ..., \conf_n\}$
     \item The performances $f(\conf_1), ..., f(\conf_n)$ on the expensive black box
     \item The performances $g(\conf_1), ..., g(\conf_n)$ on a cheap approximation of the black box
 
 \bigskip
-\fhpause
+\pause
 
-}
+\end{itemize}
     We compute the \alert{Spearman rank correlation} between $[f(\conf_1), ..., f(\conf_n)]$ and $[g(\conf_1), ..., g(\conf_n)]$
-\myit{    
+\begin{itemize}    
     \item If this is high (in the extreme: $1$), the relative ranking of the configurations is the same on $f$ and $g$
-    \myit{
+    \begin{itemize}
         \item In that case, we can optimize cheaply on $g$ and also obtain an optimum for $f$
-    }
+    \end{itemize}
     \item If it is low ($\approx 0$), optimizing $g$ does not tell us anything about $f$
 
-}
+\end{itemize}
 
 \bigskip
-\fhpause
+\pause
 \alert{Goal: find approximations $g$ that are very cheap but have high rank correlations with $f$}
 
 \end{frame}
@@ -204,5 +215,6 @@ Given:
 \end{itemize}
 
 \end{frame}
+\end{document}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------

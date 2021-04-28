@@ -1,4 +1,16 @@
-\videotitle{Extensions of Bayesian Optimization}
+\input{../latex_main/main.tex}
+
+
+\title{AutoML: Bayesian Optimization for HPO}
+\subtitle{Extensions of Bayesian Optimization}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+    
+    
+    
+\begin{document}
+\maketitle
 
 %-----------------------------------------------------------------------
 \begin{frame}{Beyond the Standard Bayesian Optimization Setting}
@@ -103,11 +115,11 @@
 
 \medskip
 Properties of categorical hyperparameters:
-\myit{
+\begin{itemize}
     \item \alert{Finite, discrete} set of values
     \item \alert{No natural order} between values 
     \item Potentially different distances between values
-}
+\end{itemize}
 
 
 \column{0.35\textwidth}
@@ -116,7 +128,7 @@ Properties of categorical hyperparameters:
 %
 \end{columns}
 
-\fhpause
+\pause
 \vspace*{-0.4cm}
 This has to be taken into account by the surrogate model:
 %
@@ -142,10 +154,10 @@ This has to be taken into account by the surrogate model:
 \column{0.65\textwidth}
 \vspace*{0.2cm}
 Conditional hyperparameters:
-\myit{
+\begin{itemize}
     \item Are \alert{only relevant if} certain other hyperparameters take on certain values
     \item \alert{Should be ignored} by the model \alert{if not active}
-} 
+\end{itemize}
 
 \column{0.35\textwidth}
 \vspace{0.5cm}
@@ -153,19 +165,21 @@ Conditional hyperparameters:
 %
 \end{columns}
 
-\fhpause 
+\pause 
 \vspace*{-0.2cm}
 Modelling conditional hyperparameters:
-\myit{
+\begin{itemize}
     \item Setting the values for inactive hyperparameter to a specific value (e.g. $0$)
-    \item Random Forests \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011}} and Tree Parzen Estimators 
+
+      \item Random Forests \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011}} and Tree Parzen Estimators 
     \lit{\href{https://proceedings.neurips.cc/paper/2011/file/86e8f7ab32cfd12577bc2619bc635690-Paper.pdf}{Bergstra et al. 2011}} can \alert{natively} handle conditional inputs
     \item There exist \alert{several kernels for Gaussian Processes} to handle conditional inputs
     
     \lit{\href{https://arxiv.org/pdf/1310.5738.pdf}{Hutter and Osborne. 2013}; \href{https://www.etsmtl.ca/Unites-de-recherche/LIVIA/Recherche-et-innovation/Publications/Publications-2017/Levesque_ijcnn_2017.pdf}{ Lévesque et al. 2017}; \href{https://dl.acm.org/doi/pdf/10.5555/3305381.3305552}{ Jenatton et al. 2017}} 
-}
+\end{itemize}
+
 %
-\fhpause
+\pause
 \vspace{0.4cm}
 Overall, structured search spaces are \alert{still an active research topic} and far from solved
 \end{frame}
@@ -174,32 +188,33 @@ Overall, structured search spaces are \alert{still an active research topic} and
 \begin{frame}[c]{High Dimensions}
 \begin{columns}[T]
 \column{0.65\linewidth}
-	\myit{
+	\begin{itemize}
 		\item Issues
-		\myit{
+		\begin{itemize}
 			\item Standard Gaussian processes \\ do not tend to fit well in high dimensions
 			\item Maximizing the acquisition function \\ is computationally challenging
-		}
+		\end{itemize}
 		\smallskip
 		\onslide<2->{
 			\item There is still hope
-			\myit{
+			\begin{itemize}		
 				\item Many optimization problems have\\ \alert{low effective dimensionality}
 				\item Not all dimensions interact with each other
-			}
+			\end{itemize}
 		}
 		\onslide<3->{
 			\smallskip
-			\fhpause		
+			\pause		
 			\item Possible solutions
-			\myit{
+			\begin{itemize}
+			
 				\item Optimize in a lower-dimensional \\
 				embedding \lit{\href{https://ml.informatik.uni-freiburg.de/papers/16-JAIR-REMBO.pdf}{Wang et al. 2016}}
 				\item Fit additive models on subsets \\ of dimensions \lit{\href{http://proceedings.mlr.press/v37/kandasamy15.pdf}{Kandasamy et al. 2015}}
 				\item Use other models; e.g., random forests
-			}
+			\end{itemize}
 		}
-	}
+	\end{itemize}
 
     \column{0.35\linewidth}
 
@@ -225,54 +240,56 @@ Overall, structured search spaces are \alert{still an active research topic} and
 
 \begin{frame}[c]{Parallel Bayesian Optimization: Multi-point Acquisition Functions}
 
-\myit{
+\begin{itemize}
     \item Often, we have many parallel compute units
     \item How should these be exploited in (the typically inherently sequential) Bayesian optimization?
 \medskip
-\fhpause
+\pause
     \item To select a batch of $q$ points in parallel, we need to compute the multi-point acquisition function.
     E.g., for expected improvement:
     \begin{equation*}
         q\text{-EI}(\conf_{1, \dots, q}) = \E \left[ \cost(\incumbent) - \min_{i=1, \dots, q} \surro(\conf_i) \right]
     \end{equation*}
-\fhpause
+\pause
 \medskip
+
     \item For EI and KG, this requires \emph{expensive-to-compute} q-dimensional Gaussian cumulative distributions \lit{\href{https://hal.archives-ouvertes.fr/hal-00260579/document}{Ginsbourger et al. 2008}; \href{https://arxiv.org/pdf/1606.04414v4.pdf}{ Wu and Frazier. 2018}; \href{https://arxiv.org/pdf/1602.05149.pdf}{ Wang et al. 2019}}
-    \fhpause
+    \pause
     \item Nevertheless, multi-point acquisition functions can be optimized efficiently with gradient descent via the reparameterization trick \lit{\href{https://papers.nips.cc/paper/2018/file/498f2c21688f6451d9f5fd09d53edda7-Paper.pdf}{Wilson et al. 2018}}
-}
+\end{itemize}
+
 \end{frame}
 
 
 %----------------------------------------------------------------------
 \begin{frame}[c]{Asynchronous Parallel Bayesian Optimization with Pending Evaluations}
 
-\myit{
+\begin{itemize}
     \item In practice, typically, not all function evaluations take the same amount of time
-    \myit{
+    \begin{itemize}
         \item Thus, we need to select \alert{some new points} while we're still waiting for \alert{pending evaluations} at other points
-    }
-\fhpause
+    \end{itemize}
+\pause
 \bigskip
 %
     \item Simple solution: \alert{hallucinate observations for pending evaluations}, and use otherwise standard methods:
-    \fhpause
-    \myit{
+    \pause
+    \begin{itemize}
         \item \alert{Constant Liar}: Choose a fixed value (constant) \lit{\href{http://www.cs.ubc.ca/labs/beta/EARG/stack/2010_CI_Ginsbourger-ParallelKriging.pdf}{Ginsbourger et al. 2010}}
 \smallskip
 \item \alert{Kriging Believer}: Use the current mean prediction (belief)  \lit{\href{http://www.cs.ubc.ca/labs/beta/EARG/stack/2010_CI_Ginsbourger-ParallelKriging.pdf}{Ginsbourger et al. 2010}}
 \smallskip
 \item \alert{Monte Carlo Fantasies} 
-        \fhpause
-        \myit{
+        \pause
+        \begin{itemize}
             \item Sample pending evaluations from the model
             \item Update copy of the model with these samples
             \item Compute acquisition function under each updated copy 
             \item Define acquisition function as an average over these sampled acquisition functions
 %            (fantasies, more details on the next slide).
-        }
-    }
-}
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -431,7 +448,7 @@ Several types of constraints
 \end{columns}
 
 \vspace*{0.2cm}
-\fhpause
+\pause
 
 Most general solution: \alert{Expected Constrained Improvement}~\lit{\href{https://www.soe.ucsc.edu/sites/default/files/technical-reports/UCSC-SOE-10-10.pdf}{Lee et al. 2010}}:
 \vspace{-0.1cm}
@@ -476,3 +493,4 @@ Bayesian optimization has been extended to numerous scenarios:
 % Further
 \end{itemize}
 \end{frame}
+\end{document}

@@ -1,22 +1,34 @@
-\videotitle{Computationally Cheap Acquisition Functions}
-    
+\input{../latex_main/main.tex}
+
+
+\title{AutoML: Bayesian Optimization for HPO}
+\subtitle{Computationally Cheap Acquisition Functions}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+\begin{document}
+\maketitle
+
 %----------------------------------------------------------------------
 \begin{frame}[c]{Acquisition Functions: the Basics}
 \begin{itemize}
     \item Given the surrogate model $\iter{\surro}$ at the $\bocount$-th iteration of BO, the \\
     \alert{acquisition function $\acq(\cdot)$ judges the utility (or usefulness) of evaluating $f$ at $\iter{\conf}\in \pcs$ next}
-    \fhpause
+    \pause
     \bigskip
     \item The acquisition function needs to \alert{trade off exploration and exploitation}
-    \myit{
+    \begin{itemize}
         \item E.g., just picking the $\conf$ with lowest predicted mean would be too greedy
         \item We also need to take into account the uncertainty of the surrogate model $\iter{\surro}$ to explore
-    }
+    \end{itemize}
 \end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------------------
-\myframetop{Probability of Improvement (PI): Concept}{
+\begin{frame}[c]{Probability of Improvement (PI): Concept}
+
+  {
     %\framesubtitle{Probability of Improvement - Concept}
     % \begin{figure}
       \centering
@@ -43,7 +55,9 @@
         \node<.> [below=0.01\belowcaptionskip of img6, align=center]{PDF of a bad candidate configuration};
       \end{tikzpicture}
     % \end{figure}
+    
 }
+\end{frame} 
 % -----------------------------------------------------------------------
 \begin{frame}[c]{Probability of Improvement (PI): Formal Definition}
 %\framesubtitle{Probability of Improvement - Choosing a candidate}
@@ -57,14 +71,14 @@
         \item The \alert{probability of improvement $\acq_{PI}(\conf)$} at a configuration $\conf$ is then defined as: 
         \alert{\[\iter{\acq}_{PI}(\conf) = P(\cost(\conf) \leq \cost_{inc}).\]}
     \vspace*{-0.5cm}
-    \fhpause
+    \pause
     \item Since the predictive distribution for $\cost(\conf)$ is a Gaussian $\normaldist(\iter[\bocount-1]{\mean}(\conf), \iter[\bocount-1]{\variance}(\conf))$, this can be written as:
     \[
         \alert{\iter{\acq}_{PI}(\conf) = \cdf[Z]}, \quad \text{with } Z = \dfrac{\cost_{inc} - \iter[\bocount-1]{\mean}(\conf) - \xi}{\iter[\bocount-1]{\stddev}(\conf)}, 
     \]
     \newline
     where $\cdf(\cdot)$ is the CDF of the standard normal distribution and $\xi$ is an optional exploration parameter
-    \fhpause
+    \pause
     \item[] \[\boxed{\text{Choose}\;\;\bonextsample \in \argmax_{\conf\in\pcs}(\iter{\acq}_{PI}(\conf))}\]
 %    \comment{Source: Tutorial by Brochu et al.: https://arxiv.org/pdf/1012.2599.pdf }
 \end{itemize}
@@ -122,7 +136,7 @@
 %        \comment{This is probably a great time to point out, once again, that because I is defined in terms of the actual cost function, we cannot directly compute it.}
         \smallskip
         \item Expected Improvement is then defined as \alert{\[\iter{\acq}_{EI}(\conf) = \E[\iter{I}(\conf)] = \int_{-\infty}^{\infty} \iter{p}(\cost \mid \conf) \times \iter[\bocount]{I}(\conf)\;\; d\cost.\]}
-        \fhpause
+        \pause
         \smallskip
         \item Since the posterior distribution of $\surro(\conf)$ is a Gaussian, EI can be computed in closed form (see exercise):
         
@@ -137,7 +151,7 @@
             \text{ and } \xi \text{ is an optional exploration parameter.}
         \end{align*}
 %            \comment{I believe I needed to switch the signs of $\cost(\cdot)$ and $\mean(\cdot)$ as compared to the reference paper in order to accommodate for our convention of minimization/maximization. Please cross-check!}
-    \fhpause
+    \pause
     \bigskip
     \[\boxed{\text{Choose}\;\;\bonextsample \in \argmax_{\conf\in\pcs}(\iter{\acq}_{EI}(\conf))}
     \]
@@ -233,15 +247,18 @@
 
 \end{itemize}
     \bigskip
-    \fhpause
+    \pause
     
-    \myit{
+    \begin{itemize}
+    
+    
         \item Note: when one aims to \alert{maximize} the objective function, one would use \alert{UCB} instead
-        \myit{
+        \begin{itemize}
             \item $\iter{\acq}_{UCB}(\conf)) = \iter{\mean}(\conf) + \alpha\iter{\stddev}(\conf)$ 
             \item For UCB, one would choose $\bonextsample \in \argmax_{\conf\in\pcs}( \iter{\acq}_{UCB}(\conf))$ 
-        }
-    }
+        \end{itemize}
+    \end{itemize}
+   
 %    \item It has been shown that using the acquisition function
 %    \[\iter{\acq}_{GP-LCB}(\conf) = \iter{\mean}(\conf) - \sqrt{\nu\tau_t}\iter{\stddev}(\conf), \quad\nu>0,\] asymptotically results in zero cumulative regret with the appropriate choice of parameters $\tau$ and $\nu$ \lit{\href{https://arxiv.org/pdf/0912.3995.pdf}{Srinivas et al. 2009}}.}
 %    \comment{Trying to further explain the difference between LCB and GP-LCB's parameters would've overwhelmed the intuitiveness of the slide. Instead, a quick verbal note on the difference and pointing out the reference paper by Srinivas et al. for further reading should suffice.}
@@ -327,3 +344,4 @@
 \end{itemize}
 
 \end{frame}
+\end{document}

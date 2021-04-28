@@ -1,4 +1,16 @@
-\videotitle{Meta-Learning}
+\input{../latex_main/main.tex}
+
+\title{Speedup Techniques for Hyperparameter Optimization}
+\subtitle{Meta-Learning}
+\author[Frank Hutter]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+\begin{document}
+\maketitle
+
 %----------------------------------------------------------------------
 
 \begin{frame}[c]{Introduction}
@@ -18,7 +30,7 @@
 	\bigskip
 	\bigskip
 	\bigskip
-\fhpause
+\pause
 	\begin{center}
 	For a good introduction to meta-learning in general, see \lit{\href{https://www.automl.org/wp-content/uploads/2019/05/AutoML_Book.pdf\#page=46&zoom=auto,-103,613}{AutoML Book: Chapter 2}}
 	\end{center}			
@@ -27,25 +39,25 @@
 \begin{frame}[c]{Problem Statement}
 %	\myblock{Definition: meta-learning for HPO}{
 		Given:
-	    \myit{
+	    \begin{itemize}
 	        \item a set of prior tasks: 
 	        %(e.g., datasets): 
 	        $t_{j} \in \mathcal{T}_{\text{meta}} \subset \mathcal{T}$,
 	        \item a set of new tasks: 
 	        %(e.g., datasets): 
 	        $t_{\text{new}} \in \mathcal{T}$,
-\fhpause
+\pause
 	        \item a set of learning algorithms, fully defined by $\theta_{i} \in \Theta$
-\fhpause
+\pause
 	        \item a set of prior evaluations $\dataset_{\text{meta}}$ on $t_j \in \mathcal{T}_{\text{meta}}$%, where $\dataset_{i, j} = \cost(\theta_{i}, t_{j})$
 	        \item a set of evaluations $\dataset_{\text{new}}$ on new task $t_{\text{new}}$
-		}
+		\end{itemize}
 		\bigskip
-\fhpause
+\pause
 		\alert{Goal of meta-learning:}
-		\myit{
+		\begin{itemize}
 			\item use meta-data $\mathcal{D}_{\text{meta}}$ to choose $\theta_{i} \in \Theta$ for $t_{\text{new}}$ better than only based on $\dataset_{\text{new}}$. 
-		}
+		\end{itemize}
 %	}	
 \bigskip
 \hspace{9cm}\lit{\href{https://www.automl.org/wp-content/uploads/2019/05/AutoML_Book.pdf\#page=46&zoom=auto,-103,613}{adapted from AutoML Book: Chapter 2}}
@@ -108,13 +120,13 @@
             m(t_j) = (m_{j, 1}, \dots, m_{j, K})
         \end{equation*}
 \medskip
-\fhpause
+\pause
     \item This vector can be used to define a \alert{similarity measure} between two tasks
-    \myit{
+    \begin{itemize}
     	\item e.g., calculating the Euclidean distance between $m(t_i)$ and $m(t_j)$
 \smallskip
 	    \item Based on similarity, we can transfer information from the most similar tasks to new task $t_{\text{new}}$
-	}
+	\end{itemize}
 \end{itemize}
 
 \end{frame}
@@ -250,37 +262,37 @@
 
 \begin{itemize}
 	\item \alert{Simple} - easily extracted from the data, describe the basic dataset structure
-	\myit{
+	\begin{itemize}
 		\item e.g., number of features, data points or classes
-		\fhpause
-	}
+		\pause
+	\end{itemize}
 	
 	\item \alert{Statistical} - characterize the data via descriptive statistics:
-	\myit{
+	\begin{itemize}
 		\item e.g., average or standard deviation of features, or their correlation with the labels
-		\fhpause
-	} 	
+		\pause
+	\end{itemize} 	
 	\item \alert{Information-theoretic} - measure the class entropy in the data
-	\myit{
+	\begin{itemize}
 		\item capture the amount of information in the data %and their complexity
-		\fhpause 
-    }
+		\pause 
+    \end{itemize}
     \item \alert{Model-based} - extracted from a model induced using the training data
-    \myit{
+    \begin{itemize}
     	\item these are often based on properties of decision tree models
     	\item e.g., number of leaves, number of nodes, shape of the tree 
-    	\fhpause
-	}	
+    	\pause
+	\end{itemize}	
 	\item \alert{Landmarking} - computed by running several fast ML algorithms on the dataset
-	\myit{
+	\begin{itemize}
 		\item e.g., is fast algorithm A better than fast algorithm B on this dataset?
 		\item this can capture different properties of the dataset, e.g., linear separability
-		\fhpause
-	}
+		\pause
+	\end{itemize}
 	\item \alert{Others} - not included in the previous groups
-	\myit{
+	\begin{itemize}
 		\item e.g., time related measures, clustering and distance-based measures
-	}
+	\end{itemize}
 	
 \end{itemize}
 
@@ -291,10 +303,10 @@
 	
 \begin{itemize}
 	\item Experts often start HPO from a strong default (rather than random configurations)
-	\fhpause
+	\pause
 	\medskip
 	\item Can we learn from meta-data $\mdata$ how to \alert{initialize} HPO?
-	\fhpause
+	\pause
 	\medskip
 	\item Note: just a single default configuration often does not perform great on a new dataset
 	\begin{itemize}
@@ -323,7 +335,7 @@
 		\item E.g., what are bad regions of the configuration space in general
 	\end{itemize}
 	\bigskip
-	\fhpause
+	\pause
 	\item Given: $n$ predictive models $\surro_{\dataset_i}: \pcs \to \mathbb{R}$ from HPO on $\mathcal{T}_{\text{meta}}$	
 	\item \alert{How can we use these $\surro_{\dataset_i}$ to speed up HPO?}
 \end{itemize}
@@ -429,10 +441,9 @@
 %----------------------------------------------------------------------
 \begin{frame}[c]{Meta-Learning for HPO Approach 5:\\ Learning a Black-box Optimization Algorithm from Data}
 
-\myit{
-
+\begin{itemize}
     \item \alert{Learning} a blackbox optimization algorithm
-    \myit{
+    \begin{itemize}
         \item Use $\dataset_{\text{meta}}$ to learn a mapping from $\dataset_{\text{new}}$ to the next configuration $\conf$ to evaluate
  %       \item This 
 %        \item 
@@ -440,7 +451,7 @@
  %       
  %       \iter[\bocount]{h}$ to next query $\iter[\bocount]{x}$
         \item This mapping can be a (recurrent) neural net $\text{NN}_{\phi}: \dataset_{\text{new}} \mapsto \conf$ parameterized by weights $\phi$   
-\fhpause        
+\pause        
 \smallskip
         \item \alert{This mapping $\text{NN}_{\phi}$ constitutes a blackbox optimization algorithm}
 %        \myit{
@@ -451,28 +462,30 @@
 %\fhpause
 %        \item Since $\iter[\bocount]{h}$ captures a \alert{sequence}, a recurrent NN $RNN_{\phi}:\iter[\bocount]{h} \mapsto \iter[\bocount]{x}$ makes sense
 
-\fhpause
+\pause
 \bigskip
     
-    }
+    \end{itemize}
     
     \item Existing approaches for learning a blackbox optimizer
-    \myit{
+
+    \begin{itemize}
         \item \alert{Gradient descent} on $\phi$  \lit{\href{https://arxiv.org/pdf/1611.03824.pdf}{Chen et al. 2016}}
-        \myit{
+        \begin{itemize}
             \item Simplest technique, but requires backpropagation through the optimization trace
             \item This also requires the blackbox functions $f$ used for training to be differentiable
-       }
-\fhpause
+       \end{itemize}
+\pause
         \item \alert{Reinforcement learning} \lit{\href{https://arxiv.org/pdf/1606.01885.pdf}{Li and Malik. 2016}}
-        \myit{
+        \begin{itemize}
+
             \item Can be harder to get to work, but does not require differentiable $f$
-        }
+        \end{itemize}
     
 %        \item Gradient-free approaches should also work
 
-    }
-}
+    \end{itemize}
+\end{itemize}
 
 \end{frame}
 %----------------------------------------------------------------------
@@ -486,32 +499,32 @@
 	\item It would be more \alert{sample-efficient} to \alert{only replace hand-designed parts} of an algorithm
 
 \bigskip
-\fhpause
+\pause
 	\item In Bayesian optimization, a critical hand-designed heuristic is the acquisition function
 	\begin{itemize}
 		\item Trade-off between exploitation and exploration, e.g., via PI, EI, UCB, ES, KG, \dots 
 		\item Depending on the problem at hand, you might need a different acquisition function
 		%all of them are \alert{myopic} (no long-term look-ahead)
 	\end{itemize}
-\fhpause
+\pause
 \smallskip
 
     \item \alert{Idea:} Learn a \alert{neural acquisition function} from data, but still make use of the sample efficiency of Gaussian processes \lit{\href{https://openreview.net/pdf?id=ryeYpJSKwr}{Volpp et al. 2019}}
 
-\fhpause
+\pause
 \medskip
     \item Two options:
-    \myit{
+    \begin{itemize}
         \item Only depend on predicted mean and variance: $\acq_\phi(\conf) = \acq_\phi(\mu_t(\conf), \sigma_t(\conf))$ 
-        \myit{
+        \begin{itemize}
             \item This allows to learn a general acquisition function
-        }
-\fhpause
+        \end{itemize}
+\pause
         \item Also depend on the $\conf$ value: $\acq_\phi(\conf) = \acq_\phi(\mu_t(\conf), \sigma_t(\conf), \alert{\conf})$  
-        \myit{
+        \begin{itemize}
             \item This allows to fine-tune to the characteristics of $\mathcal{D}_{\text{meta}}$ (e.g., avoid poor parts of the space) 
-        }
-    }
+        \end{itemize}
+    \end{itemize}
 
 \end{itemize}
 
@@ -538,3 +551,4 @@
 \end{itemize}
 
 \end{frame}
+\end{document}
