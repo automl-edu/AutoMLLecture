@@ -1,5 +1,6 @@
 \input{../latex_main/main.tex}
 
+
 \title[AutoML: NAS]{AutoML: Neural Architecture Search (NAS)} 
 \subtitle{The One-Shot Model}
 \author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
@@ -21,34 +22,35 @@
 			\item One \alert{only needs to train the single one-shot model}, \\ and implicitly trains an exponential number of individual architectures
 		}
 	}
-\pause
+%\pause
 
-\bigskip
+%\bigskip
 	\myit{
 		\item The first type of one-shot models: \alert{convolutional neural fabrics} %/ \alert{lattice} 
 
 	\centering
-	\only<2-5>{\includegraphics[width=0.7\textwidth]{images/conv_fabric_1.png}\\}
-	\only<6>{\hspace*{-0.91cm}\vspace*{0.3cm}\includegraphics[width=1.02\textwidth]{images/conv_fabric_3.png}\vspace*{-0.5cm}}
+	\only<2-5>{\includegraphics[width=0.7\textwidth]{images/conv_fabric_1.jpg}\\}
+	%\only<6>{\hspace*{-0.91cm}\vspace*{0.3cm}\includegraphics[width=1.02\textwidth]{images/conv_fabric_3.jpg}\vspace*{-0.5cm}}
 	
-	\only<2>{\bigskip\bigskip\includegraphics[width=0.7\textwidth]{images/conv_fabric_2.png}}
-\pause
-	\medskip
-		\myit{
-			\item \alert{Each path} from the input to the output \alert{represents an architecture}
-	\pause
-	\smallskip
-			\item The \alert{nodes represent tensors}
-			\item The \alert{edges represent computations} (e.g., convolution / strided convolution)
-	\pause
-	\smallskip
-		\item \alert{Weights for the operation on an edge are shared}\\ across all (exponentially many) architectures that have that edge
-		}
+%\only<2>{\bigskip\bigskip\includegraphics[width=0.7\textwidth]{images/conv_fabric_2.jpg}}
+%\pause
+%	\medskip
+%		\myit{
+%			\item \alert{Each path} from the input to the output \alert{represents an architecture}
+%	\pause
+%	\smallskip
+%			\item The \alert{nodes represent tensors}
+%			\item The \alert{edges represent computations} (e.g., convolution / strided convolution)
+%	\pause
+%	\smallskip
+%		\item \alert{Weights for the operation on an edge are shared}\\ across all (exponentially many) architectures that have that edge
+%		}
 	}
 %\pause
 %\bigskip
-%	\includegraphics[width=0.7\textwidth]{images/conv_fabric_2.png}
-	
+	%\centering
+	\only<2-5>{\includegraphics[ scale= 1, width= 15.24cm]{images/conv_fabric_2.jpg}}
+	 
 }
 %----------------------------------------------------------------------
 
@@ -172,7 +174,7 @@
 	
 	\begin{itemize}
 	%\footnotesize
-		\item To avoid coadaptation of weights, we can use \alert{DropPath}, a technique analogous to Dropout \lit{\href{http://jmlr.org/papers/v15/srivastava14a.html}{Srivastava et al., 2014}}:
+		\item To avoid coadaptation of weights, we can use \alert{DropPath}, a technique analogous to Dropout \lit{\href{https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf}{Srivastava et al. 2014}}:
 		\myit{
 \visible<2->{
 			\item[-] At each mini-batch iteration:\\ for each operation connecting 2 nodes, zero it out with probability $p$

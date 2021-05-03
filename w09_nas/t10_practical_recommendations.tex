@@ -62,14 +62,14 @@
 			\item[-] If the compute budget suffices, \alert{optimize them jointly}, e.g., using BOHB
 			\myit{
 				\item[+] Auto-PyTorch Tabular \lit{\href{https://github.com/automl/Auto-PyTorch}{Zimmer,\,Lindauer\,\& Hutter, 2020}}
-				\item[+] Auto-RL \lit{\href{https://arxiv.org/abs/1812.11951}{Runge et al, 2019}}
+				\item[+] Auto-RL \lit{\href{https://arxiv.org/pdf/1812.11951.pdf}{Runge et al. 2019}}
 			}
 \medskip
 \pause
 			\item[-] Else
 			\myit{
 				\item[+] If you have decent hyperparameters:\\
-			\alert{run NAS, followed by HPO for fine-tuning} \lit{\href{https://arxiv.org/abs/1905.07443}{Saikat et al, 2019}}
+			\alert{run NAS, followed by HPO for fine-tuning} \lit{\href{https://arxiv.org/pdf/1905.07443.pdf}{Saikat et al. 2019}}
 \smallskip
 \pause
 				\item[+] If you don't have decent hyperparameters: \alert{first run HPO} to get competitive	
@@ -110,18 +110,18 @@
 	
 	\column{0.29\textwidth}	
 \onslide<1->{
-	\includegraphics[width=\linewidth]{images/AutoPytorch-ShapedResNet.png}\\
+	\includegraphics[width=\linewidth]{images/AutoPytorch-ShapedResNet.jpg}\\
 }
 	\column{0.42\textwidth}	
 \vspace*{-0.7cm}
 \onslide<1->{
 	\begin{center}
-	\includegraphics[width=0.9\linewidth]{images/AutoPytorch-ConfigSpace.png}
+	\includegraphics[width=0.9\linewidth]{images/AutoPytorch-ConfigSpace.jpg}
 	\end{center}
 }
 \onslide<5->{
 	\vspace*{-0.3cm}\hspace*{-1.1cm}
-	\includegraphics[width=1.1\linewidth]{images/AutoPytorch-performance.png}
+	\includegraphics[width=1.1\linewidth]{images/AutoPytorch-performance.jpg}
 %	\end{center}
 }
 
@@ -158,7 +158,7 @@
 	}
 	\onslide<4->{
 		\myit{
-			\item Both NAS and HPO improved the state of the art \lit{\href{https://arxiv.org/abs/1905.07443}{Saikat et al, 2019}}:
+			\item Both NAS and HPO improved the state of the art \lit{\href{https://arxiv.org/pdf/1905.07443.pdf}{Saikat et al. 2019}}:
 			\myit{
 				\item End-point-error (EPE) on Sintel dataset: \alert{2.36 $\rightarrow$ 2.14 (by DARTS)}
 				\item Subsequent HPO: \alert{2.14 $\rightarrow$ 1.94 (by BOHB)}
