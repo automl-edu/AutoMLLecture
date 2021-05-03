@@ -99,13 +99,13 @@ def full_slides():
 
 
 def compile_all():
-    files = (file.with_suffix(".tex") for file, _, _ in iter_all())
+    files = (file for file, _, _ in iter_all(ext="tex"))
     with multiprocessing.Pool(multiprocessing.cpu_count()) as pool:
         pool.map(pdflatex, files)
 
 
 def compile_git():
-    files = (file.with_suffix(".tex") for file, _, _ in iter_all() if check_git(file.with_suffix(".tex")))
+    files = (file for file, _, _ in iter_all(ext="tex") if check_git(file.with_suffix(".tex")))
     with multiprocessing.Pool(multiprocessing.cpu_count()) as pool:
         pool.map(pdflatex, files)
 
@@ -119,7 +119,7 @@ def compile_single(week_id, slide_id):
             return week == week_id
         return week == week_id and slide == slide_id
 
-    files = (file.with_suffix(".tex") for file, week, slide in iter_all() if fits_identifier(week, slide))
+    files = (file for file, week, slide in iter_all(ext="tex") if fits_identifier(week, slide))
     with multiprocessing.Pool(multiprocessing.cpu_count()) as pool:
         pool.map(pdflatex, files)
 
@@ -131,9 +131,9 @@ def cleanup():
 
 
 # Helper functions
-def iter_all():
+def iter_all(ext="pdf"):
     folder_pattern = re.compile("w(\d{2})_")
-    slide_pattern = re.compile("t(\d{2,3})_[\w_]+\.pdf")
+    slide_pattern = re.compile("t(\d{2,3})_[\w_]+\." + ext)
     for week_folder in GIT_REPO.iterdir():
         week_number = folder_pattern.match(week_folder.name)
         if week_number is None:  # folder does not match mattern
