@@ -3,29 +3,31 @@
 \usepackage{wrapfig}
 \newcommand{\argminA}{\mathop{\mathrm{argmin}}}
 
+% FH: I created this command videotitle (and file title_slide.tex) to show a new title slide for each video without the need of any repeating boiler plate code. Please do not change this anymore.
+\newcommand{\videotitle}[1]{\subtitle{#1}\input{title_slide}}
 
-\title[AutoML: NAS]{AutoML: Neural Architecture Search} % week title
+\title[AutoML: NAS]{AutoML: Neural Architecture Search (NAS)} % week title
 \subtitle{Part 2: One-shot Neural Architecture Search} % video title
 \author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
 \institute{}
 \date{}
 
-\AtBeginSection[] % Do nothing for \section*
-{
-  \begin{frame}{Outline}
-    \bigskip
-    \vfill
-    \tableofcontents[currentsection]
-  \end{frame}
-}
+\AtBeginSection[]{}
+
+% for final handout:
+\renewcommand{\videotitle}[1]{\subtitle{#1}\section{#1}\input{title_slide}}
+\AtBeginSection[]{\begin{frame}{Outline}\bigskip\vfill\tableofcontents[currentsection]\end{frame}}
 
 \begin{document}	
 \maketitle
 
-%----------------------------------------------------------------------
 \newcommand{\lecturetitle}{Neural Architecture Search (NAS)}
-\newcommand{\lecturetime}{Week 9}
 
 \input{t07_oneshot_nas.tex}
+\input{t08_darts.tex}
+\input{t09_NASlib.tex}
+\input{t10_practical_recommendations.tex}
+
+\input{t99_bibliography.tex}
 
 \end{document}

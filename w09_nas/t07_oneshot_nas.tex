@@ -312,20 +312,23 @@
 	\end{itemize}
 	
 	\onslide<5>{
-    	\begin{minipage}{0.4\textwidth}
+	\begin{columns}
+	    \column{0.01\textwidth}
+    	\column{0.4\textwidth}
         	\begin{itemize}
 				\footnotesize
 				\item \textbf{Pitfall:} the correlation between architectures evaluated with the one-shot weights and retrained from scratch (stand-alone models) should be high
 				\item If not, \textbf{selecting the best architecture based on the one-shot weights} is sub-optimal.
 			\end{itemize}
-	    \end{minipage}
-	    \hspace{1cm}
-    	\begin{minipage}{0.5\textwidth}
+	    \column{0.5\textwidth}
 \begin{center}
+\vspace*{-0.3cm}
 	        \includegraphics[width=.7\textwidth]{images/bender_correlation_1.png}\\
 	        \scriptsize{From \smaller{\lit{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al., 2018}}}}
 \end{center}
-    	\end{minipage}
+	    \column{0.09\textwidth}
+
+    	\end{columns}
 	}
 }
 %---------------------------------------------------------------
