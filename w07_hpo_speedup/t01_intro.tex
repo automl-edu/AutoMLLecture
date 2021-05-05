@@ -1,4 +1,15 @@
-\videotitle{Overview}
+\input{../latex_main/main.tex}
+
+\title{Speedup Techniques for Hyperparameter Optimization}
+\subtitle{Overview}
+\author[Frank Hutter]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+\begin{document}
+\maketitle
 
 %-------------------------------------------------
 \begin{frame}{Beyond Black-box Optimization}
@@ -11,7 +22,7 @@ Recall general blackbox optimization:\\
         \bigskip
          Only mode of interaction with $f$: querying $f$'s value at a given $\conf$
         
-\fhpause
+\pause
         \bigskip
         \bigskip
         \huge{\textcolor{red}{Too slow for tuning expensive models}}
@@ -47,7 +58,7 @@ Recall general blackbox optimization:\\
 	        	\myit{
 		        	\item Each little black box is fast but only yields a noisy estimate \\
 		        	\item SMAC \lit{\href{https://ml.informatik.uni-freiburg.de/papers/11-LION5-SMAC.pdf}{Hutter et al. 2011}} directly solves $\argmin_{\conf\in\confs} \sum_{i=1}^N \cost(\conf,i)$ 	        	
-		        	\item Auto-WEKA \lit{\href{https://dl.acm.org/doi/10.1145/2487575.2487629}{Thornton et al, 2013}} used this to optimize 10-fold cross-validation performance
+		        	\item Auto-WEKA \lit{\href{https://ml.informatik.uni-freiburg.de/papers/13-KDD2013-AutoWEKA.pdf}{Thornton et al. 2013}} used this to optimize 10-fold cross-validation performance
 		        }
 			}\onslide<2->{
 				\bigskip
@@ -219,3 +230,4 @@ Only stop evaluations after they have spent sufficient resources to differentiat
 
 \end{frame}
 \fi
+\end{document}

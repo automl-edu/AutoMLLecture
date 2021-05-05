@@ -1,0 +1,329 @@
+
+\input{../latex_main/main.tex}
+
+\usepackage{multirow}
+
+
+\title[AutoML: Risks]{AutoML: Evaluation} % week title
+\subtitle{Background: Statistical Hypothesis Tests} % video title
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+\newcommand\reffootnote[1]{%
+	\begingroup
+	\renewcommand\thefootnote{}\footnote{
+		\tiny #1
+		\vspace*{1em}}%
+	\addtocounter{footnote}{-1}%
+	\endgroup
+}
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+	%----------------------------------------------------------------------
+	\begin{frame}[c]{Background: statistical hypothesis tests}
+		
+		\begin{itemize}
+			\item When we have a lot of data, we need to summarize it
+			\begin{itemize}
+				\item But we already saw that summarization hides a lot of data
+				%	  \item E.g., a single outlier might explain the difference in means
+				\item Ideally, we want to draw high-level conclusions\\
+				(e.g., ``A outperforms B on datasets of type X'')
+			\end{itemize}
+			
+			\pause
+			\bigskip
+			
+			\item Problem: we only have a finite number of observations
+			\begin{itemize}
+				\item Can we attribute observed performance differences to chance?
+				\item Are we reasonably sure that a claim we make is reproducible?
+				\item[$\leadsto$] Statistical tests can help
+			\end{itemize}
+			
+			
+		\end{itemize}
+		
+		\medskip
+		
+	\end{frame}
+	%-----------------------------------------------------------------------
+	%----------------------------------------------------------------------
+	\begin{frame}[c]{Statistical hypothesis testing}
+		
+		\begin{enumerate}
+			\item Define initial research hypothesis
+			\pause
+			\item Derive null $H_0$ and alternative $H_1$ hypothesis
+			\begin{itemize}
+				\item Alternative hypothesis should be your research hypothesis
+			\end{itemize}
+		\end{enumerate}	
+		
+	\end{frame}
+	%-----------------------------------------------------------------------
+	%----------------------------------------------------------------------
+	\begin{frame}[c]{First example: Courtroom Tiral}
+		
+		\begin{itemize}
+			\item A prosecutor tries to prove the guilt of the defendant
+			\item $H_0$: The defendant is not guilty
+				\begin{itemize}
+					\item Accepted for the moment\\ (``not guilty as long as their guilt is not proven'') 
+				\end{itemize}
+			\item $H_1$: The defendant is guilty
+				\begin{itemize}
+					\item prosecutor hopes to support that
+				\end{itemize}
+			\pause
+		\end{itemize}
+		
+		\medskip
+		\pause
+		\bigskip
+		\centering
+		\begin{tabular}{r|cc}
+			\toprule
+			& Truly not guilty 	& Truly guilty\\
+			\hline
+			Found not guilty 	& Acquittal & Type II Error\\
+			Found guilty & Type I Error		& Conviction\\
+			\bottomrule
+		\end{tabular}	
+		
+		\bigskip
+		$\leadsto$ We want to minimize Type I error!
+		
+	\end{frame}
+	%-----------------------------------------------------------------------
+	%----------------------------------------------------------------------
+	\begin{frame}[c]{Statistical hypothesis testing (cont'd)}
+		
+		\begin{enumerate}
+			\item Define initial research hypothesis
+			\item Derive null $H_0$ and alternative $H_1$ hypothesis
+			\begin{itemize}
+				\item Alternative hypothesis should be your research hypothesis
+			\end{itemize}
+			\item Consider statistical assumptions
+			\begin{itemize}
+				\item E.g., is your data Gaussian distributed?
+			\end{itemize}
+			\pause
+			\item Decide test and test statistic $T$
+			\begin{itemize}
+				\item The correct test depends on your statistical assumptions.
+				\item Typically: if you use more assumptions, the test is more powerful\\ (i.e., less Type-I error)
+			\end{itemize}
+			\pause
+			\item Decide significance level $\alpha$\\ (i.e., acceptable Type-I error to reject null hypothesis)
+			\pause
+			\item Compute observed $t_{obs}$ of test statistic $T$
+			\item Calculate $p$-value given $t_{obs}$
+			\begin{itemize}
+				\item i.e., probability under the null hypothesis of sampling a test statistic as extreme as observed (probability of Type-I error)
+			\end{itemize} 
+			\pause
+			\item If $p < \alpha$, reject null hypothesis in favor of alternative hypothesis
+			\begin{itemize}
+				\item If $p > \alpha$, it doesn't tell you anything about the null hypothesis!
+			\end{itemize}
+		\end{enumerate}	
+		
+	\end{frame}
+	%-----------------------------------------------------------------------
+	%----------------------------------------------------------------------
+	\begin{frame}[c]{Second example for a statistical test}
+		
+		\begin{itemize}
+			\item Claim: \alert{``the students in this course are more intelligent
+				than average''}
+			\bigskip
+			\pause
+			\item \alert{Null Hypothesis $H_0$}: $\mu=100$ ($\mu$ is the population
+			mean of this class)
+			\item \alert{Alternative Hypothesis $H_1$}: $\mu>100$ (\alert{one-sided} hypothesis)
+			\bigskip
+			\pause
+			\item IQ values are known to be normally distributed with $X \sim
+			\mathcal{N}(100,15)$
+			\begin{itemize}
+				\item$\to$ statistical assumption
+			\end{itemize}
+			% \\with mean $100$ and variance $15$: $X \sim \mathcal{N}(100,15)$
+			
+			\bigskip
+			\pause
+			
+			\item Let's say we observed IQ values $x_i$ of 9 students in the class:
+			\begin{itemize}
+				\item $\{x_1,\dots,x_9\} = \{116, 128, 125, 119, 89, 99, 105, 116, 118\}$.
+				\item The \alert{sample mean} is $\bar{x}=112.8$
+				\item Does this data support the claim?
+			\end{itemize}	
+			
+		\end{itemize}	
+		
+	\end{frame}
+	%-----------------------------------------------------------------------
+	%----------------------------------------------------------------------
+	\begin{frame}[c]{Example continued}
+		
+		\begin{itemize}
+			
+			\item \alert{Distribution of the test statistic} 
+			\begin{itemize}
+				\item Under $H_0$, we know that each $x_i \sim \mathcal{N}(100,15)$
+				\smallskip
+				\item The \alert{test statistic} that we measure is the sample
+				mean $\bar{x} = \frac{1}{9} \sum_{i=1}^9 x_i$
+				%    \item[-] $\bar{x} \sim  \mathcal{N}(\mu=100,\sigma^2=15/\sqrt{n})=\mathcal{N}(100,5)$
+				\bigskip
+				\pause
+				\item Under $H_0$, the distribution of $\bar{x}$ is
+				$\mathcal{N}(100,15/\sqrt{9})$
+				\begin{itemize}
+					\item[-] Our observation $\bar{x}=112.8$ is quite extreme under that
+					distribution
+				\end{itemize}
+			\end{itemize}	
+		\end{itemize}
+		
+		\begin{center}
+			%\includegraphics[height=3cm]{images/z_test_1.png}
+			\input{tikz/z_test_1}
+		\end{center}
+		
+	\end{frame}
+	%-----------------------------------------------------------------------
+	%----------------------------------------------------------------------
+	\begin{frame}[c]{General principle}
+		
+		\vspace*{-0.2cm}
+		\begin{center}
+			%\includegraphics[height=3cm]{images/z_test_2.png}
+			\input{tikz/z_test_2}
+		\end{center}
+		\vspace*{-0.2cm}
+		
+		\begin{itemize}
+			\item Compare the test statistic (here: $\bar{x}$)\\to its sampling
+			distribution under $H_0$
+			\pause 
+			\medskip
+			\item \alert{P-value}: probability $p$ of observing values \alert{at least as extreme as $\bar{x}$}\\
+			%  $\leadsto$ this is the %(computed through cumulative distribution function)
+			\pause 
+			\medskip
+			\item Compare $p$ to pre-defined confidence level $\alpha$ (usually
+			$\alpha=0.05$);\\\alert{if $p < \alpha$, reject $H_0$}
+			\pause 
+			\medskip
+			\item With $\alpha = 0.01$, would we reject $H_0$ in this case?
+		\end{itemize}
+		
+	\end{frame}
+	%-----------------------------------------------------------------------
+	%----------------------------------------------------------------------
+	\begin{frame}[c]{Summary of example}
+		
+		\begin{itemize}
+			\item We just used a so-called \alert{$Z$-test}
+			\item $H_0$: $\mu=\mu_0$, $H_1$: $\mu>\mu_0$  
+			\item Assumptions: $X \sim \mathcal{N}(\mu,\sigma^2)$ , with known $\mu$ and $\sigma^2$
+			
+			\medskip
+			\pause
+			\item \alert{Test statistic}: sample mean $\bar{x}$; evaluate under 
+			$\mathcal{N}(\mu=\mu_0,s=\sigma^2/\sqrt{n})$
+			\pause
+			\smallskip
+			\item Equivalent: compute the \alert{Z-statistic}: $Z = (\bar{x}-\mu_0)/s$
+			and\\
+			evaluate cumulative distribution $\Phi(Z)$ of $Z$
+			under $\mathcal{N}(0,1)$
+			\medskip
+			\pause
+			\begin{itemize}
+				\item There are standard tables to look up $\Phi(Z)$ for different values of $Z$
+				\item Nowadays, there are standard libraries to compute $\Phi(Z)$
+			\end{itemize}
+			
+		\end{itemize}
+		
+	\end{frame}
+	%-----------------------------------------------------------------------
+	%----------------------------------------------------------------------
+	\begin{frame}[c]{Two-sided tests}
+		
+		
+		\vspace*{-0.2cm}
+		\begin{center}
+			%\includegraphics[height=3.5cm]{images/z_test_3.png}
+			\input{tikz/z_test_3}
+		\end{center}
+		\vspace*{-0.2cm}
+		
+		\begin{itemize}
+			\item Similar to one-sided tests, but testing for extreme values in both tails
+			\item Example Z-test: two-sided alternative hypothesis $H_1$:
+			$\mu \neq \mu_0$
+			\pause
+			\smallskip
+			\item Compute $Z = (\bar{x}-\mu_0)/s$ as before
+			\item Compute $p$-value as $p = 2\Phi(Z)$, to account for both tails
+			\pause 
+			\medskip
+			\item With $\alpha = 0.01$, would we reject $H_0$ in this case? 
+		\end{itemize}
+		
+	\end{frame}
+	%-----------------------------------------------------------------------
+	%----------------------------------------------------------------------
+	\begin{frame}[c]{General points about statistical hypothesis tests}
+		
+		\begin{itemize}
+			\item What if $p > \alpha$?
+			\begin{itemize}
+				\item \alert{Failure to reject $H_0$}
+				\item \alert{We cannot conclude that we can accept $H_0$!}
+			\end{itemize}
+			
+			
+			\pause
+			\bigskip
+			\item Beware (i): most tests make some assumptions
+			\begin{itemize}
+				\item E.g., $Z$-test and popular $t$-test assume \alert{normality}
+				\item Our data is often far from normally-distributed
+				\begin{itemize}
+					\item[$\leadsto$] E.g., exponential runtime distributions of optimizers
+					\item[$\leadsto$] E.g., distribution of fitting a neural network\\ with different random seeds is not well studied
+				\end{itemize}
+			\end{itemize}
+			\medskip
+			\pause
+			\item Beware (ii): if you use cross-validation, observations are not independent\\ (you cannot apply statistical tests that assume independence)
+			%\begin{itemize}
+			%	\item if you use bootstrap sampling, observations are independent
+			%\end{itemize}
+		\end{itemize}
+		
+	\end{frame}
+	%-----------------------------------------------------------------------
+
+	
+\end{document}

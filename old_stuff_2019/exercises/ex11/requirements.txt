@@ -1,5 +1,0 @@
-ConfigSpace
-smac
-# git+https://github.com/automl/GenericWrapper4AC@master  # Installed like this the runsolver might not be copied over correctly
-
-# add your requirements below this line

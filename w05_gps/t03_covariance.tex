@@ -149,7 +149,7 @@ Three types of properties are commonly used in covariance functions:
 \begin{itemize}
 \item $k$ is \textbf{stationary} if it depends only on $\bm{d} =\x -\x^\prime$ and is denoted by $k(\bm{d})$.
 
-\item $k$ is \textbf{isotropic} if it depends only on $r = \|\x - \x^\prime\|$and is denoted by $k(r)$.
+\item $k$ is \textbf{isotropic} if it depends only on $r = \|\x - \x^\prime\|$ and is denoted by $k(r)$.
 
 \item $k$ is a \textbf{dot product} if it depends only on $\x^T \x^\prime$.
 \end{itemize}
@@ -284,7 +284,7 @@ What is the benefit of having an individual hyperparameter $\ls_i$ for each dime
 \vspace{2mm}
 \item If $\ls_i$ is very large, the covariance will become almost independent of that input, effectively removing it from inference.
 \vspace{2mm}
-\item If the features are on different scales, the data can be automatically \textbf{rescaled} by estimating $\ls_1,\dots, \ls_p$ 
+\item If the features are on different scales, the data can be automatically \textbf{rescaled} by estimating $\ls_1,\dots, \ls_p$. 
 
 \end{itemize}
 
@@ -300,7 +300,7 @@ What is the benefit of having an individual hyperparameter $\ls_i$ for each dime
 
 \vspace{3mm}
 %\begin{footnotesize}
-For the first plot, we have chosen $\bm{M} = \id$: the function varies the same in all directions. The second plot is for $\bm{M} = \text{diag}(\bm{\ls})^{-2}$ and $\bm{\ls} = \left(1, 3 \right)$: The function varies less rapidly as a function of $x_2$ than $x_1$ as the length-scale for $x_1$ is less. In the third plot $\bm{M} = \Gamma \Gamma^T + \text{diag}(\bm{\ls})^{-2}$ for $\Gamma = (1, -1)^\top$ and $\bm{\ls} = (6, 6)^\top$. Here $\Gamma$ gives the direction of the most rapid variation. (Image from Rasmussen \& Williams, 2006)
+For the first plot, we have chosen $\bm{M} = \id$: the function varies the same in all directions. The second plot is for $\bm{M} = \text{diag}(\bm{\ls})^{-2}$ and $\bm{\ls} = \left(1, 3 \right)$: The function varies less rapidly as a function of $x_2$ than $x_1$ as the length-scale for $x_1$ is less. In the third plot $\bm{M} = \Gamma \Gamma^T + \text{diag}(\bm{\ls})^{-2}$ for $\Gamma = (1, -1)^\top$ and $\bm{\ls} = (6, 6)^\top$. Here $\Gamma$ gives the direction of the most rapid variation. \lit{\href{http://www.gaussianprocess.org/gpml/chapters/RW.pdf\#page=125&zoom=auto,-17,731}{Rasmussen and Williams. 2006 }}
 %\end{footnotesize}
 
 

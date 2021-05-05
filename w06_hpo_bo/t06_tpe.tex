@@ -1,4 +1,16 @@
-\videotitle{The Tree-Parzen Estimator (TPE)}
+\input{../latex_main/main.tex}
+
+
+\title{AutoML: Bayesian Optimization for HPO}
+\subtitle{The Tree-Parzen Estimator (TPE)}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+    
+    
+    
+\begin{document}
+\maketitle
 
 %-----------------------------------------------------------------------
 \begin{frame}[c]{Overview of TPE \litw{\href{https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf}{Bergstra et al. 2011}}}
@@ -6,10 +18,10 @@
 \begin{itemize}
     \item Standard Bayesian optimization models the probability $p(y \mid \conf)$ of observations $y$ given configurations $\conf$
     \item Instead, \alert{TPE fits kernel density estimators (KDEs) $l(\conf \mid y \le \gamma)$ and $g(\conf \mid y > \gamma)$}
-    \myit{
+    \begin{itemize}
         \item These KDEs are for ``good configurations'' (leading to objective function values below a threshold $\gamma$) and ``bad configurations''
         \item By default, $\gamma$ is set to the 15\% quantile of the observations
-    }
+    \end{itemize}
     %\item \emph{Recall.} Bayesian optimization approach:
     %    \begin{equation*}
     %         P(\obs \vert \conf) \propto P(\conf \vert \obs) \times P(\obs)
@@ -25,16 +37,16 @@
     %where $\obs^*$ is an empirical threshold for a well-performing configuration (e.g., a $\gamma$ percentile of all observed $\obs$ in $D$).
     %\item Distributions are approximated by kernel density estimators (Parzen estimators)
 \medskip
-\fhpause
+\pause
     \item Optimizing $l(\conf)/g(\conf)$ is equivalent to optimizing standard expected improvement in Bayesian optimization \lit{\href{https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf}{Bergstra et al. 2011}}
     
 \medskip
-\fhpause
+\pause
     \item Why is the technique called TPE?
-    \myit{
+    \begin{itemize}
         \item The used KDEs are \alert{Parzen estimators}
         \item TPE can handle \alert{tree}-structured search spaces 
-    }    
+    \end{itemize}  
         
 \end{itemize}
 
@@ -117,7 +129,7 @@ Remarks:
 	\end{itemize}
 	\smallskip
 	
-	\fhpause
+	\pause
 	
 	\item Performance of TPE depends on:
 	\begin{itemize}
@@ -125,12 +137,12 @@ Remarks:
 		\item bandwidth of the KDEs 
 	\end{itemize}
 	
-	\fhpause
+	\pause
 	
 	\smallskip
 	
 	\smallskip
-	\item A successful tool implementing TPE is Hyperopt \lit{\href{https://github.com/hyperopt/hyperopt}{Bergstra et al.}}
+	\item A successful tool\footnote{\url{https://github.com/hyperopt/hyperopt}} implementing TPE is Hyperopt %\lit{\href{https://github.com/hyperopt/hyperopt}{Bergstra et al.}}
 \end{itemize}
 
 \end{frame}
@@ -151,7 +163,7 @@ Remarks:
 
 \hfill%
 
-\fhpause
+\pause
 
 \begin{column}{.48\textwidth}
     \begin{block}{Disadvantages}
@@ -171,7 +183,9 @@ Remarks:
 \medskip
     \item \alert{Disussion.} How does $\gamma$ impact the optimization procedure?
 \medskip
-    \item \alert{Derivation.} Go through the derivation that optimizing $l(\conf) / g(\conf)$ is equivalent to optimizing expected improvement; see Section 4.1 in \lit{\href{https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf}{Bergstra et al. 2011}}.
+    \item \alert{Derivation.} Go through the derivation that optimizing $l(\conf) / g(\conf)$ is equivalent to optimizing expected improvement; see Section 4.1 in
+     \lit{\href{https://papers.nips.cc/paper/2011/file/86e8f7ab32cfd12577bc2619bc635690-Paper.pdf\#page=4&zoom=auto,-77,401}{Bergstra et al. 2011}}.
 \end{itemize}
 
 \end{frame}
+\end{document}

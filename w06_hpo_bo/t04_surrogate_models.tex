@@ -1,4 +1,16 @@
-\videotitle{Surrogate Models}
+\input{../latex_main/main.tex}
+
+
+\title{AutoML: Bayesian Optimization for HPO}
+\subtitle{Surrogate Models}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+    
+    
+    
+\begin{document}
+\maketitle
 
 %-----------------------------------------------------------------------
 \myframetop{Desiderata for Surrogate Models in Bayesian Optimization}{
@@ -99,7 +111,7 @@
     \end{itemize}
     \end{block}
 \bigskip
-\fhpause
+\pause
 \hspace*{0.5cm}These advantages make GPs the\\
 \hspace*{0.5cm}\alert{most commonly-used model\\
 \hspace*{0.5cm}in Bayesian optimization}
@@ -107,7 +119,7 @@
 \end{column}%
 
 \hfill%
-\fhpause
+\pause
 
 \begin{column}{.48\textwidth}
     \begin{block}{Disadvantages}
@@ -217,7 +229,7 @@
     \centering
     \includegraphics[width=0.7\textwidth]{images/surrogate_models/kernel_hp_mcmc.jpg}
     
-    \footnotesize{Image source: \lit{\href{https://arxiv.org/pdf/1502.05700.pdf}{Snoek et al. 2015}}}
+    \footnotesize{Image source: \lit{\href{https://arxiv.org/pdf/1206.2944.pdf}{Snoek et al. 2012}}}
 }
 
 
@@ -245,7 +257,7 @@
 \end{block}
 \end{column}
 
-\fhpause
+\pause
 \hfill
 
 \begin{column}{.48\textwidth}
@@ -288,7 +300,7 @@
 \captionsetup[subfigure]{position=top}
 \centering
 
-\fhpause
+\pause
 \renewcommand{\thesubfigure}{c}
 \subfloat[][no bootstrapping, \\ with random splits]{
 \includegraphics[width=0.55\textwidth, clip]{images/surrogate_models/rf_noboot_rand_split.png}
@@ -327,7 +339,7 @@
 \end{column}%
 
 \hfill%
-\fhpause
+\pause
 
 \begin{column}{.48\textwidth}
     \begin{block}{Disadvantages}
@@ -338,7 +350,7 @@
     \end{itemize}
     \end{block}
 
-\fhpause
+\pause
 \bigskip
 \bigskip
 \hspace*{0.5cm}These qualities make RFs a \alert{robust} \\
@@ -356,8 +368,8 @@
     \item Neural networks are more flexible \& scalable than Gaussian processes 
     \item But for use in Bayesian optimization, neural networks need to be made probabilistic
     
-\fhpause
-    \item Bayesian deep learning aims to deal with all sources of uncertainty \fhpause
+\pause
+    \item Bayesian deep learning aims to deal with all sources of uncertainty \pause
     \begin{itemize}
         \item E.g., we don't have a single weight vector anymore, but a distribution over weights
     \end{itemize}
@@ -396,7 +408,7 @@
 \begin{itemize}
     \item Fit a standard regression neural network to the data (with a linear output layer)
     \item Use the representation in the last hidden layer as \alert{basis functions $\phi(x)$} of the input $x$ 
-    \item \alert{Use Bayesian linear regression with these basis functions} \fhpause
+    \item \alert{Use Bayesian linear regression with these basis functions} \pause
     \begin{itemize}
         \item The last layer is linear in its parameters $\theta$  
         \item Therefore, the Bayesian linear regression formulas work directly 
@@ -418,13 +430,15 @@
 \begin{frame}[c]{Bayesian Optimization with BNNs: Overview of Existing Approaches}
 
 \begin{itemize}
-	    \item \lit{\href{https://arxiv.org/pdf/1502.05700.pdf}{Snoek et al. 2015}} Scalable Bayesian Optimization Using Deep Neural Networks (DNGO)
-	    \item \lit{\href{https://papers.nips.cc/paper/6117-bayesian-optimization-with-robust-bayesian-neural-networks.pdf}{Springenberg et al. 2016}} Bayesian Optimization with Robust Bayesian Neural Networks
-	    \item \lit{\href{https://arxiv.org/abs/1706.01825}{Hern\'andez-Lobato et al. 2017}} Parallel and Distributed Thompson Sampling for Large-scale Accelerated Exploration of Chemical Space
+	    \item  Scalable Bayesian Optimization Using Deep Neural Networks (DNGO) \lit{\href{https://arxiv.org/pdf/1502.05700.pdf}{Snoek et al. 2015}}
+	    \item  Bayesian Optimization with Robust Bayesian Neural Networks \lit{\href{https://papers.nips.cc/paper/6117-bayesian-optimization-with-robust-bayesian-neural-networks.pdf}{Springenberg et al. 2016}}
+	    \item  Parallel and Distributed Thompson Sampling for Large-scale Accelerated Exploration of Chemical Space \lit{\href{https://arxiv.org/pdf/1706.01825.pdf}{Hern\'andez-Lobato et al. 2017}}
 \bigskip
-\fhpause
-        \item \lit{\href{https://www.ismll.uni-hildesheim.de/pub/pdfs/schilling2015-ecml.pdf}{Schilling et al. 2015}} Hyperparameter Optimization with Factorized Multilayer Perceptrons
-        \item \lit{\href{https://papers.nips.cc/paper/7917-scalable-hyperparameter-transfer-learning}{Perrone et al. 2018}} Scalable Hyperparameter Transfer Learning
+
+\pause
+        \item  Hyperparameter Optimization with Factorized Multilayer Perceptrons \lit{\href{https://www.ismll.uni-hildesheim.de/pub/pdfs/schilling2015-ecml.pdf}{Schilling et al. 2015}}
+        \item  Scalable Hyperparameter Transfer Learning \lit{\href{https://papers.nips.cc/paper/2018/file/14c879f3f5d8ed93a09f6090d77c2cc3-Paper.pdf}{Perrone et al. 2018}}
+
 
 \end{itemize}
 
@@ -476,13 +490,13 @@ There is a lot more work on BNNs that hasn't been applied to Bayesian optimizati
 \begin{itemize}
 %        \item \lit{\href{https://www.cs.utoronto.ca/~radford/bnn.book.html}{Neal 1995}} Bayesian Learning for Neural Networks
 %        \item \lit{\href{https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf}{Bishop 2006}} Pattern Recognition and Machine Learning
-        \item Ensembles obtained simply by running SGD several times \lit{\href{https://arxiv.org/abs/1612.01474}{Lakshminarayanan et al. 2017}}
+        \item Ensembles obtained simply by running SGD several times \lit{\href{https://arxiv.org/pdf/1612.01474.pdf}{Lakshminarayanan et al. 2016}}
         %: Simple and Scalable Predictive Uncertainty Estimation using Deep Ensembles
-        \item Dropout \lit{\href{https://arxiv.org/abs/1506.02142}{Gal et al. 2016}} 
+        \item Dropout \lit{\href{https://arxiv.org/pdf/1506.02142.pdf}{Gal and Ghahramani. 2015}} 
         %Dropout as a Bayesian Approximation:
         %Representing Model Uncertainty in Deep Learning
-        \item Monte Carlo Batch Normalization \lit{\href{https://arxiv.org/abs/1802.06455}{Teye et al. 2018}} %Bayesian Uncertainty Estimation for Batch Normalized Deep Networks
-        \item Snapshot Ensembles \lit{\href{https://arxiv.org/abs/1704.00109}{Gao Huang et al. 2017}} 
+        \item Monte Carlo Batch Normalization \lit{\href{https://arxiv.org/pdf/1802.06455.pdf}{Teye et al. 2018}} %Bayesian Uncertainty Estimation for Batch Normalized Deep Networks
+        \item Snapshot Ensembles \lit{\href{https://arxiv.org/pdf/1704.00109.pdf}{Gao Huang et al. 2017}} 
         %Snapshot Ensembles: Train 1, get M for free
 \end{itemize}
 
@@ -506,3 +520,4 @@ There is a lot more work on BNNs that hasn't been applied to Bayesian optimizati
 
 \end{itemize}
 \end{frame}
+\end{document}

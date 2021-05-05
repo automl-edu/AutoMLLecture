@@ -26,7 +26,7 @@
 
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \litw{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \litw{\href{https://arxiv.org/pdf/1606.01885.pdf}{Li and Malik. 2017}}}
 
 \centering
 \includegraphics[width=0.4\textwidth]{images/l2o_comic}
@@ -37,7 +37,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \litw{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning \litw{\href{https://arxiv.org/pdf/1606.01885.pdf}{Li and Malik. 2017}}}
 
 \begin{block}{Reinforcement Learning for Learning to Optimize}
 \begin{description}
@@ -49,7 +49,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \pause
 \item[Cost/Reward] Objective value at the current location
 \begin{itemize}
-\item Since the RL agent will optimize the cumulative cost, this is equivalent to $\loss_{\text{sum}}$ \lit{Chen et al'17} ($\gamma=0$)
+\item Since the RL agent will optimize the cumulative cost, this is equivalent to $\loss_{\text{sum}}$ \lit{\href{https://arxiv.org/pdf/1611.03824.pdf}{Chen et al. 2017}} ($\gamma=0$)
 \item encourages the policy to reach the minimum of the objective function as quickly as possible
 \end{itemize}
 \pause
@@ -62,7 +62,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Learning to Optimize via Reinforcement Learning Results \litw{\href{https://arxiv.org/abs/1606.01885}{Li and Malik'17}}}
+\begin{frame}[c]{Learning to Optimize via Reinforcement Learning Results \litw{\href{https://arxiv.org/pdf/1606.01885.pdf}{Li and Malik. 2017}}}
 
 \centering
 \includegraphics[width=0.4\textwidth]{images/l2o_dnn}
@@ -78,7 +78,7 @@ Source: \url{https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c, fragile]{Learning Acquisition Functions \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c, fragile]{Learning Acquisition Functions \litw{\href{https://arxiv.org/pdf/1904.02642.pdf}{Volpp et al. 2019}}}
 
 \begin{itemize}
 \item Instead of learning everything, it might be sufficient to \alert{learn hand-design heuristics}
@@ -131,7 +131,7 @@ Add observation to data $D^{(\bocount)} := D^{(\bocount-1)} \cup \{\langle \x^{(
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Neural Acquisition Function  \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{Neural Acquisition Function  \litw{\href{https://arxiv.org/pdf/1904.02642.pdf}{Volpp et al. 2019}}}
 
 Although the \alert{acquisition function $\alpha$} depends on the history $\mathcal{D}^{(\bocount-1)}$ and the predictive model $\surro$, $\alpha$ mainly makes use of the \alert{predictive mean $\mu$ and variance $\sigma^2$}.
 
@@ -155,7 +155,7 @@ where $\weights$ are the parameters of a neural network, and $\mu$, $\sigma$, $\
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{RL to train Neural AF \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{RL to train Neural AF \litw{\href{https://arxiv.org/pdf/1904.02642.pdf}{Volpp et al. 2019}}}
 
 \begin{description}
 \item[Policy $\policy_\weights$:] Neural acquisition function $\alpha_\weights$
@@ -180,7 +180,7 @@ where $\weights$ are the parameters of a neural network, and $\mu$, $\sigma$, $\
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Policy \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{Policy \litw{\href{https://arxiv.org/pdf/1904.02642.pdf}{Volpp et al. 2019}}}
 
 \begin{itemize}
 \item The state is described by a discrete set of points $\xi^{(\bocount)}  = \{\xi_n\}^N_{n=1}$
@@ -201,7 +201,7 @@ $$\pi_\alpha(\cdot \mid s^{(\bocount)} ) = \text{Cat}\left[\alpha_\weights(\xi_1
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c,fragile]{Learning Acquisition Functions: Overview \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c,fragile]{Learning Acquisition Functions: Overview \litw{\href{https://arxiv.org/pdf/1904.02642.pdf}{Volpp et al. 2019}}}
 
 \centering
 \includegraphics[width=0.8\textwidth]{images/l2acq.png}
@@ -210,7 +210,7 @@ $$\pi_\alpha(\cdot \mid s^{(\bocount)} ) = \text{Cat}\left[\alpha_\weights(\xi_1
 \end{frame}
 %-----------------------------------------------------------------------
 %-----------------------------------------------------------------------
-\begin{frame}[c]{Results on Artificial Functions \litw{\href{https://arxiv.org/abs/1904.02642}{Volpp et al.'19}}}
+\begin{frame}[c]{Results on Artificial Functions \litw{\href{https://arxiv.org/pdf/1904.02642.pdf}{Volpp et al. 2019}}}
 
 \centering
 \includegraphics[width=0.9\textwidth]{images/l2acq_results.png}
@@ -218,7 +218,7 @@ $$\pi_\alpha(\cdot \mid s^{(\bocount)} ) = \text{Cat}\left[\alpha_\weights(\xi_1
 \medskip
 
 \begin{itemize}
-\item Approach by \lit{Volpp et al. '19} called MetaBO
+\item Approach by \lit{\href{https://arxiv.org/pdf/1904.02642.pdf}{Volpp et al. 2019}} called MetaBO
 \item MetaBO performs better than other acquisition functions\\ (EI, GP-UCB, PI) and other baselines (Random, TAF)
 \end{itemize}
 

@@ -1,4 +1,13 @@
-\videotitle{Issues and Best Practices in NAS Research}
+\input{../latex_main/main.tex}
+
+\title[AutoML: NAS]{AutoML: Neural Architecture Search (NAS)} 
+\subtitle{Issues and Best Practices in NAS Research}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+\begin{document}
+\maketitle
 
 %-------------------------------------------------
 %-------------------------------------------------
@@ -12,7 +21,7 @@
 	\begin{itemize}
 	  
 	  
-	  \item Most NAS methods are \alert{extremely difficult to reproduce and compare} \lit{\href{https://arxiv.org/pdf/1902.07638.pdf}{Li \& Talwalkar, 2019}}
+	  \item Most NAS methods are \alert{extremely difficult to reproduce and compare} \lit{\href{https://arxiv.org/pdf/1902.07638.pdf}{Li and Talwalkar. 2019}}
 	  \item For benchmarks used in almost all NAS papers:
 	  \myit{
 	  	\item[-] \alert{Training pipeline matters much more than neural architecture}
@@ -36,7 +45,7 @@
 	\column{0.42\textwidth}
 		\includegraphics[width=.8\textwidth]{images/nas-eval-is-frustatingly-hard}\\
 		\centering
-		\href{https://openreview.net/forum?id=HygrdpVKvr}{\lit{Yang et al., ICLR 2020}}
+		\lit{\href{https://openreview.net/pdf?id=HygrdpVKvr}{Yang et al. 2020}}
 	\end{columns}
 	
 }
@@ -48,16 +57,16 @@
 	\myit{
 	  \item \alert{Benchmarks}
 	  \myit{
-	  	\item[-] NAS-Bench-101 \href{https://arxiv.org/pdf/1902.09635.pdf}{\lit{Ying et al, ICML 2019}}
-	  	\item[-] NAS-Bench-201 \href{https://openreview.net/forum?id=HJxyZkBKDr}{\lit{Dong et al, ICML 2020}}
-	  	\item[-] NAS-Bench-1Shot1 \href{https://openreview.net/forum?id=SJx9ngStPH}{\lit{Zela et al, ICLR 2020}}
+	  	\item[-] NAS-Bench-101 \lit{\href{https://arxiv.org/pdf/1902.09635.pdf}{Ying et al. 2019}}
+	  	\item[-] NAS-Bench-201 \lit{\href{https://openreview.net/pdf?id=HJxyZkBKDr}{Dong and Yang.  2020}}
+	  	\item[-] NAS-Bench-1Shot1 \lit{\href{https://openreview.net/pdf?id=SJx9ngStPH}{Zela et al. 2020}}
 	  }
 \medskip
 \pause
-	  \item \alert{Best Practice Checklist} for Scientific Research in NAS\\ \href{https://arxiv.org/abs/1909.02453}{\lit{Lindauer \& Hutter, arXiv 2019}}
+	  \item \alert{Best Practice Checklist} for Scientific Research in NAS\\ \lit{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer and Hutter. 2020}}
 \medskip
 \pause
-	  \item \alert{Unifying open-source implementation} of modern NAS algorithms \\ \href{https://openreview.net/forum?id=SJx9ngStPH}{\lit{Zela et al, ICLR 2020}}
+	  \item \alert{Unifying open-source implementation} of modern NAS algorithms \\ \lit{\href{https://openreview.net/pdf?id=SJx9ngStPH}{Zela et al. 2020}}
 	  \myit{
 	  	\item[-] Finally enables empirical comparisons without confounding factors	  	
 	  }
@@ -70,7 +79,7 @@
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{Best Practice Checklist for NAS Research \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}{
+\myframe{Best Practice Checklist for NAS Research \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer and Hutter. 2020}}}{
 
 \myit{
 	\item Best practices for releasing code
@@ -90,7 +99,7 @@
 
 \begin{center}
 \begin{minipage}{0.8\textwidth}
-\begin{block}{Definition: NAS Benchmark \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}
+\begin{block}{Definition: NAS Benchmark \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer and Hutter. 2020}}}
 \textit{A NAS benchmark consists of a dataset (with a predifiend training-test split), a search space, and available runnable code with pre-defined hyperparameters for training the architectures.}
 \end{block}
 \end{minipage}
@@ -100,7 +109,7 @@
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{Best Practice Checklist for NAS Research \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}{
+\myframe{Best Practice Checklist for NAS Research \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer and Hutter. 2020}}}{
 
 \myit{
 	\item Best practices for comparing NAS methods
@@ -129,7 +138,7 @@ libraries, different runtimes for the different methods)?
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{Best Practice Checklist for NAS Research \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer \& Hutter, 2020}}}{
+\myframe{Best Practice Checklist for NAS Research \litw{\href{https://arxiv.org/pdf/1909.02453.pdf}{Lindauer and Hutter. 2020}}}{
 
 \myit{
 	\item Best practices for reporting important details
@@ -196,7 +205,7 @@ this required?
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{NAS-Bench-101: The First NAS Benchmark \litw{\href{http://proceedings.mlr.press/v97/ying19a.html}{Ying et al, 2018}}}{
+\myframe{NAS-Bench-101: The First NAS Benchmark \litw{\href{https://arxiv.org/pdf/1902.09635.pdf}{Ying et al. 2019}}}{
 
 \centering
 \myit{
@@ -226,7 +235,7 @@ this required?
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{NAS-Bench-101: The First Tabular NAS Benchmark \litw{\href{http://proceedings.mlr.press/v97/ying19a.html}{Ying et al, 2018}}}{
+\myframe{NAS-Bench-101: The First Tabular NAS Benchmark \litw{\href{https://arxiv.org/pdf/1902.09635.pdf}{Ying et al. 2019}}}{
 
 \centering
 \myit{
@@ -271,7 +280,7 @@ this required?
 %-----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframe{Evaluation of Blackbox NAS Methods on NAS-Bench-101 \litw{\href{http://proceedings.mlr.press/v97/ying19a.html}{Ying et al, 2019}}}{
+\myframe{Evaluation of Blackbox NAS Methods on NAS-Bench-101 \litw{\href{https://arxiv.org/pdf/1902.09635.pdf}{Ying et al. 2019}}}{
 	\myit{
 %		\item All methods find good architectures
 		\item RL outperforms random search
@@ -283,7 +292,7 @@ this required?
 
 \pause
 	\myit{
-		\item Note that the BO method SMAC \lit{\href{https://link.springer.com/chapter/10.1007/978-3-642-25566-3_40}{Hutter et al, 2011}} predated RL for \\NAS \lit{Zoph \& Le, 2017} by 6 years
+		\item Note that the BO method SMAC \lit{\href{https://link.springer.com/chapter/10.1007/978-3-642-25566-3_40}{Hutter et al. 2011}} predated RL for \\NAS \lit{\href{https://arxiv.org/pdf/1611.01578.pdf}{Zoph and Le. 2017}} by 6 years
 		\myit{
 			\item[-] Only now, benchmarks like NAS-Bench-101 allow for efficient comparisons
 		}
@@ -308,4 +317,5 @@ this required?
 		\alert{List all best practices for NAS you remember.}
 	}	 
 }
+\end{document}
 %-----------------------------------------------------------------------

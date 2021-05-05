@@ -1,4 +1,15 @@
-\videotitle{Computationally Expensive Acquisition Functions}
+\input{../latex_main/main.tex}
+
+
+\title{AutoML: Bayesian Optimization for HPO}
+\subtitle{Computationally Expensive Acquisition Functions}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+\begin{document}
+
+\maketitle
     
 %-----------------------------------------------------------------------
 \begin{frame}[c]{A Computationally Expensive Step: One-Step Look Ahead}
@@ -127,12 +138,12 @@ fit at iteration $\bocount$}
 %\bigskip 
 %\fhpause
 %    \item Approximating the expectation is the expensive step; for an efficient approach, see \lit{\href{https://arxiv.org/pdf/1807.02811.pdf}{Frazier 2018}}
-\fhpause
+\pause
 \bigskip
 \[
     \boxed{\text{Choose}\;\;\bonextsample = \argmax_{\conf\in\pcs}(\iter{\acq}_{KG}(\conf))}
     \]
-    \comment{\lit{\href{https://arxiv.org/pdf/1807.02811.pdf}{Frazier 2018}}}
+    \comment{\lit{\href{https://arxiv.org/pdf/1807.02811.pdf}{Frazier. 2018}}}
 \end{itemize}
 \end{frame}
 
@@ -174,9 +185,9 @@ fit at iteration $\bocount$}
 \end{algorithm}
 \end{minipage}
 
-\fhpause
+\pause
 \bigskip
-This sampling view is useful for intuition;\\ but in practice, there are more efficient ways to optimize KG \lit{\href{https://arxiv.org/pdf/1807.02811.pdf}{Frazier 2018}}
+This sampling view is useful for intuition;\\ but in practice, there are more efficient ways to optimize KG \lit{\href{https://arxiv.org/pdf/1807.02811.pdf}{Frazier. 2018}}
 
 \end{center}
 
@@ -187,12 +198,12 @@ This sampling view is useful for intuition;\\ but in practice, there are more ef
 \begin{itemize}
     \item Key idea: Evaluate $\conf$ which most \alert{reduces our uncertainty about the location of $\optconf$}
 \bigskip    
-\fhpause    
+\pause    
     \item We'll use the $p_{min}$ distribution to characterize the location of $\optconf$: \alert{\[p_{min}(\conf|\dataset) = p(\conf \in \argmin_{\conf' \in \pcs} (\surro(\conf') | \dataset))\]}
 \medskip
-\fhpause
+\pause
     \item Our uncertainty is then captured by the \alert{entropy $H( p_{min}(\cdot |\dataset))$ of the $p_{min}$ distribution}
-\fhpause
+\pause
 \bigskip    
     \item Minimizing $H( p_{min}(\cdot |\dataset))$ yields a peaked $p_{min}$ distribution, i.e., strong knowledge about the location of $\optconf$
     
@@ -254,10 +265,10 @@ This sampling view is useful for intuition;\\ but in practice, there are more ef
 
     \item The $p_{min}$ distribution characterizes the location of $\optconf$: \alert{\[p_{min}(\conf^*|\dataset) = p(\conf^* \in \argmin_{\conf' \in \pcs} (\surro(\conf') | \dataset))\]}
 \smallskip
-\fhpause
+\pause
     \item Our uncertainty about the location of $\optconf$ is captured by the \alert{entropy $H( p_{min}(\cdot |\dataset))$ of the $p_{min}$ distribution}
 \bigskip    
-\fhpause
+\pause
 \item \alert{Entropy search aims to minimize $H(p_{min})$}, to yield a peaked $p_{min}$ distribution:
     %, i.e., strong knowledge about the location of $\optconf$:
     
@@ -374,15 +385,15 @@ This sampling view is useful for intuition;\\ but in practice, there are more ef
 \begin{frame}[c]{Entropy Search: Variations}
 \begin{itemize}
     %\item<+-> Note how repeated Thompson Sampling inherently approximates sampling based entropy-search!
-    \item The sample-based approximation is slow; for a faster approximation with expectation propagation see the original ES paper  \lit{\href{http://jmlr.csail.mit.edu/papers/volume13/hennig12a/hennig12a.pdf}{Hennig et al. 2012}}
+    \item The sample-based approximation is slow; for a faster approximation with expectation propagation see the original ES paper  \lit{\href{http://jmlr.csail.mit.edu/papers/volume13/hennig12a/hennig12a.pdf}{Hennig and Schuler. 2012}}
 \medskip
     \item \alert{Predictive Entropy Search}  \lit{\href{http://papers.nips.cc/paper/5324-predictive-entropy-search-for-efficient-global-optimization-of-black-box-functions.pdf}{Hernández-Lobato et al. 2014}} is a frequently-used equivalent formulation that gives rise to more convenient approximations 
 \medskip
     \item \alert{Max-Value Entropy Search} 
-    \lit{\href{https://arxiv.org/abs/1703.01968}{Wang and Jegelka 2017}} is a recent variant that 
+    \lit{\href{https://arxiv.org/pdf/1703.01968.pdf}{Wang and Jegelka. 2017}} is a recent variant that 
     is cheaper to compute and has similar behavior 
 \medskip
-    \item Further reading and summary for ES: \lit{\href{https://arxiv.org/pdf/1602.01064.pdf}{Metzen 2016}}
+    \item Further reading and summary for ES: \lit{\href{https://arxiv.org/pdf/1602.01064.pdf}{Metzen. 2016}}
 \end{itemize}
 \end{frame}
 %-----------------------------------------------------------------------
@@ -396,3 +407,4 @@ This sampling view is useful for intuition;\\ but in practice, there are more ef
 %    \item \emph{Discussion.} How would you optimize the acquisition function in practice?
 \end{itemize}
 \end{frame}
+\end{document}

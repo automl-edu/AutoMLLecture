@@ -1,4 +1,15 @@
-\videotitle{BOHB}
+\input{../latex_main/main.tex}
+
+\title{Speedup Techniques for Hyperparameter Optimization}
+\subtitle{BOHB}
+\author[Frank Hutter]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+\begin{document}
+\maketitle
 %----------------------------------------------------------------------
 
 \begin{frame}[c]{Robust and Efficient Hyperparameter Optimization at Scale}
@@ -14,10 +25,10 @@ Desiderata for a practical solution to the hyperparamenter optimization problem:
     \item Effective Use of Parallel Resources
 %    \fhpause
     \item Conceptual / Algorithmic Simplicity
-    \fhpause
+    \pause
 \end{itemize}
 \bigskip
-To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press/v80/falkner18a.html}{Falkner, Klein and Hutter, ICML 2018}} combines Bayesian Optimization with Hyperband 
+To fulfill all of these desiderata, BOHB  combines Bayesian Optimization with Hyperband  \lit{\href{http://proceedings.mlr.press/v80/falkner18a/falkner18a.pdf}{Falkner et al. 2018}}
 
 \end{frame}
 %-----------------------------------------------------------------------
@@ -25,23 +36,23 @@ To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press
 \begin{frame}[c]{BOHB}
 \begin{itemize}
     \item BOHB combines the advantages of Bayesian Optimization and Hyperband
-    \myit{
+    \begin{itemize} 
         \item Bayesian Optimization for choosing configurations to achieve strong final performance
         \item Hyperband to choose the budgets for good anytime performance    
-    }
-\fhpause
+    \end{itemize}
+\pause
 \bigskip
     \item BOHB replaces the random selection of configurations at the beginning of each HB iteration by a model-based search
-\fhpause
+\pause
 \bigskip
     \item Details of the model
-    \myit{
+    \begin{itemize}
         \item Variant of the Tree Parzen Estimator, with a product kernel
         \item Models are fitted independently to the data for one budget at a time
-        \myit{
+        \begin{itemize}
             \item Specifically, always the highest budget that has enough data points
-        }
-    }
+        \end{itemize}
+    \end{itemize}
 \end{itemize}
 
 \end{frame}
@@ -99,7 +110,7 @@ To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press
 \end{minipage}
 \end{center}
 
-\fhpause
+\pause
 %\vspace{-2em}
 \begin{equation}
     l(\conf)=p(\obs \le \gamma| D_b)\quad\quad\quad\quad
@@ -107,7 +118,7 @@ To fulfill all of these desiderata, BOHB \lit{\href{http://proceedings.mlr.press
     \label{eq:TPE_Densities}
 \end{equation}
 
-\fhpause
+\pause
 \begin{itemize}
 	\item Note: $l^{'}(\conf)$ is similar to $l(\conf,)$ but has larger bandwidths
 %    \item To optimize EI, we sample $N_s$ points from $l^{'}(\conf)$ which is $l(\conf)$ but with all bandwidths multiplied by a factor $b_w$ to encourage more exploration around the promising configurations.
@@ -235,5 +246,6 @@ benchmarks. }
 \end{itemize}
 
 \end{frame}
+\end{document}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------

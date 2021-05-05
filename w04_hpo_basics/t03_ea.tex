@@ -156,7 +156,7 @@ with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$ and $\beta$ randomly sampled from
 
 \end{frame}
 
-\begin{frame}[containsverbatim]{Mutation for numeric representations}
+\begin{frame}[containsverbatim]{Mutation for numeric representations \litw{{\href{https://www.researchgate.net/publication/262320509_Analysing_mutation_schemes_for_real-parameter_genetic_algorithms}{K. Deb and D. Deb. 2014}}}}
   \textbf{Mutation:} individuals are changed, for example for $\xx \in \R^n$
   \begin{itemize}
   \item \textbf{Uniform mutation:} choose a random gene $\xxi$ and replace it with a value uniformly distributed (within the feasible range).
@@ -165,7 +165,7 @@ with $\bar\xx = \frac{1}{2} (\xx + \tilde\xx)$ and $\beta$ randomly sampled from
   \begin{center}
   \begin{figure}
     \includegraphics[height = 3.5cm, width = 4cm]{images/polynomial_mutation.png}\\
-    \scriptsize{Source: K. Deb, Analysing mutation schemes for real-parameter genetic algorithms, 2014}
+      %\scriptsize{Source: K. Deb, Analysing mutation schemes for real-parameter genetic algorithms, 2014}
   \end{figure}
    \end{center}
    % \framebreak
@@ -336,7 +336,7 @@ We use a $(\mu + \lambda)$ selection. The selected individuals are green.
   \begin{blocki}{Advantages}
     \item Conceptually simple, yet powerful enough to solve complex problems (including HPO)
     \item All parameter types possible in general
-    \item Highly parallelizable (depends on $\mu$)
+    \item Highly parallelizable (depends on $\lambda$)
     \item Allows customization via specific variation operators
     \end{blocki}
 

@@ -1,10 +1,19 @@
-\videotitle{The One-Shot Model}
+\input{../latex_main/main.tex}
+
+\title[AutoML: NAS]{AutoML: Neural Architecture Search (NAS)} 
+\subtitle{The One-Shot Model}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+\begin{document}
+\maketitle
 
 %-------------------------------------------------
 %-------------------------------------------------
 
 %----------------------------------------------------------------------
-\myframetop{One-shot models: convolutional neural fabrics \litw{\href{https://arxiv.org/pdf/1606.02492.pdf}{Saxena and Verbeek, 2017}}}{
+\myframetop{One-shot models: convolutional neural fabrics \litw{\href{https://arxiv.org/pdf/1606.02492.pdf}{Saxena and Verbeek. 2017}}}{
 	\myit{
 		\item A \alert{one-shot model} is a big model that has all architectures in a search space as submodels
 		\myit{
@@ -108,7 +117,7 @@
 %----------------------------------------------------------------------
 
 
-\myframetop{Training the one-shot model -- standard SGD \litw{\href{https://arxiv.org/pdf/1606.02492.pdf}{Saxena and Verbeek, 2017}}}{
+\myframetop{Training the one-shot model -- standard SGD \litw{\href{https://arxiv.org/pdf/1606.02492.pdf}{Saxena and Verbeek. 2017}}}{
 
 	\myit{
 \visible<1->{
@@ -158,7 +167,7 @@
 
 
 %----------------------------------------------------------------------
-\myframetop{Training the one-shot model -- DropPath \litw{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al., 2018}}}{
+\myframetop{Training the one-shot model -- DropPath \litw{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al. 2018}}}{
 	\centering
 	
 	\begin{itemize}
@@ -222,8 +231,8 @@
 		%$\mathcal{A}$.
 		\visible<3->{
 		\myit{
-			\item[-] \textbf{Random Search with Weight Sharing} \lit{\href{https://arxiv.org/pdf/1902.07638.pdf}{Li and Talwalkar, 2020}} $\longrightarrow$ sample from uniform distribution
-			\item[-] \textbf{ENAS} \lit{\href{https://arxiv.org/pdf/1802.03268.pdf}{Pham et al., 2018}} $\longrightarrow$ sample from the learned policy of a RNN controller
+			\item[-] \textbf{Random Search with Weight Sharing} \lit{\href{https://arxiv.org/pdf/1902.07638.pdf}{Li and Talwalkar. 2020}} $\longrightarrow$ sample from uniform distribution
+			\item[-] \textbf{ENAS} \lit{\href{https://arxiv.org/pdf/1802.03268.pdf}{Pham et al. 2018}} $\longrightarrow$ sample from the learned policy of a RNN controller
 		}
 		}
 \pause
@@ -324,7 +333,7 @@
 \begin{center}
 \vspace*{-0.3cm}
 	        \includegraphics[width=.7\textwidth]{images/bender_correlation_1.png}\\
-	        \scriptsize{From \smaller{\lit{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al., 2018}}}}
+	        \scriptsize{From \smaller{\lit{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al. 2018}}}}
 \end{center}
 	    \column{0.09\textwidth}
 
@@ -344,5 +353,6 @@
 		\item Discussion:\\ \alert{What migth be some downsides of using the one-shot model for NAS?}
 	}	 
 }
+\end{document}
 %-----------------------------------------------------------------------
 
