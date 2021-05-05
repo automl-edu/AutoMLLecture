@@ -1,0 +1,32 @@
+
+
+\pgfmathdeclarefunction{gauss}{2}{%
+	\pgfmathparse{1/(#2*sqrt(2*pi))*exp(-((x-#1)^2)/(2*#2^2))}%
+}
+\tikzstyle{myarrow}=[->, thick]
+\begin{tikzpicture}
+\begin{axis}[scale=0.525,
+no markers, domain=82:118, samples=100,
+axis lines*=left, xlabel=$IQ$,axis y line=none,
+every axis x label/.style={at=(current axis.right of origin),anchor=west},
+every x tick label/.append style={font=\scriptsize, yshift=0.5ex},
+height=5cm, width=12cm,label style={font=\tiny},
+xtick={80, 85, 90, 95, 100, 105, 110, 115, 120},
+xticklabels={$80$, $85$, $90$, $95$, $100$, $105$, $110$, $115$, $120$},
+ytick=\empty,
+enlargelimits=false, clip=false, axis on top,
+x=0.25cm, y=0.25cm/.004,
+]
+\addplot [fill=black!90, draw=none, domain=112.8:118] {gauss(100,15/sqrt(9))} \closedcycle;
+\addplot [fill=black!90, draw=none, domain=82:87.2] {gauss(100,15/sqrt(9))} \closedcycle;
+%\addplot [fill=black!10, draw=none, domain=82:112.8] {gauss(100,15/sqrt(9))} \closedcycle;
+\addplot [thick,cyan!50!black] {gauss(100,15/sqrt(9))};
+\coordinate (statright) at (axis cs:112.9,0.0035);
+\coordinate (statleft) at (axis cs:87.2,0.0035);
+\coordinate (statlabelright) at (axis cs:115,0.0075);
+\coordinate (statlabelleft) at (axis cs:85,0.0075);
+\draw[-, thin] (statleft) -- (statlabelleft) node[above,font=\tiny]{$.0052$};
+\draw[-, thin, black] (statright) -- (statlabelright) node[above,font=\tiny]{$.0052$};
+\end{axis}
+
+\end{tikzpicture}

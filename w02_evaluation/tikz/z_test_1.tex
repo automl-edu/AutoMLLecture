@@ -1,0 +1,26 @@
+
+
+\pgfmathdeclarefunction{gauss}{2}{%
+	\pgfmathparse{1/(#2*sqrt(2*pi))*exp(-((x-#1)^2)/(2*#2^2))}%
+}
+\tikzstyle{myarrow}=[->, thick]
+\begin{tikzpicture}
+\begin{axis}[scale=0.75,
+no markers, domain=82:118, samples=100,
+axis lines*=left, xlabel=$IQ$,axis y line=none,
+every axis x label/.style={at=(current axis.right of origin),anchor=west},
+every x tick label/.append style={font=\scriptsize, yshift=0.5ex},
+height=5cm, width=12cm,label style={font=\tiny},
+xtick={80, 85, 90, 95, 100, 105, 110, 115, 120},
+xticklabels={$80$, $85$, $90$, $95$, $100$, $105$, $110$, $115$, $120$},
+ytick=\empty,
+enlargelimits=false, clip=false, axis on top,
+x=0.25cm, y=0.25cm/.004,
+]
+\addplot [thick,cyan!50!black] {gauss(100,15/sqrt(9))};
+\coordinate (stat) at (axis cs:112.8,0.00325);
+\coordinate (statlabel) at (axis cs:112.8,-.01);
+\draw[myarrow, black!75] (statlabel) node [below, font=\scriptsize] {$\bar{x}=112.8$} -- (stat);
+\end{axis}
+
+\end{tikzpicture}
