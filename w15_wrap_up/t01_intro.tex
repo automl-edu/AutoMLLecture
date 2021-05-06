@@ -40,11 +40,9 @@
 
 \begin{frame}{From HPO to AutoML}
     \begin{center}
-      \includegraphics[width = 0.9\linewidth]{images/drawing.pdf}  
+      \includegraphics[width = 0.9\linewidth]{images/18_AutoML-Components-Overview-Infographic_corrected.png}  
     \end{center}
 \end{frame}
-
-\section{The Missing Building Blocks}
 
 \begin{frame}{What is missing?}
   \begin{columns}
@@ -86,39 +84,6 @@
   \end{columns}
 \end{frame}
 
-% \begin{frame}{Automate HPO}
-
-%   \begin{columns}
-%     \begin{column}{0.59\textwidth}
-
-%       For AutoML the user only supplies \ldots
-%       \begin{itemize}
-%         \item dataset,
-%         \item performance measure and
-%         \item usually a time budget
-%       \end{itemize}
-
-%       To do HPO we need to \ldots
-%       \begin{itemize}
-%         \item preprocessing manually,
-%         \item decide on an optimization algorithm,
-%         \item an ML algorithm (to generate Inducer $\inducer$),
-%         \item a search space $\pcs$ and
-%         \item a resampling strategy to evaluate $\cost(\conf)$.
-%       \end{itemize}
-
-%       To build an AutoML System we have to make these choices automatically $\rightarrow$ Following slides.
-
-%     \end{column}%
-%     \begin{column}{0.4\textwidth}
-%       \begin{center}
-%         \includegraphics[width = \linewidth]{images/tuning.pdf}    
-%       \end{center}
-%     \end{column}
-%   \end{columns}
-
-% \end{frame}
-
 \begin{frame}{Choice of Learning Algorithm}
   \begin{itemize}
     % \item A good AutoML System should consider more than one learning algorithm. More on that later.
@@ -126,7 +91,7 @@
         are likely needed.
 
         
-    \item Studies~\lit{{\href{https://jmlr.org/papers/volume15/delgado14a/delgado14a.pdf}{Fernandez-Delgado et al. 2014}}} and experience show:\\
+    \item Studies and experience show:\\
 
         One these is often good -- on tabular data:
     \begin{itemize}
@@ -153,37 +118,44 @@
 
 \begin{frame}{Choice of Search Space for a Learning Algorithm}
   \begin{columns}
+  	
+  	\begin{column}{0.4\textwidth}
+  		\begin{center}
+  			\only<1>{
+  				\includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab1.pdf}
+  			}
+  			\only<2->{
+  				\includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab3.pdf}   
+  			}
+  			
+  			{\tiny Source: \lit{\href{https://www.jmlr.org/papers/volume20/18-444/18-444.pdf}{Probst et al. 2019 }}.}
+  			
+  		\end{center}
+  	\end{column}
+  	
     \begin{column}{0.6\textwidth}
-    % Which hyperparameters should we consider for a given learning algorithm?
+    
     Ranges often selected based on experience
     \begin{itemize}
 
-      \item See other AutoML frameworks: e.g.\ Auto-Sklearn 2.0~\lit{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}
+      \item See other AutoML frameworks: e.g.\ Auto-Sklearn~2.0 \lit{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}
 
-      \item Sensitivity analysis often does not exist for ML algorithms
+      \item Sensitivity analysis often does not exist for ML~algorithms
       \item Check literature on specific ML algorithm
     \end{itemize}
+	\pause
     Options for automation:
-    \begin{itemize}
+    \begin{enumerate}
       \item Use huge search space to cover all possibilities \\ 
             (combine with meta-learning for good initial design for Bayesian optimization)
-      \item Use results of meta-experiments to obtain smaller search space that is estimated to work well.
-      % \item FIXME: Wollte Bernd hier nochwas spezielles?
-    \end{itemize}
+      \begin{itemize} 
+      		\item Use results of meta-experiments to obtain smaller search space that is estimated to work well.
+       \end{itemize}
+   		\pause
+   	  \item Start with a small space and increase bit by bit
+    \end{enumerate}
     \end{column}%
-    \begin{column}{0.4\textwidth}
-      \begin{center}
-        \only<1>{
-          \includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab1.pdf}
-        }
-        \only<2>{
-          \includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab3.pdf}   
-        }
 
-        {\tiny Taken from \lit{\href{https://www.jmlr.org/papers/volume20/18-444/18-444.pdf}{Probst et al. 2019 }}.}
-
-      \end{center}
-    \end{column}
   \end{columns}
 \end{frame}
 
@@ -208,9 +180,10 @@
     \end{column}
     
     \begin{column}{0.5\textwidth}
+    	\pause
  Watch out for this:       
     \begin{itemize}
-      \item Small sample size situation because of imbalancies    
+      \item Small sample size because of imbalances    
       \item Leave-one-object out
       \item Time dependencies
       \item A good AutoML system should let you customize resampling
@@ -233,554 +206,27 @@
 
   Complex search space
   \begin{itemize}
-    \item[$\rightarrow$] EA with exploratory character, TPE, BO with RF 
+    \item[$\rightarrow$] BO with RF, EA with exploratory character, TPE, 
     % \item[$\rightarrow$] Make use of Grey-Box Optimizers: Hyperband, BOHB
   \end{itemize}
+  \pause
   Numerical (lower-dim) search space and tight budget
   \begin{itemize}
-    \item[$\rightarrow$] BO with GP
+    \item[$\rightarrow$] BO with GP\footnote{Still has its own hyperparameters\lit{\href{https://arxiv.org/abs/1908.06674}{Lindauer et al. 2019}}}
   \end{itemize}
-  Expensive evals
+  \pause
+  Expensive evaluations
   \begin{itemize}
     \item[$\rightarrow$] Hyperband, BOHB
   \end{itemize}
+  \pause
   Deep learning 
   \begin{itemize}
-    \item[$\rightarrow$]Parametrize architectures, then HPO, see above
-    \item[$\rightarrow$]NAS 
+    \item[$\rightarrow$] common practice: Parameterize architectures, then HPO -- better do it jointly!
+    \item[$\rightarrow$] one-shot models and gradient-based optimization
   \end{itemize}
 
 \end{frame}
-
-
-
-\begin{frame}{Preprocessing}
-  \begin{columns}
-    \begin{column}{0.5\textwidth} 
-      Ideal AutoML systems should also optimize: 
-      % the following steps wrt.\ given cost function:
-      \begin{itemize}
-        \item[\ding{55}] Data preprocessing
-        \item[\ding{55}] Feature engineering
-        \item[\ding{55}] Feature selection
-          % \item Feature construction  
-        \item[\ding{51}] Model training
-      \end{itemize}
-      \vspace{10em}
-      {\tiny \ding{51} = already covered, \ding{55} = not covered so far}
-    % We already know how to optimize the ml algorithm. How about the preprocessing steps?
-    \end{column}%
-    \begin{column}{0.5\textwidth}
-      \begin{center}
-        \includegraphics[width = \linewidth]{images/AutoMLPipeline.jpg}  
-      \end{center}
-    \end{column}
-  \end{columns}
-  
-\end{frame}
-
-\section{Common Preprocessing Steps}
-
-\begin{frame}{Preprocessing capabilities differ heavily}
-  \begin{columns}
-    \begin{column}{0.6\textwidth}
-      \vspace*{-1cm}
-      \begin{center}
-        \includegraphics[width = \linewidth]{images/Truong2019Towards_fig2.pdf}
-      \end{center}
-    \end{column}%
-    \begin{column}{0.4\textwidth}
-    \small
-
-      Taken from~\lit{\href{https://doi.org/10.1109/ICTAI.2019.00209}{Truong et al. 2019}}.
-
-      \vspace{1em}
-
-      Highlighted: Non-commercial AutoML frameworks
-
-      \begin{itemize}
-        \item Auto-detection of feature types: some
-        \item Preprocess categoricals: some
-        \item Imputation: all
-        \item Class imbalance handling: all
-      \end{itemize}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Cleaning}
-  Data cleaning is hard to fully automate, but a few heuristics exist:
-  \begin{itemize}
-    \item Remove ID columns, columns with mostly unique values.
-    \item Outlier detection 
-    \item Detect time series or spatial data $\rightarrow$ 
-        at the very least, evaluation and resampling needs to be adapted,
-        but feature extraction likely as well
-  \end{itemize}
-
-  \vspace{1cm}
-
-  It is highly unclear how much of this is required input by the user
-  (last point is more or less task specification),
-  and what should be automated by the system. 
-
-\end{frame}
-
-\begin{frame}{Categorical Features: Dummy Encoding}
-  % Goals:
-  \begin{itemize}
-    \item Most simple encoding
-    \item Works well with low cardinality categoricals
-  \end{itemize}
-  % ML algorithm does not support categorical features + few unique values $\rightarrow$ use dummy encoding.
-  % Most simple technique to encode categ
-  \begin{center}
-    \resizebox{0.3\linewidth}{!}{
-    \begin{tabular}{r|l|l}
-    \hline
-    SalePrice & Central.Air & Bldg.Type\\
-    \hline
-    189900 & Y & 1Fam\\
-    \hline
-    195500 & Y & 1Fam\\
-    \hline
-    213500 & Y & TwnhsE\\
-    \hline
-    191500 & Y & TwnhsE\\
-    \hline
-    236500 & Y & TwnhsE\\
-    \hline
-    \end{tabular}
-    } \\
-    \begin{tikzpicture}
-      %\useasboundingbox (-2,0);
-      \node[single arrow,draw=black,fill=black!10,minimum height=1cm,shape border rotate=270] at (0,-1) {};
-    \end{tikzpicture} \\
-  \resizebox{0.9\linewidth}{!}{
-    \begin{tabular}{r|r|r|r|r|r}
-    \hline
-    SalePrice & Y & Bldg.Type.2fmCon & Bldg.Type.Duplex & Bldg.Type.Twnhs & Bldg.Type.TwnhsE\\
-    \hline
-    189900 & 1 & 0 & 0 & 0 & 0\\
-    \hline
-    195500 & 1 & 0 & 0 & 0 & 0\\
-    \hline
-    213500 & 1 & 0 & 0 & 0 & 1\\
-    \hline
-    191500 & 1 & 0 & 0 & 0 & 1\\
-    \hline
-    236500 & 1 & 0 & 0 & 0 & 1\\
-    \hline
-    \end{tabular}
-  }
-  \end{center}
-\end{frame}
-
-\begin{frame}{Categorical Features: Target / Impact Encoding}
-  \begin{itemize}
-    \item Well known from CART
-    \item Handles high cardinality categoricals, too
-  \end{itemize}
-
-  % Avoid high cardinality categorical features because they are problematic for all ML algorithms $\rightarrow$ use target encoding (also impact encoding).
-  \begin{columns}
-    \begin{column}{0.7\textwidth}
-
-
-      \textbf{Goal}: Encodes each categorical $\bm{x}$ as a single numeric $\tilde{\bm{x}}$
-      
-      \vspace*{-0.5cm}  
-      {\footnotesize
-      \begin{align*}
-      \text{Regression:} \operatorname{Impact}(x) &= \E(\bm{y} | x) - \E(\bm{y}) \\
-      \text{Classification:} \operatorname{Impact}(x) &= \operatorname{logit}(P( y = \text{target} | x)) - \operatorname{logit}(P( y = \text{target}))
-      \end{align*}
-      }
-      \vspace*{-0.5cm}  
-      \begin{itemize}
-
-        \item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/pdf/1611.09477.pdf}{Zumel et al. 2019}}
-
-        \item Advantage: Handles unknown categorical levels on test data
-      \end{itemize}
-      Alternatives: 
-      \begin{itemize}
-    \item factorization machines 
-    \item clustering feature levels 
-    \item feature hashing
-      \end{itemize}
-    \end{column}%
-    \begin{column}{0.3\textwidth}
-      \vspace{-1cm}
-      \begin{center}
-        %\includegraphics[width = \textwidth]{images/scetch_impact_encoding.pdf}
-        \resizebox{0.8\columnwidth}{!}{
-        \begin{tikzpicture}
-          \path
-            (0,1) coordinate (A) node[above, inner sep=0] {
-              \begin{tabular}{ c c }
-                \multicolumn{2}{ c }{$\dataset_{\text{train}}$} \\
-                %\hline
-                $x$ & $y$  \\
-                \hline
-                A & 10 \\
-                A & 20 \\
-                B & 30 \\
-              \end{tabular}
-            }
-            (0,-1) coordinate (B) node[below, inner sep=0] {
-              \begin{tabular}{ c c }
-                \multicolumn{2}{ c }{$\dataset_{\text{test}}$} \\
-                %\hline
-                x & $\tilde{x}$  \\
-                \hline
-                A & -5 \\
-                B & 10 \\
-                C & 0 \\
-              \end{tabular}
-            }
-            (1,0) coordinate (C) node[right, inner sep=0] {
-              \begin{tabular}{ c c }
-                \multicolumn{2}{ c }{Encoding} \\
-                %\hline
-                $x$ & $\tilde{x}$  \\
-                \hline
-                A & -5 \\
-                B & 10 \\
-              \end{tabular}
-            };
-          %\draw[->] (A)--(B) (0,0) -- node[above]{}(C);
-          \draw[myarrow, shorten <=0.1cm, shorten >=0.1cm] (A.south)--(C.north);
-          \draw[myarrow, shorten <=0.1cm, shorten >=0.1cm] (C.south)--(B.north);
-        \end{tikzpicture}
-        }
-      \end{center}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Common Preprocessing Steps: Missing Values}
-  \begin{columns}
-    \begin{column}{0.7\textwidth}
-      \begin{itemize}
-        \item Replace missings with imputed values, try not to 
-            disturb distribution too much
-        \item Examples: mean, median, mode, sample from histogram,
-            predict value based on other features
-        \item Additional factor column indicating missingness can help
-            if NA-state carries information for target
-        \item \emph{Out-Of-Range} works often well for tree-based techniques
-            (RF and boosting!), saves extra missingness col
-        \item For inference, simple imputation is often shunned, 
-            and multiple, model-based imputation recommended; 
-            for prediction naive imputation often works remarkably well
-
-      \end{itemize}
-    \end{column}%
-    \begin{column}{0.3\textwidth}
-            \vspace{-0.65cm}
-      \begin{center}
-        %\includegraphics[width = \textwidth]{images/scetch_impact_encoding.pdf}
-        \resizebox{0.9\columnwidth}{!}{
-        \begin{tikzpicture}
-          \path
-            (0,1) coordinate (A) node[above, inner sep=0] {
-              \begin{tabular}{ c c }
-                \multicolumn{2}{ c }{$\dataset_{\text{train}}$} \\
-                %\hline
-                $x_1$ & $x_2$  \\
-                \hline
-                10 & 3 \\
-                NA & 2 \\
-                5  & NA \\
-              \end{tabular}
-            }
-            (0,-1) coordinate (B) node[below, inner sep=0] {
-              \begin{tabular}{ c c }
-                \multicolumn{2}{ c }{$\tilde{\dataset}_{\text{train}}$} \\
-                %\hline
-                $x_1$ & $x_2$  \\
-                \hline
-                10  & 3 \\
-                100 & 2 \\
-                5   & 30 \\
-              \end{tabular}
-            }
-            (1,0) coordinate (C) node[right, inner sep=0] {
-              \begin{tabular}{ c c }
-                %\multicolumn{2}{ c }{Replacements} \\
-                %\hline
-                Feature & NA  \\
-                \hline
-                $x_1$ & 100 \\
-                $x_2$ & 30 \\
-              \end{tabular}
-            };
-          %\draw[->] (A)--(B) (0,0) -- node[above]{}(C);
-          \draw[myarrow, shorten <=0.1cm, shorten >=0.1cm] (A.south)--(C.north);
-          \draw[myarrow, shorten <=0.1cm, shorten >=0.1cm] (C.south)--(B.north);
-        \end{tikzpicture}
-        }
-        \end{center}
-        {\footnotesize
-        \emph{Out of range} imputation
-        }
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Feature Selection}
-    \begin{columns}
-      \begin{column}{0.4\textwidth}
-        \begin{itemize}
-
-          \item Filter; for ultra-highdim tasks
-          \item Stepwise / wrapper methods; 
-              % m: Needs to be applied on the whole pipeline (impractical!)
-          seldom increases performance when well-regularized 
-              learners are used, but quite expensive 
-          \item Embedded: CART, lasso, \ldots 
-          \item Selection interesting when predictive performance vs. sparseness
-              should be optimized $\rightarrow$ multi-criteria optimization
-            \item Combined feature selection and HPO: \lit{\href{https://arxiv.org/pdf/1912.12912.pdf}{Binder et al. 2020}}
-
-        \end{itemize}
-      \end{column}%
-      \begin{column}{0.6\textwidth}
-        \begin{center}
-          \includegraphics[width=0.35\textwidth, trim=450 100 110 60, clip]{images/feat_extr_vs_selection.pdf}%
-          \includegraphics[width=0.55\linewidth]{images/Binder2020multiobjective_fig3.pdf}
-
-
-          {\tiny \hfill Taken from \lit{\href{https://arxiv.org/pdf/1912.12912.pdf}{Binder et al. 2020}}.}
-        \end{center}
-      \end{column}
-    \end{columns}
-    
-\end{frame}
-
-\begin{frame}{Common Feature Construction Methods}
-  \begin{columns}
-    \begin{column}{0.6\textwidth}
-    Reduction:
-    \begin{itemize}
-      \item PCA, ICA, autoencoder
-    \end{itemize}
-
-    Feature extraction:
-    \begin{itemize}
-      \item Polynomial features: $x_j \longrightarrow x_j, x_j^2, x_j^3, ...$
-      \item Interactions: $x_j, x_k \longrightarrow x_j, x_k, x_j \cdot x_k$
-    \end{itemize}
-
-    Feature generation:
-    \begin{itemize}
-      \item Transform to ``circular'' features (month, day) \\
-      e.g.\ $\tilde x_1 = sin(2\pi \cdot x /24)$ and $\tilde x_2 = cos(2\pi \cdot x /24)$
-    \end{itemize}
-    
-    Combine with external data:
-    \begin{itemize}
-      \item names $\longrightarrow$ gender, ethnicity, age
-      \item home address $\longrightarrow$ household income
-      \item location + date $\longrightarrow$ weather
-    \end{itemize}
-
-    \end{column}%
-    \begin{column}{0.4\textwidth}
-      \begin{center}
-        \includegraphics[width= \textwidth, trim=0 100 390 60, clip]{images/feat_extr_vs_selection.pdf}
-      \end{center}
-    \end{column}
-  \end{columns}
-    
-\end{frame}
-
-
-\begin{frame}{Imbalanced Classes}
-  \begin{itemize}
-    \item Oversampling of minority class
-    \item Seldom: undersampling of majority class
-    \item Intelligent oversampling strategies which create
-        synthetic observations (SMOTE) 
-        % can lead to improvement in predictive accuracy
-  \end{itemize}
-  %FIXME: HIER SOLLTE SMOTE PIC REIN
-      \begin{center}
-        \includegraphics[width= 0.7\textwidth]{images/smote.png}
-      \end{center}
-\end{frame}
-
-\section{Practical Problems}
-
-\begin{frame}{Practical Problems: Stability}
-  AutoML system should: 
-  \begin{itemize}
-    \item never fail to return a result
-    \item terminate within a given time
-    \item save intermediate results and allow to continue
-  \end{itemize}
-
-  Failure points:
-  \begin{itemize}
-    \item optimizer can crash (e.g.\ GP in BO) 
-        % $\longrightarrow$ return intermediate result, continue with warmstart / random search
-    \item training can crash (e.g. segfault) 
-    \item training can run "forever" 
-    % \item prediction can crash $\longrightarrow$ use prediction of fallback learner
-  \end{itemize}
-
-  Ways out
-  \begin{itemize}
-    \item Encapsulate train/predict in separate process from HPO
-    \item Ressource limit time and memory of that process by OS
-    \item If learner crashes, run robust fallback (constant predictor)   
-    \item Use "robust" HPO, run random config as last resort if proposal fails (exploration)
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Practical Problems: Parallelization}
-  Parallelization should allow:
-  \begin{itemize}
-    \item multiple cores
-    \item multiple nodes 
-  \end{itemize}
-
-  Possible parallelization levels:
-  \begin{itemize}
-    \item training of learner (threading / GPU)
-    \item resampling
-    \item eval configurations (batch proposal of HPO)
-  \end{itemize}
-
-  Possible problems:
-  \begin{itemize}
-    \item Sequential nature of HPO algorithms (e.g.\ BO)
-    \item Heterogeneous runtimes cause idling $\longrightarrow$ 
-        asynchronous HPO attractive, but more complex
-    \item Main memory or CPU-cache becomes bottleneck
-    \item Communication between workers
-  \end{itemize}
-
-\end{frame}
-
-
-\section{Combined Preprocessing and Model Building: Pipelining}
-
-\begin{frame}{Linear Pipelining}
-
-  % Most preprocessing steps have parameters or can be switched on/off in the pipeline.
-
-  % \vspace{1em}
-
-  % \textbf{Goal:} Find optimal preprocessing parameters $\rightarrow$ HPO
-
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-    \begin{itemize}
-      \item Applying preprocessing to the whole dataset leads to data leakage
-      \item Preprocessing should have train and predict steps, too
-      \item Can add it to learner, and embed it in CV    
-      \item Surprise: Preproc has hyperparameters 
-      \item Optimize pipeline jointly: $\pcs = \pcs_{\text{preproc}} \times \pcs_\inducer$ 
-      \item Still HPO, not much different than for single learner
-      \item $\pcs$ "simply" of higher dimension
-    \end{itemize}
-    \end{column}%
-    \begin{column}{0.5\textwidth}
-      \begin{center}
-        \includegraphics[page=19, width=\textwidth, trim=20 60 30 35, clip]{images/mlr3Pipelines_graphics}
-      \end{center}
-    \end{column}
-  \end{columns}
-
-\end{frame}
-
-\begin{frame}{Nonlinear Pipelines}
-
-  \begin{columns}
-    \begin{column}{0.6\textwidth}
-      Ideal to let HPO choose automatically:
-      \begin{itemize}
-      \item preprocessing
-      \item feature extraction   
-      \item learner
-      \item[$\rightarrow$] $\pcs$ becomes hierarchical search space!
-      \end{itemize}
-      
-      \vspace*{0.5em}
-
-      Suitable optimizers:
-      \begin{itemize}
-        \item TPE
-        \item Random search, hyperband with sampler that follows the hierarchy
-        \item BO with RF (imputation or hierarchical trees)
-        \item Evolutionary approaches (similar to NAS)
-      \end{itemize}
-
-    \end{column}%
-    \begin{column}{0.4\textwidth}
-      \begin{center}
-        %\includegraphics[page=7, width=\textwidth, trim=160 0 30 160, clip]{images/mlr3Pipelines_graphics}
-        %\includegraphics[width = \textwidth]{images/stacking.pdf}
-        \includegraphics[width = \textwidth, trim=160 0 160 5, clip]{images/dag.pdf}
-      \end{center}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Obtaining Final Model}
-
-  Options:
-  \begin{itemize}
-    \item Choose the optimal path as linear pipeline.
-    \item Build ensemble of best configurations\\ 
-        (e.g. \lit{\href{https://papers.nips.cc/paper/2015/file/11d0e6287202fced83f79975ec59a3a6-Paper.pdf}{Feurer et al. 2015}}, \lit{\href{https://www.automl.org/wp-content/uploads/2020/07/AutoML_2020_paper_61.pdf}{LeDell and Poirier. 2020}}).
-
-  \end{itemize}
-  \begin{center}
-    \includegraphics[width = 0.60\textwidth]{images/stacking.pdf}
-  \end{center}
-    
-\end{frame}
-
-\begin{frame}{Current Benchmark on Tabular Data}
-  \begin{columns}
-    \begin{column}{0.43\textwidth}
-      \vspace{-0.7cm}
-
-      \begin{center}
-        \includegraphics[width = \textwidth]{images/gijsbers_open_2019_tab2.pdf}
-      \end{center}
-    \end{column}%
-    \begin{column}{0.57\textwidth}
-      Table taken from \lit{\href{http://arxiv.org/pdf/1907.00909.pdf}{Gijsbers et al. 2019}}.
-
-      \begin{itemize}
-        \item On some datasets AutoML yields big performance improvements
-        \item On many datasets RF is equally good
-        \item Need more and diverse benchmarks
-      \end{itemize}
-
-    \end{column}
-  \end{columns}
-\end{frame}
-
-% \begin{frame}[containsverbatim,allowframebreaks]{Software}
-
-% \begin{itemize}
-%   \item DataRobot (comercial, gui)
-%   \item H20.ai (comercial but open source, r, python)
-%   \item TPOT, Tree-based Pipeline Optimization Tool  (2016-cont, open source, evolutionary approach) % show plot https://github.com/EpistasisLab/tpot
-%   \item AutoWEKA (2016, open source)
-%   \item mlr3automl (2020, prelim)
-%   \item Hyperopt-Sklearn (2014-cont) Only HPO
-%   \item Auto-Sklearn (2.0) (2015-cont) BO, ensembles, meta-learning
-% \end{itemize}
-
-% \end{frame}
-
 
 
 \end{document}
