@@ -13,11 +13,13 @@ from typing import Union, Dict, Tuple, List
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from ConfigSpace.conditions import InCondition
 from ConfigSpace.hyperparameters import CategoricalHyperparameter, \
     UniformFloatHyperparameter, UniformIntegerHyperparameter
 from sklearn import svm, datasets
 from sklearn.model_selection import cross_val_score
+from matplotlib import style
 
 # Import ConfigSpace and different types of parameters
 from smac.configspace import ConfigurationSpace
@@ -26,10 +28,10 @@ from smac.facade.smac_hpo_facade import SMAC4HPO
 # Import SMAC-utilities
 from smac.scenario.scenario import Scenario
 
+style.use("seaborn-white")
 
-# We load the iris-dataset (a widely used benchmark)
 
-def generate_data(smac_class, n_runs=1, output_dir: Union[str, Path] = ".", dataset=None):
+def generate_data(smac_class, n_runs=1, output_dir: Union[str, Path] = ".", dataset=None, runcount_limit=50):
     output_dir = Path(output_dir)
 
     if dataset is None:
@@ -57,7 +59,7 @@ def generate_data(smac_class, n_runs=1, output_dir: Union[str, Path] = ".", data
             cfg["gamma"] = cfg["gamma_value"] if cfg["gamma"] == "value" else "auto"
             cfg.pop("gamma_value", None)  # Remove "gamma_value"
 
-        clf = svm.SVC(**cfg, random_state=42)
+        clf = svm.SVC(**cfg, random_state=None)
 
         scores = cross_val_score(clf, dataset.data, dataset.target, cv=5)
         return 1 - np.mean(scores)  # Minimize!
@@ -98,7 +100,7 @@ def generate_data(smac_class, n_runs=1, output_dir: Union[str, Path] = ".", data
     # Scenario object
     for i in range(n_runs):
         scenario = Scenario({"run_obj": "quality",  # we optimize quality (alternatively runtime)
-                             "runcount-limit": 50,
+                             "runcount-limit": runcount_limit,
                              # max. number of function evaluations; for this example set to a low number
                              "cs": cs,  # configuration space
                              "deterministic": "true",
@@ -112,7 +114,7 @@ def generate_data(smac_class, n_runs=1, output_dir: Union[str, Path] = ".", data
         # print(f"Default Value: {def_value:.2f}")
         #
         # Optimize, using a SMAC-object
-        smac = smac_class(scenario=scenario, rng=np.random.RandomState(42),
+        smac = smac_class(scenario=scenario, rng=None,
                           tae_runner=svm_from_cfg)
 
         incumbent = smac.optimize()
@@ -143,9 +145,11 @@ def read_trajectory(folder: Path) -> Dict[str, Dict[str, List[Tuple[float, float
                 run_data = []
                 traj_file = run_dir / "traj.json"
                 with traj_file.open("r") as d:
-                    for line in d:
+                    for line in list(d)[1:]:
                         line_data = json.loads(line)
-                        run_data.append((line_data["cpu_time"], line_data["incumbent"]["C"]))
+                        # run_data.append((line_data["wallclock_time"], line_data["incumbent"]["C"]))
+                        # run_data.append((line_data["cpu_time"], line_data["cost"]))
+                        run_data.append((line_data["evaluations"], line_data["cost"]))
 
                 algorithm_result[run_name] = run_data
         res[algorithm_name] = algorithm_result
@@ -168,7 +172,7 @@ def plot_all(data: Dict[str, Dict[str, List[Tuple[float, float]]]], group_color=
             x, y = list(zip(*run_data))
 
             if step:
-                plt.step(x, y, label=label, color=color)
+                plt.step(x, y, label=label, color=color, where="post")
             else:
                 plt.plot(x, y, label=label, color=color)
 
@@ -177,51 +181,155 @@ def plot_all(data: Dict[str, Dict[str, List[Tuple[float, float]]]], group_color=
     if log_y:
         plt.yscale("log")
 
+    plt.xlabel("cpu time")
+    plt.ylabel("incumbent cost")
     plt.legend()
     plt.tight_layout()
     plt.show()
 
 
-def group_values(data:List[Tuple[float, float]]):
-    pass
+def fill_trajectory(time_list, performance_list):
+    """
+    modified:
+    https://github.com/automl/plotting_scripts/blob/master/plottingscripts/utils/merge_test_performance_different_times.py
+    """
+    if len(performance_list) < 2:
+        return np.array(performance_list), np.array(time_list).flatten()
+
+    frame_dict = {}
+    for c, (p, t) in enumerate(zip(performance_list, time_list)):
+        if len(p) != len(t):
+            raise ValueError(f"({c}) Array length mismatch: {len(p)} != {len(t)}")
+        frame_dict[str(c)] = pd.Series(data=p, index=t)
+
+    merged = pd.DataFrame(frame_dict)
+    indices = merged.index.values
+    fill_nan_row = merged.loc[indices.max()].copy()
+    for idx in indices[::-1]:
+        row = merged.loc[idx]
+        nan_values = pd.isna(row)
+        fill_nan_row[-nan_values] = row[-nan_values]
+        merged.loc[idx] = fill_nan_row
+    merged.fillna(np.min(merged), inplace=True)
+
+    if not np.isfinite(merged.to_numpy()).all():
+        raise ValueError("\nCould not merge lists, because \n"
+                         "\t(a) one list is empty?\n"
+                         "\t(b) the lists do not start with the same times and"
+                         " replace_nan is not set?\n"
+                         "\t(c) replace_nan is not set and there are non valid "
+                         "numbers in the list\n"
+                         "\t(d) any other reason.")
+    return merged
+
+
+def group_values(data: Dict[str, List[Tuple[float, float]]],
+                 main_line="mean", bounds=None,
+                 ) -> Tuple[List[float], List[float],Tuple[List[float], List[float]]]:
+    times = []
+    values = []
+    for d in data:
+        t, v = list(zip(*d))
+        times.append(list(t))
+        values.append(list(v))
+    merged = fill_trajectory(times, values)
+
+    time_ = merged.index.values
+
+    # Main line
+    if main_line == "mean":
+        _main_line = merged.mean(axis=1).to_numpy()
+    elif main_line == "median":
+        _main_line = merged.median(axis=1).to_numpy()
+    elif main_line is None:
+        _main_line = None
+    else:
+        raise ValueError(f"Could not identify `{main_line}` as identifier for main_line")
+
+    # Bounds
+    if bounds == "stderr":
+        # https://en.wikipedia.org/wiki/Standard_error
+        mean = merged.mean(axis=1).to_numpy()
+        stdev = merged.std(axis=1, ddof=1).to_numpy()
+        stderr = stdev / np.sqrt(merged.shape[1])
+        _bounds = mean - stderr, mean + stderr
+    elif bounds == "stdev":
+        mean = merged.mean(axis=1).to_numpy()
+        stdev = merged.std(axis=1).to_numpy()
+        _bounds = mean - stdev, mean + stdev
+    elif bounds == "percentile":
+        _bounds = np.percentile(merged.to_numpy(), [25, 75], axis=1)
+    elif bounds is None:
+        _bounds = (None, None)
+    else:
+        raise ValueError(f"Could not identify `{bounds}` as identifier for bounds")
+
+    performance = merged.to_numpy()
+
+    return time_, _main_line, _bounds
 
 
 def plot_grouped(data: Dict[str, Dict[str, List[Tuple[float, float]]]],
                  step=True, log_x=False, log_y=False,
-                 main_line="mean", range_lines="stddev"):
-    for algorithm, c in zip(data, ["red", "blue"]):
-        plt.plot([], [], color=c, label=algorithm)
-        x,y = group_values(data[algorithm].values())
+                 main_line="mean", bound_lines="stdev"):
+    assert main_line in ["mean", "median"]
+    assert bound_lines in ["stdev", "stderr", "percentile"]
 
-        if step:
-            plt.step(x, y, label=None, color=color)
-        else:
-            plt.plot(x, y, label=None, color=color)
+    for algorithm, c in zip(data, [(1.,0,0), (0,0,1.)]):
+        # Add alpha
+        color = tuple(list(c) + [1.])
+        color_fill = tuple(list(c) + [0.5])
 
+        # Plot legend
+        plt.plot([], [], color=color, label=algorithm)
+
+        # Get grouped data
+        x, y, (bounds_low, bounds_high) = group_values(data[algorithm].values(), main_line=main_line, bounds=bound_lines)
+
+        # Plot boundary lines
+        if bounds_low is not None and bounds_high is not None:
+            plt.fill_between(x, bounds_low, bounds_high, color=color_fill, step="post" if step else None)
+
+        # Plot main line
+        if y is not None:
+            if step:
+                plt.step(x, y, label=None, color=color, where="post")
+            else:
+                plt.plot(x, y, label=None, color=color)
+
+    # Adjust aces
     if log_x:
         plt.xscale("log")
     if log_y:
         plt.yscale("log")
 
+    plt.title(f"{main_line} + {bound_lines}")
+    plt.xlabel("cpu time")
+    plt.ylabel("incumbent cost")
     plt.legend()
     plt.tight_layout()
     plt.show()
 
 
 if __name__ == '__main__':
-    folder = Path("data2/")
+    folder = Path("data_runcount_limit_500/")
     GENERATE_DATA = False
     PLOT_DATA = True
     if GENERATE_DATA:
-        generate_data(SMAC4HPO, 10, output_dir=folder)
-        generate_data(SMAC4AC, 10, output_dir=folder)
+        generate_data(SMAC4HPO, 10, output_dir=folder, runcount_limit=500)
+        generate_data(SMAC4AC, 10, output_dir=folder, runcount_limit=500)
 
     if not PLOT_DATA:
         exit(0)
 
     trajectory_data = read_trajectory(folder)
     plot_all(trajectory_data)
+    plot_all(trajectory_data, group_color=False)
     plot_all(trajectory_data, step=True)
     plot_all(trajectory_data, step=True, log_x=True)
     plot_all(trajectory_data, step=True, log_y=True)
     plot_all(trajectory_data, step=True, log_x=True, log_y=True)
+
+    plot_grouped(trajectory_data, step=True, main_line="mean", bound_lines="stdev")
+    plot_grouped(trajectory_data, step=True, main_line="mean", bound_lines="stderr")
+    plot_grouped(trajectory_data, step=True, main_line="median", bound_lines="percentile")
