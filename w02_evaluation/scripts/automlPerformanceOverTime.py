@@ -339,6 +339,7 @@ if __name__ == '__main__':
         exit(0)
 
     trajectory_data = read_trajectory(DATA_FOLDER)
+    all_data = {"SMAC4HPO": trajectory_data["SMAC4HPO"], "SMAC4AC": trajectory_data["SMAC4AC"]}  # Change order of plots
     smac4hpo_data = {"SMAC4HPO": trajectory_data["SMAC4HPO"]}
     PLOT_FOLDER.mkdir(exist_ok=True, parents=True)
 
@@ -360,9 +361,9 @@ if __name__ == '__main__':
     plot_grouped(smac4hpo_data, step=True, main_line="median", bound_lines="percentile",
                  save_fig_path=PLOT_FOLDER / "8_3_smac4hpo_median_percentile.png", show_plots=SHOW_PLOTS)
 
-    plot_grouped(trajectory_data, step=True, main_line="mean", bound_lines="stdev",
+    plot_grouped(all_data, step=True, main_line="mean", bound_lines="stdev",
                  save_fig_path=PLOT_FOLDER / "9_1_compare_median_percentile.png", show_plots=SHOW_PLOTS)
-    plot_grouped(trajectory_data, step=True, main_line="mean", bound_lines="stderr",
+    plot_grouped(all_data, step=True, main_line="mean", bound_lines="stderr",
                  save_fig_path=PLOT_FOLDER / "9_2_compare_mean_stderr.png", show_plots=SHOW_PLOTS)
-    plot_grouped(trajectory_data, step=True, main_line="median", bound_lines="percentile",
+    plot_grouped(all_data, step=True, main_line="median", bound_lines="percentile",
                  save_fig_path=PLOT_FOLDER / "9_3_compare_median_percentile.png", show_plots=SHOW_PLOTS)
