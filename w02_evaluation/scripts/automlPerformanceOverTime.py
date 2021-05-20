@@ -129,7 +129,8 @@ def generate_data(smac_class, n_runs=1, output_dir: Union[str, Path] = ".", data
                       n_jobs=1)  # How many cores to use in parallel for optimization
 
 
-def read_trajectory(folder: Path) -> Dict[str, Dict[str, List[Tuple[float, float]]]]:
+def read_trajectory(folder: Path, *,
+                    x_key="evaluations", y_key="cost", skip_rows=1) -> Dict[str, Dict[str, List[Tuple[float, float]]]]:
     res = {}
     for algorithm_dir in folder.iterdir():
         if not algorithm_dir.is_dir():
@@ -144,19 +145,19 @@ def read_trajectory(folder: Path) -> Dict[str, Dict[str, List[Tuple[float, float
                 run_data = []
                 traj_file = run_dir / "traj.json"
                 with traj_file.open("r") as d:
-                    for line in list(d)[1:]:
+                    for line in list(d)[skip_rows:]:
                         line_data = json.loads(line)
-                        # run_data.append((line_data["wallclock_time"], line_data["incumbent"]["C"]))
-                        # run_data.append((line_data["cpu_time"], line_data["cost"]))
-                        run_data.append((line_data["evaluations"], line_data["cost"]))
+                        run_data.append((line_data[x_key], line_data[y_key]))
 
                 algorithm_result[run_name] = run_data
         res[algorithm_name] = algorithm_result
     return res
 
 
-def plot_all(data: Dict[str, Dict[str, List[Tuple[float, float]]]], group_color=True, step=False, log_x=False,
-             log_y=False):
+def plot_all(data: Dict[str, Dict[str, List[Tuple[float, float]]]], *,
+             group_color=True, step=False,
+             log_x=False, log_y=False,
+             save_fig_path: Path = None, show_plots=True):
     for algorithm, c in zip(data, ["red", "blue"]):
         if group_color:
             color = c
@@ -185,7 +186,13 @@ def plot_all(data: Dict[str, Dict[str, List[Tuple[float, float]]]], group_color=
     plt.ylabel("incumbent cost")
     plt.legend()
     plt.tight_layout()
-    plt.show()
+
+    if save_fig_path is not None:
+        plt.savefig(save_fig_path)
+    if show_plots:
+        plt.show()
+
+    plt.clf()
 
 
 def fill_trajectory(time_list, performance_list):
@@ -225,7 +232,7 @@ def fill_trajectory(time_list, performance_list):
 
 def group_values(data: Dict[str, List[Tuple[float, float]]],
                  main_line="mean", bounds=None,
-                 ) -> Tuple[List[float], List[float],Tuple[List[float], List[float]]]:
+                 ) -> Tuple[np.ndarray, np.ndarray, Tuple[np.ndarray, np.ndarray]]:
     times = []
     values = []
     for d in data:
@@ -264,18 +271,17 @@ def group_values(data: Dict[str, List[Tuple[float, float]]],
     else:
         raise ValueError(f"Could not identify `{bounds}` as identifier for bounds")
 
-    performance = merged.to_numpy()
-
     return time_, _main_line, _bounds
 
 
-def plot_grouped(data: Dict[str, Dict[str, List[Tuple[float, float]]]],
+def plot_grouped(data: Dict[str, Dict[str, List[Tuple[float, float]]]], *,
                  step=True, log_x=False, log_y=False,
-                 main_line="mean", bound_lines="stdev"):
+                 main_line="mean", bound_lines="stdev",
+                 save_fig_path=None, show_plots=True):
     assert main_line in ["mean", "median"]
     assert bound_lines in ["stdev", "stderr", "percentile"]
 
-    for algorithm, c in zip(data, [(1.,0,0), (0,0,1.)]):
+    for algorithm, c in zip(data, [(1., 0, 0), (0, 0, 1.)]):
         # Add alpha
         color = tuple(list(c) + [1.])
         color_fill = tuple(list(c) + [0.5])
@@ -284,7 +290,8 @@ def plot_grouped(data: Dict[str, Dict[str, List[Tuple[float, float]]]],
         plt.plot([], [], color=color, label=algorithm)
 
         # Get grouped data
-        x, y, (bounds_low, bounds_high) = group_values(data[algorithm].values(), main_line=main_line, bounds=bound_lines)
+        x, y, (bounds_low, bounds_high) = group_values(data[algorithm].values(), main_line=main_line,
+                                                       bounds=bound_lines)
 
         # Plot boundary lines
         if bounds_low is not None and bounds_high is not None:
@@ -309,34 +316,53 @@ def plot_grouped(data: Dict[str, Dict[str, List[Tuple[float, float]]]],
     plt.ylim(bottom=0)
     plt.legend()
     plt.tight_layout()
-    plt.show()
+    if save_fig_path is not None:
+        plt.savefig(save_fig_path)
+    if show_plots:
+        plt.show()
+
+    plt.clf()
 
 
 if __name__ == '__main__':
-    folder = Path("data_runcount_limit_500/")
+    DATA_FOLDER = Path("data_runcount_limit_500/")
+    PLOT_FOLDER = Path("../plots")
     GENERATE_DATA = False
     PLOT_DATA = True
+    SHOW_PLOTS = False
+
     if GENERATE_DATA:
-        generate_data(SMAC4HPO, 10, output_dir=folder, runcount_limit=500)
-        generate_data(SMAC4AC, 10, output_dir=folder, runcount_limit=500)
+        generate_data(SMAC4HPO, 10, output_dir=DATA_FOLDER, runcount_limit=500)
+        generate_data(SMAC4AC, 10, output_dir=DATA_FOLDER, runcount_limit=500)
 
     if not PLOT_DATA:
         exit(0)
 
-    trajectory_data = read_trajectory(folder)
-    smac4hpo_data = {"SMAC4HPO":trajectory_data["SMAC4HPO"]}
+    trajectory_data = read_trajectory(DATA_FOLDER)
+    smac4hpo_data = {"SMAC4HPO": trajectory_data["SMAC4HPO"]}
+    PLOT_FOLDER.mkdir(exist_ok=True, parents=True)
 
-    plot_all(smac4hpo_data)
-    plot_all(smac4hpo_data, group_color=False)
-    plot_all(smac4hpo_data, step=True)
-    plot_all(smac4hpo_data, step=True, log_x=True)
-    plot_all(smac4hpo_data, step=True, log_y=True)
-    plot_all(smac4hpo_data, step=True, log_x=True, log_y=True)
+    plot_all(smac4hpo_data,
+             save_fig_path=PLOT_FOLDER / "4_smac4hpo.png", show_plots=SHOW_PLOTS)
+    plot_all(smac4hpo_data, step=True,
+             save_fig_path=PLOT_FOLDER / "5_smac4hpo_step.png", show_plots=SHOW_PLOTS)
+    plot_all(smac4hpo_data, step=True, log_x=True,
+             save_fig_path=PLOT_FOLDER / "6_1_smac4hpo_step_log_x.png", show_plots=SHOW_PLOTS)
+    plot_all(smac4hpo_data, step=True, log_y=True,
+             save_fig_path=PLOT_FOLDER / "6_2_smac4hpo_step_log_y.png", show_plots=SHOW_PLOTS)
+    plot_all(smac4hpo_data, step=True, log_x=True, log_y=True,
+             save_fig_path=PLOT_FOLDER / "6_3_smac4hpo_step_log_x_y.png", show_plots=SHOW_PLOTS)
 
-    plot_grouped(smac4hpo_data, step=True, main_line="mean", bound_lines="stdev")
-    plot_grouped(smac4hpo_data, step=True, main_line="mean", bound_lines="stderr")
-    plot_grouped(smac4hpo_data, step=True, main_line="median", bound_lines="percentile")
+    plot_grouped(smac4hpo_data, step=True, main_line="mean", bound_lines="stdev",
+                 save_fig_path=PLOT_FOLDER / "8_1_smac4hpo_mean_stdev.png", show_plots=SHOW_PLOTS)
+    plot_grouped(smac4hpo_data, step=True, main_line="mean", bound_lines="stderr",
+                 save_fig_path=PLOT_FOLDER / "8_2_smac4hpo_mean_stderr.png", show_plots=SHOW_PLOTS)
+    plot_grouped(smac4hpo_data, step=True, main_line="median", bound_lines="percentile",
+                 save_fig_path=PLOT_FOLDER / "8_3_smac4hpo_median_percentile.png", show_plots=SHOW_PLOTS)
 
-    plot_grouped(trajectory_data, step=True, main_line="mean", bound_lines="stdev")
-    plot_grouped(trajectory_data, step=True, main_line="mean", bound_lines="stderr")
-    plot_grouped(trajectory_data, step=True, main_line="median", bound_lines="percentile")
+    plot_grouped(trajectory_data, step=True, main_line="mean", bound_lines="stdev",
+                 save_fig_path=PLOT_FOLDER / "9_1_compare_median_percentile.png", show_plots=SHOW_PLOTS)
+    plot_grouped(trajectory_data, step=True, main_line="mean", bound_lines="stderr",
+                 save_fig_path=PLOT_FOLDER / "9_2_compare_mean_stderr.png", show_plots=SHOW_PLOTS)
+    plot_grouped(trajectory_data, step=True, main_line="median", bound_lines="percentile",
+                 save_fig_path=PLOT_FOLDER / "9_3_compare_median_percentile.png", show_plots=SHOW_PLOTS)
