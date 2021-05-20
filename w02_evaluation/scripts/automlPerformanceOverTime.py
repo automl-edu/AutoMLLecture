@@ -19,7 +19,6 @@ from ConfigSpace.hyperparameters import CategoricalHyperparameter, \
     UniformFloatHyperparameter, UniformIntegerHyperparameter
 from sklearn import svm, datasets
 from sklearn.model_selection import cross_val_score
-from matplotlib import style
 
 # Import ConfigSpace and different types of parameters
 from smac.configspace import ConfigurationSpace
@@ -28,7 +27,7 @@ from smac.facade.smac_hpo_facade import SMAC4HPO
 # Import SMAC-utilities
 from smac.scenario.scenario import Scenario
 
-style.use("seaborn-white")
+plt.style.use(['ggplot', 'seaborn-talk'])
 
 
 def generate_data(smac_class, n_runs=1, output_dir: Union[str, Path] = ".", dataset=None, runcount_limit=50):
@@ -181,6 +180,7 @@ def plot_all(data: Dict[str, Dict[str, List[Tuple[float, float]]]], group_color=
     if log_y:
         plt.yscale("log")
 
+    plt.ylim(bottom=0)
     plt.xlabel("cpu time")
     plt.ylabel("incumbent cost")
     plt.legend()
@@ -306,6 +306,7 @@ def plot_grouped(data: Dict[str, Dict[str, List[Tuple[float, float]]]],
     plt.title(f"{main_line} + {bound_lines}")
     plt.xlabel("cpu time")
     plt.ylabel("incumbent cost")
+    plt.ylim(bottom=0)
     plt.legend()
     plt.tight_layout()
     plt.show()
@@ -323,12 +324,18 @@ if __name__ == '__main__':
         exit(0)
 
     trajectory_data = read_trajectory(folder)
-    plot_all(trajectory_data)
-    plot_all(trajectory_data, group_color=False)
-    plot_all(trajectory_data, step=True)
-    plot_all(trajectory_data, step=True, log_x=True)
-    plot_all(trajectory_data, step=True, log_y=True)
-    plot_all(trajectory_data, step=True, log_x=True, log_y=True)
+    smac4hpo_data = {"SMAC4HPO":trajectory_data["SMAC4HPO"]}
+
+    plot_all(smac4hpo_data)
+    plot_all(smac4hpo_data, group_color=False)
+    plot_all(smac4hpo_data, step=True)
+    plot_all(smac4hpo_data, step=True, log_x=True)
+    plot_all(smac4hpo_data, step=True, log_y=True)
+    plot_all(smac4hpo_data, step=True, log_x=True, log_y=True)
+
+    plot_grouped(smac4hpo_data, step=True, main_line="mean", bound_lines="stdev")
+    plot_grouped(smac4hpo_data, step=True, main_line="mean", bound_lines="stderr")
+    plot_grouped(smac4hpo_data, step=True, main_line="median", bound_lines="percentile")
 
     plot_grouped(trajectory_data, step=True, main_line="mean", bound_lines="stdev")
     plot_grouped(trajectory_data, step=True, main_line="mean", bound_lines="stderr")
