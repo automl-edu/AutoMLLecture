@@ -131,6 +131,8 @@ def generate_data(smac_class, n_runs=1, output_dir: Union[str, Path] = ".", data
 
 def read_trajectory(folder: Path, *,
                     x_key="evaluations", y_key="cost", skip_rows=1) -> Dict[str, Dict[str, List[Tuple[float, float]]]]:
+    if not folder.exists():
+        raise FileNotFoundError(f"Cannot find {folder}. Maybe you have to generate the data first?")
     res = {}
     for algorithm_dir in folder.iterdir():
         if not algorithm_dir.is_dir():
