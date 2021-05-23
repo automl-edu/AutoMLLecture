@@ -159,7 +159,8 @@ def read_trajectory(folder: Path, *,
 def plot_all(data: Dict[str, Dict[str, List[Tuple[float, float]]]], *,
              group_color=True, step=False,
              log_x=False, log_y=False,
-             save_fig_path: Path = None, show_plots=True):
+             save_fig_path: Path = None, show_plots=True,
+             xlabel=None, ylabel=None):
     for algorithm, c in zip(data, ["red", "blue"]):
         if group_color:
             color = c
@@ -184,8 +185,10 @@ def plot_all(data: Dict[str, Dict[str, List[Tuple[float, float]]]], *,
         plt.yscale("log")
 
     plt.ylim(bottom=0)
-    plt.xlabel("cpu time")
-    plt.ylabel("incumbent cost")
+    if xlabel:
+        plt.xlabel(xlabel)
+    if ylabel:
+        plt.ylabel(ylabel)
     plt.legend()
     plt.tight_layout()
 
@@ -279,7 +282,8 @@ def group_values(data: Dict[str, List[Tuple[float, float]]],
 def plot_grouped(data: Dict[str, Dict[str, List[Tuple[float, float]]]], *,
                  step=True, log_x=False, log_y=False,
                  main_line="mean", bound_lines="stdev",
-                 save_fig_path=None, show_plots=True):
+                 save_fig_path=None, show_plots=True,
+                 xlabel=None, ylabel=None):
     assert main_line in ["mean", "median"]
     assert bound_lines in ["stdev", "stderr", "percentile"]
 
@@ -313,8 +317,10 @@ def plot_grouped(data: Dict[str, Dict[str, List[Tuple[float, float]]]], *,
         plt.yscale("log")
 
     plt.title(f"{main_line} + {bound_lines}")
-    plt.xlabel("cpu time")
-    plt.ylabel("incumbent cost")
+    if xlabel:
+        plt.xlabel(xlabel)
+    if ylabel:
+        plt.ylabel(ylabel)
     plt.ylim(bottom=0)
     plt.legend()
     plt.tight_layout()
@@ -333,6 +339,11 @@ if __name__ == '__main__':
     PLOT_DATA = True
     SHOW_PLOTS = False
 
+    # Label: key in data file, label in plot
+    # X_LABEL = "cpu_time", "CPU time"
+    X_LABEL = "evaluations", "Number of function evaluations"
+    Y_LABEL = "cost", "Incumbent cost"
+
     if GENERATE_DATA:
         generate_data(SMAC4HPO, 10, output_dir=DATA_FOLDER, runcount_limit=500)
         generate_data(SMAC4AC, 10, output_dir=DATA_FOLDER, runcount_limit=500)
@@ -340,32 +351,39 @@ if __name__ == '__main__':
     if not PLOT_DATA:
         exit(0)
 
-    trajectory_data = read_trajectory(DATA_FOLDER)
+    trajectory_data = read_trajectory(DATA_FOLDER, x_key=X_LABEL[0], y_key=Y_LABEL[0])
     all_data = {"SMAC4HPO": trajectory_data["SMAC4HPO"], "SMAC4AC": trajectory_data["SMAC4AC"]}  # Change order of plots
     smac4hpo_data = {"SMAC4HPO": trajectory_data["SMAC4HPO"]}
+    PLOT_FOLDER = PLOT_FOLDER / X_LABEL[0]
     PLOT_FOLDER.mkdir(exist_ok=True, parents=True)
 
+    cfg = {
+        "show_plots": SHOW_PLOTS,
+        "xlabel": X_LABEL[1],
+        "ylabel": Y_LABEL[1],
+    }
+    
     plot_all(smac4hpo_data,
-             save_fig_path=PLOT_FOLDER / "4_smac4hpo.png", show_plots=SHOW_PLOTS)
+             save_fig_path=PLOT_FOLDER / "4_smac4hpo.png", **cfg)
     plot_all(smac4hpo_data, step=True,
-             save_fig_path=PLOT_FOLDER / "5_smac4hpo_step.png", show_plots=SHOW_PLOTS)
+             save_fig_path=PLOT_FOLDER / "5_smac4hpo_step.png", **cfg)
     plot_all(smac4hpo_data, step=True, log_x=True,
-             save_fig_path=PLOT_FOLDER / "6_1_smac4hpo_step_log_x.png", show_plots=SHOW_PLOTS)
+             save_fig_path=PLOT_FOLDER / "6_1_smac4hpo_step_log_x.png", **cfg)
     plot_all(smac4hpo_data, step=True, log_y=True,
-             save_fig_path=PLOT_FOLDER / "6_2_smac4hpo_step_log_y.png", show_plots=SHOW_PLOTS)
+             save_fig_path=PLOT_FOLDER / "6_2_smac4hpo_step_log_y.png", **cfg)
     plot_all(smac4hpo_data, step=True, log_x=True, log_y=True,
-             save_fig_path=PLOT_FOLDER / "6_3_smac4hpo_step_log_x_y.png", show_plots=SHOW_PLOTS)
+             save_fig_path=PLOT_FOLDER / "6_3_smac4hpo_step_log_x_y.png", **cfg)
 
     plot_grouped(smac4hpo_data, step=True, main_line="mean", bound_lines="stdev",
-                 save_fig_path=PLOT_FOLDER / "8_1_smac4hpo_mean_stdev.png", show_plots=SHOW_PLOTS)
+                 save_fig_path=PLOT_FOLDER / "8_1_smac4hpo_mean_stdev.png", **cfg)
     plot_grouped(smac4hpo_data, step=True, main_line="mean", bound_lines="stderr",
-                 save_fig_path=PLOT_FOLDER / "8_2_smac4hpo_mean_stderr.png", show_plots=SHOW_PLOTS)
+                 save_fig_path=PLOT_FOLDER / "8_2_smac4hpo_mean_stderr.png", **cfg)
     plot_grouped(smac4hpo_data, step=True, main_line="median", bound_lines="percentile",
-                 save_fig_path=PLOT_FOLDER / "8_3_smac4hpo_median_percentile.png", show_plots=SHOW_PLOTS)
+                 save_fig_path=PLOT_FOLDER / "8_3_smac4hpo_median_percentile.png", **cfg)
 
     plot_grouped(all_data, step=True, main_line="mean", bound_lines="stdev",
-                 save_fig_path=PLOT_FOLDER / "9_1_compare_median_percentile.png", show_plots=SHOW_PLOTS)
+                 save_fig_path=PLOT_FOLDER / "9_1_compare_mean_stdev.png", **cfg)
     plot_grouped(all_data, step=True, main_line="mean", bound_lines="stderr",
-                 save_fig_path=PLOT_FOLDER / "9_2_compare_mean_stderr.png", show_plots=SHOW_PLOTS)
+                 save_fig_path=PLOT_FOLDER / "9_2_compare_mean_stderr.png", **cfg)
     plot_grouped(all_data, step=True, main_line="median", bound_lines="percentile",
-                 save_fig_path=PLOT_FOLDER / "9_3_compare_median_percentile.png", show_plots=SHOW_PLOTS)
+                 save_fig_path=PLOT_FOLDER / "9_3_compare_median_percentile.png", **cfg)
