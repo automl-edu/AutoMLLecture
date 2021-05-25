@@ -156,11 +156,23 @@ def read_trajectory(folder: Path, *,
     return res
 
 
+def get_max_x(data: Dict[str, Dict[str, List[Tuple[float, float]]]]) -> float:
+    """ Might be used to get a maximum x value in a set of data """
+    max_x = 0
+    for algorithm in data:
+        for run_data in data[algorithm].values():
+            x, y = list(zip(*run_data))
+            this_max_x = np.max(x)
+            if this_max_x > max_x:
+                max_x = this_max_x
+    return max_x
+
+
 def plot_all(data: Dict[str, Dict[str, List[Tuple[float, float]]]], *,
              group_color=True, step=False,
              log_x=False, log_y=False,
-             save_fig_path: Path = None, show_plots=True,
-             xlabel=None, ylabel=None):
+             save_fig_path: Path = None, show_plots: bool = True,
+             xlabel: str = None, ylabel: str = None, max_x: int = None):
     for algorithm, c in zip(data, ["red", "blue"]):
         if group_color:
             color = c
@@ -173,6 +185,9 @@ def plot_all(data: Dict[str, Dict[str, List[Tuple[float, float]]]], *,
             else:
                 label = f"{algorithm}_{run}"
             x, y = list(zip(*run_data))
+            if max_x is not None and max_x not in x:
+                x = list(x) + [max_x]
+                y = list(y) + [y[-1]]
 
             if step:
                 plt.step(x, y, label=label, color=color, where="post")
@@ -280,10 +295,10 @@ def group_values(data: Dict[str, List[Tuple[float, float]]],
 
 
 def plot_grouped(data: Dict[str, Dict[str, List[Tuple[float, float]]]], *,
-                 step=True, log_x=False, log_y=False,
-                 main_line="mean", bound_lines="stdev",
-                 save_fig_path=None, show_plots=True,
-                 xlabel=None, ylabel=None):
+                 step: bool = True, log_x: bool = False, log_y: bool = False,
+                 main_line: str = "mean", bound_lines: str = "stdev",
+                 save_fig_path: Path = None, show_plots: bool = True,
+                 xlabel: str = None, ylabel: str = None, max_x: int = None):
     assert main_line in ["mean", "median"]
     assert bound_lines in ["stdev", "stderr", "percentile"]
 
@@ -298,6 +313,11 @@ def plot_grouped(data: Dict[str, Dict[str, List[Tuple[float, float]]]], *,
         # Get grouped data
         x, y, (bounds_low, bounds_high) = group_values(data[algorithm].values(), main_line=main_line,
                                                        bounds=bound_lines)
+        if max_x is not None and max_x not in x:
+            x = np.append(x, max_x)
+            y = np.append(y, y[-1])
+            bounds_low = np.append(bounds_low, bounds_low[-1])
+            bounds_high = np.append(bounds_high, bounds_high[-1])
 
         # Plot boundary lines
         if bounds_low is not None and bounds_high is not None:
@@ -338,15 +358,16 @@ if __name__ == '__main__':
     GENERATE_DATA = False
     PLOT_DATA = True
     SHOW_PLOTS = False
+    RUNCOUNT_LIMIT = 500
 
     # Label: key in data file, label in plot
-    # X_LABEL = "cpu_time", "CPU time"
-    X_LABEL = "evaluations", "Number of function evaluations"
+    X_LABEL = "cpu_time", "CPU time"
+    # X_LABEL = "evaluations", "Number of function evaluations"
     Y_LABEL = "cost", "Incumbent cost"
 
     if GENERATE_DATA:
-        generate_data(SMAC4HPO, 10, output_dir=DATA_FOLDER, runcount_limit=500)
-        generate_data(SMAC4AC, 10, output_dir=DATA_FOLDER, runcount_limit=500)
+        generate_data(SMAC4HPO, 10, output_dir=DATA_FOLDER, runcount_limit=RUNCOUNT_LIMIT)
+        generate_data(SMAC4AC, 10, output_dir=DATA_FOLDER, runcount_limit=RUNCOUNT_LIMIT)
 
     if not PLOT_DATA:
         exit(0)
@@ -361,8 +382,9 @@ if __name__ == '__main__':
         "show_plots": SHOW_PLOTS,
         "xlabel": X_LABEL[1],
         "ylabel": Y_LABEL[1],
+        "max_x": RUNCOUNT_LIMIT if X_LABEL[0] == "evaluations" else None
     }
-    
+
     plot_all(smac4hpo_data,
              save_fig_path=PLOT_FOLDER / "4_smac4hpo.png", **cfg)
     plot_all(smac4hpo_data, step=True,
