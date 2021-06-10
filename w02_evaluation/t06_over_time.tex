@@ -1,0 +1,208 @@
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: Risks]{AutoML: Evaluation} % week title
+\subtitle{Visualizing Evaluation over Time} % video title
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer}}
+\institute{}
+\date{}
+
+\newcommand\reffootnote[1]{%
+	\begingroup
+	\renewcommand\thefootnote{}\footnote{
+		\tiny #1
+		\vspace*{1em}}%
+	\addtocounter{footnote}{-1}%
+	\endgroup
+}
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+\maketitle
+
+\begin{frame}[c]{Motivation}
+	\begin{itemize}
+		\item If we define AutoML as an optimization process, the incumbent solution\\ (i.e., the best found configuration so far) gradually improves over time
+		\medskip
+		\pause
+		\item We don't know when users will stop the AutoML process
+		\begin{itemize}
+			\item Running over the coffee break (15min)
+			\item Running during a meeting (1h)
+			\item Running over night (16h)
+			\item Running over the weekend (48+h)
+		\end{itemize}
+		\pause
+		\medskip
+		\item[$\leadsto$] Anytime performance of AutoML is important
+		\begin{itemize}
+			\item i.e., the AutoML tool should return the best possible solution at each time point
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Observing Performance over Time}
+	(\textit{Empty slides for drawing something live in the video.})
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Repeated Experiments}
+
+	\centering
+	\includegraphics[width=0.6\textwidth]{plots/evaluations/4_smac4hpo.png}
+
+	\pause
+	$\leadsto$ Don't linearly interpolate between points!
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Step Functions}
+	
+	\centering
+	\includegraphics[width=0.6\textwidth]{plots/evaluations/5_smac4hpo_step.png}
+	
+	\pause
+	$\leadsto$ Do we care about number of function evaluations?
+	
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+\begin{frame}[c]{CPU Time}
+	
+	\centering
+	\includegraphics[width=0.6\textwidth]{plots/cpu_time/5_smac4hpo_step.png}
+	
+	\pause
+	$\leadsto$ We might loose information in the beginning.
+	
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{x-log scale}
+	
+	\centering
+	\includegraphics[width=0.6\textwidth]{plots/cpu_time/6_1_smac4hpo_step_log_x.png}
+	
+	\pause
+	$\leadsto$ Small differences on y are hard to spot.
+	
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{y-log scale}
+	
+	\centering
+	\includegraphics[width=0.6\textwidth]{plots/cpu_time/6_2_smac4hpo_step_log_y.png}
+	
+	\pause
+	$\leadsto$ Log on both?
+	
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{x-y-log scale}
+	
+	\centering
+	\includegraphics[width=0.6\textwidth]{plots/cpu_time/6_3_smac4hpo_step_log_x_y.png}
+	
+	\pause
+	$\leadsto$ Can we summarize the individual curves?
+	
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Mean $\pm$ Standard Deviation: $\mu \pm \sigma$}
+	
+	\centering
+	\includegraphics[width=0.6\textwidth]{plots/cpu_time/8_1_smac4hpo_mean_stdev.png}
+	
+	\pause
+	$\leadsto$ Mean $\pm$ standard deviation works only if uncertainty is symmetric.
+	
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Mean $\pm$ Standard Error: $\mu \pm \frac{\sigma}{\sqrt{n}}$}
+	
+	\centering
+	\includegraphics[width=0.6\textwidth]{plots/cpu_time/8_2_smac4hpo_mean_stderr.png}
+	
+	\pause
+	$\leadsto$ Confidence of the mean estimate!
+	
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Median + 25/75th Percentile}
+		
+		\centering
+		\includegraphics[width=0.6\textwidth]{plots/cpu_time/8_3_smac4hpo_median_percentile.png}
+		
+		\pause
+		$\leadsto$ Works also for asymmetric uncertainties.
+		
+\end{frame}
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Comparing 2 AutoML Optimizers}
+	
+	\centering
+	\includegraphics[width=0.6\textwidth]{plots/cpu_time/9_2_compare_mean_stderr.png}
+	
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Summary}
+	
+	\begin{enumerate}
+		\item Plotting anytime performance is helpful
+		\medskip
+		\item On real benchmarks often better to plot CPU time instead of function evaluations
+		\medskip
+		\item Use step functions!
+		\medskip
+		\item Consider log-scales on x and/or y
+		\medskip
+		\item Consider different ways for plotting the uncertainty of cost observations 
+	\end{enumerate}
+	\bigskip
+		\includegraphics[width=0.3\textwidth]{plots/cpu_time/9_1_compare_mean_stdev.png}
+		\includegraphics[width=0.3\textwidth]{plots/cpu_time/9_2_compare_mean_stderr.png}
+		\includegraphics[width=0.3\textwidth]{plots/cpu_time/9_3_compare_median_percentile.png}
+	
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}
