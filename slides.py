@@ -1,9 +1,9 @@
 import re
 import sys
+from functools import partial
 from pathlib import Path
 import subprocess
 import multiprocessing
-
 
 try:
     subprocess.run("pdftk", capture_output=True)
@@ -16,6 +16,7 @@ LATEX_TMP_FILES = [".aux", ".log", ".out", ".synctex.gz", ".nav", ".snm", ".toc"
 
 GIT_REPO = Path("./")  # Overwritten in main
 DST_FOLDER = Path("dst/")  # Overwritten in main
+HANDOUT_MODE = False  # Overwritten in main
 
 FULL_PDF_NAME = "autoML"
 PDF_AUTHOR = "Marius Lindauer"
@@ -35,29 +36,30 @@ def copy():
         with copy_destination.open("wb") as d:
             d.write(content)
 
-#sorts the values(paths) of the dict created in weekly and full slides   
+
+# sorts the values(paths) of the dict created in weekly and full slides
 def sort_paths(plist):
     for i in range(1, len(plist)):
-        j = i-1
+        j = i - 1
         nxt_element = plist[i]
-        #get the slide numbers
+        # get the slide numbers
         number1 = int(''.join(filter(str.isdigit, nxt_element.name)))
         number2 = int(''.join(filter(str.isdigit, plist[j].name)))
-       
+
         if number1 >= 10:
             number1 /= 10
 
         if number2 >= 10:
             number2 /= 10
-    
-        while number2 > number1  and j >= 0:
-            plist[j+1] = plist[j]
+
+        while number2 > number1 and j >= 0:
+            plist[j + 1] = plist[j]
             j = j - 1
             number2 = int(''.join(filter(str.isdigit, plist[j].name)))
-            
+
             if number2 >= 10:
                 number2 /= 10
-        plist[j+1] = nxt_element    
+        plist[j + 1] = nxt_element
 
 
 def weekly_slides():
@@ -71,7 +73,7 @@ def weekly_slides():
         sources[week_number][1].append(file)
     for key in sources:
         sort_paths(sources[key][1])
-    
+
     for week_name, sources in sources.values():
         pdftk(sources, DST_FOLDER / f"{week_name}.pdf", Author=PDF_AUTHOR, Title=week_name.replace("_", " - ").title())
 
@@ -83,31 +85,30 @@ def full_slides():
     sources = {}
     for file, week_number, slide_number in iter_all():
         if week_number not in sources:
-            sources[week_number]= (file.parent.name, [])
+            sources[week_number] = (file.parent.name, [])
         sources[week_number][1].append(file)
     for key in sources:
         sort_paths(sources[key][1])
-        
-    
-    key_list= list(sources)
+
+    key_list = list(sources)
     key_list.sort()
-    sources_list= list()
+    sources_list = list()
     for i in key_list:
         sources_list.extend(sources[i][1])
-    
+
     pdftk(sources_list, DST_FOLDER / f"{FULL_PDF_NAME}.pdf", Author=PDF_AUTHOR, Title=FULL_PDF_NAME)
 
 
 def compile_all():
     files = (file for file, _, _ in iter_all(ext="tex"))
     with multiprocessing.Pool(multiprocessing.cpu_count()) as pool:
-        pool.map(pdflatex, files)
+        pool.map(partial(pdflatex, handout=HANDOUT_MODE), files)
 
 
 def compile_git():
     files = (file for file, _, _ in iter_all(ext="tex") if check_git(file.with_suffix(".tex")))
     with multiprocessing.Pool(multiprocessing.cpu_count()) as pool:
-        pool.map(pdflatex, files)
+        pool.map(partial(pdflatex, handout=HANDOUT_MODE), files)
 
 
 def compile_single(week_id, slide_id):
@@ -121,7 +122,7 @@ def compile_single(week_id, slide_id):
 
     files = (file for file, week, slide in iter_all(ext="tex") if fits_identifier(week, slide))
     with multiprocessing.Pool(multiprocessing.cpu_count()) as pool:
-        pool.map(pdflatex, files)
+        pool.map(partial(pdflatex, handout=HANDOUT_MODE), files)
 
 
 def cleanup():
@@ -138,7 +139,7 @@ def iter_all(ext="pdf"):
         week_number = folder_pattern.match(week_folder.name)
         if week_number is None:  # folder does not match mattern
             continue
-            
+
         week_number = int(week_number.group(1))
 
         for file in week_folder.iterdir():
@@ -191,8 +192,12 @@ def pdftk(source, out_file, **meta_data) -> int:
     return proc.returncode
 
 
-def pdflatex(source) -> int:
-    args = ["pdflatex", "-interaction=nonstopmode", "-output-format=pdf", source]
+def pdflatex(source, handout=False) -> int:
+    args = ["pdflatex", "-interaction=nonstopmode", "-output-format=pdf"]
+    if handout:
+        args.append(f"\\PassOptionsToClass{{handout}}{{beamer}}\\input{{{Path(source).as_posix()}}}")
+    else:
+        args.append(source)
     print(args, file=sys.stderr)
     proc = subprocess.run(args, cwd=str(source.parent), stdout=subprocess.PIPE)
     if proc.returncode != 0:
@@ -226,12 +231,14 @@ def main():
                         action='store_true')
     parser.add_argument("--compile-all", help="Compile all slides", action='store_true')
     parser.add_argument("--cleanup", help="Cleanup all temporary latex files (aux, log, ...)", action='store_true')
+    parser.add_argument("--handout", help="Compile slides in handout-mode (more compact, no animation slides)", action='store_true')
 
     args = parser.parse_args()
 
-    global GIT_REPO, DST_FOLDER
+    global GIT_REPO, DST_FOLDER, HANDOUT_MODE
     GIT_REPO = Path(args.source)
     DST_FOLDER = Path(args.destination)
+    HANDOUT_MODE = args.handout
 
     _did_smth = False
     if args.compile_all:
