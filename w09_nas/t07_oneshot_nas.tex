@@ -1,6 +1,5 @@
 \input{../latex_main/main.tex}
 
-
 \title[AutoML: NAS]{AutoML: Neural Architecture Search (NAS)} 
 \subtitle{The One-Shot Model}
 \author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
@@ -22,35 +21,34 @@
 			\item One \alert{only needs to train the single one-shot model}, \\ and implicitly trains an exponential number of individual architectures
 		}
 	}
-%\pause
+\pause
 
-%\bigskip
+\bigskip
 	\myit{
 		\item The first type of one-shot models: \alert{convolutional neural fabrics} %/ \alert{lattice} 
 
 	\centering
 	\only<2-5>{\includegraphics[width=0.7\textwidth]{images/conv_fabric_1.jpg}\\}
-	%\only<6>{\hspace*{-0.91cm}\vspace*{0.3cm}\includegraphics[width=1.02\textwidth]{images/conv_fabric_3.jpg}\vspace*{-0.5cm}}
+	\only<6>{\hspace*{-0.91cm}\vspace*{0.3cm}\includegraphics[width=1.02\textwidth]{images/conv_fabric_3.jpg}\vspace*{-0.5cm}}
 	
-%\only<2>{\bigskip\bigskip\includegraphics[width=0.7\textwidth]{images/conv_fabric_2.jpg}}
-%\pause
-%	\medskip
-%		\myit{
-%			\item \alert{Each path} from the input to the output \alert{represents an architecture}
-%	\pause
-%	\smallskip
-%			\item The \alert{nodes represent tensors}
-%			\item The \alert{edges represent computations} (e.g., convolution / strided convolution)
-%	\pause
-%	\smallskip
-%		\item \alert{Weights for the operation on an edge are shared}\\ across all (exponentially many) architectures that have that edge
-%		}
+	\only<2>{\bigskip\bigskip\includegraphics[width=0.7\textwidth]{images/conv_fabric_2.jpg}}
+\pause
+	\medskip
+		\myit{
+			\item \alert{Each path} from the input to the output \alert{represents an architecture}
+	\pause
+	\smallskip
+			\item The \alert{nodes represent tensors}
+			\item The \alert{edges represent computations} (e.g., convolution / strided convolution)
+	\pause
+	\smallskip
+		\item \alert{Weights for the operation on an edge are shared}\\ across all (exponentially many) architectures that have that edge
+		}
 	}
 %\pause
 %\bigskip
-	%\centering
-	\only<2-5>{\includegraphics[ scale= 1, width= 15.24cm]{images/conv_fabric_2.jpg}}
-	 
+%	\includegraphics[width=0.7\textwidth]{images/conv_fabric_2.png}
+	
 }
 %----------------------------------------------------------------------
 
@@ -174,7 +172,7 @@
 	
 	\begin{itemize}
 	%\footnotesize
-		\item To avoid coadaptation of weights, we can use \alert{DropPath}, a technique analogous to Dropout \lit{\href{https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf}{Srivastava et al. 2014}}:
+		\item To avoid coadaptation of weights, we can use \alert{DropPath}, a technique analogous to Dropout \lit{\href{http://jmlr.org/papers/v15/srivastava14a.html}{Srivastava et al., 2014}}:
 		\myit{
 \visible<2->{
 			\item[-] At each mini-batch iteration:\\ for each operation connecting 2 nodes, zero it out with probability $p$
@@ -323,20 +321,23 @@
 	\end{itemize}
 	
 	\onslide<5>{
-    	\begin{minipage}{0.4\textwidth}
+	\begin{columns}
+	    \column{0.01\textwidth}
+    	\column{0.4\textwidth}
         	\begin{itemize}
 				\footnotesize
 				\item \textbf{Pitfall:} the correlation between architectures evaluated with the one-shot weights and retrained from scratch (stand-alone models) should be high
 				\item If not, \textbf{selecting the best architecture based on the one-shot weights} is sub-optimal.
 			\end{itemize}
-	    \end{minipage}
-	    \hspace{1cm}
-    	\begin{minipage}{0.5\textwidth}
+	    \column{0.5\textwidth}
 \begin{center}
+\vspace*{-0.3cm}
 	        \includegraphics[width=.7\textwidth]{images/bender_correlation_1.png}\\
 	        \scriptsize{From \smaller{\lit{\href{http://proceedings.mlr.press/v80/bender18a/bender18a.pdf}{Bender et al. 2018}}}}
 \end{center}
-    	\end{minipage}
+	    \column{0.09\textwidth}
+
+    	\end{columns}
 	}
 }
 %---------------------------------------------------------------
