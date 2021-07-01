@@ -1,6 +1,10 @@
 \pdfminorversion=4 % for acroread
-%\documentclass[aspectratio=169,t,xcolor={usenames,dvipsnames}]{beamer}
-\documentclass[aspectratio=169,t,handout,xcolor={usenames,dvipsnames}]{beamer}
+\ifdefined\ishandout
+  \documentclass[aspectratio=169,t,handout,xcolor={usenames,dvipsnames}]{beamer}
+\else
+  \documentclass[aspectratio=169,t,xcolor={usenames,dvipsnames}]{beamer}
+\fi
+
 \usepackage{../beamerstyle}
 \usepackage{dsfont}
 \usepackage{bm}
