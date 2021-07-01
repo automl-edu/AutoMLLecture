@@ -238,6 +238,10 @@ def main():
     DST_FOLDER = Path(args.destination)
     HANDOUT_MODE = args.handout
 
+    if args.handout and not (args.compile or args.compile_git or args.compile_all):
+        print("Warning: --handout flag set, but no compilation initiated. "
+              "Use --compile, --compile-all or --compile-git to compile tex to pdf")
+
     _did_smth = False
     if args.compile_all:
         compile_all()
@@ -245,7 +249,7 @@ def main():
     if args.compile_git and not args.compile_all:
         compile_git()
         _did_smth = True
-    if args.compile and not (args.compile_all or args.compile_git):
+    if args.compile and not args.compile_all:
         compile_single(*args.compile)
         _did_smth = True
     if args.cleanup:
