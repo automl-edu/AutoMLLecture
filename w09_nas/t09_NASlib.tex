@@ -9,7 +9,7 @@
 \begin{document}
 \maketitle
 %----------------------------------------------------------------------
-\myframe{Motivation for NASLib \litw{Zela et al., 2020}}{
+\myframe{Motivation for NASLib \litw{Zela et al. 2020}}{
 
 	\alert{NASLib} is a \alert{framework} for easily implementing different NAS methods, aiming to:
 \medskip		
@@ -132,13 +132,13 @@
 \myframe{Tabular benchmarks for one-shot NAS}{
 	\centering
 	\myit{
-		\item NAS-Bench-101 \lit{\href{https://arxiv.org/abs/1902.09635}{Ying et al. 2019}} is not directly compatible with one-shot NAS methods 
+		\item NAS-Bench-101 \lit{\href{https://arxiv.org/pdf/1902.09635.pdf}{Ying et al. 2019}} is not directly compatible with one-shot NAS methods 
 		\myit{
 			\item Mainly due to the constraint of at most 9 edges in the cell
 		}
 		\bigskip
 		\pause
-		\item \alert{NAS-Bench-1Shot1} \lit{\href{https://openreview.net/forum?id=SJx9ngStPH}{Zela et al. 2020}}
+		\item \alert{NAS-Bench-1Shot1} \lit{\href{https://openreview.net/pdf?id=SJx9ngStPH}{Zela et al. 2020}}
 		\myit{
 				\item[-] \alert{3 sub-spaces of NAS-Bench-101} that are compatible with one-shot methods
 				\myit{
@@ -148,7 +148,7 @@
 			}
 		\bigskip
 		\pause
-		\item \alert{NAS-Bench-201} \lit{\href{https://openreview.net/forum?id=HJxyZkBKDr}{Dong and Yang. 2020}}
+		\item \alert{NAS-Bench-201} \lit{\href{https://openreview.net/pdf?id=HJxyZkBKDr}{Dong and Yang. 2020}}
 		\myit{
 %				\item[-] Same graph representation as in DARTS
 				\item[-] Much smaller than NAS-Bench-101 and largest NAS-Bench-1Shot1 subspace
@@ -167,7 +167,7 @@
 		\myit{
 			\item<1-> NAS-Bench-201 is already integrated in NASLib and we can run any one-shot optimizer on it
 \medskip
-			\item<2-> We can also combine random perturbations \lit{\href{https://arxiv.org/pdf/2002.05283.pdf}{Chen and Hsieh, 2020}} with any one-shot optimizer
+			\item<2-> We can also combine random perturbations \lit{\href{https://arxiv.org/pdf/2002.05283.pdf}{Chen and Hsieh. 2020}} with any one-shot optimizer
 \medskip
 			\item<3-> We can also evaluate black-box optimizers cheaply with a tabular benchmark
 		}	
