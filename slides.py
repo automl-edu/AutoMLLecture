@@ -44,10 +44,10 @@ def sort_paths(plist):
         number1 = int(''.join(filter(str.isdigit, nxt_element.name)))
         number2 = int(''.join(filter(str.isdigit, plist[j].name)))
        
-        if number1 >= 10:
+        if number1 > 10 and number1 <= 90:
             number1 /= 10
 
-        if number2 >= 10:
+        if number2 > 10 and number2 <= 90:
             number2 /= 10
     
         while number2 > number1  and j >= 0:
@@ -55,7 +55,7 @@ def sort_paths(plist):
             j = j - 1
             number2 = int(''.join(filter(str.isdigit, plist[j].name)))
             
-            if number2 >= 10:
+            if number2 > 10 and number2 <= 90:
                 number2 /= 10
         plist[j+1] = nxt_element    
 
