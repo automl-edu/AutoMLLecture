@@ -1,0 +1,85 @@
+name: Compile all
+
+on: push
+
+jobs:
+  compile:
+    name: Compile
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        week: [
+            "w01_big_picture",
+            "w02_evaluation",
+            "w03_algorithm_selection",
+            "w04_hpo_basics",
+            "w05_gps",
+            "w06_hpo_bo",
+            "w07_hpo_speedup",
+            "w08_hpo_multicrit",
+            "w09_nas",
+            "w10_meta_learning",
+            "w11_l2l_hpo_control",
+            "w12_analysis",
+            "w13_beyond_automl",
+            "w14_practical_considerations",
+            "w15_wrap_up"
+          ]
+        mode: [
+                "animation",
+                "handout",
+        ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: compile week ${{ matrix.week }} with xelatex
+        uses: ./.github/actions/xelatex-week
+        with:
+          folder: ${{ matrix.week }}
+          mode: ${{ matrix.mode }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Slides ${{ matrix.week }} (${{ matrix.mode }})
+          path: ${{ matrix.week }}/${{ matrix.mode }}/*.pdf
+  merge:
+    name: Merge slides
+    needs: compile
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        week: [
+            "w01_big_picture",
+            "w02_evaluation",
+            "w03_algorithm_selection",
+            "w04_hpo_basics",
+            "w05_gps",
+            "w06_hpo_bo",
+            "w07_hpo_speedup",
+            "w08_hpo_multicrit",
+            "w09_nas",
+            "w10_meta_learning",
+            "w11_l2l_hpo_control",
+            "w12_analysis",
+            "w13_beyond_automl",
+            "w14_practical_considerations",
+            "w15_wrap_up"
+          ]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: Slides ${{ matrix.week }} (handout)
+          path: ${{ matrix.week }}/
+      - name: Prepare output folder
+        run: sh -c "[[ -d slides ]] || mkdir slides"
+      - name: Merge slides for week ${{ matrix.week }} with pdftk
+        uses: ./.github/actions/merge-pdftk
+        with:
+          input-pattern: ${{ matrix.week }}/t*.pdf
+          output-name: slides/${{ matrix.week }}.pdf
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Merged slides
+          path: slides/*.pdf
+
