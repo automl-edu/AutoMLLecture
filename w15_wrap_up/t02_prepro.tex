@@ -14,7 +14,7 @@
 	\begin{frame}[c]{Preprocessing}
 		\begin{columns}
 			\begin{column}{0.5\textwidth} 
-				Ideal AutoML systems should also optimize: 
+				An AutoML systems should also optimize: 
 				% the following steps wrt.\ given cost function:
 				\begin{itemize}
 					\item[\ding{55}] Data preprocessing
@@ -36,343 +36,318 @@
 		
 	\end{frame}
 	
-	\begin{frame}{Preprocessing capabilities differ heavily}
-		\begin{columns}
-			\begin{column}{0.6\textwidth}
-				\vspace*{-1cm}
-				\begin{center}
-					\includegraphics[width = \linewidth]{images/Truong2019Towards_fig2.pdf}
-				\end{center}
-				\vspace{-1em}
-				{\tiny Source~\lit{\href{https://doi.org/10.1109/ICTAI.2019.00209}{Truong et al. 2019}}.}
-			
-			\end{column}%
-			\begin{column}{0.4\textwidth}
-				\small
-				
-				\vspace{1em}
-				
-				Highlighted: Non-commercial AutoML frameworks
-				
-				\begin{itemize}
-					\item Auto-detection of feature types: some
-					\item Preprocess categoricals: some
-					\item Imputation: all
-					\item Class imbalance handling: all
-				\end{itemize}
-			\end{column}
-		\end{columns}
-	\end{frame}
+%	\begin{frame}{Preprocessing capabilities differ heavily}
+%		\begin{columns}
+%			\begin{column}{0.6\textwidth}
+%				\vspace*{-1cm}
+%				\begin{center}
+%					\includegraphics[width = \linewidth]{images/Truong2019Towards_fig2.pdf}
+%				\end{center}
+%				\vspace{-1em}
+%				{\tiny Source~\lit{\href{https://doi.org/10.1109/ICTAI.2019.00209}{Truong et al. 2019}}.}
+%			
+%			\end{column}%
+%			\begin{column}{0.4\textwidth}
+%				\small
+%				
+%				\vspace{1em}
+%				
+%				Highlighted: Non-commercial AutoML frameworks
+%				
+%				\begin{itemize}
+%					\item Auto-detection of feature types: some
+%					\item Preprocess categoricals: some
+%					\item Imputation: all
+%					\item Class imbalance handling: all
+%				\end{itemize}
+%			\end{column}
+%		\end{columns}
+%	\end{frame}
 	
-	\begin{frame}{Cleaning}
-		Data cleaning is hard to fully automate, but a few heuristics exist:
+	\begin{frame}{Simple Preprocessing and Cleaning}
 		\begin{itemize}
-			\item Remove ID columns, columns with mostly unique values.
-			\item Outlier detection 
-			\item Detect time series or spatial data $\rightarrow$ 
-			at the very least, evaluation and resampling needs to be adapted,
-			but feature extraction likely as well
+			\item Data cleaning is hard to fully automate since errors in the data can be semantic.
+			\item A few simple things should always be done:
+			\begin{itemize}
+				\item Remove ID columns, columns with only unique values
+				\item Remove duplicated columns
+				\item Remove constant columns
+			\end{itemize}
+			\item Already harder, but still possible:
+			\begin{itemize}
+				\item Detect outliers
+				\item Detect correct column types (numeric, discrete, datetime, ...)
+				\item Detect missing value encoding
+			\end{itemize}
+			\item Even harder:
+			\begin{itemize}
+				\item Detect spelling and formatting errors
+				\item Detect inconsistencies (e.g. zip code does not match city name)
+				\item Detect time series or spatial data 
+			\end{itemize}  
 		\end{itemize}
-		
-		\vspace{1cm}
-		
-		It is highly unclear how much of this is required input by the user
-		(last point is more or less task specification),
-		and what should be automated by the system. 
-		
-	\end{frame}
-	
-	\begin{frame}{Categorical Features: Dummy Encoding}
-		% Goals:
-		\begin{itemize}
-			\item Most simple encoding
-			\item Works well with low cardinality categoricals
-		\end{itemize}
-		% ML algorithm does not support categorical features + few unique values $\rightarrow$ use dummy encoding.
-		% Most simple technique to encode categ
-		\begin{center}
-			\resizebox{0.3\linewidth}{!}{
-				\begin{tabular}{r|l|l}
-					\hline
-					SalePrice & Central.Air & Bldg.Type\\
-					\hline
-					189900 & Y & 1Fam\\
-					\hline
-					195500 & Y & 1Fam\\
-					\hline
-					213500 & Y & TwnhsE\\
-					\hline
-					191500 & Y & TwnhsE\\
-					\hline
-					236500 & Y & TwnhsE\\
-					\hline
-				\end{tabular}
-			} \\
-			\begin{tikzpicture}
-				%\useasboundingbox (-2,0);
-				\node[single arrow,draw=black,fill=black!10,minimum height=1cm,shape border rotate=270] at (0,-1) {};
-			\end{tikzpicture} \\
-			\resizebox{0.9\linewidth}{!}{
-				\begin{tabular}{r|r|r|r|r|r}
-					\hline
-					SalePrice & Y & Bldg.Type.2fmCon & Bldg.Type.Duplex & Bldg.Type.Twnhs & Bldg.Type.TwnhsE\\
-					\hline
-					189900 & 1 & 0 & 0 & 0 & 0\\
-					\hline
-					195500 & 1 & 0 & 0 & 0 & 0\\
-					\hline
-					213500 & 1 & 0 & 0 & 0 & 1\\
-					\hline
-					191500 & 1 & 0 & 0 & 0 & 1\\
-					\hline
-					236500 & 1 & 0 & 0 & 0 & 1\\
-					\hline
-				\end{tabular}
-			}
-		\end{center}
-	\end{frame}
-	
-	\begin{frame}{Categorical Features: Target / Impact Encoding}
-		\begin{itemize}
-			\item Well known from CART
-			\item Handles high cardinality categoricals, too
-		\end{itemize}
-		
-		% Avoid high cardinality categorical features because they are problematic for all ML algorithms $\rightarrow$ use target encoding (also impact encoding).
-		\begin{columns}
-			\begin{column}{0.3\textwidth}
-				\vspace{-2em}
-				\begin{center}
-					%\includegraphics[width = \textwidth]{images/scetch_impact_encoding.pdf}
-					\resizebox{0.8\columnwidth}{!}{
-						\begin{tikzpicture}
-							\path
-							(0,1) coordinate (A) node[above, inner sep=0] {
-								\begin{tabular}{ c c }
-									\multicolumn{2}{ c }{$\dataset_{\text{train}}$} \\
-									%\hline
-									$x$ & $y$  \\
-									\hline
-									A & 10 \\
-									A & 20 \\
-									B & 30 \\
-								\end{tabular}
-							}
-							(0,-1) coordinate (B) node[below, inner sep=0] {
-								\begin{tabular}{ c c }
-									\multicolumn{2}{ c }{$\dataset_{\text{test}}$} \\
-									%\hline
-									x & $\tilde{x}$  \\
-									\hline
-									A & -5 \\
-									B & 10 \\
-									C & 0 \\
-								\end{tabular}
-							}
-							(1,0) coordinate (C) node[right, inner sep=0] {
-								\begin{tabular}{ c c }
-									\multicolumn{2}{ c }{Encoding} \\
-									%\hline
-									$x$ & $\tilde{x}$  \\
-									\hline
-									A & -5 \\
-									B & 10 \\
-								\end{tabular}
-							};
-							%\draw[->] (A)--(B) (0,0) -- node[above]{}(C);
-							\draw[myarrow, shorten <=0.1cm, shorten >=0.1cm] (A.south)--(C.north);
-							\draw[myarrow, shorten <=0.1cm, shorten >=0.1cm] (C.south)--(B.north);
-						\end{tikzpicture}
-					}
-				\end{center}
-			\end{column}
-			\begin{column}{0.7\textwidth}
-				
-				
-				\textbf{Goal}: Encodes each categorical $\bm{x}$ as a single numeric $\tilde{\bm{x}}$
-				
-				\vspace*{-0.5cm}  
-				{\footnotesize
-					\begin{align*}
-						\text{Regression:} \operatorname{Impact}(x) &= \E(\bm{y} | x) - \E(\bm{y}) \\
-						\text{Classification:} \operatorname{Impact}(x) &= \operatorname{logit}(P( y = \text{target} | x)) - \operatorname{logit}(P( y = \text{target}))
-					\end{align*}
-				}
-				\vspace*{-0.5cm}  
-				\begin{itemize}
-					
-					\item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/pdf/1611.09477.pdf}{Zumel et al. 2019}}
-					
-					\item Advantage: Handles unknown categorical levels on test data
-				\end{itemize}
-				\pause
-				Alternatives: 
-				\begin{itemize}
-					\item factorization machines 
-					\item clustering feature levels 
-					\item feature hashing
-				\end{itemize}
-			\end{column}%
 
-		\end{columns}
-	\end{frame}
-	
-\begin{frame}{Common Preprocessing Steps: Missing Values}
 		
+		It is unclear how much of this is required input by the user (last point is more or less task specification) and what should be automated by the system. 
+		
+	\end{frame}
+
+	\begin{frame}{Preprocessing: Categorical Features}
+	
+	\textit{Categorical} features have a fixed number of distict (unordered) possible values called levels.  
+
+	\vspace{0.5cm}
+
+		\begin{itemize}
+			\item For most learners categorical features need to be encoded in numeric features.
+			\item Distinguish between binary, low cardinality and high cardinality categorical features. Low or high cardinality refers to the number of levels.
+			\begin{itemize}
+				\item Binary: Encode as $1-0$.
+				\item Low-cardinality: One-hot encoding.
+				\item High-cardinality: Regularized target/impact encoding, clustering, hashing.
+			\end{itemize}
+			\item Tree-based algorithms (in some software implementations) can natively handle even high-cardinality categorical features.
+			\item Optimal encoding can vary between each feature, algorithm and hyperparameter configuration. Introduce and tune threshold hyperparameter that decides when to use high-cardinality encoding, e.g. $n_{lvls} \ge \tau_{\text{high card.}}$.
+			\item The encoder should also be able to handle new feature levels occuring at test time without crashing. 
+		\end{itemize}
+	\end{frame}
+
+
+%	\begin{frame}{Categorical Features: Dummy Encoding}
+%		% Goals:
+%		\begin{itemize}
+%			\item Most simple encoding
+%			\item Works well with low cardinality categoricals
+%		\end{itemize}
+%		% ML algorithm does not support categorical features + few unique values $\rightarrow$ use dummy encoding.
+%		% Most simple technique to encode categ
+%		\begin{center}
+%			\resizebox{0.3\linewidth}{!}{
+%				\begin{tabular}{r|l|l}
+%					\hline
+%					SalePrice & Central.Air & Bldg.Type\\
+%					\hline
+%					189900 & Y & 1Fam\\
+%					\hline
+%					195500 & Y & 1Fam\\
+%					\hline
+%					213500 & Y & TwnhsE\\
+%					\hline
+%					191500 & Y & TwnhsE\\
+%					\hline
+%					236500 & Y & TwnhsE\\
+%					\hline
+%				\end{tabular}
+%			} \\
+%			\begin{tikzpicture}
+%				%\useasboundingbox (-2,0);
+%				\node[single arrow,draw=black,fill=black!10,minimum height=1cm,shape border rotate=270] at (0,-1) {};
+%			\end{tikzpicture} \\
+%			\resizebox{0.9\linewidth}{!}{
+%				\begin{tabular}{r|r|r|r|r|r}
+%					\hline
+%					SalePrice & Y & Bldg.Type.2fmCon & Bldg.Type.Duplex & Bldg.Type.Twnhs & Bldg.Type.TwnhsE\\
+%					\hline
+%					189900 & 1 & 0 & 0 & 0 & 0\\
+%					\hline
+%					195500 & 1 & 0 & 0 & 0 & 0\\
+%					\hline
+%					213500 & 1 & 0 & 0 & 0 & 1\\
+%					\hline
+%					191500 & 1 & 0 & 0 & 0 & 1\\
+%					\hline
+%					236500 & 1 & 0 & 0 & 0 & 1\\
+%					\hline
+%				\end{tabular}
+%			}
+%		\end{center}
+%	\end{frame}
+%	
+%	\begin{frame}{Categorical Features: Target / Impact Encoding}
+%		\begin{itemize}
+%			\item Well known from CART
+%			\item Handles high cardinality categoricals, too
+%		\end{itemize}
+%		
+%		% Avoid high cardinality categorical features because they are problematic for all ML algorithms $\rightarrow$ use target encoding (also impact encoding).
+%		\begin{columns}
+%			\begin{column}{0.3\textwidth}
+%				\vspace{-2em}
+%				\begin{center}
+%					%\includegraphics[width = \textwidth]{images/scetch_impact_encoding.pdf}
+%					\resizebox{0.8\columnwidth}{!}{
+%						\begin{tikzpicture}
+%							\path
+%							(0,1) coordinate (A) node[above, inner sep=0] {
+%								\begin{tabular}{ c c }
+%									\multicolumn{2}{ c }{$\dataset_{\text{train}}$} \\
+%									%\hline
+%									$x$ & $y$  \\
+%									\hline
+%									A & 10 \\
+%									A & 20 \\
+%									B & 30 \\
+%								\end{tabular}
+%							}
+%							(0,-1) coordinate (B) node[below, inner sep=0] {
+%								\begin{tabular}{ c c }
+%									\multicolumn{2}{ c }{$\dataset_{\text{test}}$} \\
+%									%\hline
+%									x & $\tilde{x}$  \\
+%									\hline
+%									A & -5 \\
+%									B & 10 \\
+%									C & 0 \\
+%								\end{tabular}
+%							}
+%							(1,0) coordinate (C) node[right, inner sep=0] {
+%								\begin{tabular}{ c c }
+%									\multicolumn{2}{ c }{Encoding} \\
+%									%\hline
+%									$x$ & $\tilde{x}$  \\
+%									\hline
+%									A & -5 \\
+%									B & 10 \\
+%								\end{tabular}
+%							};
+%							%\draw[->] (A)--(B) (0,0) -- node[above]{}(C);
+%							\draw[myarrow, shorten <=0.1cm, shorten >=0.1cm] (A.south)--(C.north);
+%							\draw[myarrow, shorten <=0.1cm, shorten >=0.1cm] (C.south)--(B.north);
+%						\end{tikzpicture}
+%					}
+%				\end{center}
+%			\end{column}
+%			\begin{column}{0.7\textwidth}
+%				
+%				
+%				\textbf{Goal}: Encodes each categorical $\bm{x}$ as a single numeric $\tilde{\bm{x}}$
+%				
+%				\vspace*{-0.5cm}  
+%				{\footnotesize
+%					\begin{align*}
+%						\text{Regression:} \operatorname{Impact}(x) &= \E(\bm{y} | x) - \E(\bm{y}) \\
+%						\text{Classification:} \operatorname{Impact}(x) &= \operatorname{logit}(P( y = \text{target} | x)) - \operatorname{logit}(P( y = \text{target}))
+%					\end{align*}
+%				}
+%				\vspace*{-0.5cm}  
+%				\begin{itemize}
+%					
+%					\item Needs regularization (through CV) to prevent target leakage \lit{\href{https://arxiv.org/pdf/1611.09477.pdf}{Zumel et al. 2019}}
+%					
+%					\item Advantage: Handles unknown categorical levels on test data
+%				\end{itemize}
+%				\pause
+%				Alternatives: 
+%				\begin{itemize}
+%					\item factorization machines 
+%					\item clustering feature levels 
+%					\item feature hashing
+%				\end{itemize}
+%			\end{column}%
+%
+%		\end{columns}
+%	\end{frame}
+	
+\begin{frame}{Preprocessing: Missing Values}
+
+	\textit{Imputation} is the process of replacing missing values with artificial substituted values.
+
+	\vspace{0.5cm}
+
+	\begin{itemize}
+		\item Simple imputation techniques replace missings with the mean, median, mode or a sample from empirical distribution of the feature.
+		\item To keep track of the imputation, binary indicator features are added.
+		\item For categorical features, missing values can easily be replaced by a new seperate level.
+		\item Tree-based algorithms (in some software implementations) can natively handle missing values.
+		\item Model-based imputation trains a machine learning model $f(x_{-i}) = x_i$ to predict missing values of $x_i$ using the remaining features $x_{-i} = x_1, ..., x_{i-1}, x_{i+1}, ..., x_p$.
+		\begin{itemize}
+			\item The imputation model should be able to handle missings natively.
+			\item The choice of learner and its hyperparameters add additional complexity to the imputation.
+			\item Random Forests are a reasonable choice.
+		\end{itemize}
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Feature Engineering}
 	\begin{columns}
-		\begin{column}{0.3\textwidth}
-			\vspace{-0.65cm}
-			\begin{center}
-				%\includegraphics[width = \textwidth]{images/scetch_impact_encoding.pdf}
-				\resizebox{0.9\columnwidth}{!}{
-					\begin{tikzpicture}
-						\path
-						(0,1) coordinate (A) node[above, inner sep=0] {
-							\begin{tabular}{ c c }
-								\multicolumn{2}{ c }{$\dataset_{\text{train}}$} \\
-								%\hline
-								$x_1$ & $x_2$  \\
-								\hline
-								10 & 3 \\
-								NA & 2 \\
-								5  & NA \\
-							\end{tabular}
-						}
-						(0,-1) coordinate (B) node[below, inner sep=0] {
-							\begin{tabular}{ c c }
-								\multicolumn{2}{ c }{$\tilde{\dataset}_{\text{train}}$} \\
-								%\hline
-								$x_1$ & $x_2$  \\
-								\hline
-								10  & 3 \\
-								100 & 2 \\
-								5   & 30 \\
-							\end{tabular}
-						}
-						(1,0) coordinate (C) node[right, inner sep=0] {
-							\begin{tabular}{ c c }
-								%\multicolumn{2}{ c }{Replacements} \\
-								%\hline
-								Feature & NA  \\
-								\hline
-								$x_1$ & 100 \\
-								$x_2$ & 30 \\
-							\end{tabular}
-						};
-						%\draw[->] (A)--(B) (0,0) -- node[above]{}(C);
-						\draw[myarrow, shorten <=0.1cm, shorten >=0.1cm] (A.south)--(C.north);
-						\draw[myarrow, shorten <=0.1cm, shorten >=0.1cm] (C.south)--(B.north);
-					\end{tikzpicture}
-				}
-			\end{center}
-			{\footnotesize
-				\emph{Out of range} imputation
-			}
-		\end{column}
-		
-
-			\begin{column}{0.7\textwidth}
+		\begin{column}{0.6\textwidth}
+			\begin{itemize}
+				\item $1:1$ Transformations
 				\begin{itemize}
-					\item Replace missings with imputed values, try not to 
-					disturb distribution too much
-					\item Examples: mean, median, mode, sample from histogram,
-					predict value based on other features
-					\pause
-					\item Additional factor column indicating missingness can help
-					if NA-state carries information for target
-					\item \emph{Out-Of-Range} works often well for tree-based techniques
-					(RF and boosting!), saves extra missingness column
-					\pause
-					\item For inference, simple imputation is often shunned, 
-					and multiple, model-based imputation recommended; 
-					for prediction naive imputation often works remarkably well
-					
+					\item $\log$, $\sqrt{\cdot}$, ....
+					\item Standardization, Box-Cox, 0-1-scaling, ...
+					\item Binning of numeric features 
 				\end{itemize}
-			\end{column}%
+				\item $1:many$ Transformations
+				\begin{itemize}
+					\item Polynomial expansion: $x_j \longrightarrow x_j, x_j^2, x_j^3, ...$
+					\item Basis expansions with B/P-splines
+					\item Transform to ``circular'' features (month, day)\\ e.g.\ $\tilde x_1 = sin(2\pi \cdot x_1 /24)$
+					\item Extract Weekday/Day/... from datetime features
+				\end{itemize}
+				\item $many:many$ Transformations 
+				\begin{itemize}
+					\item (kernel) Principal component analysis
+					\item Truncated singular value decomposition
+					\item Idependent component analysis
+					\item Autoencoder
+				\end{itemize}
+			\end{itemize}
+	\end{column}%
+	\begin{column}{0.4\textwidth}
+		\begin{center}
+			\includegraphics[width= \textwidth, trim=0 100 390 60, clip]{images/feat_extr_vs_selection.pdf}
+			\end{center}
+	\end{column}
+	\end{columns}
+\end{frame}
 
-		\end{columns}
-	\end{frame}
-	
 	\begin{frame}{Feature Selection}
 		\begin{columns}
-			\begin{column}{0.4\textwidth}
+			\begin{column}{0.6\textwidth}
 				\begin{itemize}
 					
-					\item Filter; for extremely high dim.
-					\item Stepwise / wrapper methods; 
-					% m: Needs to be applied on the whole pipeline (impractical!)
-					seldom increases performance when well-regularized 
-					learners are used, but quite expensive 
-					\item Embedded: CART, lasso, \ldots 
-					\item Selection interesting when predictive performance vs. sparseness
-					should be optimized $\rightarrow$ multi-criteria optimization
+					\item Feature filter rank features and select most important fraction.
+					\item Stepwise / wrapper methods greedily select one feature after another. 
+					\item Some learner have embedded feature selection CART, lasso, \ldots 
+					\item $p$-dimensional bitvector as hyperparameters.
 					\item Combined feature selection and HPO: \lit{\href{https://arxiv.org/pdf/1912.12912.pdf}{Binder et al. 2020}}
 					
 				\end{itemize}
 			\end{column}%
-			\begin{column}{0.6\textwidth}
+			\begin{column}{0.4\textwidth}
 				\begin{center}
-					\includegraphics[width=0.35\textwidth, trim=450 100 110 60, clip]{images/feat_extr_vs_selection.pdf}%
-					\includegraphics[width=0.55\linewidth]{images/Binder2020multiobjective_fig3.pdf}
-					
-					
-					{\tiny \hfill Source: \lit{\href{https://arxiv.org/pdf/1912.12912.pdf}{Binder et al. 2020}}.}
-				\end{center}
+					\includegraphics[width=0.5\textwidth, trim=450 100 110 60, clip]{images/feat_extr_vs_selection.pdf}%
+					\end{center}
 			\end{column}
 		\end{columns}
 		
 	\end{frame}
 	
-	\begin{frame}{Common Feature Construction Methods}
-		\begin{columns}
-			\begin{column}{0.6\textwidth}
-				Reduction:
-				\begin{itemize}
-					\item PCA, ICA, autoencoder
-				\end{itemize}
-				
-				Feature extraction:
-				\begin{itemize}
-					\item Polynomial features: $x_j \longrightarrow x_j, x_j^2, x_j^3, ...$
-					\item Interactions: $x_j, x_k \longrightarrow x_j, x_k, x_j \cdot x_k$
-				\end{itemize}
-				
-				Feature generation:
-				\begin{itemize}
-					\item Transform to ``circular'' features (month, day) \\
-					e.g.\ $\tilde x_1 = sin(2\pi \cdot x /24)$ and $\tilde x_2 = cos(2\pi \cdot x /24)$
-				\end{itemize}
-				
-				Combine with external data:
-				\begin{itemize}
-					\item names $\longrightarrow$ gender, ethnicity, age
-					\item home address $\longrightarrow$ household income
-					\item location + date $\longrightarrow$ weather
-				\end{itemize}
-				
-			\end{column}%
-			\begin{column}{0.4\textwidth}
-				\begin{center}
-					\includegraphics[width= \textwidth, trim=0 100 390 60, clip]{images/feat_extr_vs_selection.pdf}
-				\end{center}
-			\end{column}
-		\end{columns}
-		
-	\end{frame}
+
 	
 	
 	\begin{frame}{Imbalanced Classes}
-		\begin{itemize}
-			\item Oversampling of minority class
-			\item Seldom: undersampling of majority class
-			\item Intelligent oversampling strategies which create
-			synthetic observations (SMOTE) 
-			% can lead to improvement in predictive accuracy
-		\end{itemize}
-		%FIXME: HIER SOLLTE SMOTE PIC REIN
-		\begin{center}
-			\includegraphics[width= 0.7\textwidth]{images/smote.png}
-		\end{center}
+	
+		\textit{Imbalanced} classifcation occurs if one (usually more important) class appears much less frequent than other classes.
+
+		\begin{columns}
+			\begin{column}{0.4\textwidth}
+				\begin{itemize}
+					\item Tune class weights as hyperparameters.
+					\item Oversampling of minority class or undersmpling of majority class.
+					\item Generate synthetic samples that (should) belong to the minority class, e.g. SMOTE.
+					\item Be careful with resampling and ensure stratification.
+					\item If imbalance is severe change framing, e.g. anomaly detection.
+				\end{itemize}
+			\end{column}%
+			\begin{column}{0.6\textwidth}
+				\begin{center}
+					\includegraphics[width=\textwidth]{images/smote.png}
+					\end{center}
+			\end{column}
+		\end{columns}
 	\end{frame}
 	
 	
