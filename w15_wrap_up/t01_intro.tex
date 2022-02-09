@@ -4,8 +4,9 @@
 \usepackage{pifont}
 \usepackage{relsize}
 \renewcommand{\lit}[1]{{\smaller\color{black!60}[#1]}}
-\subtitle{Wrap Up}
-
+\title[AutoML: Practical]{AutoML: Practical Considerations} 
+\subtitle{Introduction}
+\author[Janek Thomas]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and \underline{Janek Thomas} \and Joaquin Vanschoren}
 
 \begin{document}
 
@@ -52,7 +53,7 @@
           \item \sout{Nothing, because it is automatic.}
           \item Understand limitations of AutoML and framework.
           \item Know how to interpret the results.
-          \item Maybe: Preprocessing and feature extraction.
+          \item Maybe: Data cleaning and feature extraction.
         \end{itemize}
 
         \vspace{1em}
@@ -63,6 +64,7 @@
           \item ML / Pipeline framework 
           \item Parallelization / Multifidelity
           \item Process encapsulation and time capping 
+          \item ...
           % \item (Preprocessing)
         \end{itemize}
     \end{column}%
@@ -84,150 +86,6 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{Choice of Learning Algorithm}
-  \begin{itemize}
-    % \item A good AutoML System should consider more than one learning algorithm. More on that later.
-    \item A plethora of learners exists, for different data sets different models
-        are likely needed.
-
-        
-    \item Studies and experience show:\\
-
-        One these is often good -- on tabular data:
-    \begin{itemize}
-      \item Penalized regression, e.g. elastic net
-      \item Support vector machines
-      \item Gradient boosting
-      \item Random forests
-      \item Neural networks
-  \end{itemize}
-      % \item Random forests only beaten on few tabular datasets by current AutoML frameworks~\lit{\href{https://arxiv.org/abs/1907.00909}{Gijsbers et al., 2019}}.
-
-      \item Example: Auto-Sklearn 2.0~\lit{{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}} uses: 
-
-    \begin{itemize}
-        \item Extra trees 
-        \item Gradient boosting 
-        \item Passive aggressive 
-        \item Random forest 
-        \item Linear regression with SGD
-        \item Multi-layer perceptron
-  \end{itemize}
-    \end{itemize}
-  % \end{itemize}
-\end{frame}
-
-\begin{frame}{Choice of Search Space for a Learning Algorithm}
-  \begin{columns}
-  	
-  	\begin{column}{0.4\textwidth}
-  		\begin{center}
-  			\only<1>{
-  				\includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab1.pdf}
-  			}
-  			\only<2->{
-  				\includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab3.pdf}   
-  			}
-  			
-  			{\tiny Source: \lit{\href{https://www.jmlr.org/papers/volume20/18-444/18-444.pdf}{Probst et al. 2019 }}.}
-  			
-  		\end{center}
-  	\end{column}
-  	
-    \begin{column}{0.6\textwidth}
-    
-    Ranges often selected based on experience
-    \begin{itemize}
-
-      \item See other AutoML frameworks: e.g.\ Auto-Sklearn~2.0 \lit{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}
-
-      \item Sensitivity analysis often does not exist for ML~algorithms
-      \item Check literature on specific ML algorithm
-    \end{itemize}
-	\pause
-    Options for automation:
-    \begin{enumerate}
-      \item Use huge search space to cover all possibilities \\ 
-            (combine with meta-learning for good initial design for Bayesian optimization)
-      \begin{itemize} 
-      		\item Use results of meta-experiments to obtain smaller search space that is estimated to work well.
-       \end{itemize}
-   		\pause
-   	  \item Start with a small space and increase bit by bit
-    \end{enumerate}
-    \end{column}%
-
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Choice of Resampling Strategy}
-  
-  For computation of generalization error / cost:
-  \begin{equation*}
-    \cost(\conf) = \frac{1}{k}\sum_{i = 1}^k \widehat{GE}_{\dataset_{\text{val}}^i}\left(\inducer(\dataset_{\text{train}}^i, \conf)\right)
-  \end{equation*}
-  % that defines the objective of the black-box optimization we need a resampling strategy.
-
-  \vspace{1em}
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-    Rules of thumb:
-    \begin{itemize}
-      \item Default: 10-fold CV ($k=10$)
-      \item Huge datasets: holdout
-      \item Tiny datasets: 10x10 repeated CV
-      \item Stratification for imbalanced classes
-    \end{itemize}
-    \end{column}
-    
-    \begin{column}{0.5\textwidth}
-    	\pause
- Watch out for this:       
-    \begin{itemize}
-      \item Small sample size because of imbalances    
-      \item Repeated mesurements (leave-one-object out)
-      \item Time dependencies
-      \item A good AutoML system should let you customize resampling
-          % errors here can mean: garbage in, garbvgae out
-      \item Meta-learn good resampling strategy~\lit{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}
-    \end{itemize}
-    \end{column}
-    \end{columns}
-    
-\end{frame}
-
-\begin{frame}{Choice of Optimization Algorithm}
-  Choose optimization algorithm based on \ldots
-  \begin{itemize}
-    \item complexity of search space / budget
-    \item time-costs of evaluations
-  \end{itemize}
-
-  \vspace{0.5em}
-
-  Complex search space
-  \begin{itemize}
-    \item[$\rightarrow$] BO with RF surrogate, EA with exploratory character, TPE 
-    % \item[$\rightarrow$] Make use of Grey-Box Optimizers: Hyperband, BOHB
-  \end{itemize}
-  \pause
-  Numerical (lower-dim) search space and tight budget
-  \begin{itemize}
-    \item[$\rightarrow$] BO with GP surrogate\footnote{Still has its own hyperparameters \lit{\href{https://arxiv.org/abs/1908.06674}{Lindauer et al. 2019}}}
-  \end{itemize}
-  \pause
-  Expensive evaluations
-  \begin{itemize}
-    \item[$\rightarrow$] Hyperband, BOHB, DEHB
-  \end{itemize}
-  \pause
-  Deep learning 
-  \begin{itemize}
-    \item[$\rightarrow$] common practice: Parameterize architectures, then HPO -- better do it jointly!
-    \item[$\rightarrow$] one-shot models and gradient-based optimization
-  \end{itemize}
-
-\end{frame}
 
 
 \end{document}

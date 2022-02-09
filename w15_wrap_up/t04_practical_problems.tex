@@ -1,0 +1,271 @@
+\input{t00_template.tex}
+
+\usepackage[normalem]{ulem}
+\usepackage{pifont}
+\usepackage{relsize}
+\renewcommand{\lit}[1]{{\smaller\color{black!60}[#1]}}
+\title[AutoML: Practical]{AutoML: Practical Considerations} 
+\subtitle{Practical and Open Problems}
+\author[Janek Thomas]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and \underline{Janek Thomas} \and Joaquin Vanschoren}
+
+
+\begin{document}
+	
+	\maketitle
+
+	\begin{frame}{Choice of Learning Algorithms}
+		\begin{itemize}
+		  % \item A good AutoML System should consider more than one learning algorithm. More on that later.
+		  \item A plethora of learners exists, for different data sets different models are likely needed.
+	  
+			  
+		  \item Studies and experience show:\\
+	  
+			  One these is often good -- on tabular data:
+		  \begin{itemize}
+			\item Penalized regression, e.g. elastic net
+			\item Support vector machines
+			\item Gradient boosting
+			\item Random forests
+			\item Neural networks
+		\end{itemize}
+			\item Example: Auto-Sklearn 2.0~\lit{{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}} uses: 
+	  
+		  \begin{itemize}
+			  \item Extra trees 
+			  \item Gradient boosting 
+			  \item Passive aggressive 
+			  \item Random forest 
+			  \item Linear regression with SGD
+			  \item Multi-layer perceptron
+		\end{itemize}
+		  \end{itemize}
+		% \end{itemize}
+	  \end{frame}
+	  
+	  \begin{frame}{Choice of Search Space for a Learning Algorithms}
+		\begin{columns}
+			
+			\begin{column}{0.4\textwidth}
+				\begin{center}
+					\only<1>{
+						\includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab1.pdf}
+					}
+					\only<2->{
+						\includegraphics[width = 0.8\linewidth]{images/probst2019jmlr_tab3.pdf}   
+					}
+					
+					{\tiny Source: \lit{\href{https://www.jmlr.org/papers/volume20/18-444/18-444.pdf}{Probst et al. 2019 }}.}
+					
+				\end{center}
+			\end{column}
+			
+		  \begin{column}{0.6\textwidth}
+		  
+		  Ranges often selected based on experience
+		  \begin{itemize}
+	  
+			\item See other AutoML frameworks: e.g.\ Auto-Sklearn~2.0 \lit{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}
+	  
+			\item Sensitivity analysis often does not exist for ML~algorithms
+			\item Check literature on specific ML algorithm
+		  \end{itemize}
+		  Options for automation:
+		  \begin{enumerate}
+			\item Use huge search space to cover all possibilities \\ 
+				  (combine with meta-learning for good initial design for Bayesian optimization)
+			\begin{itemize} 
+					\item Use results of meta-experiments to obtain smaller search space that is estimated to work well.
+			 \end{itemize}
+			   \item Start with a small space and increase bit by bit
+		  \end{enumerate}
+		  \end{column}%
+	  
+		\end{columns}
+	  \end{frame}
+	  
+	  \begin{frame}{Choice of Resampling Strategy}
+		
+		For computation of generalization error / cost:
+		\begin{equation*}
+		  \cost(\conf) = \frac{1}{k}\sum_{i = 1}^k \widehat{GE}_{\dataset_{\text{val}}^i}\left(\inducer(\dataset_{\text{train}}^i, \conf)\right)
+		\end{equation*}
+		% that defines the objective of the black-box optimization we need a resampling strategy.
+	  
+		\vspace{1em}
+		\begin{columns}
+		  \begin{column}{0.5\textwidth}
+		  Rules of thumb:
+		  \begin{itemize}
+			\item Default: 10-fold CV ($k=10$)
+			\item Huge datasets: holdout
+			\item Tiny datasets: 10x10 repeated CV
+			\item Stratification for imbalanced classes
+		  \end{itemize}
+		  \end{column}
+		  
+		  \begin{column}{0.5\textwidth}
+	   Watch out for this:       
+		  \begin{itemize}
+			\item Small sample size because of imbalances    
+			\item Repeated mesurements (leave-one-object out)
+			\item Time dependencies
+			\item A good AutoML system should let you customize resampling
+				% errors here can mean: garbage in, garbvgae out
+			\item Meta-learn good resampling strategy~\lit{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}
+		  \end{itemize}
+		  \end{column}
+		  \end{columns}
+		  
+	  \end{frame}
+	  
+	  \begin{frame}{Choice of Optimization Algorithm}
+		Choose optimization algorithm based on \ldots
+		\begin{itemize}
+		  \item complexity of search space / budget
+		  \item time-costs of evaluations
+		\end{itemize}
+	  
+		\vspace{0.5em}
+	  
+		Complex search space
+		\begin{itemize}
+		  \item[$\rightarrow$] BO with RF surrogate, EA with exploratory character, TPE 
+		  % \item[$\rightarrow$] Make use of Grey-Box Optimizers: Hyperband, BOHB
+		\end{itemize}
+		Numerical (lower-dim) search space and tight budget
+		\begin{itemize}
+		  \item[$\rightarrow$] BO with GP surrogate\footnote{Still has its own hyperparameters \lit{\href{https://arxiv.org/abs/1908.06674}{Lindauer et al. 2019}}}
+		\end{itemize}
+		Expensive evaluations
+		\begin{itemize}
+		  \item[$\rightarrow$] Hyperband, BOHB, DEHB
+		\end{itemize}
+		Deep learning 
+		\begin{itemize}
+		  \item[$\rightarrow$] common practice: Parameterize architectures, then HPO -- better do it jointly!
+		  \item[$\rightarrow$] one-shot models and gradient-based optimization
+		\end{itemize}
+	  
+	  \end{frame}
+	  
+
+
+	\begin{frame}{Practical Problems: When to stop?}
+
+		We need to specify a budget, e.g.
+		\begin{itemize}
+			\item walltime,
+			\item function evaluations,
+			\item performance threshold, or
+			\item \textit{stagnation} for a certain time.
+		\end{itemize}
+
+		Problems:
+		\begin{itemize}
+			\item Overtuning \lit{{\href{https://www.amazon.science/publications/overfitting-in-bayesian-optimization-an-empirical-study-and-early-stopping-solution}{Makarova et al. 2021}}} 
+			\item Missed opportunity 
+			\item Wasted computational resources
+		\end{itemize}
+
+
+		Ways out:
+		\begin{itemize}
+			\item Early stopping for BO \lit{{\href{https://www.amazon.science/publications/overfitting-in-bayesian-optimization-an-empirical-study-and-early-stopping-solution}{Makarova et al. 2021}}}.
+			\item Rules of thumb, maybe $50 \times l$ to $100 \times l$  (\textcolor{red}{be careful and think for yourself!}).
+			\item Expert knowledge.
+		\end{itemize}
+
+	\end{frame}
+
+	\begin{frame}{Practical Problems: Stability}
+		AutoML system should: 
+		\begin{itemize}
+			\item Never fail to return a result.
+			\item Terminate within a given time.
+			\item Save intermediate results and allow to continue.
+		\end{itemize}
+
+		Failure points:
+		\begin{itemize}
+			\item Optimizer can crash.
+			% $\longrightarrow$ return intermediate result, continue with warmstart / random search
+			\item Pipeline training can crash.
+			\item Training of a pipeline can run "forever". 
+			% \item prediction can crash $\longrightarrow$ use prediction of fallback learner
+		\end{itemize}
+
+		Ways out:
+		\begin{itemize}
+			\item Encapsulate train/predict in separate process from HPO.
+			\item Ressource limit time and memory of that process.
+			\item If pipeline crashes, run robust fallback (e.g., constant predictor).   
+			\item Use random configuration if optimizer crashes.
+		\end{itemize}
+		
+	\end{frame}
+	
+	\begin{frame}{Practical Problems: Parallelization}
+		Parallelization should allow:
+		\begin{itemize}
+			\item Multiple CPUs/GPUs on a single machine. 
+			\item Multiple machines / nodes. 
+		\end{itemize}
+		
+		Possible parallelization levels:
+		\begin{itemize}
+			\item Training of pipeline.
+			\item Resampling.
+			\item Evaluation of configurations (batch proposals or asynchronous).
+		\end{itemize}
+		
+		Possible problems:
+		\begin{itemize}
+			\item Sequential nature of HPO algorithms (e.g.\ BO).
+			\item Heterogeneous training times of pipelines can cause idling.
+			\item Main memory or CPU-cache becomes bottleneck
+			\item Communication between machine / nodes.
+		\end{itemize}
+	
+	Way out: Use a robust framework for parallelization.
+
+	\end{frame}
+	
+	\begin{frame}{Practical Problems: What to return?}
+		What is the output of a an AutoML system, e.g.
+		\begin{itemize}
+			\item Pipeline with best validation error.
+			\item Stacking, e.g. averaging, of top-$k$ pipelines.
+			\item Pareto set for multi-objective optimization.
+			\item "One-standard-error rule": Use the simplest model within one standard error of the performance of the best model \lit{{\href{https://link.springer.com/book/10.1007/978-0-387-84858-7}{Hastie et al. 2009}}}.
+		\end{itemize}
+	
+		Ensure that simple but efficient pipelines have been tried out 
+		\begin{itemize}
+			\item Baseline (Classification: Majority vote; Regression: Mean prediction).
+			\item Linear Model.
+			\item (untuned) Random Forest.
+			\item ...
+		\end{itemize}
+	
+	\end{frame}
+
+	\begin{frame}{Open Problems}
+		\begin{itemize}
+			\item Most efficient HPO approach? Good benchmarks often missing.
+			\item How to integrate human a-priori knowledge?
+			\item Human-in-the-loop approaches for AutoML.
+			\item How can we best (computationally) transfer “experience” into AutoML? 
+			\item Warmstarts, learned search spaces, etc.
+			\item Multi-Objective goals, including model intepretability and fairness.
+			\item AutoML as a process is too much of a black-box, hurts adoption.
+			\item Incorporate Uncertainty quantification into AutoML.
+			\item AutoML beyond supervised learning.
+			\item ...
+		\end{itemize}
+	
+		$\longrightarrow$ Lots of open research questions, feel free to approach us for if you are interested. 
+
+	\end{frame}
+
+\end{document}
