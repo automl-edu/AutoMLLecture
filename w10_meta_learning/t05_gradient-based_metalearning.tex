@@ -1,0 +1,85 @@
+\input{../latex_main/main.tex}
+\usepackage{multimedia}
+
+\title[Meta-Learning]{AutoML: Meta-Learning} 
+\subtitle{Gradient-based meta-learning}
+\author[Joaquin Vanschoren]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and \underline{Joaquin Vanschoren}}
+\institute{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{frame}{Gradient-based meta-learning}
+
+    \centerline{\textcolor{red}{parameterize some aspect of the learner that we want to learn as}} 
+    \centerline{\textcolor{red}{meta-parameters $\theta$ meta-learn $\theta$ across tasks}}
+    \centering\includegraphics[height=5cm]{image/img000908.jpg}
+    \small\centerline{$\Theta(Prior)$, could encode an initialization $\phi$, the hyperparameters $\lambda$, the optimizer,...}
+    \leavevmode\hphantom{ }
+
+    \small\centerline{\textit{Learned $\theta^*$ should \textcolor{blue}{learn $T_{new}$ from small amount of data, yet generalize to a large number of tasks}}}
+\end{frame}
+
+\begin{frame}{Gradient-based methods: learning $\phi_{init}$}
+    \centering\includegraphics[height=7cm]{image/img005015.jpg}
+\end{frame}
+\begin{frame}{Model agnostic meta-learning (MAML)}
+    \centering\includegraphics[height=7cm]{image/img005114.jpg}
+\end{frame}
+\begin{frame}{Model agnostic meta-learning (MAML)}
+    \centering\includegraphics[height=7cm]{image/img005224.jpg}
+\end{frame}
+\begin{frame}{Model agnostic meta-learning (MAML)}
+    \centering\includegraphics[height=7cm]{image/img005323.jpg}
+\end{frame}
+\begin{frame}{Model agnostic meta-learning (MAML)}
+    Example of reinforcement learning:
+    \begin{itemize}
+        \item Goal: reach certain velocity in certain direction
+    \end{itemize}
+    \centering\includegraphics[height=5cm]{image/img005513.jpg}
+\end{frame}
+\begin{frame}{Other gradient-based techniques}
+    \centering\includegraphics[height=7cm]{image/img005754.jpg}
+\end{frame}
+\begin{frame}{Scalability}
+    \centering\includegraphics[height=6cm]{image/img010316.jpg}
+\end{frame}
+\begin{frame}{Generalizability}
+    \centering\includegraphics[height=7cm]{image/img010613.jpg}
+\end{frame}
+\begin{frame}{Bayesian meta-learning}
+    \centerline{Can meta-learning reason about \textcolor{red}{uncertainty} in the task distribution?}
+    \centering\includegraphics[height=6cm]{image/img010856.jpg}
+\end{frame}
+\begin{frame}{Fully Bayesian meta-learning}
+    \centering\includegraphics[height=7cm]{image/img011307.jpg}
+\end{frame}
+\begin{frame}{Meta-learning optimizers}
+    Our brains probably don’t do backprop, instead:
+    \begin{itemize}
+        \item weights: networks that continuously modify the weights of another network
+        \item Gradient based: parameterize the update rule using a neural network
+        \begin{itemize}
+            \item Learn meta-parameters across tasks, by gradient descent
+            \centering\includegraphics[height=3cm]{image/img011721.jpg}
+        \end{itemize}
+        \item Represent update rule as an LSTM, hierarchical RNN 
+    \end{itemize}
+\end{frame}
+\begin{frame}{Meta-learning optimizers}
+    \begin{itemize}
+        \item Meta-learned (RNN) optimizers ‘rediscover’ momentum, gradient clipping, learning rate schedules, learning rate adaptation,… \\
+        \item RL-based optimizers: represent updates as a policy, learn using guided policy search 
+        \item Combined with MAML: 
+        \begin{itemize}
+            \item learn per-parameter learning rates
+            \item learn precondition matrix (to `warp' the loss surface)
+        \end{itemize}
+        \item Black-box optimizers: meta-learned with an RNN, or with user-defined priors
+        \item Speed up backpropagation by meta-learning sparsity and weight sharing 
+    \end{itemize}
+    \centering\includegraphics[height=3cm]{image/img012318.jpg}
+\end{frame}
+\end{document}

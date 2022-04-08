@@ -1,0 +1,187 @@
+\input{../latex_main/main.tex}
+\usepackage{multimedia}
+
+\title[Meta-Learning]{AutoML: Meta-Learning} 
+\subtitle{Learning hyperparameter priors}
+\author[Joaquin Vanschoren]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and \underline{Joaquin Vanschoren}}
+\institute{}
+\date{}
+
+\begin{document}
+\maketitle
+
+%---------------------------------------------------------
+%This block of code is for the table of contents after
+%the title page
+% \begin{frame}
+% \frametitle{Table of Contents}
+% \tableofcontents
+% \end{frame}
+%---------------------------------------------------------
+
+\begin{frame}{What can we learn to learn?}
+\centerline{\textit{3 pillars}}
+\centering\includegraphics[height=5.5cm]{image/img194520.jpg}
+
+\end{frame}
+\begin{frame}{Terminology}
+
+\centering\includegraphics[height=6cm]{image/img194743.jpg}
+
+\end{frame}
+\begin{frame}{Terminology}
+
+\centering\includegraphics[height=6cm]{image/img194806.jpg}
+
+\end{frame}
+
+\begin{frame}{Learning hyperparameters}
+\centerline{Closely related to Automated Machine Learning (AutoML)}
+\centerline{But:\textcolor{red}{meta-learn }how to design architectures/pipelines and tune hyperparameters}
+\centerline{\textit{\textcolor{red}{Human data scientists also learn from experience}}}
+\centering\includegraphics[height=5cm]{image/img195244.jpg}
+\end{frame}
+
+
+\begin{frame}{Meta-learning for AutoML: how?}
+\small\centerline{hyperparameters = architecture + hyperparameters}
+
+
+\centering\includegraphics[height=6cm]{image/img195525.jpg}
+
+\end{frame}
+
+\begin{frame}{Observation:}{current AutoML strongly depends on learned priors}
+
+\centering\includegraphics[height=5cm]{image/img195740.jpg}
+
+\end{frame}
+
+\begin{frame}{Manual architecture priors}
+\begin{itemize}
+\item \textcolor{red}{Most successful pipelines have a similar structure}
+\item \textcolor{red}{Can we meta-learn a prior over successful structures?} 
+\end{itemize}
+
+
+\centering\includegraphics[height=5cm]{image/img200135.jpg}
+
+\end{frame}
+
+\begin{frame}{Manual architecture priors}
+\textcolor{red}{Successful deep networks often have repeated motifs (cells)}
+\centering\includegraphics[height=6cm]{image/img200331.jpg}
+
+\end{frame}
+
+\begin{frame}{Cell search space prior}
+
+\centering\includegraphics[height=6cm]{image/img200520.jpg}
+\pause
+\\\small\textcolor{red}{Can we meta-learn hierarchies / components that generalize better?}
+
+\end{frame}
+
+\begin{frame}{Cell search space prior}
+
+\centering\includegraphics[height=7cm]{image/img200717.jpg}
+
+
+\end{frame}
+
+\begin{frame}{Manual priors: Weight sharing}
+
+\centering\includegraphics[height=7cm]{image/img200845.jpg}
+
+
+\end{frame}
+\begin{frame}{Learning hyperparameter priors}
+
+\centering\includegraphics[height=5cm]{image/img200954.jpg}
+
+
+\end{frame}
+\begin{frame}{Learn hyperparameter importance}
+
+\centering\includegraphics[height=6cm]{image/img201111.jpg}
+
+
+\end{frame}
+\begin{frame}{Learn defaults + hyperparameter importance}
+
+\begin{itemize}
+    \item \textbf{Tunability} \\\textit{\textcolor{red}{Learn} good defaults, measure \textcolor{red}{importance} as improvement via tuning}
+\end{itemize}
+\centering\includegraphics[height=5.5cm]{image/img201428.jpg}
+
+
+\end{frame}
+\begin{frame}{Bayesian Optimization (interlude)}
+\begin{itemize}
+    \item Start with a few (random) hyperparameter configurations
+    \item Fit a \textcolor{purple}{surrogate model}  to predict other configurations
+    \item Probabilistic regression: mean $\mu$ and standard deviation $\sigma$ \textcolor{purple}{(blue band)}
+    \item Use an \textcolor{green}{acquisition function }to trade off exploration and exploitation, e.g. Expected Improvement (EI)
+    \item Sample for the best configuration under that function
+\end{itemize}
+\centering\includegraphics[height=3cm]{image/img201705.jpg}
+
+
+\end{frame}
+\begin{frame}{Bayesian Optimization}
+
+\begin{itemize}
+    \item Repeat until some stopping criterion:
+        \begin{itemize}
+            \item Fixed budget
+            \item Convergence
+            \item EI threshold
+        \end{itemize}
+    \item Theoretical guarantees 
+        \begin{itemize}
+            \item \textit{Srinivas et al. 2010, Freitas et al. 2012, Kawaguchi et al. 2016}
+        \end{itemize}
+    \item Also works for non-convex, noisy data
+    \item Used in AlphaGo
+\end{itemize}
+
+\end{frame}
+\begin{frame}{Bayesian Optimization}
+
+\centering\includegraphics[height=7cm]{image/img202037.jpg}
+
+
+\end{frame}
+\begin{frame}{Learn basis expansions for hyperparameters}
+
+    \begin{itemize}
+        \item Hyperparameters can interact in very non-linear ways
+        \item Use a neural net to learn a suitable basis expansion $\phi _z(\lambda)$ for all tasks
+        \item \textcolor{green}{You can use Bayesian linear models, transfers info on configuration space}
+    \end{itemize}
+\small \textcolor{blue}{Learn basis expansion on lots of data (e.g. OpenML)}
+\centering\includegraphics[height=4cm]{image/img202530.jpg}
+
+\end{frame}
+
+\begin{frame}{Surrogate model transfer}
+    \begin{itemize}
+        \item If task $j$ is similar to the new task, its surrogate model $S_j$ will likely transfer well
+        \item Sum up all $S_j$ predictions, weighted by task similarity (as in active testing)
+        \item Build combined Gaussian process, weighted by current performance on new task
+    \end{itemize}
+\centering\includegraphics[height=6cm]{image/img202917.jpg}
+
+\end{frame}
+
+\begin{frame}{Surrogate model transfer}
+    \begin{itemize}
+        \item Store surrogate model $S_ij$ for every pair of task $i$ and algorithm $j$
+        \item \textcolor{red}{Simpler surrogates, better transfer}
+        \item Learn weighted ensemble $\rightarrow $ significant speed up in optimization
+    \end{itemize}
+\centering\includegraphics[height=5cm]{image/img203139.jpg}
+
+\end{frame}
+
+\end{document}

@@ -1,0 +1,154 @@
+\input{../latex_main/main.tex}
+\usepackage{multimedia}
+
+\title[Meta-Learning]{AutoML: Meta-Learning} 
+\subtitle{Hyperparameter transfer from similar tasks}
+\author[Joaquin Vanschoren]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and \underline{Joaquin Vanschoren}}
+\institute{}
+\date{}
+
+\begin{document}
+\maketitle
+
+%---------------------------------------------------------
+%This block of code is for the table of contents after
+%the title page
+% \begin{frame}
+% \frametitle{Table of Contents}
+% \tableofcontents
+% \end{frame}
+%---------------------------------------------------------
+
+\begin{frame}{Meta-learning for AutoML: how?}
+\small\centerline{hyperparameters = architecture + hyperparameters}
+
+
+\centering\includegraphics[height=6cm]{image/img195525.jpg}
+
+\end{frame}
+
+\begin{frame}{Warm starting}{(what works on similar tasks?)}
+    \centering\includegraphics[height=4cm]{image/img203410.jpg}
+\end{frame}
+
+\begin{frame}{How to measure task similarity?}
+    \begin{itemize}
+        \item Hand-designed (statistical) meta-features that describe (tabular) datasets
+        \item Task2Vec: task embedding for image data
+        \item Optimal transport: similarity measure based on comparing probability distributions
+        \item Metadata embedding based on textual dataset description
+        \item Dataset2Vec: compares batches of datasets
+        \item Distribution-based invariant deep networks
+    \end{itemize}
+    \centering\includegraphics[height=5cm]{image/Picture1.png}
+\end{frame}
+\begin{frame}{Warm-starting with kNN}
+    \begin{itemize}
+        \item Find k most similar tasks, warm-start search with best $\lambda _i$
+        \begin{itemize}
+            \item Auto-sklearn: Bayesian optimization (SMAC)
+            \begin{itemize}
+                \item Meta-learning yield better models, faster
+                \item Winner of AutoML Challenges
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+    \centering\includegraphics[height=3cm]{image/img204247.jpg}
+    
+\end{frame}
+\begin{frame}{Warm-starting with kNN}
+    \centering\includegraphics[height=5cm]{image/img204255.jpg}
+\end{frame}
+\begin{frame}{Probabilistic Matrix Factorization}
+    \begin{itemize}
+        \item Collaborative filtering: configurations $\lambda_i$ are `rated’ by tasks  $t_j$
+        \item Learn  latent representation for tasks $T$ and configurations $\lambda$
+        \item Use meta-features to warm-start on new task
+        \item Returns probabilistic predictions for Bayesian optitmization
+
+    \end{itemize}
+    \centering\includegraphics[height=5cm]{image/img204634.jpg}
+\end{frame}
+
+\begin{frame}{DARTS: Differentiable NAS}
+    \begin{itemize}
+        \item Fixed (one-shot) structure, learn which operators to use
+        \item Give all operators a weight $\alpha_i$
+        \item Optimize $\alpha_i$ and model weights $\omega_j$ using bilevel optimization
+        \begin{itemize}
+            \item approximate $\omega_j*(\alpha_i)$ adapting $\omega_j$ after every training step
+        \end{itemize}
+    \end{itemize}
+    \centering\includegraphics[height=5cm]{image/Picture2.png}
+\end{frame}
+
+\begin{frame}{Warm-started DARTS}
+    \begin{itemize}
+        \item Warm-start DARTS with architectures that worked well on similar problems
+        \item Slightly better performance, but much faster (5x)
+    \end{itemize}
+    \centering\includegraphics[height=5cm]{image/Picture3.png}
+\end{frame}
+
+\begin{frame}{Meta-models}
+    (learn how to build models/components)
+    \centering\includegraphics[height=3cm]{image/img233402.jpg}
+\end{frame}
+
+\begin{frame}{Algorithm selection models}
+    \centering\includegraphics[height=7cm]{image/img233552.jpg}
+\end{frame}
+
+\begin{frame}{Learning model components}
+    \begin{itemize}
+        \item Learn nonlinearities: RL-based search of space of likely useful activation functions 
+        \begin{itemize}
+            \item E.g. \textit{Swish} can outperform ReLU
+            $$  \text { Swish: } \frac{x}{1+e^{-\beta x}}$$
+        \end{itemize}
+        \item Learn optimizers: RL-based search of space of likely useful update rules 
+        \begin{itemize}
+            \item E.g. PowerSign can outperform Adam, RMPprop
+            \item PowerSign $: e^{\operatorname{sign}(g) \operatorname{sign}(m)} g$
+g: gradient, m:moving average
+        \end{itemize}
+        \item Learn acquisition functions for Bayesian optimization
+    \end{itemize}
+    \includegraphics[height=3cm]{image/img234610.jpg}
+    \includegraphics[height=3cm]{image/img234631.jpg}
+\end{frame}
+
+\begin{frame}{Monte Carlo Tree Search + reinforcement learning}
+    \begin{itemize}
+        \item \textbf{\textit{Self-play:}}
+        \begin{itemize}
+            \item Game actions: insert, delete, replace components in a pipeline
+            \item Monte Carlo Tree Search builds pipelines given action probabilities
+            \begin{itemize}
+                \item With grammar to avoid invalid pipelines
+            \end{itemize}
+            \item Neural network (LSTM) Predicts pipeline performance (can be pre-trained on prior datasets)
+        \end{itemize}
+    \end{itemize}
+    \centering\includegraphics[height=5cm]{image/img235128.jpg}
+\end{frame}
+\begin{frame}{Meta-Reinforcement Learning for NAS}
+    Results on increasingly difficult tasks:
+    \begin{itemize}
+        \item Initially slower than DQN, but faster after a few tasks
+        \item Policy entropy shows learning/relearning
+    \end{itemize}
+    \includegraphics[height=3cm]{image/Picture4.png}
+    \includegraphics[height=3cm]{image/Picture5.png}
+\end{frame}
+
+\begin{frame}{MetaNAS: MAML + Neural Architecture Search}
+    \begin{itemize}
+        \item Combines gradient based meta-learning (REPTILE) with NAS
+        \item During meta-train, it optimizes the meta-architecture (DARTS weights) along with the meta-parameters (initial weights) $\theta$
+        \item During meta-test, the architecture can be adapted to the novel task through gradient descent
+    \end{itemize}
+    \centering\includegraphics[height=4cm]{image/img235920.jpg}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,108 @@
+\input{../latex_main/main.tex}
+\usepackage{multimedia}
+
+\title[Meta-Learning]{AutoML: Meta-Learning} 
+\subtitle{Ever-learning AutoML}
+\author[Joaquin Vanschoren]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and \underline{Joaquin Vanschoren}}
+\institute{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{frame}{What can we learn to learn?}
+    \centerline{\textit{3 pillars}}
+    \centering\includegraphics[height=5.5cm]{image/img014300.jpg}
+\end{frame}
+\begin{frame}{Training Task Acquisition}
+    \begin{itemize}
+        \item Ultimately, \textcolor{red}{meta-learning translates constraints on the learner to constraints on the data}
+        \begin{itemize}
+            \item The biases we don’t put in manually have to be learnable from data
+        \end{itemize}
+        \item Can we \textcolor{red}{automatically create new tasks to inform and challenge our meta-learners?} 
+        \item Paired open-ended trailblazer (POET): \textcolor{red}{evolves a parameterized environment $\theta_E$ for agent $\theta_A$ }
+        \item Select agents that can solve challenges AND evolve environments so they are solvable
+    \end{itemize}
+    \centering\includegraphics[height=3cm]{image/img014755.jpg}
+\end{frame}
+
+\begin{frame}{Does POET scale?}{Increasingly difficult 3D terrain, 18 degrees of freedom.}
+    \centering\includegraphics[height=6cm]{image/img015021.jpg}
+\end{frame}
+
+\begin{frame}{Generative Teaching Networks}
+     \begin{itemize}
+        \item Based on an existing dataset, generate synthetic training data for more efficient training
+        \begin{itemize}
+            \item Like dataset distillation, but uses meta-learning to update the generator model
+        \end{itemize}
+        \item While POET has limited expressivity (limited to \textcolor{red}{$\theta_E$}), GTNs could produce all sorts of training datasets and environments
+        \begin{itemize}
+            \item While being careful not to generate noise: needs some grounding in reality
+        \end{itemize}
+    \end{itemize}   
+    \centering\includegraphics[height=3cm]{image/img015352.jpg}
+    
+\end{frame}
+\begin{frame}{Thank you!}
+    \centering\includegraphics[height=6cm]{image/Picture6.png}
+\end{frame}
+%---------------------------------------------------------
+%Example of the \pause command
+
+%---------------------------------------------------------
+
+% \section{Second section}
+
+%---------------------------------------------------------
+%Highlighting text
+% \begin{frame}
+% \frametitle{Sample frame title}
+
+% In this slide, some important text will be
+% \alert{highlighted} because it's important.
+% Please, don't abuse it.
+
+% \begin{block}{Remark}
+% Sample text
+% \end{block}
+
+% \begin{alertblock}{Important theorem}
+% Sample text in red box
+% \end{alertblock}
+
+% \begin{examples}
+% Sample text in green box. The title of the block is ``Examples".
+% \end{examples}
+% \end{frame}
+
+
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+%Two columns
+% \begin{frame}
+% \frametitle{Two-column slide}
+
+% \begin{columns}
+
+% \column{0.5\textwidth}
+% This is a text in first column.
+% $$E=mc^2$$
+% \begin{itemize}
+% \item First item
+% \item Second item
+% \end{itemize}
+
+% \column{0.5\textwidth}
+% This text will be in the second column
+% and on a second tought this is a nice looking
+% layout in some cases.
+% \end{columns}
+% \end{frame}
+%---------------------------------------------------------
+
+
+\end{document}

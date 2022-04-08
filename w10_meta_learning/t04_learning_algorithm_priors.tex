@@ -1,0 +1,76 @@
+\input{../latex_main/main.tex}
+\usepackage{multimedia}
+
+\title[Meta-Learning]{AutoML: Meta-Learning} 
+\subtitle{Learning model priors}
+\author[Joaquin Vanschoren]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and \underline{Joaquin Vanschoren}}
+\institute{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{frame}{What can we learn to learn?}
+    \centerline{\textit{3 pillars}}
+    \centering\includegraphics[height=5.5cm]{image/img000132.jpg}
+\end{frame}
+
+\begin{frame}{Terminology (reminder)}
+    \centering\includegraphics[height=5.5cm]{image/img000340.jpg}
+\end{frame}
+
+\begin{frame}{Strategy 1: bilevel optimization}
+
+    \centerline{\textcolor{red}{parameterize some aspect of the learner that we want to learn as}} 
+    \centerline{\textcolor{red}{meta-parameters $\theta$ meta-learn $\theta$ across tasks}}
+    \centering\includegraphics[height=5cm]{image/img000908.jpg}
+    \small\centerline{$\Theta(Prior)$, could encode an initialization $\phi$, the hyperparameters $\lambda$, the optimizer,...}
+    \leavevmode\hphantom{ }
+
+    \small\centerline{\textit{Learned $\theta^*$ should \textcolor{blue}{learn $T_{new}$ from small amount of data, yet generalize to a large number of tasks}}}
+\end{frame}
+
+\begin{frame}{Meta-learning with bilevel optimization}
+    \centering\includegraphics[height=7cm]{image/img002035.jpg}
+\end{frame}
+\begin{frame}{Strategy 2: black-box models}
+
+    \centerline{\textit{\textcolor{red}{black box meta-model $g_\theta$ predicts $\phi$ given $D_{train}$ ($theta$ is hidden)}}}
+    \centerline{\textit{\textcolor{red}{hypernetwork where input embedding learned across tasks}}}
+    \centering\includegraphics[height=6cm]{image/img002812.jpg}
+\end{frame}
+
+\begin{frame}{Example: few-shot classification}
+    \centering\includegraphics[height=6.5cm]{image/img003052.jpg}
+\end{frame}
+
+\begin{frame}{Example: few-shot classification}
+    \centering\includegraphics[height=6.5cm]{image/img003340.jpg}
+\end{frame}
+
+\begin{frame}{Example: meta-reinforcement learning}
+    \centering\includegraphics[height=7cm]{image/img003718.jpg}
+\end{frame}
+
+\begin{frame}{Example: meta-reinforcement learning}
+    \centering\includegraphics[height=7cm]{image/img004129.jpg}
+\end{frame}
+
+\begin{frame}{Taxonomy of meta-learning methods}
+    \small like base-learners, meta-learners consist of a representation, an objective, and an optimizer
+    \centering\includegraphics[height=7cm]{image/img004512.jpg}
+\end{frame}
+
+
+\begin{frame}{Taxonomy of meta-learning methods}
+    \small like base-learners, meta-learners consist of a representation, an objective, and an optimizer
+    \centering\includegraphics[height=7cm]{image/img004703.jpg}
+\end{frame}
+
+
+\begin{frame}{Taxonomy of meta-learning methods}
+    \small like base-learners, meta-learners consist of a representation, an objective, and an optimizer
+    \centering\includegraphics[height=7cm]{image/img004820.jpg}
+\end{frame}
+
+\end{document}

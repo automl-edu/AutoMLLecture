@@ -7,6 +7,9 @@
 *.synctex.gz
 *.toc
 *.vrb
+*.fls
+*.fdb_latexmk
+*.DS_Store
 /tmp
 /.texlipse
 /.project

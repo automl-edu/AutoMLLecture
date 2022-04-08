@@ -1,0 +1,204 @@
+\input{../latex_main/main.tex}
+\usepackage{multimedia}
+
+\title[Meta-Learning]{AutoML: Meta-Learning} 
+\subtitle{Introduction}
+\author[Joaquin Vanschoren]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and \underline{Joaquin Vanschoren}}
+\institute{}
+\date{}
+
+\begin{document}
+\maketitle
+
+%---------------------------------------------------------
+%This block of code is for the table of contents after
+%the title page
+% \begin{frame}
+% \frametitle{Table of Contents}
+% \tableofcontents
+% \end{frame}
+%---------------------------------------------------------
+
+
+% \section{First section}
+
+%---------------------------------------------------------
+%Changing visivility of the text
+\begin{frame}
+\frametitle{Intro: humans can easily learn from a single example}
+thanks to years of learning (and eons of evolution) 
+
+% \movie[width=8cm,height=4.5cm]{train}{video.mov}
+\includegraphics[height=6cm]{image/img162621.jpg}
+
+\end{frame}
+
+%---------------------------------------------------------
+\begin{frame}{Can a computer learn from a single example?}
+\includegraphics[height=5cm]{image/img163023.jpg}
+
+\hspace*{\fill} \
+\hspace*{\fill} \
+\pause
+\centerline{\textbf{That won’t work :) Humans also don’t start from scratch.}}
+\end{frame}
+
+
+\begin{frame}{Transfer learning?}
+\includegraphics[height=6.5cm]{image/img163705.jpg}
+
+\pause
+\small\centerline{\textbf{A single source task (e.g. ImageNet) may not generalize well to the test task.}}
+\end{frame}
+
+\begin{frame}{Meta-learning}{Learn over a series (or distribution) of many different tasks/episodes}
+\centerline{\textit{\textcolor{red}{Inductive bias}: learn \textcolor{red}{assumptions} that you can to transfer to new tasks}}
+\centerline{\textit{Prepare yourself to learn new things faster}}
+\centering\includegraphics[height=5cm]{image/img182859.jpg}
+
+\pause
+\leavevmode\hphantom{ }
+
+\small\centerline{Useful in many real-life situations: rare events, test-time constraints, data collection costs, privacy issues,...}
+\end{frame}
+
+\begin{frame}{Inspired by human learning}
+\centerline{We don’t transfer from a single source task, we learn across many, many tasks}
+\centerline{We have a ‘drive’ to explore new, challenging, but doable, fun tasks}
+ 
+\centering\includegraphics[height=5cm]{image/img184210.jpg}
+
+\end{frame}
+
+\begin{frame}{Human-like Learning***}
+\centerline{humans learn across tasks: less trial-and-error, less data, less compute}
+\centerline{\textcolor{orange}{new tasks should be related to experience (doable, fun, interesting?)}}
+ 
+\centering\includegraphics[height=5cm]{image/img184546.jpg}
+
+\centerline{\textit{key aspects of fast learning: compositionality, causality, \underline{learning to learn}}}
+\end{frame}
+
+\begin{frame}{Inductive bias (in language)}
+\centerline{\textit{which assumptions do we make?}}
+\centering\includegraphics[height=6.2cm]{image/img185829.jpg}
+
+\end{frame}
+
+\begin{frame}{Inductive bias (in language)}
+\centerline{\textit{which assumptions do we make?}}
+\centering\includegraphics[height=6cm]{image/img185953.jpg}
+
+\end{frame}
+
+\begin{frame}{Inductive bias (in language)}
+\centerline{\textit{which assumptions do we make?}}
+\centering\includegraphics[height=5.9cm]{image/img190213.jpg}
+
+\end{frame}
+
+\begin{frame}{Inductive bias (in language)}
+\centerline{\textit{which assumptions do we make?}}
+\centering\includegraphics[height=5.9cm]{image/img190532.jpg}
+
+\end{frame}
+
+\begin{frame}{Inductive bias (in language)}
+\centerline{\textit{which assumptions do we make?}}
+\centering\includegraphics[height=5.9cm]{image/img190839.jpg}
+
+\end{frame}
+
+\begin{frame}{What if there is no training data?}
+\centerline{\textit{we can still solve problems by making assumptions}}
+\centering\includegraphics[height=5.5cm]{image/img191412.jpg}
+
+\end{frame}
+
+\begin{frame}{What if there is no training data?}
+\centerline{\textit{we can still solve problems by making assumptions}}
+\centering\includegraphics[height=5.5cm]{image/img191823.jpg}
+
+\end{frame}
+
+\begin{frame}{What if there is no training data?}
+\centerline{\textit{we can still solve problems by making assumptions}}
+\centering\includegraphics[height=5.5cm]{image/img191448.jpg}
+
+\end{frame}
+
+\begin{frame}{What if there is no training data?}
+\centerline{\textit{we can still solve problems by making assumptions}}
+\centering\includegraphics[height=5.5cm]{image/img191531.jpg}
+
+\end{frame}
+
+\begin{frame}{What if there is no training data?}
+\centerline{\textit{we can still solve problems by making assumptions}}
+\centering\includegraphics[height=5.5cm]{image/img192202.jpg}
+
+\end{frame}
+
+\begin{frame}{What if there is no training data?}
+\centerline{\textit{we can still solve problems by making assumptions}}
+\centering\includegraphics[height=5.5cm]{image/img192229.jpg}
+
+\end{frame}
+\begin{frame}{What if there is no training data?}
+\centerline{\textit{we can still solve problems by making assumptions}}
+\centering\includegraphics[height=5.5cm]{image/img192318.jpg}
+
+\end{frame}
+\begin{frame}{What if there is no training data?}
+\centerline{\textit{we can still solve problems by making assumptions}}
+\centering\includegraphics[height=5.5cm]{image/img192345.jpg}
+
+\end{frame}
+\begin{frame}{What if there is no training data?}
+\centerline{\textit{we can still solve problems by making assumptions}}
+\centering\includegraphics[height=5.5cm]{image/img192403.jpg}
+
+\end{frame}
+\begin{frame}{What if there is no training data?}
+\centerline{\textit{we can still solve problems by making assumptions}}
+\centering\includegraphics[height=5.5cm]{image/img192435.jpg}
+
+\end{frame}
+\begin{frame}{What if there is no training data?}
+\centerline{\textit{we can still solve problems by making assumptions}}
+\centering\includegraphics[height=5.5cm]{image/img192503.jpg}
+\pause
+\leavevmode\hphantom{ }
+
+\small\centerline{Humans \textit{assume} that words have consistent meanings and follow input/output constraints}
+\pause
+\small\centerline{\textbf{These assumptions \textcolor{red}{(inductive biases)} are necessary for learning quickly}}
+\end{frame}
+
+\begin{frame}{Meta-learning inductive biases}
+\centerline{\textit{Capture \textcolor{red}{useful assumptions} from the data - that can often not be easily expressed}}
+\centering\includegraphics[height=6cm]{image/img193434.jpg}
+
+\end{frame}
+
+\begin{frame}{Meta-learning goal}
+\centerline{learn \textit{minimal} inductive biases from prior tasks instead of constructing manual ones }
+\centerline{should still generalize well (otherwise you meta-overfit)}
+\centering\includegraphics[height=3.5cm]{image/img193722.jpg}
+
+
+\textbf{Inductive bias:} any assumptions added to training data to learn more effectively. E.g:
+\begin{itemize}
+  \item Instead of \textcolor{red}{general model architectures}, \textcolor{green}{learn better architectures (and hyperparameters)}
+  \item Instead of \textcolor{red}{starting from random weights}, \textcolor{green}{learn good initial weights}
+  \item Instead of \textcolor{red}{standard loss/reward function}, \textcolor{green}{learn a better loss/reward function}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What can we learn to learn?}
+\centerline{\textit{3 pillars}}
+\centering\includegraphics[height=5.5cm]{image/img194451.jpg}
+\end{frame}
+
+
+\end{document}

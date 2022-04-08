@@ -1,0 +1,76 @@
+\input{../latex_main/main.tex}
+\usepackage{multimedia}
+
+\title[Meta-Learning]{AutoML: Meta-Learning} 
+\subtitle{Black-box meta-learning}
+\author[Joaquin Vanschoren]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and \underline{Joaquin Vanschoren}}
+\institute{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{frame}{Black-box meta-learning}
+
+    \centerline{\textit{\textcolor{red}{black box meta-model $g_\theta$ predicts $\phi$ given $D_{train}$ ($theta$ is hidden)}}}
+    \centerline{\textit{\textcolor{red}{hypernetwork where input embedding learned across tasks}}}
+    \centering\includegraphics[height=6cm]{image/img002812.jpg}
+\end{frame}
+
+\begin{frame}{Metric learning}
+
+    \centerline{\textit{\textcolor{red}{Learn an embedding network $theta$ that transforms data ${D_{train},D_{test}}$ across all}}}
+    \centerline{\textit{\textcolor{red}{tasks to a representation that allows easy similarity comparison}}}
+    \centering\includegraphics[height=6cm]{image/img012823.jpg}
+\end{frame}
+\begin{frame}{Prototypical networks}
+    \centering\includegraphics[height=7cm]{image/img013030.jpg}
+\end{frame}
+\begin{frame}{Metric learning}
+    \begin{itemize}
+        \item Quite a few other techniques exist
+        \begin{itemize}
+            \item Siamese neural networks 
+            \item Graph Neural Networks 
+            \begin{itemize}
+                \item Also applicable for semi-supervised and active learning
+            \end{itemize}
+            \item Attentive Recurrent Comparators 
+            \begin{itemize}
+                \item Compares inputs not as a whole but by parts (e.g. image patches)
+            \end{itemize}
+            \item MetaOptNet
+            \begin{itemize}
+                \item Learns embeddings so that linear models can distinguish between classes
+            \end{itemize}
+        \end{itemize}
+        \item Overall
+        \begin{itemize}
+            \item Fast at test time, although pair-wise comparisons limit task size
+            \item Mostly limited to few-shot supervised tasks
+            \item Fails when test tasks are more distant: no way to adapt
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+\begin{frame}{Black-box model for meta-RL}
+    \centering\includegraphics[height=6cm]{image/img013804.jpg}
+\end{frame}
+\begin{frame}{Other black-box models}
+    \begin{itemize}
+        \item Memory-augmented NNs 
+        \begin{itemize}
+            \item Uses neural Turing machines: short term + long term memory
+        \end{itemize}
+        \item Meta Networks 
+        \begin{itemize}
+            \item Meta-learner that returns ‘fast weights’ for itself and the base network solving the task
+        \end{itemize}
+        \item Simple Neural attentive meta- learner (SNAIL)
+        \begin{itemize}
+            \item Aims to overcome memory limitations of RNNs with series of 1D convolutions
+        \end{itemize}
+    \end{itemize}
+    \centering\includegraphics[height=4cm]{image/img014112.jpg}
+\end{frame}
+
+\end{document}
