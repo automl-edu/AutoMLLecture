@@ -52,14 +52,51 @@ thanks to years of learning (and eons of evolution)
 \end{frame}
 
 \begin{frame}{Meta-learning}{Learn over a series (or distribution) of many different tasks/episodes}
-\centerline{\textit{\textcolor{red}{Inductive bias}: learn \textcolor{red}{assumptions} that you can to transfer to new tasks}}
+\centerline{\textit{\textcolor{red}{Inductive bias (or prior)}: learn \textcolor{red}{assumptions} that you can to transfer to new tasks}}
 \centerline{\textit{Prepare yourself to learn new things faster}}
-\centering\includegraphics[height=5cm]{image/img182859.jpg}
+\centering\includegraphics[height=4.9cm]{image/img182859.jpg}
 
 \pause
 \leavevmode\hphantom{ }
 
-\small\centerline{Useful in many real-life situations: rare events, test-time constraints, data collection costs, privacy issues,...}
+\small\centerline{Closely related to continual learning, online learning, multi-task learning}
+\end{frame}
+
+\begin{frame}{Meta-learning}{Learn over a series (or distribution) of many different tasks/episodes}
+  \centerline{\textit{\textcolor{red}{Inductive bias (or prior)}: learn \textcolor{red}{assumptions} that you can to transfer to new tasks}}
+  \centerline{\textit{Prepare yourself to learn new things faster}}
+  \centering\includegraphics[height=4.9cm]{image/img182859.jpg}
+  
+  \leavevmode\hphantom{ }
+  
+  \small\centerline{Useful in many real-life situations: rare events, test-time constraints, data collection costs, privacy issues,...}
+  \end{frame}
+  
+
+\begin{frame}{Meta-learning for AutoML?}
+  \centerline{AutoML systems should not start from scratch, they should learn across tasks}
+  \centerline{Human ML experts also get better over time}
+
+  \centering\includegraphics[height=4.5cm]{image/imgnew1.png}
+  
+  \begin{itemize}
+    \item Current AutoML systems require humans to hard-code a set of assumptions
+    \item What if AutoML systems could learn these by themselves?
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Meta-learning for AutoML?}
+  \centerline{AutoML systems should not start from scratch, they should learn across tasks}
+  \centerline{Human ML experts also get better over time}
+
+  \centering\includegraphics[height=4.5cm]{image/imgnew1.png}
+  
+  \begin{itemize}
+    \item Meta-learning can make AutoML much more efficient
+    \item Vice-versa: AutoML can make meta-learning more robust
+  \end{itemize}
+
 \end{frame}
 
 \begin{frame}{Inspired by human learning}
@@ -77,6 +114,11 @@ thanks to years of learning (and eons of evolution)
 \centering\includegraphics[height=5cm]{image/img184546.jpg}
 
 \centerline{\textit{key aspects of fast learning: compositionality, causality, \underline{learning to learn}}}
+\vspace{0.3cm}
+\raggedright{\footnotesize{\textit{
+\href{https://cims.nyu.edu/~brenden/papers/LakeEtAl2017BBS.pdf}{Lake et al. (2017) Building machines that learn and think like people.}}
+}}
+
 \end{frame}
 
 \begin{frame}{Inductive bias (in language)}
@@ -179,6 +221,10 @@ thanks to years of learning (and eons of evolution)
 \centerline{\textit{Capture \textcolor{red}{useful assumptions} from the data - that can often not be easily expressed}}
 \centering\includegraphics[height=6cm]{image/img193434.jpg}
 
+\vspace{0.2cm}
+\raggedright{\footnotesize{\textit{
+\href{https://arxiv.org/abs/1906.05381}{Lake (2019) Compositional generalization through meta sequence-to-sequence learning.}}
+}}
 \end{frame}
 
 \begin{frame}{Meta-learning goal}
@@ -189,16 +235,20 @@ thanks to years of learning (and eons of evolution)
 
 \textbf{Inductive bias:} any assumptions added to training data to learn more effectively. E.g:
 \begin{itemize}
-  \item Instead of \textcolor{red}{general model architectures}, \textcolor{green}{learn better architectures (and hyperparameters)}
-  \item Instead of \textcolor{red}{starting from random weights}, \textcolor{green}{learn good initial weights}
-  \item Instead of \textcolor{red}{standard loss/reward function}, \textcolor{green}{learn a better loss/reward function}
+  \item Instead of \textcolor{red}{general model architectures}, \textcolor{blue}{learn better architectures (and hyperparameters)}
+  \item Instead of \textcolor{red}{starting from random weights}, \textcolor{blue}{learn good initial weights}
+  \item Instead of \textcolor{red}{standard loss/reward function}, \textcolor{blue}{learn a better loss/reward function}
 \end{itemize}
 \end{frame}
 
 \begin{frame}{What can we learn to learn?}
 \centerline{\textit{3 pillars}}
-\centering\includegraphics[height=5.5cm]{image/img194451.jpg}
-\end{frame}
+\centering\includegraphics[height=5.5cm]{image/imgnew2.png}
 
+\vspace{0.7cm}
+\raggedright{\footnotesize{\textit{
+\href{https://arxiv.org/abs/1905.10985}{Clune (2019) AI-GAs: AI-generating algorithms.}}
+}}
+\end{frame}
 
 \end{document}
