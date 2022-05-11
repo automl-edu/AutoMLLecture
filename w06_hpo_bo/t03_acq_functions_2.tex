@@ -78,7 +78,7 @@ fit at iteration $\bocount$}
 \only<4>{We would then be interested in the \alert{minimum of the updated mean function $\iter[\bocount+1]{\left(\mean^*\right)} \given_{\conf}$}}
 %    The best risk-neutral choice would then the minimum of the new conditional mean function: $\iter[\bocount+1]{\left(\mean^*\right)} \given_{\conf}$.};
 
-\only<5>{The \alert{Knowledge Gradient} is then the \alert{expectation of the improvement $\iter[\bocount+1]{\left(\mean^*\right)} - \iter[\bocount+1]{\left(\mean^*\right)} \!\given_{\!\conf}$}}
+\only<5>{The \alert{Knowledge Gradient} is then the \alert{expectation of the improvement $\iter[\bocount]{\left(\mean^*\right)} - \iter[\bocount+1]{\left(\mean^*\right)} \!\given_{\!\conf}$}}
 % \end{figure}
 
 \end{frame}
@@ -124,7 +124,7 @@ fit at iteration $\bocount$}
 \begin{frame}[c]{Knowledge Gradient (KG): Formal Definition}
 \begin{itemize}\belowdisplayskip=1.5em
     
-    \item The Knowledge Gradient is the \alert{expectation of the improvement $\iter[\bocount+1]{\left(\mean^*\right)} - \iter[\bocount+1]{\left(\mean^*\right)} \!\given_{\!\conf}$}:
+    \item The Knowledge Gradient is the \alert{expectation of the improvement $\iter[\bocount]{\left(\mean^*\right)} - \iter[\bocount+1]{\left(\mean^*\right)} \!\given_{\!\conf}$}:
     \[
     \begin{split}
         \iter{\acq}_{KG}(\conf) 
