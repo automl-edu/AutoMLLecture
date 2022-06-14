@@ -1,9 +1,9 @@
 
-\input{./latex_main/main.tex}
+\input{latex_main/main.tex}
 
 
 
-\title[AutoML: Overview]{AutoML: Dynamic Configuration \& Learning}
+\title[AutoML: Overview]{AutoML: Dynamic Algorithm Configuration}
 \subtitle{Overview}
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
@@ -56,7 +56,7 @@
    \end{itemize}
 	\pause
 	\medskip
-   \item[$\leadsto$] Goal: \alert{Replace algorithm components by learned policies}
+   \item[$\leadsto$] Goal: \alert{Replace hyperparameter heuristics or even algorithm components by learned policies}
 \end{itemize}
 
 
@@ -81,9 +81,9 @@ Important Observations:
 	\end{itemize}
 	\pause
 	\smallskip
-	\item Often we have only a \alert{single solution candidate}\newline (e.g., weights of neural network)
+	\item A \alert{solution candidate} refers to a (partially) trained model (e.g., weights of neural network)
 	\begin{itemize}
-		\item If we use a evolutionary strategy as in neural evolution,\newline we have a population of solution candidates
+		\item If we use an evolutionary strategy as in neural evolution,\newline we have a population of solution candidates
 	\end{itemize}
 	\pause
 	\smallskip
@@ -116,26 +116,19 @@ Important Observations:
 \pause
 
 \begin{block}{Learning to Learn: L2L}
-	The goal of L2L is to learn a \alert{proposal mechanism} from data.
+	The goal of L2L is to learn a \alert{proposal mechanism} from data. (Not covered in this lecture.)
 \end{block}
 	
 \end{frame}
 %-----------------------------------------------------------------------
-%----------------------------------------------------------------------
-%\begin{frame}[c]{Main Idea \& Challenges}
-%
-%\begin{enumerate}
-%	\item \alert{Training data}: Run algorithm over and over again
-%	\pause
-%	\smallskip
-%	\item \alert{Learn} algorithm component from offline training data
-%	\pause
-%	\smallskip
-%	\item Apply to many new problems (a.k.a. instances, tasks, datasets) and assess the \alert{generalization} performance 
-%\end{enumerate}
-%	
-%	
-%\end{frame}
-%-----------------------------------------------------------------------
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+    
+    \begin{enumerate}
+        \item Name a few hyperparameters and figure out whether you would need to dynamically adjust them?
+        \item Is the architecture of a neural network a static or dynamic decision?
+        \item Instead of ``simply'' learning to adjust hyperparameters, which components of training a DNN could be entirely learned from meta-data?
+    \end{enumerate}
+    
+\end{frame}
 
 \end{document}

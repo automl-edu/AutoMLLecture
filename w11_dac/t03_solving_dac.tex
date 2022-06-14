@@ -1,0 +1,204 @@
+
+\input{../latex_main/main.tex}
+
+
+\title[AutoML: DAC]{AutoML: Dynamic Algorithm Configuration}
+\subtitle{Approaches for Solving Dynamic Algorithm Configuration}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Recap: Setup}
+	
+	Objective:
+	\begin{equation}
+	\policy^* \in \argmin_{\policy \in \policies} \int_{\datasets} p(\dataset) \cost(\policy, \dataset) \diff \dataset \nonumber
+	\end{equation}
+	
+	\bigskip
+	
+	Task: Determine a dynamic policy
+	
+	$$\policy^* : \stateRL_t \times \dataset \mapsto \conf$$
+	
+	$\leadsto$ let's ignore generalization across datasets for now -- will be covered in a later video
+	\bigskip
+	
+	Running example: learning rates
+	
+	\centering
+		\includegraphics[width=0.5\textwidth]{images/learning_rates}
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{DAC by Configuring Hand-Designed Heuristics}
+	
+	
+	\begin{itemize}
+	    \item Adaptively changing hyperparameters itself is not a new idea
+	    \item Often heuristics are designed manually
+	    \item Example: cosine annealing learning rates \lit{\href{https://arxiv.org/abs/1608.03983}{Loshchilov and Hutter. 2016}}
+	\end{itemize}
+	
+	\begin{eqnarray}
+	         \eta_t = \eta_{min} + \frac{1}{2}(\eta_{max} - \eta_{min})\left(1 +
+        \cos\left(\frac{T_{cur}}{T_{max}} \cdot 3.141592 \right)\right)
+	\end{eqnarray}
+	
+	Hyperparameters:
+	\begin{description}
+	    \item[$\eta_{max}$] initial (maximal) learning rate
+	    \item[$\eta_{min}$] Minimal learning rate
+	    \item[$T_{max}$] Maximum number of iterations (i.e. restart of learning rate)
+	\end{description}
+	
+	$\leadsto$ Use HPO to optimize these three continuous hyperparameters
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{DAC by Optimization (Direct Schedule)}
+	
+	
+	\begin{itemize}
+	    \item Maybe we don't know a well-performing analytic expression
+	    \item We can also optimize directly for a discrete schedule of learning rates
+	\end{itemize}
+	
+	On a linear schedule:
+	\begin{verbatim}
+	    lr_after_0_epochs [0.00001, 1] float log
+	    lr_after_10_epochs [0.00001, 1] float log
+	    lr_after_20_epochs [0.00001, 1] float log
+	    lr_after_30_epochs [0.00001, 1] float log
+	    ...
+	\end{verbatim}
+	
+	Or exponential schedule:
+	\begin{verbatim}
+	    lr_after_0_epochs [0.00001, 1] float log
+	    lr_after_10_epochs [0.00001, 1] float log
+	    lr_after_30_epochs [0.00001, 1] float log
+	    lr_after_90_epochs [0.00001, 1] float log
+	    ...
+	\end{verbatim}
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{DAC by Optimization (Functional Schedule)}
+	
+	
+	\begin{itemize}
+	    \item The previous approach has the disadvantages
+	    \begin{itemize}
+	        \item Discretization is important
+	        \item Hard to optimize for a reasonable pattern in the learning rate schedule
+	    \end{itemize}
+	    \smallskip
+	    \pause
+	    \item Directly learn a function of a schedule:\\ $\pi(s; \theta)$ where $\theta$ are the implicit parameters of your schedule\\ (e.g., the weight of a neural network)
+	    \pause
+	    \item Since we can observe the cost induced by our learning rate schedule (i.e., validation loss), we can apply any black-box optimizer to optimize $\theta$
+	\end{itemize}
+	
+	\begin{equation}
+	    \bm{\theta}^* \in \argmin_{\bm{\theta} \in \mathbb{R}^{(n\times m)}}  \cost(\policy_{\bm{\theta}}) = \argmin_{\bm{\theta} \in \mathbb{R}^{(n\times m)}} \cost(s_T,\policy_{\bm{\theta}})\nonumber
+	\end{equation}
+	
+	\begin{itemize}
+	    \item For example, you could use an evolutionary strategy~\lit{\href{https://arxiv.org/abs/1802.08842}{Chrabaszcz et al. 2018}}
+	\end{itemize}
+	
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{DAC by Reinforcement Learning}
+	
+	\centering
+    \input{tikz/control.tex}
+	
+	\begin{itemize}
+	    \item The way we defined the problem already hinted at using reinforcement learning ($\rightarrow$ more in the next video)
+	    \item The policy agent is trained by means of RL in a purely data-driven way
+	    \item Difference to DAC by Optimziation with a functional schedule:
+	    \begin{itemize}
+	        \item DAC by RL can make use of sequential structure of the problem
+	        \item Allows to find generalizing policies conditioned to the dataset at hand
+	    \end{itemize}
+	\end{itemize}
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{DAC by Optimization (Online)}
+	
+	
+	\begin{itemize}
+	    \item Sometimes we cannot afford evaluations of different learning rates in a sequential manner
+	    \item Assume we have $n$ parallel compute units (e.g., CPUs or GPUs),\\ but we can use them only once in parallel
+	    \item Main idea: 
+	    \begin{enumerate}
+	        \item Initialize a your learning rates randomly on each compute unit\\
+	        $\leadsto$ Population of learning rates (and partially trained models)
+	        \item Train all models for a bit (e.g., 1 epoch), and observe $\stateRL^{(t+1)}$ and $\rewardRL^{(t+1)}$
+	        \item Update your population of learning rates and paritally trained models
+	        \item Go back to 2.
+	    \end{enumerate}
+	    \item The challenge is how to do Step 3.
+	    
+	\end{itemize}
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c,fragile]{Summary}
+	
+	
+	\begin{itemize}
+	    \item DAC can be solved in different ways, incl.
+	    \begin{itemize}
+	        \item Configuration of hand-designed heuristics
+	        \item Direct configuration of a schedule
+	        \item Optimization of a functional schedule
+	        \item Using Reinforcement Learning
+	        \item On-the-fly online optimization
+	    \end{itemize}
+	    
+	\end{itemize}
+	
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+    
+    \begin{enumerate}
+        \item Under which assumptions would you choose which of the approaches discussed in this video?
+        \item What are the advantages and disadvantages of using reinforcement learning for DAC or online DAC?
+        \item How would you optimize a policy that can generalize to more than one dataset / task?
+    \end{enumerate}
+    
+\end{frame}
+
+
+\end{document}

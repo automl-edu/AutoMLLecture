@@ -1,0 +1,182 @@
+% !TeX spellcheck = en_US
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: PBT]{AutoML: Dynamic Algorithm Configuration}
+\subtitle{Generalizing DAC}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+	
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{RL for DAC}
+	
+	\centering
+    \input{tikz/control.tex}
+    \bigskip
+	
+	\begin{itemize}
+	    \item So far, we ignored that we want to learn a policy that performs well on different datasets (and tasks)
+	    \begin{itemize}
+	        \item Task could refer to solving different variations of an MDP with RL\\
+	        (Note: In this case, we would use RL to tune the hyperparameters of an RL agent.\\ RL on the target and meta-level!)
+	    \end{itemize}
+	    \item What are challenges to achieve this?
+	\end{itemize}	
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Characterizing Datasets}
+
+	\begin{itemize}
+	    \item An RL agent could try to implicitly learn what kind of dataset $\mathcal{D}$ is at hand right now
+	    \begin{itemize}
+	        \item For example, the transition function or state information should be informative
+	        \item[-] Might take a lot of time to figure it out
+	    \end{itemize}
+	    \medskip
+	    \pause
+	    \item Directly provide meta-features characterizing the dataset
+	    \begin{itemize}
+	        \item Counting features, such as, number of observations, number of features, number of classes
+	        \item Landmarking features, such as, loss of tree-based models vs. linear model
+	    \end{itemize}
+	    \item[$\leadsto$] We could directly add these as context information to the state information
+	    \begin{itemize}
+	        \item contextual MDP (cMDPs) \lit{\href{https://arxiv.org/abs/1502.02259}{Hallak et al. 2015}}
+	    \end{itemize}
+	    \item[+] Will help to identify similar datasets more easily
+	    \begin{itemize}
+	        \item Similar datasets should require similar policies
+	    \end{itemize}
+	    \pause
+	    \item[-] Unclear which meta-features are useful
+	    \begin{itemize}
+	        \item Whether loss of a tree-based model is informative for changing the learning rate of DNN is questionable
+	    \end{itemize}
+	    
+	\end{itemize}	
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning a Curriculum}
+
+	\begin{itemize}
+	    \item \alert{Problem I:} If we have $100+$ datasets, we cannot afford to evaluate a new policy on all datasets
+	    \begin{itemize}
+	        \item This would mean that a ML model is trained and evaluated on all of these 
+	    \end{itemize}
+	    \pause
+	    \smallskip
+	    \item \alert{Problem II:} On some datasets, it might be easier to learn a good policy (e.g., learning rate schedule) than on others
+	    \pause
+	    \smallskip
+	    \item Idea: Curriculum learning starts to learn on the easy tasks and gradually goes to the harder tasks
+	    \begin{itemize}
+	        \item Learn a policy first on easy datasets/tasks (maybe also small s.t. quick to evaluate)
+	        \item Go to datasets/tasks that might be harder and harder
+	    \end{itemize}
+	    \pause
+	    \smallskip
+	    \item \alert{Problem:} How should we know which datasets/tasks are easy or hard?
+	    \pause
+	    \item \alert{Idea:} Check on a regular base on which tasks learning happened and focus on these \lit{\href{https://arxiv.org/abs/2106.05110}{Eimer et al. 2021}}
+	\end{itemize}	
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Learning from Manually Designed Heuristics}
+
+	\begin{itemize}
+	    \item So far, DAC is often used to replace existing manually designed heuristics,\\ e.g., learning rate schedules 
+	    \item In some cases, these manually designed heuristics perform very well
+	    \item[$\leadsto$] Can we learn from these existing heuristics as an initial policy?
+	    \pause
+	    \medskip
+	    \item There are special RL algorithm that allow imitating existing episodes (here generated from these manual heuristics)
+	    \item \lit{\href{https://ml.informatik.uni-freiburg.de/wp-content/uploads/papers/20-PPSN-LTO-CMA.pdf}{Shala et al. 2020}} proposed to combine replies of existing heuristics and learned heuristics 
+	    \begin{itemize}
+	        \item Guided Policy Search~\lit{\href{https://proceedings.mlr.press/v28/levine13.html}{Levine and Koltun 2013}} allows to define a teacher which is imitated
+	        \item Teacher is our existing manually designed heuristic
+	        \item By replying the existing heuristics sufficiently often, a policy similar to the existing one can be learned, but is better on average
+	    \end{itemize}
+	    
+	\end{itemize}	
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Relation to Meta-Reinforcement Learning}
+
+	\begin{itemize}
+	    \item Meta-RL deals with the problem on how to transfer knowledge between learning tasks
+	    \begin{itemize}
+	        \item E.g., how to initialize the policy weights effectively s.t. learning will be efficient on new tasks
+	    \end{itemize}
+	    \pause\smallskip
+	    \item For dynamic algorithm configuration, the goal is to learn on a set of meta-train datasets and then apply the learned policy on a new (meta-test) datasets
+	    \begin{itemize}
+	        \item[$\leadsto$] no fine-tuning on the new data set
+	        \item[$\leadsto$] zero-short transfer
+	    \end{itemize}
+	    \pause
+	    \item Also related to offline Reinforcement Learning
+	    \begin{itemize}
+	        \item Only logged data from previous tasks is available
+	        \item Learn a new policy on a new task without interacting with environment again
+	        \item Special case of meta-RL
+	    \end{itemize}
+	\end{itemize}	
+	
+	\centering
+	\includegraphics[width=.6\textwidth]{images/offline_rl.png} \footnotesize Source: \lit{\href{https://bair.berkeley.edu/blog/2020/12/07/offline/}{Kumar and Singh 2020}}
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Summary}
+
+	\begin{itemize}
+	    \item Characterising datasets with meta-features can help
+	    \item Learn a curriculum s.t. you avoid evaluation on all of them all the time
+	    \item Imitate existing dynamic polices to warmstart RL
+	    \item Closely related to meta reinforcement learning
+	\end{itemize}	
+	
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+    
+    \begin{enumerate}
+        \item Which meta-features would you consider if you have to find a policy for learning rates?
+        \item What would you consider to be an easy dataset for a finding a learning-rate policy?
+    \end{enumerate}
+    
+\end{frame}
+%-----------------------------------------------------------------------
+
+\end{document}

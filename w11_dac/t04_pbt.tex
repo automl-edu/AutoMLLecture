@@ -4,7 +4,7 @@
 
 
 
-\title[AutoML: PBT]{AutoML: Dynamic Configuration \& Learning}
+\title[AutoML: PBT]{AutoML: Dynamic Algorithm Configuration}
 \subtitle{Population-based Training}
 \author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
 \institute{}
@@ -42,7 +42,7 @@
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{Massively parallelized Random Search}
+\begin{frame}[c]{Massively Parallelized Random Search}
 
 \begin{tikzpicture}[node distance=2.1cm]
 %PreProcessing
@@ -132,7 +132,7 @@ General workflow of PBT:
 	\pause
 	\item Use mutation (and cross-over) to generate off-springs
 	\begin{itemize}
-		\item Change the hyperparameter settings, but inherits the partially trained model (+ pertubation)
+		\item Pertubate the hyperparameter settings, but inherits the partially trained model 
 	\end{itemize}
 	\pause
 	\item[$\leadsto$] New population consists of so-far best performing ones and new off-springs
@@ -148,6 +148,10 @@ General workflow of PBT:
 
 \begin{itemize}
 	\item PBT returns an already trained model (e.g., DNN or RL policy)
+	\begin{itemize}
+	    \item No explicit policy is returned
+	    \item[$\leadsto$] Drawback: cannot be transferred to other datasets/tasks
+	\end{itemize}
 	\bigskip
 	\pause
 	\item PBT uses evolutionary computing to determine well-performing hyperparameter settings
@@ -231,7 +235,7 @@ General workflow of PBT:
 \end{frame}
 %----------------------------------------------------------------------
 %----------------------------------------------------------------------
-\begin{frame}[c]{PBT  + BO: Parallel Evaluation \litw{\href{https://arxiv.org/pdf/2002.02518.pdf}{Parker-Holder et al. 2020}}}
+\begin{frame}[c]{PB2: PBT  + BO: Parallel Evaluation \litw{\href{https://arxiv.org/pdf/2002.02518.pdf}{Parker-Holder et al. 2020}}}
 
 \begin{itemize}
 	\item \alert{Challenge II}: The cost depends on the previous $\confI{1}, \confI{2}. \ldots, \confI{t-1}$
@@ -254,5 +258,25 @@ where $\cost^{(t)}(\conf)$ is the cost for a given hyperparameter setting at tim
 
 \end{frame}
 %----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Summary}
 
+\begin{itemize}
+    \item Update hyperparameters while learning by training multiple models in parallel
+    \item Drop the poorly-performing models and add variations of the well-performing ones
+    \item Increase efficiency by learning a BO-like surrogate model by modelling cost improvement
+\end{itemize}
+
+\end{frame}
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+    
+    \begin{enumerate}
+        \item Which mutation operators could make sense if applied to NAS?
+        \item Why is it important to model cost improvement instead of cost directly?
+        \item How would you decide how many of the poorly-performing models (or which) you can drop?
+    \end{enumerate}
+    
+\end{frame}
 \end{document}

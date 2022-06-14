@@ -1,0 +1,159 @@
+% !TeX spellcheck = en_US
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: PBT]{AutoML: Dynamic Algorithm Configuration}
+\subtitle{Reinforcement Learning for DAC}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+	
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{RL for DAC}
+	
+	\centering
+    \input{tikz/control.tex}
+    \bigskip
+	
+	\begin{itemize}
+	    \item The way we defined the problem already hinted at using reinforcement learning
+	    \begin{itemize}
+	        \item Now the details!
+	    \end{itemize}
+	\end{itemize}	
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Actions}
+	
+	Domain of changes:
+	\begin{enumerate}
+	    \item Directly setting the hyperparameter:
+	    \begin{itemize}
+	        \item $\conf^t_i = a_t$
+	        \item[+] Full flexibility on changing settings
+	        \item[-] Can lead to very jumpy schedules, going from min to max values all the time
+	    \end{itemize}
+	    \item Relative update
+	    \begin{itemize}
+	        \item Change the hyperparameter by a factor, e.g., $\conf^{(t)}_i = a_t \cdot \conf^{(t-1)}_i$
+	        \item Change the hyperparameter by a summand, e.g., $\conf^{(t)}_i = a_t + \conf^{(t-1)}_i$
+	        \item Depending on the domain of possible actions, it will impose restrictions on the update
+	        \item[-] Less flexibility
+	        \item[+] (potentially) less jumpy schedules
+	    \end{itemize}
+	\end{enumerate}
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{State Information}
+	
+	\begin{itemize}
+	    \item Start with everything that is used in existing manually designed heuristics
+	    \item For example, for learning rates:
+	    \begin{itemize}
+	        \item Previous learning rates
+	        \item Number of updates
+	        \item Loss
+	        \item Momentum
+	        \item Gradient information
+	    \end{itemize}
+	    \medskip
+	    \pause
+	    \item Why are these good state features?
+	    \begin{itemize}
+	        \item already informative to update manually designed policies
+	        \item already available in existing implementations
+	        \item cheap to compute
+	        \item some quantify the progress of the learning process
+	    \end{itemize}
+	    \medskip
+	    \pause
+	    \item If these are very noisy statistics, consider to smooth them over the last updates
+	\end{itemize}
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Transitions}
+	
+	\begin{itemize}
+	    \item These are implicitly given by training the model for a bit more
+	    \item But: Granularity can be important
+	    \begin{itemize}
+	        \item Too often: Much harder learning problem
+	        \item Too rarely: We might miss important state updates and do not change the hyperparameter(s) accordingly
+	    \end{itemize}
+	    \item If you assume that your hyperparameters can stay constant for quite some time (without knowing exactly for how many updates), you can try to use an RL approach that is able to efficiently repeat actions, e.g. \lit{\href{https://arxiv.org/abs/2106.05262}{Biedenkapp et al. 2021}}
+	\end{itemize}
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Reward}
+	
+	\begin{itemize}
+	    \item We minimize cost (e.g., validation loss), but RL agents maximize reward:
+	    $$\rewardRL(s) = - \cost(s) $$
+	    
+	    \item RL agents will optimize the expected (discounted) cumulative reward 
+	    $$ \mathbb{E} \left[\sum^T_{t=0} \gamma^{t}R^{(t)} \right]$$
+	    \item Actually, we (often) care about the final reward $R^{(T)}$
+	    \item By optimizing for the cumulative reward:
+	    \begin{itemize}
+	        \item We go quickly for better cost values during training
+	        \item Often fairly well correlated with final loss
+	        \item BUT: Can lead to too aggressive hyperparameter changes early on to minimize cost quickly, but does not convergence as well later on
+	        \begin{itemize}
+	            \item You can play with the discount factor to account for this
+	        \end{itemize} 
+	    \end{itemize}
+	\end{itemize}
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Summary}
+	
+	\begin{itemize}
+	    \item Actions: Try direct settings or relative changes
+	    \item States: Take whatever was used for manual heuristics
+	    \item Transitions: Pay attention to granularity
+	    \item Reward: Cumulative cost can lead to greedy policies
+	\end{itemize}
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+    
+    \begin{enumerate}
+        \item Which state information would you consider to change a hyperparameter of your choice?
+        \item Which proxy reward information could be helpful instead of negative validation loss?
+    \end{enumerate}
+    
+\end{frame}
+%-----------------------------------------------------------------------
+
+\end{document}

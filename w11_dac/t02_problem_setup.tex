@@ -1,0 +1,160 @@
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: DAC]{AutoML: Dynamic Algorithm Configuration}
+\subtitle{Problem Setup}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Iterative Optimization Heuristics}
+	
+	\begin{itemize}
+		\item Many iterative heuristics in algorithms are dynamic and adaptive
+		\begin{enumerate}
+			\item the algorithm's behavior changes over time
+			\item the algorithm's behavior changes based on internal statistics
+		\end{enumerate}
+		\medskip
+		\pause
+		\item These heuristics might control other hyperparameters of the algorithms
+		\pause
+		\smallskip
+		\item Example: learning rate schedules for training DNNs
+		\begin{enumerate}
+			\item exponential decaying learning rate: based on number of iterations, learning rate decreases
+			\pause
+			\item Reduce learning rate on plateaus: if the learning stagnates for some time,\\ the learning rate is decreased by a factor
+		\end{enumerate}
+		
+		\centering
+		\includegraphics[width=0.6\textwidth]{images/learning_rates}
+		%\pause
+		%\smallskip
+		%\item other examples: restart probability of search, mutation rate of evolutionary algorithms, \ldots  
+		
+	\end{itemize}
+	
+\end{frame}
+%----------------------------------------------------------------------
+% %----------------------------------------------------------------------
+% \begin{frame}[c]{Parametrization of Learning Rate Schedules}
+	
+% 	\begin{itemize}
+% 		\item How can we parameterize learning rate schedules?
+% 		\begin{enumerate}
+% 			\item exponential decaying learning rate:
+% 			\begin{itemize}
+% 				\item initial learning rate
+% 				\item minimal learning rate
+% 				\item multiplicative factor
+% 			\end{itemize}
+% 			\pause
+% 			\item Reduce learning rate on plateaus:
+% 			\begin{itemize}
+% 				\item patience (in number of epochs)
+% 				\item patience threshold
+% 				\item decreasing factor
+% 				\item cool-down break (in number of epochs)
+% 			\end{itemize}
+% 		\end{enumerate}
+% 		\pause
+% 		\medskip
+% 		\item[$\leadsto$] Many hyperparameters only to control a single hyperparameter
+% 		\pause   
+% 		\item Still not guaranteed that optimal setting of e.g. learning rate schedules will lead to optimal learning behavior
+% 		\begin{itemize}
+% 			\item Learning rate schedules are only heuristics
+% 		\end{itemize}
+% 	\end{itemize}
+	
+% \end{frame}
+% %----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Dynamic Algorithm Configuration}
+
+\begin{itemize}
+	\item So far, we assumed that an algorithm runs with static settings
+	\item However, settings, such as learning rate, have to be adapted over time
+\end{itemize}
+
+\begin{block}{Definition}
+	Let 
+	\begin{itemize}
+		\item $\conf \in \pcs$ be a hyperparameter configuration of an algorithm $\algo$,
+		\pause
+		\item $p(\dataset)$ be a probability distribution over datasets $\dataset \in \datasets$ (or tasks),
+		\pause
+		\item $\stateRL^{(t)}$ be a state description of $\algo$ solving $\dataset$ at time point $t$,
+		\pause
+		\item $\cost: \policies \times \datasets \to \perf$ be a cost metric assessing the cost of a control policy $\pi \in \Pi$ on $\dataset \in \datasets$
+	\end{itemize}
+	
+	\pause
+	the \emph{dynamic algorithm configuration problem} is to obtain a policy $\policy^* : \stateRL \times \dataset \mapsto \conf$ by optimizing its cost across a distribution of datasets:
+	\begin{equation}
+	\policy^* \in \argmin_{\policy \in \policies} \int_{\datasets} p(\dataset) \cost(\policy, \dataset) \diff \dataset \nonumber
+	\end{equation}
+\end{block}
+
+\end{frame}
+%-----------------------------------------------------------------------	
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Dynamic Algorithm Configuration as Contextual MDP \litw{\href{https://ml.informatik.uni-freiburg.de/papers/20-ECAI-DAC.pdf}{Biedenkapp et al. 2020}}}
+
+
+\begin{description}
+	\item[State $\stateRL^{(t)}$] are described by statistics gathered in the algorithm run
+	\pause
+	\item[Action $\actionRL^{(t)}$] change hyperparameters according to some control policy $\pi$
+	\pause
+	\item[Transition] run the algorithm from state $\stateRL^{(t)}$ to $\stateRL^{(t+1)}$ for a "short" moment by using the hyperparameters defined by $a^{(t)}$
+	\pause
+	\item[Reward $\rewardRL^{(t)}$] Return your current cost (or an approximation)
+	\pause
+	\item[Context $\dataset$] A given dataset (or task)
+\end{description}
+
+\bigskip
+	
+\centering
+\input{tikz/control.tex}
+	
+	
+\end{frame}
+%-----------------------------------------------------------------------
+
+\begin{frame}[c]{Questions to Answer for Yourself / Discuss with Friends}
+    
+    \begin{enumerate}
+        \item What kind of information can you make use of for state information in deep learning?
+        \item How would you solve the dynamic algorithm configuration problem efficiently?
+        \item How can we make use of the cost value in each state (and not only in the final state after training ended)?
+    \end{enumerate}
+    
+\end{frame}
+
+
+
+\end{document}

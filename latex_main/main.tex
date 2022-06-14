@@ -73,7 +73,7 @@
 \useoutertheme{infolines}
 \setbeamertemplate{navigation symbols}{\vspace{-5pt}} % to lower the logo
 \setbeamercolor{date in head/foot}{bg=white} % blue
-\setbeamercolor{date in head/foot}{fg=white}
+\setbeamercolor{date in head/foot}{fg=blue}
 \setbeamercolor{author  in head/foot}{bg=white} %blue
 \setbeamercolor{title in head/foot}{bg=white} % blue
 \setbeamercolor{title}{fg=white, bg=blue}
@@ -82,24 +82,24 @@
 \setbeamercolor{frametitle}{fg=white, bg=blue}
 \setbeamercovered{invisible}
 
-\makeatletter
-\setbeamertemplate{footline}
-{
-  \leavevmode%
-  \hbox{%
-  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
-%    \usebeamerfont{author in head/foot}\insertshortauthor
-  \end{beamercolorbox}%
-  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
-    \usebeamerfont{title in head/foot}\insertshorttitle
-  \end{beamercolorbox}%
-  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
-    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
-%    \insertframenumber\hspace*{2ex} 
-  \end{beamercolorbox}}%
-  \vskip0pt%
-}
-\makeatother
+% \makeatletter
+% \setbeamertemplate{footline}
+% {
+%   \leavevmode%
+%   \hbox{%
+%   \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+% %    \usebeamerfont{author in head/foot}\insertshortauthor
+%   \end{beamercolorbox}%
+%   \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+%     \usebeamerfont{title in head/foot}\insertshorttitle
+%   \end{beamercolorbox}%
+%   \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+%     \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+% %    \insertframenumber\hspace*{2ex} 
+%   \end{beamercolorbox}}%
+%   \vskip0pt%
+% }
+% \makeatother
 
 %\pgfdeclareimage[height=1.2cm]{automl}{images/logos/automl.png}
 %\pgfdeclareimage[height=1.2cm]{freiburg}{images/logos/freiburg}

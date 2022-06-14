@@ -1,0 +1,218 @@
+% !TeX spellcheck = en_US
+
+\input{../latex_main/main.tex}
+
+
+
+\title[AutoML: PBT]{AutoML: Dynamic Algorithm Configuration}
+\subtitle{Background: Reinforcement Learning}
+\author[Marius Lindauer]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and \underline{Marius Lindauer} \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+
+
+% \AtBeginSection[] % Do nothing for \section*
+% {
+%   \begin{frame}{Outline}
+%     \bigskip
+%     \vfill
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+	
+	\maketitle
+	
+	
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Components of RL Problems}
+	
+	\centering
+	\includegraphics[width=0.6\textwidth]{images/rl_comic.png}\footnote{Image source: Morning Brew and Marius Haakestad on Unsplash}
+	
+	\bigskip
+	
+	\begin{itemize}
+		\item Data: Self-acquired observations + rewards
+		\item Task: Learn how to behave s.t. reward is maximized
+	\end{itemize}	
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{State?}
+	
+	\begin{itemize}
+		\item We constantly observe our environment (and our own state)
+		\item Mostly via sensors
+		\begin{itemize}
+			\item images
+			\item sound
+			\item feeling by touch
+			\item feeling of acceleration
+			\item feeling of balance
+			\item ...
+		\end{itemize}
+		\pause
+		\smallskip
+		\item Sometimes we are also presented by explicit information from our environment
+		\begin{itemize}
+			\item Documents
+			\item Scores
+			\item ...
+		\end{itemize}
+		\pause
+		\smallskip
+		\item[$\leadsto$] We never observe the full state, but only an abstraction of it
+		\item[$\leadsto$] some distinguish between states $s$ and observations $o$
+	\end{itemize}
+	
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Actions}
+	
+	\begin{itemize}
+		\item In a given state, an action will (potentially) change the state 
+		\medskip
+		\pause
+		\item Types of actions:
+		\begin{description}
+			\item[continuous] The value domain is continuous and often bounded by some range (e.g., $[0,1]$)
+			\begin{itemize}
+				\item Examples: velocity, angles, probabilities
+			\end{itemize}
+			\pause
+			\item[categorical and discrete] The action is to choose from a set of possible options (i.e., potentially no ordering between actions)
+			\begin{itemize}
+				\item Examples: button on a game controller, set of strategies, discrete position on a board
+			\end{itemize}
+		\end{description}
+	\end{itemize}
+	
+\end{frame}
+%-----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+\begin{frame}[c]{Transitions}
+	
+	\begin{itemize}
+		\item Given state $s$ and action $a$, in which state do we end up?
+		\smallskip
+		\pause
+		\item Either deterministic: We will end up exactly in one state
+		\begin{itemize}
+			\item Examples: board games like Go or Chess
+		\end{itemize}
+		\pause
+		\item Or non-deterministic: There is probability distribution over\newline in which states we will end up.
+		\begin{itemize}
+			\item Examples: games with randomized events (e.g., many card games), robotics -- often because the control over our robot is not perfect
+		\end{itemize}
+		\item Challenges:
+		\begin{itemize}
+			\item Was the action responsible for the stochasticity or the environment?
+			\item Harder to learn in such environment since you have a different notion of reproducibility
+		\end{itemize}
+	\end{itemize}
+	
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Rewards}
+	\begin{itemize}
+		\item Feedback on whether we did something "good" or "bad"
+		\smallskip
+		\pause
+		\item Either immediate (or dense) reward: We directly get a reward signal after each transition
+		\item Or delayed (or sparse) reward: We have to wait some states to observe the reward
+		\begin{itemize}
+			\item Examples: Saving for retirement or Finding a key in video game Montezuma’s revenge
+			\item Extreme case: we get only feedback at the end of an episode\newline (e.g., who won a board game match)
+		\end{itemize}
+		\item Introduces two challenges
+		\begin{itemize}
+			\item When planning: decisions involve reasoning about not just immediate
+			benefit of a decision but also its longer term ramifications
+			\item When learning: temporal credit assignment is hard (what caused later
+			high or low rewards?)
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Episode}
+	\begin{itemize}
+		\item An episode is a sequence of state-action(-reward) pairs (i.e. steps)
+		\item The end of an episode is called a horizon
+		\smallskip
+		\pause
+		\item Finite horizon: We have a finite amount of steps\newline until the episode ends
+		\item Infinite horizon: The episode will never end (unless we abort it)
+	\end{itemize}
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Markov Decision Process (MDP)}
+
+\begin{itemize}
+	\item Markov Decision Process is Markov Reward Process + actions
+	\item Definition of MDP
+	\begin{itemize}
+		\item $S$ is a (finite) set of Markov states $s \in S$
+		\item $A$ is a (finite) set of actions $a \in A$
+		\item $P$ is dynamics/transition model for each action, that specifies $P(s_{t+1} = s' \mid s_t=s, a_t=a)$
+		\item $R$ is a reward function 
+		$R(s_t=s, a_t=a) = \mathbb{E}[r_t \mid s_t=s, a_t=a] $
+		\begin{itemize}
+			\item Sometimes R is also defined based on $(s)$ or on $(s,a,s')$
+		\end{itemize}
+		\item Discount factor $\gamma \in [0, 1]$
+	\end{itemize}
+	\item MDP is tuple $(S,A,P, R, \gamma)$
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{MDP Policies}
+
+\begin{itemize}
+	\item Policy specifies what action to take in each state
+	\begin{itemize}
+		\item Can be deterministic or stochastic
+	\end{itemize}
+	\item For generality, consider as a conditional distribution
+	\begin{itemize}
+		\item Given a state, specifies a distribution over actions
+	\end{itemize}
+	\item Policy: $\pi(a \mid s) = P(a_t=a | s_t = s)$
+	\item For deterministic policies, we write $\pi(s)$ to indicate the action taken in state $s$
+\end{itemize}
+
+
+\end{frame}
+%-----------------------------------------------------------------------
+%----------------------------------------------------------------------
+\begin{frame}[c]{Objective}
+
+Value function for a state $s$:
+$$V^\pi (s) = r(s, \pi(s)) + \gamma \sum_{s'\in S} p(s'\mid s, \pi(s)) V^\pi (s')$$
+
+\begin{itemize}
+    \item[$\leadsto$] How much (discounted) reward can I expect by following my policy $\pi$ from this state onwards
+    \bigskip
+    \pause
+    \item Find optimal policy $\pi^*$ maximizing our value function:
+\end{itemize}
+
+$$ \pi^* \in \argmax_{\pi} V^\pi$$
+
+\end{frame}
+%-----------------------------------------------------------------------
+
+\end{document}
