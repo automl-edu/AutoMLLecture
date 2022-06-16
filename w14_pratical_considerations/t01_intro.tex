@@ -19,24 +19,28 @@
 \begin{frame}{From HPO to AutoML}
   So far we covered
   \begin{itemize}
-    \item Mechanisms to select ML algorithms for a data set (algorithm selection)
     \item HPO as black-box optimization
     \begin{itemize}
       \item Grid- and random search, EAs, BO
     \end{itemize}
-    \item HPO as a grey box problem
+    \item Speedup techniques for HPO
     \begin{itemize}
-      \item Hyperband, BOHB
+      \item Multi-fidelity, meta-learning, ...
+    \end{itemize}
+    \item Multi-objective HPO
+    \begin{itemize}
+      \item NSGA-II, ParEGO, ...
     \end{itemize}
     \item Neural Architecture Search (NAS)
     \begin{itemize}
-      \item One-Shot approaches, DART
+      \item One-Shot approaches, DARTS, ...
     \end{itemize}
-    \item Dynamic algorithm configuration (learning to learn)
-    \begin{itemize}
-      \item Adapt configuration during training
-    \end{itemize}
-  \end{itemize}  
+  \end{itemize}
+  
+  \vspace{1cm}
+
+  $\longrightarrow$ So far we haven't talked (much) about practical considerations.
+
 \end{frame}
 
 \begin{frame}{From HPO to AutoML}
@@ -62,7 +66,7 @@
         \begin{itemize}
           \item HPO algorithm
           \item ML / Pipeline framework 
-          \item Parallelization / Multifidelity
+          \item Parallelization / Multi-fidelity
           \item Process encapsulation and time capping 
           \item ...
           % \item (Preprocessing)
@@ -70,17 +74,18 @@
     \end{column}%
     \begin{column}{0.5\textwidth}
       \begin{center}
-        Academic view:
-        \scalebox{0.45}{
-          \input{tikz/automl_overview.tex}
-        }
-
-        \vspace{1em}
 
         Practitioners view:
         \scalebox{0.45}{
           \input{tikz/true_automl_overview.tex}
         }
+        \vspace{1em}
+
+        Academic view:
+        \scalebox{0.45}{
+          \input{tikz/automl_overview.tex}
+        }
+
       \end{center}
     \end{column}
   \end{columns}

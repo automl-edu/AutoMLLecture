@@ -29,7 +29,7 @@
 			\item Random forests
 			\item Neural networks
 		\end{itemize}
-			\item Example: Auto-Sklearn 2.0~\lit{{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2020}}} uses: 
+			\item Example: Auto-Sklearn 2.0~\lit{{\href{https://arxiv.org/pdf/2007.04074.pdf}{Feurer et al. 2022}}} uses: 
 	  
 		  \begin{itemize}
 			  \item Extra trees 
@@ -132,7 +132,7 @@
 		\end{itemize}
 		Expensive evaluations
 		\begin{itemize}
-		  \item[$\rightarrow$] Hyperband, BOHB, DEHB
+		  \item[$\rightarrow$] Hyperband, Multi-fidelity BO / EAs, ...
 		\end{itemize}
 		Deep learning 
 		\begin{itemize}
@@ -140,7 +140,27 @@
 		  \item[$\rightarrow$] one-shot models and gradient-based optimization
 		\end{itemize}
 	  
-	  \end{frame}
+	\end{frame}
+
+	\begin{frame}{HPO Benchmark Suites}
+		\textbf{HPOBench} \lit{{\href{https://openreview.net/forum?id=1k4rJYEwda-}{Eggensperger et al. 2021}}}.
+		\begin{itemize}
+			\item Successor of HPOlib
+			\item Collection of 12 benchmark families; in total $>100$ HPO problems
+			\item Mix of tabular, surrogate and real benchmark problems
+			\item Also allows for benchmarking multifidelity HPO methods
+			\item Benchmarks are containerized making them easily reproducible
+		\end{itemize}
+		\vspace{1em}
+		\textbf{YAHPO Gym} \lit{{\href{https://openreview.net/forum?id=SWcg-TrUgc}{Pfisterer, Schneider et al. 2021}}}.
+		\begin{itemize}
+			\item Collection of 9 benchmark families constituting over 700 multifidelity multicriteria HPO problems
+			\item Surrogate benchmarks using neural-network based instance surrogates
+			\item fast inference (< 50 ms) \& low memory footprint ($\sim$ 5 MB)
+		\end{itemize}
+		\vspace{1em}
+		Others: HPO-B \lit{{\href{https://openreview.net/forum?id=O24OhmqpJtP}{Arango et al. 2021}}}.
+	\end{frame}
 	  
 
 
@@ -156,7 +176,7 @@
 
 		Problems:
 		\begin{itemize}
-			\item Overtuning \lit{{\href{https://www.amazon.science/publications/overfitting-in-bayesian-optimization-an-empirical-study-and-early-stopping-solution}{Makarova et al. 2021}}}. 
+			\item Overtuning. 
 			\item Missed opportunity. 
 			\item Wasted computational resources.
 		\end{itemize}
@@ -164,8 +184,8 @@
 
 		Ways out:
 		\begin{itemize}
-			\item Early stopping for BO \lit{{\href{https://www.amazon.science/publications/overfitting-in-bayesian-optimization-an-empirical-study-and-early-stopping-solution}{Makarova et al. 2021}}}.
-			\item Rules of thumb, maybe $50 \times l$ to $100 \times l$  (\textcolor{red}{be careful and think for yourself!}).
+			\item Early stopping for BO \lit{{\href{https://arxiv.org/abs/2104.08166}{Makarova et al. 2021}}}.
+			\item Rules of thumb, maybe $50 \times d$ to $100 \times d$  (\textcolor{red}{be careful and think for yourself!}).
 			\item Expert knowledge.
 		\end{itemize}
 
@@ -193,7 +213,7 @@
 			\item Encapsulate train/predict in separate process from HPO.
 			\item Ressource limit time and memory of that process.
 			\item If pipeline crashes, run robust fallback (e.g., constant predictor).   
-			\item Use random configuration if optimizer crashes.
+			\item If optimizer proposal crashes, run random configuration.
 		\end{itemize}
 		
 	\end{frame}
@@ -243,9 +263,8 @@
 	
 	\end{frame}
 
-	\begin{frame}{Open Problems}
+	\begin{frame}{Interesting Problems}
 		\begin{itemize}
-			\item Most efficient HPO approach? Good benchmarks often missing.
 			\item How to integrate human a-priori knowledge?
 			\item Human-in-the-loop approaches for AutoML.
 			\item How can we best (computationally) transfer “experience” into AutoML? 
