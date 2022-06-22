@@ -1,0 +1,96 @@
+\input{t00_template.tex}
+
+\usepackage[normalem]{ulem}
+\usepackage{pifont}
+\usepackage{relsize}
+\renewcommand{\lit}[1]{{\smaller\color{black!60}[#1]}}
+\title[AutoML: Practical]{AutoML: Practical Considerations} 
+\subtitle{Introduction}
+\author[Janek Thomas]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and \underline{Janek Thomas} \and Joaquin Vanschoren}
+
+\begin{document}
+
+\maketitle
+
+
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
+
+\begin{frame}{From HPO to AutoML}
+  So far we covered
+  \begin{itemize}
+    \item HPO as black-box optimization
+    \begin{itemize}
+      \item Grid- and random search, EAs, BO
+    \end{itemize}
+    \item Speedup techniques for HPO
+    \begin{itemize}
+      \item Multi-fidelity, meta-learning, ...
+    \end{itemize}
+    \item Multi-objective HPO
+    \begin{itemize}
+      \item NSGA-II, ParEGO, ...
+    \end{itemize}
+    \item Neural Architecture Search (NAS)
+    \begin{itemize}
+      \item One-Shot approaches, DARTS, ...
+    \end{itemize}
+  \end{itemize}
+  
+  \vspace{1cm}
+
+  $\longrightarrow$ So far we haven't talked (much) about practical considerations.
+
+\end{frame}
+
+\begin{frame}{From HPO to AutoML}
+    \begin{center}
+      \includegraphics[width = 0.9\linewidth]{images/18_AutoML-Components-Overview-Infographic_corrected.png}  
+    \end{center}
+\end{frame}
+
+\begin{frame}{What is missing?}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+        What do I need to know as an AutoML user?
+        \begin{itemize}
+          \item \sout{Nothing, because it is automatic.}
+          \item Understand limitations of AutoML and framework.
+          \item Know how to interpret the results.
+          \item Maybe: Data cleaning and feature extraction.
+        \end{itemize}
+
+        \vspace{1em}
+
+        Ingredients to implement an AutoML system?
+        \begin{itemize}
+          \item HPO algorithm
+          \item ML / Pipeline framework 
+          \item Parallelization / Multi-fidelity
+          \item Process encapsulation and time capping 
+          \item ...
+          % \item (Preprocessing)
+        \end{itemize}
+    \end{column}%
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+
+        Practitioners view:
+        \scalebox{0.45}{
+          \input{tikz/true_automl_overview.tex}
+        }
+        \vspace{1em}
+
+        Academic view:
+        \scalebox{0.45}{
+          \input{tikz/automl_overview.tex}
+        }
+
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+
+\end{document}

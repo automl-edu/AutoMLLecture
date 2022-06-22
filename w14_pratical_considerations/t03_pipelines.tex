@@ -1,0 +1,184 @@
+\input{t00_template.tex}
+
+\usepackage[normalem]{ulem}
+\usepackage{pifont}
+\usepackage{relsize}
+\renewcommand{\lit}[1]{{\smaller\color{black!60}[#1]}}
+\title[AutoML: Practical]{AutoML: Practical Considerations}
+\subtitle{Machine Learning Pipelines}
+\author[Janek Thomas]{Bernd Bischl \and Frank Hutter \and Lars Kotthoff\newline \and Marius Lindauer \and \underline{Janek Thomas} \and Joaquin Vanschoren}
+
+
+\begin{document}
+	
+	\maketitle
+	
+    \begin{frame}{Pipelines and Workflows}
+		
+		% Most preprocessing steps have parameters or can be switched on/off in the pipeline.
+		
+		% \vspace{1em}
+		
+		% \textbf{Goal:} Find optimal preprocessing parameters $\rightarrow$ HPO
+		
+		To build AutoML systems we need a language to describe: 
+
+		\begin{itemize}
+			\item Machine learning algorithms
+			\item Preprocessing operations
+			\item Ensemble methodes like model averaging and stacking
+			\item How data is passed from one stage to another
+		\end{itemize}
+
+		\begin{center}
+		\includegraphics[page=7, width=0.7\textwidth, trim=200 0 30 190, clip]{images/mlr3Pipelines_graphics}
+		\end{center}
+
+	\end{frame}
+
+	\begin{frame}{Pipelines and Workflows}
+		\begin{columns}
+			\begin{column}{0.5\textwidth}
+				\textbf{Nodes:} What is happening? 
+				\begin{center}
+					\includegraphics[page=8, width=\textwidth, trim=200 0 30 190, clip]{images/mlr3Pipelines_graphics}
+				\end{center}
+			\end{column}%
+			\begin{column}{0.5\textwidth}
+				\textbf{Edges:} In what sequence is it happening? 
+				\begin{center}
+					\includegraphics[page=9, width=\textwidth, trim=200 0 30 190, clip]{images/mlr3Pipelines_graphics}
+				\end{center}
+			\end{column}
+		\end{columns}
+		
+	\vspace{1cm}
+
+	$\longrightarrow$ We represent a ML workflow as a stateful directed acyclical graph with nodes of operations and edged of data flow between them.
+
+	\end{frame}
+
+\begin{frame}{Training nodes}
+
+	Each node can have \textit{hyperparameters} $\pcs_{\text{node}}$, has to be \textit{trained} and can \textit{predict}.
+
+	\begin{center}
+		\includegraphics[page=2, width=0.6\textwidth, trim=111 0 130 160, clip]{images/mlr3Pipelines_graphics}
+	\end{center}
+
+	Transformed data can be 
+	\begin{itemize}
+		\item a transformed version of the train/test data for preprocessing nodes, or
+		\item predictions for learner nodes.
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Linear Pipelines}
+
+A linear pipeline behaves just as a machine learning algorithm.
+
+	\begin{itemize}
+		\item Can be evaluated with resampling and ensures that preprocessing does not cause data leakage.
+		\item Hyperparameters $\pcs = \pcs_{\text{preproc}} \times \pcs_\inducer$ can be optimized jointly.
+	\end{itemize}
+
+	\begin{center}
+	\includegraphics[page=19, width=0.7\textwidth, trim=20 60 30 35, clip]{images/mlr3Pipelines_graphics}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Nodes with Multiple Inputs or Outputs}
+	Nodes are not restricted to single inputs and single outputs.
+	\begin{center}
+		\includegraphics[page=6, width=0.8\textwidth, trim=130 0 100 160, clip]{images/mlr3Pipelines_graphics}
+	\end{center}
+\end{frame}
+
+
+\begin{frame}{Ensemble Algorithms}
+
+	This view allows easy representation of different ensemble algorithms:
+
+	\vspace{1cm}
+
+		\begin{columns}
+			\begin{column}{0.5\textwidth}
+				Bagging:
+				\begin{center}
+					\includegraphics[page=20, width=\textwidth, trim=0 80 120 85, clip]{images/mlr3Pipelines_graphics}
+				\end{center}
+			\end{column}
+			\begin{column}{0.5\textwidth}
+				Stacking:
+				\begin{center}
+					\includegraphics[page=21, width=\textwidth, trim=0 80 120 85, clip]{images/mlr3Pipelines_graphics}
+				\end{center}
+			\end{column}
+		\end{columns}
+
+
+\end{frame}
+
+\begin{frame}{Branching}
+
+	To represent the search space of an AutoML system there needs to be a branching node with a selection hyperparameter $\lambda_\text{branch} = (choice_1, ..., choice_k)$.
+
+	\begin{center}
+		\includegraphics[page=22, width=0.8\textwidth, trim=40 120 120 80, clip]{images/mlr3Pipelines_graphics}
+	\end{center}
+
+\end{frame}
+
+
+%\item Applying preprocessing to the whole dataset leads to data leakage
+%\item Preprocessing should have train and predict steps, too
+%\item Can add it to learner, and embed it in CV    
+%\item Note: Preprocessing has hyperparameters 
+%\item Optimize pipeline jointly: $\pcs = \pcs_{\text{preproc}} \times \pcs_\inducer$ 
+%\item Still HPO, not much different than for single learner
+%\item $\pcs$ "simply" of higher dimension
+
+	
+	\begin{frame}{Example of a simple AutoML system}
+	
+		\begin{center}
+			\includegraphics[width = \textwidth]{images/pipeline_with_param_table.eps}
+		\end{center}
+
+	\end{frame}
+	
+	\begin{frame}{Pipeline Systems for Machine Learning Frameworks}
+
+		Different frameworks to define and control such pipelines exist for most common programming languages:
+
+		\begin{itemize}
+			\item \texttt{scikit-learn} with \texttt{Pipeline}, \texttt{FeatureUnion} and \texttt{ColumnTransformer} classes for python.
+			\item \texttt{mlr3} with \texttt{mlr3pipelines} extension for R.
+			\item \texttt{ML.Net} for C\#.
+			\item \texttt{tfx} for tensorflow.
+			\item \texttt{AutoMLPipeline} for Julia.
+			\item ...
+		\end{itemize}
+
+	Each framework has slightly different features and limitations. 
+	
+	\end{frame}
+
+	% \begin{frame}[containsverbatim,allowframebreaks]{Software}
+	
+	% \begin{itemize}
+	%   \item DataRobot (comercial, gui)
+	%   \item H20.ai (comercial but open source, r, python)
+	%   \item TPOT, Tree-based Pipeline Optimization Tool  (2016-cont, open source, evolutionary approach) % show plot https://github.com/EpistasisLab/tpot
+	%   \item AutoWEKA (2016, open source)
+	%   \item mlr3automl (2020, prelim)
+	%   \item Hyperopt-Sklearn (2014-cont) Only HPO
+	%   \item Auto-Sklearn (2.0) (2015-cont) BO, ensembles, meta-learning
+	% \end{itemize}
+	
+	% \end{frame}
+	
+	
+	
+\end{document}
