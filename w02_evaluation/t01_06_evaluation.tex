@@ -1,0 +1,21 @@
+\input{../latex_main/main.tex}
+\usepackage{pdfpages}
+\includepdfset{trim=0mm 0mm 0mm 0mm, pagecommand={\global\setcounter{framenumber}{\value{page}}}}
+
+\title[AutoML: Overview]{Multi-criteria Optimization}
+\subtitle{Overview}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+\begin{document}
+\setbeamercolor{background canvas}{bg=}
+
+\includepdf[pages={1-last}]{t01_big_picture.pdf}
+\includepdf[pages={1-last}]{t02_evaluation.pdf}
+\includepdf[pages={1-last}]{t03_stat_tests.pdf}
+\includepdf[pages={1-last}]{t04_benchmarking.pdf}
+\includepdf[pages={1-last}]{t05_nested_evaluation.pdf}
+\includepdf[pages={1-last}]{t06_over_time.pdf}
+
+\end{document}
