@@ -1,0 +1,19 @@
+\input{../latex_main/main.tex}
+\usepackage{pdfpages}
+\includepdfset{trim=0mm 0mm 0mm 0mm, pagecommand={\global\setcounter{framenumber}{\value{page}}}}
+
+\title[AutoML: NAS]{AutoML: Neural Architecture Search (NAS) I} 
+\subtitle{Overview}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+\begin{document}
+\setbeamercolor{background canvas}{bg=}
+\includepdf[pages={1-last}]{t07_oneshot_nas.pdf}
+\includepdf[pages={1-last}]{t08_darts.pdf}
+\includepdf[pages={1-last}]{t09_NASlib.pdf}
+\includepdf[pages={1-last}]{t10_practical_recommendations.pdf}
+
+
+\end{document}

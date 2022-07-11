@@ -1,0 +1,26 @@
+\input{../latex_main/main.tex}
+\usepackage{pdfpages}
+\includepdfset{trim=0mm 0mm 0mm 0mm, pagecommand={\global\setcounter{framenumber}{\value{page}}}}
+
+\title[AutoML: Overview]{Multi-criteria Optimization}
+\subtitle{Overview}
+\author[Marius Lindauer]{Bernd Bischl \and \underline{Frank Hutter} \and Lars Kotthoff\newline \and Marius Lindauer \and Joaquin Vanschoren}
+\institute{}
+\date{}
+
+\begin{document}
+\setbeamercolor{background canvas}{bg=}
+
+%ToDO: Replace OLD_XXX.pdf with newer versions as soon as videos are released
+\includepdf[pages={1-last}]{t01_big_picture.pdf}
+\includepdf[pages={1-last}]{t02_problem_setup.pdf}
+%\includepdf[pages={1-last}]{t03_solving_dac.pdf}
+\includepdf[pages={1-last}]{OLDt03_control_learning_rates.pdf}
+\includepdf[pages={1-last}]{t04_pbt.pdf}
+\includepdf[pages={1-last}]{t05_background_rl.pdf}
+\includepdf[pages={1-last}]{OLD_t05_l2l_supervised.pdf}
+\includepdf[pages={1-last}]{OLDt_06_control_learning_rates.pdf}
+%\includepdf[pages={1-last}]{t06_dac_rl.pdf}
+%\includepdf[pages={1-last}]{t07_generalizing_dac.pdf}
+
+\end{document}
