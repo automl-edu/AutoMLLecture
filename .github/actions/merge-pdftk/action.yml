@@ -1,0 +1,20 @@
+# Action metadata file:
+# https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action#creating-an-action-metadata-file
+
+name: 'pdftk GitHub Action'
+description: 'Runs pdftk to merge pdf-files'
+inputs:
+  input-pattern:
+    description: 'Pattern for input files'
+    required: true
+  output-name:
+    description: 'Name of output file'
+    required: false
+    default: 'merged.pdf'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.input-pattern }}
+    - ${{ inputs.output-name }}
